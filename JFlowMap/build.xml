@@ -1,0 +1,79 @@
+<project name="JFlowMap" basedir="." default="build">
+
+	<property file="build.properties"/>
+
+    <property name="app.name" value="JFlowMap"/>
+	<property name="path.src" value="src"/>
+	<property name="path.classes" value="build/classes"/>
+	<property name="path.lib" value="lib"/>
+	<property name="path.build" value="build"/>
+
+	<target name="build" depends="mkdirs, clean, compile, one-big-jar, sign-jar" />
+
+	<path id="master-classpath">
+		<fileset dir="${path.lib}">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement path="${path.classes}"/>
+	</path>
+
+	<target name="mkdirs">
+		<mkdir dir="${path.classes}"/>
+		<mkdir dir="${path.build}"/>
+	</target>
+
+	<target name="compile">
+		<javac destdir="${path.classes}" failonerror="true" debug="true" target="1.5">
+			<src path="${path.src}"/>
+			<classpath refid="master-classpath"/>
+		</javac>
+	</target>
+
+	<target name="clean">
+		<delete includeEmptyDirs="true">
+			<fileset dir="${path.classes}">
+				<include name="**/*.class"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="one-big-jar">
+		<copy file="log4j-prod.properties" tofile="${path.build}/log4j.properties" overwrite="true"/>
+		<jar basedir="." jarfile="${path.build}/${app.name}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="jflowmap.FlowMapMain" />
+			</manifest>
+			<exclude name="**/*" />
+			<fileset dir="${path.classes}">
+				<include name="**/*.class"/>
+				<include name="**/res/*.*"/>
+			</fileset>
+			<fileset dir="${path.build}">
+				<include name="log4j.properties"/>
+			</fileset>
+			<fileset dir=".">
+				<include name="license.txt"/>
+				<include name="data/*.*"/>
+			</fileset>
+			<zipgroupfileset dir="${path.lib}">
+				<include name="**/*.jar"/>
+				<exclude name="CopyLibs/*.jar"/>
+				<exclude name="junit*.jar"/>
+				<exclude name="beans-binding/*.jar"/>
+			</zipgroupfileset>
+		</jar>
+		<delete file="${path.build}/log4j.properties" quiet="true"/>
+	</target>
+
+    <target name="sign-jar">
+    	<!-- To create a certificate: keytool -genkey -alias jflowmap -->
+        <exec executable="jarsigner">
+            <!-- <arg line="-keystore ${sign.keystore.name}"/> -->
+            <arg line="-storepass ${sign.keystore.pass}"/>
+            <arg line="${path.build}/${app.name}.jar"/>
+            <arg line="${app.name}"/>
+        </exec>
+    </target>
+
+</project>
+

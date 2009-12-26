@@ -1,0 +1,1 @@
+@java  -Xmx256m -Dsun.java2d.opengl=true -jar JFlowMap.jar

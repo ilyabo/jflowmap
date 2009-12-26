@@ -1,0 +1,5783 @@
+<?xml version="1.0" encoding="UTF-8"?><graphml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://graphml.graphdrawing.org/xmlns" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+   <key id="x" for="node" attr.name="x" attr.type="double"/>
+   <key id="y" for="node" attr.name="y" attr.type="double"/>
+   <key id="name" for="node" attr.name="name" attr.type="string"/>
+   <key id="refugees" for="edge" attr.name="refugees" attr.type="double"/>
+   <key id="refugees-unhcr" for="edge" attr.name="refugees-unhcr" attr.type="double"/>
+   <key id="refugees-and-like" for="edge" attr.name="refugees-and-like" attr.type="double"/>
+   <key id="refugees-and-like-unhcr" for="edge" attr.name="refugees-and-like-unhcr" attr.type="double"/>
+   <graph edgedefault="directed" name="Refugees of the year 2008">
+      
+      
+      
+      
+      <node id="AFG">
+         <data key="x">488.412987125</data>
+         <data key="y">258.9695095086407</data>
+         <data key="name">Afghanistan</data>
+      </node>
+      <node id="AGO">
+         <data key="x">389.948706425</data>
+         <data key="y">386.75711969805525</data>
+         <data key="name">Angola</data>
+      </node>
+      
+      <node id="ALB">
+         <data key="x">395.07195912500003</data>
+         <data key="y">238.1090711297232</data>
+         <data key="name">Albania</data>
+      </node>
+      
+      
+      
+      
+      <node id="ARM">
+         <data key="x">444.7416232</data>
+         <data key="y">241.2161285922206</data>
+         <data key="name">Armenia</data>
+      </node>
+      
+      
+      
+      
+      <node id="AUS">
+         <data key="x">622.802723225</data>
+         <data key="y">425.5642594360657</data>
+         <data key="name">Australia</data>
+      </node>
+      <node id="AUT">
+         <data key="x">382.0848588</data>
+         <data key="y">216.78182573178387</data>
+         <data key="name">Austria</data>
+      </node>
+      <node id="AZE">
+         <data key="x">449.866525025</data>
+         <data key="y">240.97832651818138</data>
+         <data key="name">Azerbaijan</data>
+      </node>
+      <node id="BDI">
+         <data key="x">414.5521998</data>
+         <data key="y">364.23533191119617</data>
+         <data key="name">Burundi</data>
+      </node>
+      
+      <node id="BEN">
+         <data key="x">360.1048468</data>
+         <data key="y">330.11032382229206</data>
+         <data key="name">Benin</data>
+      </node>
+      
+      <node id="BGD">
+         <data key="x">533.1787755749999</data>
+         <data key="y">290.2212284379362</data>
+         <data key="name">Bangladesh</data>
+      </node>
+      
+      
+      
+      <node id="BIH">
+         <data key="x">390.820451675</data>
+         <data key="y">228.2897924221837</data>
+         <data key="name">Bosnia And Herzegovina</data>
+      </node>
+      
+      
+      
+      
+      
+      
+      
+      <node id="BTN">
+         <data key="x">534.245982625</data>
+         <data key="y">279.8412240017597</data>
+         <data key="name">Bhutan</data>
+      </node>
+      
+      
+      <node id="CAF">
+         <data key="x">396.355246975</data>
+         <data key="y">338.3936681513379</data>
+         <data key="name">Central African Republic</data>
+      </node>
+      <node id="CAN">
+         <data key="x">153.9590473</data>
+         <data key="y">176.27325006126225</data>
+         <data key="name">Canada</data>
+      </node>
+      
+      <node id="CHE">
+         <data key="x">371.94804095</data>
+         <data key="y">219.5124235960347</data>
+         <data key="name">Switzerland</data>
+      </node>
+      
+      <node id="CHN">
+         <data key="x">567.6155846</data>
+         <data key="y">255.075559002308</data>
+         <data key="name">China</data>
+      </node>
+      <node id="CIV">
+         <data key="x">344.536737475</data>
+         <data key="y">335.6149306302374</data>
+         <data key="name">Cote D'ivoire (Ivory Coast)</data>
+      </node>
+      <node id="CMR">
+         <data key="x">381.23455612500004</data>
+         <data key="y">337.62449786851187</data>
+         <data key="name">Cameroon</data>
+      </node>
+      <node id="COD">
+         <data key="x">401.6690141</data>
+         <data key="y">366.3223592996971</data>
+         <data key="name">Democratic Republic of the Congo</data>
+      </node>
+      <node id="COG">
+         <data key="x">384.66710415</data>
+         <data key="y">357.98953148699115</data>
+         <data key="name">Congo</data>
+      </node>
+      
+      <node id="COL">
+         <data key="x">211.584927775</data>
+         <data key="y">344.03689797313035</data>
+         <data key="name">Colombia</data>
+      </node>
+      
+      
+      <node id="CRI">
+         <data key="x">189.402031925</data>
+         <data key="y">329.16603225185816</data>
+         <data key="name">Costa Rica</data>
+      </node>
+      
+      
+      
+      
+      
+      <node id="DEU">
+         <data key="x">376.38511545</data>
+         <data key="y">202.0153342961783</data>
+         <data key="name">Germany</data>
+      </node>
+      <node id="DJI">
+         <data key="x">439.71156285</data>
+         <data key="y">323.7371377474846</data>
+         <data key="name">Djibouti</data>
+      </node>
+      
+      <node id="DNK">
+         <data key="x">376.0247056</data>
+         <data key="y">186.83301805705693</data>
+         <data key="name">Denmark</data>
+      </node>
+      
+      <node id="DZA">
+         <data key="x">360.53700840000005</data>
+         <data key="y">276.18468899672644</data>
+         <data key="name">Algeria</data>
+      </node>
+      <node id="ECU">
+         <data key="x">200.96069177500002</data>
+         <data key="y">358.5902598902782</data>
+         <data key="name">Ecuador</data>
+      </node>
+      <node id="EGY">
+         <data key="x">415.696931525</data>
+         <data key="y">280.4458888125066</data>
+         <data key="name">Egypt</data>
+      </node>
+      <node id="ERI">
+         <data key="x">433.67532887500005</data>
+         <data key="y">314.8741501883265</data>
+         <data key="name">Eritrea</data>
+      </node>
+      <node id="ESH">
+         <data key="x">329.56491224999996</data>
+         <data key="y">288.0110693605782</data>
+         <data key="name">Western Sahara</data>
+      </node>
+      
+      
+      <node id="ETH">
+         <data key="x">434.231200525</data>
+         <data key="y">331.61971957341996</data>
+         <data key="name">Ethiopia</data>
+      </node>
+      
+      
+      
+      <node id="FRA">
+         <data key="x">359.983611425</data>
+         <data key="y">220.9366216612865</data>
+         <data key="name">France</data>
+      </node>
+      
+      
+      <node id="GAB">
+         <data key="x">378.1426245</data>
+         <data key="y">357.6891753537435</data>
+         <data key="name">Gabon</data>
+      </node>
+      <node id="GBR">
+         <data key="x">352.46862582500006</data>
+         <data key="y">199.04214125274885</data>
+         <data key="name">United Kingdom</data>
+      </node>
+      <node id="GEO">
+         <data key="x">441.269488275</data>
+         <data key="y">234.48903672926266</data>
+         <data key="name">Georgia</data>
+      </node>
+      <node id="GHA">
+         <data key="x">353.3647011</data>
+         <data key="y">334.3819159502806</data>
+         <data key="name">Ghana</data>
+      </node>
+      
+      <node id="GIN">
+         <data key="x">333.71332865000005</data>
+         <data key="y">327.73136032918626</data>
+         <data key="name">Guinea</data>
+      </node>
+      
+      <node id="GMB">
+         <data key="x">324.7962945</data>
+         <data key="y">319.09298546910617</data>
+         <data key="name">Gambia</data>
+      </node>
+      <node id="GNB">
+         <data key="x">325.25031144999997</data>
+         <data key="y">323.4680365220042</data>
+         <data key="name">Guinea Bissau</data>
+      </node>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <node id="HRV">
+         <data key="x">387.778003675</data>
+         <data key="y">227.26200752037508</data>
+         <data key="name">Croatia</data>
+      </node>
+      <node id="HTI">
+         <data key="x">211.612143275</data>
+         <data key="y">304.04191388109757</data>
+         <data key="name">Haiti</data>
+      </node>
+      
+      <node id="IDN">
+         <data key="x">591.0529017</data>
+         <data key="y">363.51587906654646</data>
+         <data key="name">Indonesia</data>
+      </node>
+      
+      <node id="IND">
+         <data key="x">512.7649366</data>
+         <data key="y">293.5672949585589</data>
+         <data key="name">India</data>
+      </node>
+      
+      
+      <node id="IRN">
+         <data key="x">461.63384362500005</data>
+         <data key="y">264.265744603356</data>
+         <data key="name">Iran</data>
+      </node>
+      <node id="IRQ">
+         <data key="x">442.4430866</data>
+         <data key="y">262.81361817871436</data>
+         <data key="name">Iraq</data>
+      </node>
+      
+      
+      <node id="ITA">
+         <data key="x">380.11126697500004</data>
+         <data key="y">235.09554435818913</data>
+         <data key="name">Italy</data>
+      </node>
+      
+      <node id="JOR">
+         <data key="x">428.56692027500003</data>
+         <data key="y">268.11694732992515</data>
+         <data key="name">Jordan</data>
+      </node>
+      
+      
+      <node id="KEN">
+         <data key="x">430.600716025</data>
+         <data key="y">353.78139626119224</data>
+         <data key="name">Kenya</data>
+      </node>
+      
+      <node id="KHM">
+         <data key="x">562.9690277750001</data>
+         <data key="y">321.2798314012783</data>
+         <data key="name">Cambodia</data>
+      </node>
+      
+      
+      
+      <node id="KWT">
+         <data key="x">449.682609075</data>
+         <data key="y">274.11151782297236</data>
+         <data key="name">Kuwait</data>
+      </node>
+      <node id="LAO">
+         <data key="x">557.9199995250001</data>
+         <data key="y">302.19991174843466</data>
+         <data key="name">Laos, Peoples Democratic Republic of</data>
+      </node>
+      <node id="LBN">
+         <data key="x">426.3657018</data>
+         <data key="y">260.6356957529154</data>
+         <data key="name">Lebanon</data>
+      </node>
+      <node id="LBR">
+         <data key="x">337.280307025</data>
+         <data key="y">337.92496976473177</data>
+         <data key="name">Liberia</data>
+      </node>
+      
+      
+      
+      <node id="LKA">
+         <data key="x">514.58430265</data>
+         <data key="y">333.4345187779015</data>
+         <data key="name">Sri Lanka</data>
+      </node>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <node id="MKD">
+         <data key="x">398.35275605</data>
+         <data key="y">236.58670134313795</data>
+         <data key="name">Macedonia, The Former Republic of Yugoslavia</data>
+      </node>
+      <node id="MLI">
+         <data key="x">346.5998126</data>
+         <data key="y">310.6118153138726</data>
+         <data key="name">Mali</data>
+      </node>
+      
+      <node id="MMR">
+         <data key="x">545.6875309</data>
+         <data key="y">296.98960904354004</data>
+         <data key="name">Myanmar</data>
+      </node>
+      <node id="MNE">
+         <data key="x">393.60970467500005</data>
+         <data key="y">232.82159302980324</data>
+         <data key="name">MONTENEGRO</data>
+      </node>
+      
+      
+      
+      <node id="MRT">
+         <data key="x">334.15414865</data>
+         <data key="y">299.6430944644256</data>
+         <data key="name">Mauritania</data>
+      </node>
+      
+      
+      
+      <node id="MYS">
+         <data key="x">573.7944984999999</data>
+         <data key="y">344.8582559908132</data>
+         <data key="name">Malaysia</data>
+      </node>
+      
+      <node id="NAM">
+         <data key="x">391.295498425</data>
+         <data key="y">414.4381530667044</data>
+         <data key="name">Namibia</data>
+      </node>
+      
+      
+      
+      <node id="NGA">
+         <data key="x">371.2758813</data>
+         <data key="y">331.2558309103785</data>
+         <data key="name">Nigeria</data>
+      </node>
+      
+      
+      <node id="NLD">
+         <data key="x">365.78727137500005</data>
+         <data key="y">200.62299762062668</data>
+         <data key="name">Netherlands</data>
+      </node>
+      <node id="NOR">
+         <data key="x">374.26966925</data>
+         <data key="y">164.59878778704478</data>
+         <data key="name">Norway</data>
+      </node>
+      <node id="NPL">
+         <data key="x">521.83372185</data>
+         <data key="y">277.5104296657639</data>
+         <data key="name">Nepal</data>
+      </node>
+      
+      
+      <node id="PAK">
+         <data key="x">491.1486327</data>
+         <data key="y">273.2289002468011</data>
+         <data key="name">Pakistan</data>
+      </node>
+      <node id="PAN">
+         <data key="x">197.28484745</data>
+         <data key="y">332.6610409723792</data>
+         <data key="name">Panama</data>
+      </node>
+      
+      
+      
+      
+      <node id="PNG">
+         <data key="x">648.116314025</data>
+         <data key="y">373.4775384200963</data>
+         <data key="name">Papua New Guinea</data>
+      </node>
+      <node id="POL">
+         <data key="x">393.38702539999997</data>
+         <data key="y">200.8527562613826</data>
+         <data key="name">Poland</data>
+      </node>
+      
+      
+      
+      
+      
+      
+      
+      
+      <node id="RUS">
+         <data key="x">533.4962983</data>
+         <data key="y">159.07164977332405</data>
+         <data key="name">Russian Federation</data>
+      </node>
+      <node id="RWA">
+         <data key="x">414.53900285000003</data>
+         <data key="y">360.9755330855736</data>
+         <data key="name">Rwanda</data>
+      </node>
+      <node id="SAU">
+         <data key="x">443.395654775</data>
+         <data key="y">289.6176621034569</data>
+         <data key="name">Saudi Arabia</data>
+      </node>
+      <node id="SDN">
+         <data key="x">415.617757725</data>
+         <data key="y">319.7476818329209</data>
+         <data key="name">Sudan</data>
+      </node>
+      <node id="SEN">
+         <data key="x">326.1389627</data>
+         <data key="y">317.96231353491515</data>
+         <data key="name">Senegal</data>
+      </node>
+      
+      
+      
+      <node id="SLE">
+         <data key="x">331.920354525</data>
+         <data key="y">332.75618715050314</data>
+         <data key="name">Sierra Leone</data>
+      </node>
+      
+      <node id="SOM">
+         <data key="x">445.9638796</data>
+         <data key="y">338.2310461009268</data>
+         <data key="name">Somalia</data>
+      </node>
+      <node id="SRB">
+         <data key="x">396.42205135000006</data>
+         <data key="y">228.42690947882863</data>
+         <data key="name">Serbia</data>
+      </node>
+      
+      
+      
+      
+      <node id="SWE">
+         <data key="x">388.5590273</data>
+         <data key="y">151.797824852101</data>
+         <data key="name">Sweden</data>
+      </node>
+      
+      
+      <node id="SYR">
+         <data key="x">431.488130925</data>
+         <data key="y">256.90923767910095</data>
+         <data key="name">Syrian Arab Republic</data>
+      </node>
+      
+      <node id="TCD">
+         <data key="x">391.95941047499997</data>
+         <data key="y">314.9362423025926</data>
+         <data key="name">Chad</data>
+      </node>
+      <node id="TGO">
+         <data key="x">357.23971825</data>
+         <data key="y">331.8792621748337</data>
+         <data key="name">Togo</data>
+      </node>
+      <node id="THA">
+         <data key="x">555.36909545</data>
+         <data key="y">313.41264345468096</data>
+         <data key="name">Thailand</data>
+      </node>
+      
+      
+      
+      
+      
+      
+      
+      <node id="TUR">
+         <data key="x">421.39502575</data>
+         <data key="y">244.40412378491075</data>
+         <data key="name">Turkey</data>
+      </node>
+      
+      
+      <node id="TZA">
+         <data key="x">425.37931965</data>
+         <data key="y">372.8235254703957</data>
+         <data key="name">Tanzania, United Republic of</data>
+      </node>
+      <node id="UGA">
+         <data key="x">419.161642425</data>
+         <data key="y">351.93084363740206</data>
+         <data key="name">Uganda</data>
+      </node>
+      <node id="UKR">
+         <data key="x">418.21072337500004</data>
+         <data key="y">215.01492971811106</data>
+         <data key="name">Ukraine</data>
+      </node>
+      
+      <node id="USA">
+         <data key="x">156.026657025</data>
+         <data key="y">240.86734611933494</data>
+         <data key="name">United States</data>
+      </node>
+      
+      
+      
+      <node id="VEN">
+         <data key="x">225.363361225</data>
+         <data key="y">334.4351009875315</data>
+         <data key="name">Venezuela</data>
+      </node>
+      
+      
+      <node id="VNM">
+         <data key="x">569.4786593750001</data>
+         <data key="y">322.08163902351544</data>
+         <data key="name">Viet Nam</data>
+      </node>
+      
+      
+      <node id="YEM">
+         <data key="x">450.202192075</data>
+         <data key="y">313.2433257668417</data>
+         <data key="name">Yemen</data>
+      </node>
+      <node id="ZAF">
+         <data key="x">404.933315825</data>
+         <data key="y">434.95250032390675</data>
+         <data key="name">South Africa</data>
+      </node>
+      <node id="ZMB">
+         <data key="x">410.90192185</data>
+         <data key="y">390.8408461716854</data>
+         <data key="name">Zambia</data>
+      </node>
+      <node id="ZWE">
+         <data key="x">414.11096702500004</data>
+         <data key="y">407.09945000562055</data>
+         <data key="name">Zimbabwe</data>
+      </node>
+      <node id="*TB">
+         <data key="x">535.520153875</data>
+         <data key="y">272.75364899433873</data>
+         <data key="name">Tibetans</data>
+      </node>
+      <node id="*PA">
+         <data key="x">425.0271179</data>
+         <data key="y">266.57497964869435</data>
+         <data key="name">Occupied Palestinian Territory</data>
+      </node>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ESH" target="DZA" id="22">
+         <data key="refugees">90000</data>
+         <data key="refugees-unhcr">90000</data>
+         <data key="refugees-and-like">90000</data>
+         <data key="refugees-and-like-unhcr">90000</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="AUS" id="169">
+         <data key="refugees">5945</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5945</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="AUT" id="239">
+         <data key="refugees">5387</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5387</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="RUS" target="AUT" id="307">
+         <data key="refugees">14122</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">14122</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      <edge source="SRB" target="AUT" id="310">
+         <data key="refugees">6218</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6218</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="MMR" target="BGD" id="346">
+         <data key="refugees">28337</data>
+         <data key="refugees-unhcr">28123</data>
+         <data key="refugees-and-like">28337</data>
+         <data key="refugees-and-like-unhcr">28123</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="TGO" target="BEN" id="488">
+         <data key="refugees">5600</data>
+         <data key="refugees-unhcr">5600</data>
+         <data key="refugees-and-like">5600</data>
+         <data key="refugees-and-like-unhcr">5600</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="BDI" id="666">
+         <data key="refugees">20757</data>
+         <data key="refugees-unhcr">20757</data>
+         <data key="refugees-and-like">20757</data>
+         <data key="refugees-and-like-unhcr">20757</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="CAF" target="CMR" id="684">
+         <data key="refugees">66602</data>
+         <data key="refugees-unhcr">66602</data>
+         <data key="refugees-and-like">66602</data>
+         <data key="refugees-and-like-unhcr">66602</data>
+      </edge>
+      <edge source="TCD" target="CMR" id="685">
+         <data key="refugees">8773</data>
+         <data key="refugees-unhcr">8773</data>
+         <data key="refugees-and-like">8773</data>
+         <data key="refugees-and-like-unhcr">8773</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="CHN" target="CAN" id="736">
+         <data key="refugees">15585</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">15585</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="COL" target="CAN" id="737">
+         <data key="refugees">13080</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">13080</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="CAN" id="747">
+         <data key="refugees">5687</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5687</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IND" target="CAN" id="776">
+         <data key="refugees">6718</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6718</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      <edge source="IRN" target="CAN" id="780">
+         <data key="refugees">5200</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5200</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="PAK" target="CAN" id="823">
+         <data key="refugees">15798</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">15798</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="CAN" id="847">
+         <data key="refugees">6209</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6209</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      <edge source="LKA" target="CAN" id="850">
+         <data key="refugees">20442</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">20442</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="CAF" target="TCD" id="899">
+         <data key="refugees">52258</data>
+         <data key="refugees-unhcr">52258</data>
+         <data key="refugees-and-like">57258</data>
+         <data key="refugees-and-like-unhcr">52258</data>
+      </edge>
+      <edge source="SDN" target="TCD" id="900">
+         <data key="refugees">250052</data>
+         <data key="refugees-unhcr">250050</data>
+         <data key="refugees-and-like">267966</data>
+         <data key="refugees-and-like-unhcr">250050</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="COG" id="973">
+         <data key="refugees">13973</data>
+         <data key="refugees-unhcr">13657</data>
+         <data key="refugees-and-like">13973</data>
+         <data key="refugees-and-like-unhcr">13657</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COL" target="CRI" id="993">
+         <data key="refugees">9939</data>
+         <data key="refugees-unhcr">9939</data>
+         <data key="refugees-and-like">9939</data>
+         <data key="refugees-and-like-unhcr">9939</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBR" target="CIV" id="1040">
+         <data key="refugees">24256</data>
+         <data key="refugees-unhcr">24256</data>
+         <data key="refugees-and-like">24256</data>
+         <data key="refugees-and-like-unhcr">24256</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="DNK" id="1175">
+         <data key="refugees">5214</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5214</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="DNK" id="1208">
+         <data key="refugees">7102</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7102</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="DJI" id="1256">
+         <data key="refugees">8522</data>
+         <data key="refugees-unhcr">8390</data>
+         <data key="refugees-and-like">8522</data>
+         <data key="refugees-and-like-unhcr">8390</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COL" target="ECU" id="1271">
+         <data key="refugees">18337</data>
+         <data key="refugees-unhcr">18337</data>
+         <data key="refugees-and-like">100637</data>
+         <data key="refugees-and-like-unhcr">18337</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="EGY" id="1343">
+         <data key="refugees">10091</data>
+         <data key="refugees-unhcr">10091</data>
+         <data key="refugees-and-like">10091</data>
+         <data key="refugees-and-like-unhcr">10091</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="EGY" id="1356">
+         <data key="refugees">5600</data>
+         <data key="refugees-unhcr">5600</data>
+         <data key="refugees-and-like">5600</data>
+         <data key="refugees-and-like-unhcr">5600</data>
+      </edge>
+      
+      <edge source="SDN" target="EGY" id="1358">
+         <data key="refugees">10146</data>
+         <data key="refugees-unhcr">10146</data>
+         <data key="refugees-and-like">10146</data>
+         <data key="refugees-and-like-unhcr">10146</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ERI" target="ETH" id="1384">
+         <data key="refugees">21018</data>
+         <data key="refugees-unhcr">21018</data>
+         <data key="refugees-and-like">21018</data>
+         <data key="refugees-and-like-unhcr">21018</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="SOM" target="ETH" id="1389">
+         <data key="refugees">33625</data>
+         <data key="refugees-unhcr">33625</data>
+         <data key="refugees-and-like">33625</data>
+         <data key="refugees-and-like-unhcr">33625</data>
+      </edge>
+      <edge source="SDN" target="ETH" id="1390">
+         <data key="refugees">25913</data>
+         <data key="refugees-unhcr">25913</data>
+         <data key="refugees-and-like">25913</data>
+         <data key="refugees-and-like-unhcr">25913</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="KHM" target="FRA" id="1494">
+         <data key="refugees">13195</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">13195</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="FRA" id="1507">
+         <data key="refugees">9952</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">9952</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LAO" target="FRA" id="1534">
+         <data key="refugees">7496</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7496</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="RUS" target="FRA" id="1558">
+         <data key="refugees">7615</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7615</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      <edge source="SRB" target="FRA" id="1561">
+         <data key="refugees">8395</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8395</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="LKA" target="FRA" id="1566">
+         <data key="refugees">18102</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">18102</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      <edge source="TUR" target="FRA" id="1573">
+         <data key="refugees">10564</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">10564</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      <edge source="VNM" target="FRA" id="1580">
+         <data key="refugees">8583</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8583</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COG" target="GAB" id="1589">
+         <data key="refugees">7674</data>
+         <data key="refugees-unhcr">7674</data>
+         <data key="refugees-and-like">7674</data>
+         <data key="refugees-and-like-unhcr">7674</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SEN" target="GMB" id="1613">
+         <data key="refugees">7546</data>
+         <data key="refugees-unhcr">6946</data>
+         <data key="refugees-and-like">7546</data>
+         <data key="refugees-and-like-unhcr">6946</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="DEU" id="1623">
+         <data key="refugees">25108</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">25108</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AZE" target="DEU" id="1632">
+         <data key="refugees">5315</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5315</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="BIH" target="DEU" id="1643">
+         <data key="refugees">24697</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">24697</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="HRV" target="DEU" id="1662">
+         <data key="refugees">16241</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">16241</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="DEU" id="1697">
+         <data key="refugees">38854</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">38854</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="IRN" target="DEU" id="1698">
+         <data key="refugees">15816</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">15816</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBN" target="DEU" id="1711">
+         <data key="refugees">9650</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">9650</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="RUS" target="DEU" id="1750">
+         <data key="refugees">35505</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">35505</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SRB" target="DEU" id="1758">
+         <data key="refugees">98787</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">98787</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LKA" target="DEU" id="1767">
+         <data key="refugees">6594</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6594</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      <edge source="SYR" target="DEU" id="1774">
+         <data key="refugees">8205</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8205</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      <edge source="MKD" target="DEU" id="1776">
+         <data key="refugees">5729</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5729</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      <edge source="TUR" target="DEU" id="1782">
+         <data key="refugees">161919</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">161919</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      <edge source="UKR" target="DEU" id="1786">
+         <data key="refugees">22156</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">22156</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      <edge source="VNM" target="DEU" id="1795">
+         <data key="refugees">14043</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">14043</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBR" target="GHA" id="1807">
+         <data key="refugees">15797</data>
+         <data key="refugees-unhcr">15797</data>
+         <data key="refugees-and-like">15797</data>
+         <data key="refugees-and-like-unhcr">15797</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBR" target="GIN" id="1876">
+         <data key="refugees">11097</data>
+         <data key="refugees-unhcr">11097</data>
+         <data key="refugees-and-like">11097</data>
+         <data key="refugees-and-like-unhcr">11097</data>
+      </edge>
+      
+      
+      
+      <edge source="SLE" target="GIN" id="1880">
+         <data key="refugees">6460</data>
+         <data key="refugees-unhcr">6460</data>
+         <data key="refugees-and-like">6460</data>
+         <data key="refugees-and-like-unhcr">6460</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SEN" target="GNB" id="1892">
+         <data key="refugees">7492</data>
+         <data key="refugees-unhcr">7492</data>
+         <data key="refugees-and-like">7492</data>
+         <data key="refugees-and-like-unhcr">7492</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="IND" id="2008">
+         <data key="refugees">8441</data>
+         <data key="refugees-unhcr">8441</data>
+         <data key="refugees-and-like">8441</data>
+         <data key="refugees-and-like-unhcr">8441</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LKA" target="IND" id="2022">
+         <data key="refugees">73286</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">73286</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRN" target="IRQ" id="2040">
+         <data key="refugees">10823</data>
+         <data key="refugees-unhcr">10823</data>
+         <data key="refugees-and-like">10823</data>
+         <data key="refugees-and-like-unhcr">10823</data>
+      </edge>
+      
+      
+      <edge source="*PA" target="IRQ" id="2043">
+         <data key="refugees">12302</data>
+         <data key="refugees-unhcr">12302</data>
+         <data key="refugees-and-like">12302</data>
+         <data key="refugees-and-like-unhcr">12302</data>
+      </edge>
+      
+      
+      <edge source="TUR" target="IRQ" id="2046">
+         <data key="refugees">15716</data>
+         <data key="refugees-unhcr">15716</data>
+         <data key="refugees-and-like">15716</data>
+         <data key="refugees-and-like-unhcr">15716</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="IRN" id="2156">
+         <data key="refugees">935595</data>
+         <data key="refugees-unhcr">935595</data>
+         <data key="refugees-and-like">935595</data>
+         <data key="refugees-and-like-unhcr">935595</data>
+      </edge>
+      
+      <edge source="IRQ" target="IRN" id="2158">
+         <data key="refugees">44444</data>
+         <data key="refugees-unhcr">44444</data>
+         <data key="refugees-and-like">44444</data>
+         <data key="refugees-and-like-unhcr">44444</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ERI" target="ITA" id="2211">
+         <data key="refugees">9033</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">9033</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="ITA" id="2254">
+         <data key="refugees">5251</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5251</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="JOR" id="2297">
+         <data key="refugees">500000</data>
+         <data key="refugees-unhcr">52668</data>
+         <data key="refugees-and-like">500000</data>
+         <data key="refugees-and-like-unhcr">52668</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ETH" target="KEN" id="2321">
+         <data key="refugees">22649</data>
+         <data key="refugees-unhcr">22649</data>
+         <data key="refugees-and-like">22649</data>
+         <data key="refugees-and-like-unhcr">22649</data>
+      </edge>
+      
+      
+      <edge source="SOM" target="KEN" id="2324">
+         <data key="refugees">259121</data>
+         <data key="refugees-unhcr">259121</data>
+         <data key="refugees-and-like">259121</data>
+         <data key="refugees-and-like-unhcr">259121</data>
+      </edge>
+      
+      
+      <edge source="SDN" target="KEN" id="2327">
+         <data key="refugees">28496</data>
+         <data key="refugees-unhcr">28496</data>
+         <data key="refugees-and-like">28496</data>
+         <data key="refugees-and-like-unhcr">28496</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="LBN" id="2359">
+         <data key="refugees">50000</data>
+         <data key="refugees-unhcr">10245</data>
+         <data key="refugees-and-like">50000</data>
+         <data key="refugees-and-like-unhcr">10245</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="CIV" target="LBR" id="2382">
+         <data key="refugees">6607</data>
+         <data key="refugees-unhcr">6607</data>
+         <data key="refugees-and-like">6607</data>
+         <data key="refugees-and-like-unhcr">6607</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="MMR" target="MYS" id="2475">
+         <data key="refugees">33715</data>
+         <data key="refugees-unhcr">33715</data>
+         <data key="refugees-and-like">33781</data>
+         <data key="refugees-and-like-unhcr">33781</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="MRT" target="MLI" id="2509">
+         <data key="refugees">6157</data>
+         <data key="refugees-unhcr">6157</data>
+         <data key="refugees-and-like">6157</data>
+         <data key="refugees-and-like-unhcr">6157</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ESH" target="MRT" id="2563">
+         <data key="refugees">NaN</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">26000</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="BIH" target="MNE" id="2650">
+         <data key="refugees">6168</data>
+         <data key="refugees-unhcr">6168</data>
+         <data key="refugees-and-like">6168</data>
+         <data key="refugees-and-like-unhcr">6168</data>
+      </edge>
+      
+      <edge source="SRB" target="MNE" id="2652">
+         <data key="refugees">16210</data>
+         <data key="refugees-unhcr">16210</data>
+         <data key="refugees-and-like">16210</data>
+         <data key="refugees-and-like-unhcr">16210</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AGO" target="NAM" id="2691">
+         <data key="refugees">5916</data>
+         <data key="refugees-unhcr">5916</data>
+         <data key="refugees-and-like">5916</data>
+         <data key="refugees-and-like-unhcr">5916</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="BTN" target="NPL" id="2703">
+         <data key="refugees">102087</data>
+         <data key="refugees-unhcr">102087</data>
+         <data key="refugees-and-like">104587</data>
+         <data key="refugees-and-like-unhcr">102087</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="*TB" target="NPL" id="2712">
+         <data key="refugees">20000</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">20000</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="AFG" target="NLD" id="2713">
+         <data key="refugees">13477</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">13477</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="NLD" id="2768">
+         <data key="refugees">15553</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">15553</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="NLD" id="2808">
+         <data key="refugees">8565</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8565</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBR" target="NGA" id="2948">
+         <data key="refugees">5303</data>
+         <data key="refugees-unhcr">5303</data>
+         <data key="refugees-and-like">5303</data>
+         <data key="refugees-and-like-unhcr">5303</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="NOR" id="3004">
+         <data key="refugees">7878</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7878</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="NOR" id="3042">
+         <data key="refugees">6977</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6977</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="PAK" id="3065">
+         <data key="refugees">764935</data>
+         <data key="refugees-unhcr">764935</data>
+         <data key="refugees-and-like">1780150</data>
+         <data key="refugees-and-like-unhcr">764935</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="RUS" target="POL" id="3206">
+         <data key="refugees">12034</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">12034</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="RWA" id="3381">
+         <data key="refugees">52409</data>
+         <data key="refugees-unhcr">52409</data>
+         <data key="refugees-and-like">52409</data>
+         <data key="refugees-and-like-unhcr">52409</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="MRT" target="SEN" id="3413">
+         <data key="refugees">32292</data>
+         <data key="refugees-unhcr">32292</data>
+         <data key="refugees-and-like">32292</data>
+         <data key="refugees-and-like-unhcr">32292</data>
+      </edge>
+      
+      
+      
+      
+      
+      <edge source="BIH" target="SRB" id="3419">
+         <data key="refugees">27165</data>
+         <data key="refugees-unhcr">27165</data>
+         <data key="refugees-and-like">27165</data>
+         <data key="refugees-and-like-unhcr">27165</data>
+      </edge>
+      
+      <edge source="HRV" target="SRB" id="3421">
+         <data key="refugees">69505</data>
+         <data key="refugees-unhcr">69505</data>
+         <data key="refugees-and-like">69505</data>
+         <data key="refugees-and-like-unhcr">69505</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBR" target="SLE" id="3430">
+         <data key="refugees">7778</data>
+         <data key="refugees-unhcr">7778</data>
+         <data key="refugees-and-like">7778</data>
+         <data key="refugees-and-like-unhcr">7778</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AGO" target="ZAF" id="3501">
+         <data key="refugees">5751</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5751</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="ZAF" id="3508">
+         <data key="refugees">10999</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">10999</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="ZAF" id="3526">
+         <data key="refugees">8543</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8543</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="TCD" target="SDN" id="3617">
+         <data key="refugees">41202</data>
+         <data key="refugees-unhcr">19940</data>
+         <data key="refugees-and-like">41202</data>
+         <data key="refugees-and-like-unhcr">19940</data>
+      </edge>
+      <edge source="COD" target="SDN" id="3618">
+         <data key="refugees">5447</data>
+         <data key="refugees-unhcr">5447</data>
+         <data key="refugees-and-like">5447</data>
+         <data key="refugees-and-like-unhcr">5447</data>
+      </edge>
+      <edge source="ERI" target="SDN" id="3619">
+         <data key="refugees">124785</data>
+         <data key="refugees-unhcr">57999</data>
+         <data key="refugees-and-like">124785</data>
+         <data key="refugees-and-like-unhcr">57999</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="SWE" id="3693">
+         <data key="refugees">32120</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">32120</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SRB" target="SWE" id="3733">
+         <data key="refugees">8692</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8692</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="SOM" target="SWE" id="3738">
+         <data key="refugees">6753</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6753</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SRB" target="CHE" id="3853">
+         <data key="refugees">7397</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7397</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="TUR" target="CHE" id="3868">
+         <data key="refugees">5245</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5245</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="SYR" id="3890">
+         <data key="refugees">1100000</data>
+         <data key="refugees-unhcr">224343</data>
+         <data key="refugees-and-like">1100000</data>
+         <data key="refugees-and-like-unhcr">224343</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="MMR" target="THA" id="3927">
+         <data key="refugees">111555</data>
+         <data key="refugees-unhcr">111555</data>
+         <data key="refugees-and-like">111555</data>
+         <data key="refugees-and-like-unhcr">111555</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="TUR" id="3998">
+         <data key="refugees">7481</data>
+         <data key="refugees-unhcr">7481</data>
+         <data key="refugees-and-like">7481</data>
+         <data key="refugees-and-like-unhcr">7481</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="UGA" id="4029">
+         <data key="refugees">76498</data>
+         <data key="refugees-unhcr">76498</data>
+         <data key="refugees-and-like">76498</data>
+         <data key="refugees-and-like-unhcr">76498</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      <edge source="RWA" target="UGA" id="4037">
+         <data key="refugees">16162</data>
+         <data key="refugees-unhcr">16162</data>
+         <data key="refugees-and-like">16162</data>
+         <data key="refugees-and-like-unhcr">16162</data>
+      </edge>
+      
+      <edge source="SOM" target="UGA" id="4039">
+         <data key="refugees">6085</data>
+         <data key="refugees-unhcr">6085</data>
+         <data key="refugees-and-like">6085</data>
+         <data key="refugees-and-like-unhcr">6085</data>
+      </edge>
+      <edge source="SDN" target="UGA" id="4040">
+         <data key="refugees">56883</data>
+         <data key="refugees-unhcr">56883</data>
+         <data key="refugees-and-like">56883</data>
+         <data key="refugees-and-like-unhcr">56883</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="AFG" target="GBR" id="4101">
+         <data key="refugees">23079</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">23079</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="COD" target="GBR" id="4132">
+         <data key="refugees">6673</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6673</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      <edge source="ERI" target="GBR" id="4138">
+         <data key="refugees">7701</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7701</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="IRQ" target="GBR" id="4150">
+         <data key="refugees">21483</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">21483</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="IRN" target="GBR" id="4151">
+         <data key="refugees">10320</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">10320</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SRB" target="GBR" id="4191">
+         <data key="refugees">15242</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">15242</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      <edge source="SOM" target="GBR" id="4195">
+         <data key="refugees">31665</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">31665</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      <edge source="LKA" target="GBR" id="4197">
+         <data key="refugees">8725</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">8725</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="TUR" target="GBR" id="4208">
+         <data key="refugees">9219</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">9219</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ZWE" target="GBR" id="4222">
+         <data key="refugees">9637</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">9637</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="BDI" target="TZA" id="4223">
+         <data key="refugees">240480</data>
+         <data key="refugees-unhcr">240480</data>
+         <data key="refugees-and-like">240480</data>
+         <data key="refugees-and-like-unhcr">240480</data>
+      </edge>
+      <edge source="COD" target="TZA" id="4224">
+         <data key="refugees">79706</data>
+         <data key="refugees-unhcr">79706</data>
+         <data key="refugees-and-like">79706</data>
+         <data key="refugees-and-like-unhcr">79706</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ALB" target="USA" id="4234">
+         <data key="refugees">7232</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7232</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="ARM" target="USA" id="4239">
+         <data key="refugees">7731</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7731</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="CMR" target="USA" id="4260">
+         <data key="refugees">7279</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7279</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="CHN" target="USA" id="4265">
+         <data key="refugees">47277</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">47277</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="COL" target="USA" id="4266">
+         <data key="refugees">26447</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">26447</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="ETH" target="USA" id="4287">
+         <data key="refugees">12515</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">12515</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="HTI" target="USA" id="4303">
+         <data key="refugees">18175</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">18175</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="IND" target="USA" id="4308">
+         <data key="refugees">9483</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">9483</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      <edge source="IDN" target="USA" id="4309">
+         <data key="refugees">7845</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7845</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      <edge source="IRN" target="USA" id="4311">
+         <data key="refugees">6347</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">6347</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="LBR" target="USA" id="4325">
+         <data key="refugees">5475</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5475</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="MMR" target="USA" id="4341">
+         <data key="refugees">5171</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">5171</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="RUS" target="USA" id="4362">
+         <data key="refugees">7652</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">7652</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="USA" id="4376">
+         <data key="refugees">10154</data>
+         <data key="refugees-unhcr">NaN</data>
+         <data key="refugees-and-like">10154</data>
+         <data key="refugees-and-like-unhcr">NaN</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <edge source="SOM" target="YEM" id="4470">
+         <data key="refugees">132275</data>
+         <data key="refugees-unhcr">132275</data>
+         <data key="refugees-and-like">132275</data>
+         <data key="refugees-and-like-unhcr">132275</data>
+      </edge>
+      
+      
+      
+      
+      <edge source="AGO" target="ZMB" id="4476">
+         <data key="refugees">27131</data>
+         <data key="refugees-unhcr">18882</data>
+         <data key="refugees-and-like">27131</data>
+         <data key="refugees-and-like-unhcr">18882</data>
+      </edge>
+      
+      
+      <edge source="COD" target="ZMB" id="4479">
+         <data key="refugees">47329</data>
+         <data key="refugees-unhcr">30630</data>
+         <data key="refugees-and-like">47329</data>
+         <data key="refugees-and-like-unhcr">30630</data>
+      </edge>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+   </graph>
+</graphml>
