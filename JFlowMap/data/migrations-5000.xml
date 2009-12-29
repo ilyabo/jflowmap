@@ -1,4 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?><graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns             http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    US census 2000 County-to-County Migration Flows
+    ===============================================
+    
+    These migration data come from the Census 2000 long-form question on residence 5 years ago 
+    and contain the number of people who moved between counties. A data record was produced for 
+    every combination of county-to-county migration flows in the United States of at least one 
+    person between 1995 and 2000. Current county of residence is based on where the person was 
+    living on April 1st, 2000. Previous county of residence is based on where the person was 
+    living 5 years earlier.
+    
+    The original dataset can be found here:
+    http://www.census.gov/population/www/cen2000/ctytoctyflow/index.html 
+        
+    This dataset is a modified version of the one provided by Weiwei Cui on his web page:
+    http://ihome.ust.hk/~weiwei/public_html/papers/data.zip
+    The Weiwei Cui's version has duplicate instances of some nodes which were merged in this 
+    version.
+    
+    The data in this file was filtered. The minimum number of migrants in a flow is 5000. 
+    All the flows with less migrants which can be found in the original dataset were removed 
+    from this dataset.
+
+-->
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns             http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
     <key attr.type="double" attr.name="x" id="x" for="node"/><key attr.type="string" attr.name="tooltip" id="tooltip" for="node"/><key attr.type="double" attr.name="y" id="y" for="node"/><key attr.type="int" attr.name="value" id="value" for="edge"/>
 
     <graph edgedefault="directed">

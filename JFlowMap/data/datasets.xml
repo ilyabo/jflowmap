@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datasets>
-        <dataset src="data/migrations-unique.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" valueFilterMin="1000" />
+        <dataset src="data/migrations-500.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" valueFilterMin="1000" />
         <dataset src="data/migrations-5000.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
         <dataset src="data/migrations-10000.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
         <dataset src="data/bundling-test1.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
