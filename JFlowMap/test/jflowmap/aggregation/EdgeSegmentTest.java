@@ -178,4 +178,48 @@ public class EdgeSegmentTest {
         assertTrue(newSegment.getB().isFixed());
     }
 
+
+    @Test
+    public void testDot() {
+        assertEquals(0,
+                    new EdgeSegment(new FPoint(0, 0, false) , new FPoint(2, 0, false) , 1.0)
+                    .dot(new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1.0)),
+        EPS);
+        assertEquals(1.0,
+                    new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1.0)
+                    .dot(new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1.0)),
+        EPS);
+    }
+
+    @Test
+    public void test_cosOfAngleBetween() {
+        assertEquals(Math.cos(Math.PI/4),
+                    EdgeSegment.cosOfAngleBetween(
+                        new EdgeSegment(new FPoint(1, 1, false) , new FPoint(2, 2, false) , 1.0),
+                        new EdgeSegment(new FPoint(1, 2, false) , new FPoint(1, 3, false) , 1.0)
+                    ),
+        EPS);
+        assertEquals(0,
+                EdgeSegment.cosOfAngleBetween(
+                    new EdgeSegment(new FPoint(1, 1, false) , new FPoint(3, 1, false) , 1.0),
+                    new EdgeSegment(new FPoint(1, 2, false) , new FPoint(1, 3, false) , 1.0)
+                ),
+        EPS);
+
+        assertEquals(1.0,
+                EdgeSegment.cosOfAngleBetween(
+                    new EdgeSegment(new FPoint(1, 1, false) , new FPoint(1, 2, false) , 1.0),
+                    new EdgeSegment(new FPoint(1, 2, false) , new FPoint(1, 3, false) , 1.0)
+                ),
+        EPS);
+
+        assertEquals(-1.0,
+                EdgeSegment.cosOfAngleBetween(
+                    new EdgeSegment(new FPoint(0, 0, false) , new FPoint(2, 0, false) , 1.0),
+                    new EdgeSegment(new FPoint(0, 0, false) , new FPoint(-2, 0, false) , 1.0)
+                ),
+        EPS);
+
+    }
+
 }

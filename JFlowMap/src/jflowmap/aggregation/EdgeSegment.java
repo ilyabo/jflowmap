@@ -212,6 +212,20 @@ public class EdgeSegment {
         return a.distanceTo(b);
     }
 
+    /**
+     * Vector dot product
+     */
+    public double dot(EdgeSegment other) {
+        return (b.x() - a.x()) * (other.b.x() - other.a.x()) +
+               (b.y() - a.y()) * (other.b.y() - other.a.y());
+    }
+
+    public static double cosOfAngleBetween(EdgeSegment seg1, EdgeSegment seg2) {
+        return (seg1.dot(seg2) / seg1.length()) / seg2.length();
+    }
+
+    private static final double COS_PI_4 = Math.cos(Math.PI / 4);
+
     public boolean canBeAggregatedWith(EdgeSegment other) {
         return
                 // segments with a fixed point mustn't be aggregated with anything else
@@ -221,6 +235,9 @@ public class EdgeSegment {
 
                 // zero-length segments are irrelevant
                 length() != 0  &&  other.length() != 0  &&
+
+                // angle is less or equal to PI/4 = 45 grad
+                cosOfAngleBetween(this, other) >= COS_PI_4  &&
 
                 // segments of the same edge mustn't be aggregated as well
                 !sharesAParentWith(other);

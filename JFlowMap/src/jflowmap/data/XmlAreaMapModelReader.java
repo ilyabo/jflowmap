@@ -55,6 +55,7 @@ public class XmlAreaMapModelReader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static AreaMap loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
         Xb1XPath
                 areaPath = new Xb1XPath("/areas/area"),
@@ -73,7 +74,7 @@ public class XmlAreaMapModelReader {
                 for (XmlElement polyNode : polyNodes) {
                     Iterator it = polyNode.children();
                     if (it.hasNext()) {
-                        java.awt.geom.Area poly = new java.awt.geom.Area();
+//                        java.awt.geom.Area poly = new java.awt.geom.Area();
                         String coordsStr = it.next().toString().trim();
                         String[] coords = coordsStr.split("\\s*,\\s*");
                         Point2D[] points = new Point2D[coords.length / 2];

@@ -32,8 +32,8 @@ import javax.swing.Icon;
 class ClusterIcon implements Icon, Comparable<ClusterIcon> {
 
         final int r = 8;
-        private Paint clusterPaint;
-        private int clusterId;
+        private final Paint clusterPaint;
+        private final int clusterId;
 
         public ClusterIcon(int clusterId, Paint clusterPaint) {
             this.clusterId = clusterId;
@@ -64,9 +64,31 @@ class ClusterIcon implements Icon, Comparable<ClusterIcon> {
         }
 
         public int compareTo(ClusterIcon o) {
-//            if (clusterId <= 0  &&  o.clusterId > 0) return +1; 
-//            if (clusterId > 0  &&  o.clusterId <= 0) return -1; 
+//            if (clusterId <= 0  &&  o.clusterId > 0) return +1;
+//            if (clusterId > 0  &&  o.clusterId <= 0) return -1;
             return clusterId - o.clusterId;
         }
-        
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + clusterId;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ClusterIcon other = (ClusterIcon) obj;
+            if (clusterId != other.clusterId)
+                return false;
+            return true;
+        }
+
     }

@@ -29,9 +29,10 @@ import edu.umd.cs.piccolo.event.PInputEvent;
  */
 public class ZoomHandler extends PDragSequenceEventHandler {
 
+    private static final double WHEEL_ZOOM_UNIT = 0.15;
+
     private double minScale = 0;
     private double maxScale = Double.MAX_VALUE;
-    private final double wheelZoomUnit = 0.15;
     private Point2D viewZoomPoint;
 
     public ZoomHandler() {
@@ -74,7 +75,7 @@ public class ZoomHandler extends PDragSequenceEventHandler {
     public void mouseWheelRotated(PInputEvent aEvent) {
         final PCamera camera = aEvent.getCamera();
         final double scaleDelta = checkScaleConstraints(camera.getViewScale(),
-                1.0 - aEvent.getWheelRotation() * wheelZoomUnit);
+                1.0 - aEvent.getWheelRotation() * WHEEL_ZOOM_UNIT);
 
         final Point2D position;
         if (viewZoomPoint != null) {

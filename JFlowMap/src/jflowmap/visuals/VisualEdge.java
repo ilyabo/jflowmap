@@ -401,21 +401,21 @@ public abstract class VisualEdge extends PNode {
             VisualEdge ve = getParentVisualEdge(event.getPickedNode());
             if (ve != null) {
                 ve.setHighlighted(true, false, false);
+                ve.getVisualFlowMap().showTooltip(ve, event.getPosition());
             }
-            ve.getVisualFlowMap().showTooltip(ve, event.getPosition());
 //            node.moveToFront();
         }
 
         @Override
         public void mouseExited(PInputEvent event) {
             VisualEdge ve = getParentVisualEdge(event.getPickedNode());
-            if (!ve.getVisible()) {
-                return;
-            }
             if (ve != null) {
+                if (!ve.getVisible()) {
+                    return;
+                }
                 ve.setHighlighted(false, false, false);
+                ve.getVisualFlowMap().hideTooltip();
             }
-            ve.getVisualFlowMap().hideTooltip();
         }
     };
 
