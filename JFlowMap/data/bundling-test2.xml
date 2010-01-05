@@ -81,26 +81,6 @@
          <data key="name">B1-</data>
       </node>
        -->
-      <node id="C">
-         <data key="x">10</data>
-         <data key="y">100</data>
-         <data key="name">C</data>
-      </node>
-      <node id="D">
-         <data key="x">110</data>
-         <data key="y">100</data>
-         <data key="name">D</data>
-      </node>
-      <node id="E">
-         <data key="x">10</data>
-         <data key="y">110</data>
-         <data key="name">E</data>
-      </node> 
-      <node id="F">
-         <data key="x">110</data>
-         <data key="y">110</data>
-         <data key="name">F</data>
-      </node>
 
       <edge source="A" target="B" id="1">
          <data key="data">3</data>
@@ -125,12 +105,5 @@
          <data key="data">7</data>
       </edge>
        -->
-
-      <edge source="C" target="D" id="6">
-         <data key="data">5</data>
-      </edge>
-      <edge source="E" target="F" id="7">
-         <data key="data">5</data>
-      </edge>
    </graph>
 </graphml>

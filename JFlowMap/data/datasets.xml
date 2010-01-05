@@ -6,6 +6,8 @@
         <dataset src="data/bundling-test1.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
         <dataset src="data/bundling-test2.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
         <dataset src="data/bundling-test6.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+        <dataset src="data/bundling-test7.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+        <dataset src="data/bundling-test8.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
         <dataset src="data/refugees-2008-nv-5000.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
         <dataset src="data/refugees-2008-no-various.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
 <!-- 
