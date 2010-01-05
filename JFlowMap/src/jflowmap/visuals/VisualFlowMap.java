@@ -20,6 +20,7 @@ package jflowmap.visuals;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.awt.LinearGradientPaint;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -155,12 +156,12 @@ public class VisualFlowMap extends PNode {
         visualNodes = new ArrayList<VisualNode>();
         nodesToVisuals = new LinkedHashMap<Node, VisualNode>();
 
-//        MinMax xStats = graphStats.getNodeXStats();
-//        MinMax yStats = graphStats.getNodeYStats();
+//        FlowMapStats stats = flowMapModel.getStats();
+//        MinMax xStats = stats.getNodeXStats();
+//        MinMax yStats = stats.getNodeYStats();
 //        double nodeSize = (Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 250);
         MinMax lenStats = flowMapModel.getEdgeLengthStats();
-//        double nodeSize = lenStats.getMin() / 10;
-        double nodeSize = lenStats.getAvg() / 50;
+        double nodeSize = lenStats.getAvg() / 30;
 //        double nodeSize = Math.max(
 //                lenStats.getAvg() / 70,
 //                Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
@@ -562,6 +563,8 @@ public class VisualFlowMap extends PNode {
                         @Override
                         public void run() {
                             createAggregatedSegmentsVisuals(segments);
+                            // remove edges
+                            edgeLayer.removeAllChildren();
                         }
                     });
                     repaint();
@@ -606,8 +609,11 @@ public class VisualFlowMap extends PNode {
 
     private static class PSegment extends PNode {
         private static final long serialVersionUID = 1L;
-        private final static Color JOINT_PT_COLOR = new Color(0, 0, 255, 150);
-        private final static Color SEGMENT_COLOR = new Color(255, 255, 255, 200);
+//        private static final Color JOINT_PT_COLOR = new Color(0, 0, 255, 150);
+//        private static final Color SEGMENT_COLOR = new Color(255, 255, 255, 200);
+        private static final float[] GRADIENT_FRACTIONS = new float[] { 0.0f, 1.0f };
+//        private static final Color[] GRADIENT_COLORS = new Color[] { new Color(100, 100, 200, 200), new Color(200, 200, 100, 200) };
+        private static final Color[] GRADIENT_COLORS = new Color[] { new Color(255, 0, 0, 150), new Color(0, 255, 0, 150) };
         private final EdgeSegment segment;
 
         public PSegment(EdgeSegment seg, double width) {
@@ -620,7 +626,12 @@ public class VisualFlowMap extends PNode {
             }
             PPath linep = new PPath(new Line2D.Double(src.asPoint2D(), dest.asPoint2D()), new PFixedWidthStroke((float)width));
 //            linep.setPaint(SEGMENT_COLOR);
-            linep.setStrokePaint(SEGMENT_COLOR);
+//            linep.setStrokePaint(SEGMENT_COLOR);
+            linep.setStrokePaint( new LinearGradientPaint(
+                    (float)src.x(), (float)src.y(), (float)dest.x(), (float)dest.y(),
+                    GRADIENT_FRACTIONS,
+                    GRADIENT_COLORS
+            ));
             addChild(linep);
 
 //            PSegmentPoint srcp = new PSegmentPoint(src);
@@ -634,6 +645,7 @@ public class VisualFlowMap extends PNode {
 
 //            setPickable(true);
             addInputEventListener(MOUSE_HANDLER);
+            setPickable(false);
         }
 
         private static class PSegmentPoint extends PPath {
