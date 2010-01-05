@@ -121,10 +121,10 @@ public class VisualFlowMap extends PNode {
     	this.flowMapModel = model;
 
         nodeLayer = new PNode();
-        createNodes();
+        createNodeVisuals();
 
         edgeLayer = new PNode();
-        createEdges();
+        createEdgeVisuals();
 
         addChild(edgeLayer);
         addChild(nodeLayer);
@@ -146,7 +146,7 @@ public class VisualFlowMap extends PNode {
     }
 
 
-    private void createNodes() {
+    private void createNodeVisuals() {
         nodeLayer.removeAllChildren();
 
         Graph graph = flowMapModel.getGraph();
@@ -203,7 +203,7 @@ public class VisualFlowMap extends PNode {
         }
     }
 
-    private void createEdges() {
+    private void createEdgeVisuals() {
         edgeLayer.removeAllChildren();
         clearAggregatedEdgesLayer();
 
@@ -486,7 +486,7 @@ public class VisualFlowMap extends PNode {
     public void resetBundling() {
         bundled = false;
         flowMapModel.removeAllEdgeSubdivisionPoints();
-        createEdges();
+        createEdgeVisuals();
         repaint();
     }
 
@@ -514,7 +514,7 @@ public class VisualFlowMap extends PNode {
             public void taskCompleted(int taskId) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        createEdges();
+                        createEdgeVisuals();
                         bundled = true;
                         repaint();
                     }
@@ -553,26 +553,15 @@ public class VisualFlowMap extends PNode {
             public Object construct() {
                 try {
                     aggregator.aggregate(pt);
-                    List<EdgeSegment> segments = aggregator.getAggregatedSegments();
 
-                    clearAggregatedEdgesLayer();
-                    PNode parentNode = getAggregatedEdgesLayer();
+                    final List<EdgeSegment> segments = aggregator.getAggregatedSegments();
 
-                    // create aggregated edge weight stats to normalize on them
-                    MinMax stats = MinMax.createFor(Iterators.transform(segments.iterator(), EdgeSegment.TRANSFORM_TO_WEIGHT));
-
-                    for (EdgeSegment seg : segments) {
-//                        if (seg.length() == 0) {
-//                            logger.warn("Zero-length segment: " + seg);
-//                        }
-
-                        double nv = stats.normalizeLog(seg.getWeight());
-//                        double nv = stats.normalize(seg.getWeight());
-//                        double nv = seg.getWeight();
-                        double width = 1 + nv * getModel().getMaxEdgeWidth();
-
-                        parentNode.addChild(new PSegment(seg, width));
-                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            createAggregatedSegmentsVisuals(segments);
+                        }
+                    });
                     repaint();
                 } catch (Throwable th) {
                     logger.error("Aggregation error", th);
@@ -588,6 +577,29 @@ public class VisualFlowMap extends PNode {
         pt.addProgressListener(dialog);
         worker.start();
         dialog.setVisible(true);
+    }
+
+    private void createAggregatedSegmentsVisuals(
+            final List<EdgeSegment> segments) {
+        clearAggregatedEdgesLayer();
+
+        // create aggregated edge weight stats to normalize on them
+        MinMax stats = MinMax.createFor(Iterators.transform(segments.iterator(), EdgeSegment.TRANSFORM_TO_WEIGHT));
+
+        PNode parentNode = getAggregatedEdgesLayer();
+
+        for (EdgeSegment seg : segments) {
+//          if (seg.length() == 0) {
+//              logger.warn("Zero-length segment: " + seg);
+//          }
+
+          double nv = stats.normalizeLog(seg.getWeight());
+//          double nv = stats.normalize(seg.getWeight());
+//          double nv = seg.getWeight();
+          double width = 1 + nv * getModel().getMaxEdgeWidth();
+
+          parentNode.addChild(new PSegment(seg, width));
+      }
     }
 
     private static class PSegment extends PNode {
