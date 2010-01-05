@@ -33,7 +33,7 @@ public class SegmentedEdgeTest {
         edge1.addConsecutiveSegment(seg1_3);
 
         seg2_1 = new EdgeSegment(new FPoint(0.5, 1, false), new FPoint(1, 1, false), 1.0, edge2);
-        seg2_2 = new EdgeSegment(new FPoint(1, 1, false), new FPoint(1.5, 1, false), 2.0, edge2);
+        seg2_2 = new EdgeSegment(new FPoint(1, 1, false), new FPoint(1.5, 1, false), 1.0, edge2);
         seg2_3 = new EdgeSegment(new FPoint(1.5, 1, false), new FPoint(3, 2, false), 1.0, edge2);
         edge2.addConsecutiveSegment(seg2_1);
         edge2.addConsecutiveSegment(seg2_2);
@@ -41,7 +41,7 @@ public class SegmentedEdgeTest {
 
 
         agg = seg1_2.aggregateWith(seg2_2);
-        assertEquals(3.0, agg.getWeight(), EPS);
+        assertEquals(2.0, agg.getWeight(), EPS);
         assertEquals(new FPoint(1, 0.5, false), agg.getA());
         assertEquals(new FPoint(1.75, 0.5, false), agg.getB());
 

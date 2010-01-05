@@ -51,11 +51,11 @@ public class EdgeSegmentTest {
         EdgeSegment seg1, seg2, agg;
 
         seg1 = new EdgeSegment(new FPoint(0, 1, false) , new FPoint(1, 0, false) , 1.0, edge1);
-        seg2 = new EdgeSegment(new FPoint(0, 1.5, false) , new FPoint(1.5, 0, false) , 2.0, edge2);
+        seg2 = new EdgeSegment(new FPoint(0, 1.6, false) , new FPoint(1.6, 0, false) , 2.0, edge2);
         agg = seg1.aggregateWith(seg2);
         assertEquals(3.0, agg.getWeight(), EPS);
-        assertEquals(new FPoint(0, 1.25, false), agg.getA());
-        assertEquals(new FPoint(1.25, 0, false), agg.getB());
+        assertEquals(new FPoint(0, 1.4, false), agg.getA());
+        assertEquals(new FPoint(1.4, 0, false), agg.getB());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class EdgeSegmentTest {
         edge1.addConsecutiveSegment(seg1_3);
 
         seg2_1 = new EdgeSegment(new FPoint(0.5, 1, false) , new FPoint(1, 1, false) , 1.0, edge2);
-        seg2_2 = new EdgeSegment(new FPoint(1, 1, false) , new FPoint(1.5, 1, false) , 2.0, edge2);
+        seg2_2 = new EdgeSegment(new FPoint(1, 1, false) , new FPoint(1.5, 1, false) , 1.0, edge2);
         seg2_3 = new EdgeSegment(new FPoint(1.5, 1, false) , new FPoint(3, 2, false) , 1.0, edge2);
         edge2.addConsecutiveSegment(seg2_1);
         edge2.addConsecutiveSegment(seg2_2);
@@ -84,7 +84,7 @@ public class EdgeSegmentTest {
 
         // aggregate middle segments
         agg = seg1_2.aggregateWith(seg2_2);
-        assertEquals(3.0, agg.getWeight(), EPS);
+        assertEquals(2.0, agg.getWeight(), EPS);
         assertEquals(new FPoint(1, 0.5, false), agg.getA());
         assertEquals(new FPoint(1.75, 0.5, false), agg.getB());
 
@@ -115,7 +115,7 @@ public class EdgeSegmentTest {
         assertEquals(agg, edge2.getNext(seg2_1));
         assertEquals(agg, edge2.getPrev(seg2_3));
 
-        assertEquals(3.0, edge2.getNext(seg2_1).getWeight(), EPS);
+        assertEquals(2.0, edge2.getNext(seg2_1).getWeight(), EPS);
     }
 
 
@@ -220,6 +220,61 @@ public class EdgeSegmentTest {
                 ),
         EPS);
 
+    }
+
+    @Test
+    public void test_canBeAggregatedWith() {
+        // TODO: other cases (fixed point or sharesAParentWith)
+
+        // length
+        assertTrue(
+                new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1).canBeAggregatedWith(
+                        new EdgeSegment(new FPoint(0, 0, false) , new FPoint(2, 0, false) , 1)
+                )
+        );
+        assertTrue(
+                !new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1).canBeAggregatedWith(
+                 new EdgeSegment(new FPoint(0, 0, false) , new FPoint(2.1, 0, false) , 1)
+                )
+        );
+
+
+        // angle
+        assertTrue(
+                new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1).canBeAggregatedWith(
+                new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0.7, 0.7, false) , 1)
+                )
+        );
+        assertTrue(
+                !new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1).canBeAggregatedWith(
+                 new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1)
+                )
+        );
+        assertTrue(
+                !new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1).canBeAggregatedWith(
+                 new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1)
+                )
+        );
+        assertTrue(
+                !new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1).canBeAggregatedWith(
+                 new EdgeSegment(new FPoint(0, 0, false) , new FPoint(-1, 0, false) , 1)
+                )
+        );
+        assertTrue(
+                !new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1).canBeAggregatedWith(
+                 new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, -1, false) , 1)
+                )
+        );
+        assertTrue(
+                new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1).canBeAggregatedWith(
+                new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0.1, 1.1, false) , 1)
+                )
+        );
+        assertTrue(
+                !new EdgeSegment(new FPoint(0, 0, false) , new FPoint(0, 1, false) , 1).canBeAggregatedWith(
+                 new EdgeSegment(new FPoint(0, 0, false) , new FPoint(1, 0, false) , 1)
+                )
+        );
     }
 
 }

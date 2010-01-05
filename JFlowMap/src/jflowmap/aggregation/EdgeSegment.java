@@ -233,8 +233,7 @@ public class EdgeSegment {
                 // (between fixed points) which didn't exist before
                 !a.isFixed()  &&  !other.a.isFixed()  &&  !b.isFixed()  &&  !other.b.isFixed()  &&
 
-                // zero-length segments are irrelevant
-                length() != 0  &&  other.length() != 0  &&
+                canBeAggregatedWith_checkLengths(this, other)  &&
 
                 // angle is less or equal to PI/4 = 45 grad
                 cosOfAngleBetween(this, other) >= COS_PI_4  &&
@@ -243,20 +242,39 @@ public class EdgeSegment {
                 !sharesAParentWith(other);
     }
 
+    private static boolean canBeAggregatedWith_checkLengths(EdgeSegment seg1, EdgeSegment seg2) {
+        double l1 = seg1.length();
+        double l2 = seg2.length();
+
+        return
+            // zero-length segments are irrelevant
+            (l1 != 0  &&  l2 != 0)  &&
+
+            // length difference shouldn't be too big
+            (l1 <= 2 * l2  &&  l2 <= 2 * l1);
+    }
+
     public EdgeSegment aggregateWith(EdgeSegment other) {
 //        return aggregate(Arrays.asList(this, other));
         if (!canBeAggregatedWith(other)) {
             throw new IllegalArgumentException("Segments cannot be aggregated");
         }
 
+        double alpha = other.weight / (this.weight + other.weight);
         return new EdgeSegment(
-                aggregate(a, other.a), aggregate(b, other.b), weight + other.weight,
+                aggregate(a, other.a, alpha), aggregate(b, other.b, alpha), weight + other.weight,
 //                Iterables.concat(getParents(), other.getParents())
                 getParentsOf(this, other)
         );
     }
 
-    private FPoint aggregate(FPoint p1, FPoint p2) {
+    /**
+     * @param alpha Whether the aggregated point must be closer to p1 or to p2. {@code alpha} must be between 0.0 and 1.0.
+     */
+    private FPoint aggregate(FPoint p1, FPoint p2, double alpha) {
+        if (alpha < 0   ||  alpha > 1.0) {
+            throw new IllegalArgumentException("Alpha must be between 0.0 and 1.0");
+        }
         if (p1.isFixed()  &&  p2.isFixed()  &&  !p1.equals(p2)) {
             throw new IllegalArgumentException("Both points are fixed; cannot aggregate");
         }
@@ -265,7 +283,7 @@ public class EdgeSegment {
         } else if (p2.isFixed()) {
             return p2;
         } else {
-            return new FPoint(GeomUtils.midpoint(p1.getPoint(), p2.getPoint()), false);
+            return new FPoint(GeomUtils.between(p1.getPoint(), p2.getPoint(), alpha), false);
         }
     }
 

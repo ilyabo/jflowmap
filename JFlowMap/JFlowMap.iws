@@ -2,75 +2,7 @@
 <project relativePaths="false" version="4">
   <component name="ChangeListManager">
     <list default="true" readonly="true" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/ZoomHandler.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/ZoomHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/PanHandler.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/PanHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/TupleStats.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/TupleStats.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/XmlAreaMapModelReader.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/XmlAreaMapModelReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/PiccoloUtils.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/PiccoloUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/FlowMapMain.java" afterPath="$PROJECT_DIR$/src/jflowmap/FlowMapMain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/INodeData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/INodeData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/geom/Point.java" afterPath="$PROJECT_DIR$/src/jflowmap/geom/Point.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/models/FlowMapModel.java" afterPath="$PROJECT_DIR$/src/jflowmap/models/FlowMapModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/AbstractFlowData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/AbstractFlowData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/FlowsTableModel.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/FlowsTableModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/FlowMapApplet.java" afterPath="$PROJECT_DIR$/src/jflowmap/FlowMapApplet.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedBundlerParameters.java" afterPath="$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedBundlerParameters.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/ClustersTableModel.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/ClustersTableModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/models/map/Area.java" afterPath="$PROJECT_DIR$/src/jflowmap/models/map/Area.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/Tooltip.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/Tooltip.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/LineVisualEdge.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/LineVisualEdge.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/FlowMapStats.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/FlowMapStats.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/NodeAttrValues.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/NodeAttrValues.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/clustering/NodeDistanceMeasure.java" afterPath="$PROJECT_DIR$/src/jflowmap/clustering/NodeDistanceMeasure.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/ClusterIcon.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/ClusterIcon.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualFlowMap.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualFlowMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/INodeAndFlowData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/INodeAndFlowData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/ClusterNodesTableModel.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/ClusterNodesTableModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualArea.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualArea.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/ColorUtils.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/ColorUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/models/FlowMapGraphBuilder.java" afterPath="$PROJECT_DIR$/src/jflowmap/models/FlowMapGraphBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualNodeCluster.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualNodeCluster.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/MathUtils.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/MathUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/EventListenerList.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/EventListenerList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/Pair.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/Pair.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/XmlNodeData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/XmlNodeData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/aggregation/EdgeSegmentDistanceMatrix.java" afterPath="$PROJECT_DIR$/src/jflowmap/aggregation/EdgeSegmentDistanceMatrix.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/CsvFlowMapReader.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/CsvFlowMapReader.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/GraphFileFormats.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/GraphFileFormats.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/geom/Vector2D.java" afterPath="$PROJECT_DIR$/src/jflowmap/geom/Vector2D.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/aggregation/EdgeSegmentAggregator.java" afterPath="$PROJECT_DIR$/src/jflowmap/aggregation/EdgeSegmentAggregator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualAreaMap.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualAreaMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/MinMax.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/MinMax.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/util/LogScale.java" afterPath="$PROJECT_DIR$/src/jflowmap/util/LogScale.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/NodeSimilarityDistancesTableModel.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/NodeSimilarityDistancesTableModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/geom/GeomUtils.java" afterPath="$PROJECT_DIR$/src/jflowmap/geom/GeomUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/IFlowData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/IFlowData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/DoubleAttrValue.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/DoubleAttrValue.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualNodeDistance.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualNodeDistance.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedEdgeBundler.java" afterPath="$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedEdgeBundler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/models/map/Polygon.java" afterPath="$PROJECT_DIR$/src/jflowmap/models/map/Polygon.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/aggregation/SegmentedEdge.java" afterPath="$PROJECT_DIR$/src/jflowmap/aggregation/SegmentedEdge.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/geom/BSplinePath.java" afterPath="$PROJECT_DIR$/src/jflowmap/geom/BSplinePath.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/BSplineVisualEdge.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/BSplineVisualEdge.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/NodeAndFlowData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/NodeAndFlowData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/JFlowMap.java" afterPath="$PROJECT_DIR$/src/jflowmap/JFlowMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/BoundSpinnerSliderModels.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/BoundSpinnerSliderModels.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/INodeAttrValue.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/INodeAttrValue.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JFlowMap.iws" afterPath="$PROJECT_DIR$/JFlowMap.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/models/map/AreaMap.java" afterPath="$PROJECT_DIR$/src/jflowmap/models/map/AreaMap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/XmlFlowData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/XmlFlowData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/ClusterTag.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/ClusterTag.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/AbstractAttrValue.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/AbstractAttrValue.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/IAttrValue.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/IAttrValue.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualNode.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualNode.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/VisualEdge.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/VisualEdge.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/StringAttrValue.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/StringAttrValue.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/_old/AbstractNodeData.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/_old/AbstractNodeData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/aggregation/EdgeSegment.java" afterPath="$PROJECT_DIR$/src/jflowmap/aggregation/EdgeSegment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/geom/FPoint.java" afterPath="$PROJECT_DIR$/src/jflowmap/geom/FPoint.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/geom/Segment.java" afterPath="$PROJECT_DIR$/src/jflowmap/geom/Segment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JFlowMap.ipr" afterPath="$PROJECT_DIR$/JFlowMap.ipr" />
     </list>
     <ignored path=".idea/workspace.xml" />
     <ignored path="JFlowMap.iws" />
@@ -128,64 +60,7 @@
     <favorites_list name="JFlowMap" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="FlowMapMain.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/jflowmap/FlowMapMain.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="13" selection-start="1132" selection-end="1132" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ForceDirectedEdgeBundler.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedEdgeBundler.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="60" column="13" selection-start="1760" selection-end="1760" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ForceDirectedBundlerParameters.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedBundlerParameters.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="85" column="0" selection-start="3430" selection-end="3430" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="VisualFlowMap.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/jflowmap/visuals/VisualFlowMap.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ControlPanel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="300" column="0" selection-start="12806" selection-end="12806" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1261570087351" expanded="false" signature="37063:61770" placeholder="UI Designer generated code" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ControlPanel.form" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.form">
-          <provider selected="true" editor-type-id="ui-designer">
-            <state />
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -222,42 +97,6 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="JFlowMap" />
           <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="JFlowMap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="JFlowMap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="JFlowMap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="JFlowMap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="JFlowMap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="JFlowMap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="src" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="jflowmap" />
-          <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
         </PATH_ELEMENT>
       </PATH>
     </subPane>
@@ -459,7 +298,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1288" height="1032" extended-state="6" />
+    <frame x="-4" y="-4" width="1288" height="1032" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2038835" sideWeight="0.688414" order="2" side_tool="false" />
@@ -571,9 +410,7 @@
     <entry file="file://$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="300" column="0" selection-start="12806" selection-end="12806" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1261570087351" expanded="false" signature="37063:61770" placeholder="UI Designer generated code" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -581,15 +418,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="85" column="0" selection-start="3430" selection-end="3430" vertical-scroll-proportion="0.0">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/jflowmap/visuals/VisualFlowMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
