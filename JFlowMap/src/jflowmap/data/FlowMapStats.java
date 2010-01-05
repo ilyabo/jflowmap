@@ -33,8 +33,11 @@ import prefuse.data.Node;
  */
 public class FlowMapStats {
 
+    private static final String NODE_ATTRS_PREFIX = "-[node]-";
+    private static final String EDGE_ATTRS_PREFIX = "-[edge]-";
+
     private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
-    private FlowMapModel flowMapModel;
+    private final FlowMapModel flowMapModel;
     private MinMax edgeLengthStats;
 
     private FlowMapStats(FlowMapModel flowMapModel) {
@@ -88,7 +91,7 @@ public class FlowMapStats {
     }
 
     public MinMax getEdgeWeightStats(String attrName) {
-        String key = "edge-" + attrName;
+        String key = EDGE_ATTRS_PREFIX + attrName;
         MinMax stats = statsCache.get(key);
         if (stats == null) {
             stats = TupleStats.createFor(flowMapModel.getGraph().getEdges(), attrName);
@@ -96,9 +99,9 @@ public class FlowMapStats {
         }
         return stats;
     }
-    
+
     public MinMax getNodeAttrStats(String attrName) {
-    	String key = "node-" + attrName;
+    	String key = NODE_ATTRS_PREFIX + attrName;
     	MinMax stats = statsCache.get(key);
     	if (stats == null) {
             stats = TupleStats.createFor(flowMapModel.getGraph().getNodes(), attrName);
@@ -106,7 +109,7 @@ public class FlowMapStats {
     	}
     	return stats;
     }
-    
+
     public MinMax getNodeXStats() {
         return getNodeAttrStats(flowMapModel.getXNodeAttr());
     }
@@ -114,5 +117,6 @@ public class FlowMapStats {
     public MinMax getNodeYStats() {
         return getNodeAttrStats(flowMapModel.getYNodeAttr());
     }
+
 
 }

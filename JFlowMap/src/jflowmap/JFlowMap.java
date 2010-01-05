@@ -146,6 +146,7 @@ public class JFlowMap extends JComponent {
     public VisualFlowMap createVisualFlowMap(String weightAttrName, String nodeLabelAttrName,
             String xNodeAttr, String yNodeAttr, double weightFilterMin, Graph graph, VisualAreaMap areaMap) {
         FlowMapModel params = new FlowMapModel(graph, weightAttrName, xNodeAttr, yNodeAttr, nodeLabelAttrName);
+        logger.info("Edge weight stats: " + params.getStats().getEdgeWeightStats());
         if (!Double.isNaN(weightFilterMin)) {
             params.setEdgeWeightFilterMin(weightFilterMin);
         }
@@ -157,9 +158,9 @@ public class JFlowMap extends JComponent {
     }
 
     private Graph loadGraph(String filename) throws DataIOException {
-        logger.info("Loading graph \"" + filename + "\"");
+        logger.info("Loading \"" + filename + "\"");
         Graph graph = GraphFileFormats.createReaderFor(filename).readGraph(filename);
-        logger.info("Loaded graph \"" + filename + "\": " + graph.getNodeCount() + " nodes, " + graph.getEdgeCount() + " edges");
+        logger.info("Graph loaded: " + graph.getNodeCount() + " nodes, " + graph.getEdgeCount() + " edges");
         return graph;
     }
 
