@@ -103,6 +103,9 @@ public class EdgeSegmentAggregator {
 //        }
 //        this.aggregatedSegments = aggSegs;
 
+        if (pt.isCancelled()) {
+            return;
+        }
 
         List<EdgeSegment> aggSegs = Lists.newArrayListWithCapacity(nodes.size());
         for (ClusterNode<EdgeSegment> node : nodes) {

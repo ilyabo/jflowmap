@@ -553,9 +553,11 @@ public class VisualFlowMap extends PNode {
             public Object construct() {
                 try {
                     aggregator.aggregate(pt);
+                    if (pt.isCancelled()) {
+                        return null;
+                    }
 
                     final List<EdgeSegment> segments = aggregator.getAggregatedSegments();
-
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -621,14 +623,14 @@ public class VisualFlowMap extends PNode {
             linep.setStrokePaint(SEGMENT_COLOR);
             addChild(linep);
 
-            PSegmentPoint srcp = new PSegmentPoint(src);
-            PSegmentPoint dstp = new PSegmentPoint(dest);
-            srcp.setPaint(JOINT_PT_COLOR);
-            dstp.setPaint(JOINT_PT_COLOR);
-            srcp.setStroke(null);
-            dstp.setStroke(null);
-            addChild(srcp);
-            addChild(dstp);
+//            PSegmentPoint srcp = new PSegmentPoint(src);
+//            PSegmentPoint dstp = new PSegmentPoint(dest);
+//            srcp.setPaint(JOINT_PT_COLOR);
+//            dstp.setPaint(JOINT_PT_COLOR);
+//            srcp.setStroke(null);
+//            dstp.setStroke(null);
+//            addChild(srcp);
+//            addChild(dstp);
 
 //            setPickable(true);
             addInputEventListener(MOUSE_HANDLER);
