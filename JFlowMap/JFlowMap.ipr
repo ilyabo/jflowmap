@@ -227,7 +227,7 @@
   </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
-    <option name="state" value="svn+ssh://boyandii@diuf-ssh.unifr.ch/home/data/subversion/research/diva/JFlowMap/trunk/JFlowMap.ipr" />
+    <option name="state" value="https://jflowmap.googlecode.com/svn/trunk/JFlowMap/JFlowMap.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>

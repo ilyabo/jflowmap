@@ -2,8 +2,15 @@ package jflowmap;
 
 import at.fhj.utils.misc.FileUtils;
 
-
+/**
+ * @author Ilya Boyandin
+ */
 public class DatasetSpec {
+
+    private final String filename;
+    private final String name;
+    private final String areaMapFilename;
+    private final FlowMapAttrsSpec attrsSpec;
 
     public DatasetSpec(String filename, String weightAttrName, String xNodeAttr, String yNodeAttr,
     		String labelAttrName, String areaMapFilename) {
@@ -11,32 +18,47 @@ public class DatasetSpec {
         		labelAttrName, areaMapFilename, Double.NaN);
     }
 
-    public FlowMapAttrsSpec getAttrsSpec() {
-        return attrsSpec;
-    }
-
     public DatasetSpec(String filename, String weightAttrName,
     		String xNodeAttr, String yNodeAttr,
     		String labelAttrName, String areaMapFilename, double valueFilterMin) {
-        this.filename = filename;
-        this.name = FileUtils.getFilenameOnly(filename);
-        this.areaMapFilename = areaMapFilename;
-        this.attrsSpec = new FlowMapAttrsSpec(
+        this(filename, areaMapFilename, new FlowMapAttrsSpec(
                 weightAttrName,
                 labelAttrName,
                 xNodeAttr,
                 yNodeAttr,
                 valueFilterMin
-        );
+        ));
     }
 
-    public final String filename;
-    public final String name;
-    public final String areaMapFilename;
-    public final FlowMapAttrsSpec attrsSpec;
+    private DatasetSpec(String filename, String areaMapFilename, FlowMapAttrsSpec attrsSpec) {
+        this.filename = filename;
+        this.name = FileUtils.getFilenameOnly(filename);
+        this.areaMapFilename = areaMapFilename;
+        this.attrsSpec = attrsSpec;
+    }
+
+    public DatasetSpec withFilename(String filename) {
+        return new DatasetSpec(filename, areaMapFilename, attrsSpec);
+    }
+
+    public FlowMapAttrsSpec getAttrsSpec() {
+        return attrsSpec;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAreaMapFilename() {
+        return areaMapFilename;
+    }
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 }

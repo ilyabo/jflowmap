@@ -373,7 +373,8 @@ public class ControlPanel {
         datasetCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (initializing) return;
-                loadFlowMap((DatasetSpec) datasetCombo.getSelectedItem());
+                jFlowMap.loadFlowMap((DatasetSpec) datasetCombo.getSelectedItem());
+                jFlowMap.fitFlowMapInView();
             }
         });
     }
@@ -602,12 +603,12 @@ public class ControlPanel {
         });
     }
 
-    private void loadFlowMap(DatasetSpec dataset) {
-        VisualFlowMap visualFlowMap = jFlowMap.loadFlowMap(dataset);
-        jFlowMap.setVisualFlowMap(visualFlowMap);
-        jFlowMap.fitFlowMapInView();
-        loadVisualFlowMap(visualFlowMap);
-    }
+//    private void loadFlowMap(DatasetSpec dataset) {
+//        VisualFlowMap visualFlowMap = jFlowMap.loadFlowMap(dataset);
+//        jFlowMap.setVisualFlowMap(visualFlowMap);
+//        jFlowMap.fitFlowMapInView();
+//        loadVisualFlowMap(visualFlowMap);
+//    }
 
     private final List<PropertyChangeListener> visualFlowMapListeners =
             new ArrayList<PropertyChangeListener>();

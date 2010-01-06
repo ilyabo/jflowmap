@@ -21,8 +21,6 @@ package jflowmap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.util.List;
 
@@ -79,14 +77,14 @@ public class JFlowMap extends JComponent {
         canvas.addInputEventListener(new ZoomHandler());
         canvas.setPanEventHandler(new PanHandler());
         add(canvas, BorderLayout.CENTER);
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                visualFlowMap.fitInCameraView();
-            }
-        });
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                visualFlowMap.fitInCameraView();
+//            }
+//        });
 
-        visualFlowMap = loadFlowMap(datasetSpecs.get(0));
+        loadFlowMap(datasetSpecs.get(0));
         canvas.getLayer().addChild(visualFlowMap);
 
         if (showControlPanel) {
@@ -96,7 +94,7 @@ public class JFlowMap extends JComponent {
             controlPanel = null;
         }
 
-        fitFlowMapInView();
+//        fitFlowMapInView();
     }
 
     public PCanvas getCanvas() {
@@ -130,19 +128,19 @@ public class JFlowMap extends JComponent {
         });
 	}
 
-    public VisualFlowMap loadFlowMap(DatasetSpec dataset) {
+    public void loadFlowMap(DatasetSpec dataset) {
         logger.info("> Loading flow map \"" + dataset + "\"");
         try {
             VisualAreaMap areaMap = null;
-            if (dataset.areaMapFilename != null) {
-                areaMap = loadAreaMap(dataset.areaMapFilename);
+            if (dataset.getAreaMapFilename() != null) {
+                areaMap = loadAreaMap(dataset.getAreaMapFilename());
             }
-            return createVisualFlowMap(dataset.getAttrsSpec(), loadGraph(dataset.filename), areaMap);
+            setVisualFlowMap(createVisualFlowMap(dataset.getAttrsSpec(), loadGraph(dataset.getFilename()), areaMap));
+
         } catch (DataIOException e) {
             logger.error("Couldn't load flow map " + dataset, e);
             JOptionPane.showMessageDialog(this,  "Couldn't load flow map: [" + e.getClass().getSimpleName()+ "] " + e.getMessage());
         }
-        return null;
     }
 
     public VisualFlowMap createVisualFlowMap(FlowMapAttrsSpec attrs, Graph graph, VisualAreaMap areaMap) {

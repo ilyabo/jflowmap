@@ -82,6 +82,10 @@ public class FlowMapMain extends JFrame {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
+            public void windowOpened(WindowEvent e) {
+                flowMap.fitFlowMapInView();
+            }
+            @Override
             public void windowClosing(WindowEvent e) {
                 dispose();
                 shutdown();

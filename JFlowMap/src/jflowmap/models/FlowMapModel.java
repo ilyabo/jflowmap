@@ -287,6 +287,11 @@ public class FlowMapModel {
 		return directionMarkerSize;
 	}
 
+	/**
+	 * @param markerSize A double value between 0 and 0.5. When useProportionalDirectionMarkers
+	 * is true, the size of the marker for a certain edge E will be {@code markerSize * lengthOf(E)}.
+	 * Otherwise it's {@code markerSize * lengthOfTheLongestEdge}
+	 */
 	public void setDirectionMarkerSize(double markerSize) {
 		if (markerSize < 0  ||  markerSize > .5) {
 			throw new IllegalArgumentException(
