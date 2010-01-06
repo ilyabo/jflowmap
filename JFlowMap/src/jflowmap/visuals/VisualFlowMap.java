@@ -564,7 +564,6 @@ public class VisualFlowMap extends PNode {
                         public void run() {
                             createAggregatedSegmentsVisuals(segments);
                             // remove edges
-                            edgeLayer.removeAllChildren();
                         }
                     });
                     repaint();
@@ -586,6 +585,7 @@ public class VisualFlowMap extends PNode {
 
     private void createAggregatedSegmentsVisuals(
             final List<EdgeSegment> segments) {
+//        edgeLayer.removeAllChildren();
         clearAggregatedEdgesLayer();
 
         // create aggregated edge weight stats to normalize on them
@@ -870,7 +870,6 @@ public class VisualFlowMap extends PNode {
         );
         clusteredFlowMap.setOriginalVisualFlowMap(this);
         jFlowMap.setVisualFlowMap(clusteredFlowMap);
-        jFlowMap.getControlPanel().loadVisualFlowMap(clusteredFlowMap);
     }
 
     public void resetClusters() {
@@ -883,7 +882,6 @@ public class VisualFlowMap extends PNode {
     public void resetJoinedNodes() {
         if (flowMapBeforeJoining != null) {
             jFlowMap.setVisualFlowMap(flowMapBeforeJoining);
-            jFlowMap.getControlPanel().loadVisualFlowMap(flowMapBeforeJoining);
         }
     }
 

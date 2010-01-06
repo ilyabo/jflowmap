@@ -58,7 +58,7 @@ public class FlowMapMain extends JFrame {
 
     public FlowMapMain(List<DatasetSpec> datasetSpecs) {
         setTitle("JFlowMap");
-        flowMap = new JFlowMap(this, datasetSpecs);
+        flowMap = new JFlowMap(this, datasetSpecs, true);
         add(flowMap);
 
         JPanel statusPanel = new JPanel(new BorderLayout());

@@ -1,51 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datasets>
-        <dataset src="data/migrations-500.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" valueFilterMin="1000" />
-        <dataset src="data/migrations-5000.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
-        <dataset src="data/migrations-10000.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
-        <dataset src="data/bundling-test1.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
-        <dataset src="data/bundling-test2.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
-        <dataset src="data/bundling-test6.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
-        <dataset src="data/bundling-test7.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
-        <dataset src="data/bundling-test8.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
-        <dataset src="data/refugees-2008-nv-5000.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-2008-no-various.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/migrations/migrations-500.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" valueFilterMin="1000" />
+	<dataset src="data/migrations/migrations-5000.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
+	<dataset src="data/migrations/migrations-10000.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
+
+    <dataset src="data/airlines/airlines.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
+
+    <dataset src="data/test/bundling-test1.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+    <dataset src="data/test/bundling-test2.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+    <dataset src="data/test/bundling-test6.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+    <dataset src="data/test/bundling-test7.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+    <dataset src="data/test/bundling-test8.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+
+	<dataset src="data/refugees/refugees-2008-nv-5000.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-2008-no-various.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2008.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2007.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2006.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2005.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2004.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2003.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2002.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2001.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-2000.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
+	<dataset src="data/refugees/refugees-1999.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1998.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1997.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1996.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1995.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1994.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1993.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1992.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1991.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1990.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1989.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1988.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1987.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1986.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1985.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1984.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1983.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1982.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1981.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1980.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1979.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1978.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1977.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1976.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
+	<dataset src="data/refugees/refugees-1975.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
 <!-- 
-        <dataset src="C:/Data/uni-konstanz/PhotoTrails/sline_test_1.csv" weightAttr="value" xNodeAttr="x" yNodeAttr="y" />
- --> 
-        <dataset src="data/airlines.xml" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
-        <dataset src="data/refugees-2008.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2007.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2006.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2005.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2004.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2003.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2002.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2001.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-2000.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" valueFilterMin="1000" />
-        <dataset src="data/refugees-1999.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1998.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1997.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1996.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1995.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1994.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1993.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1992.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1991.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1990.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1989.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1988.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1987.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1986.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1985.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1984.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1983.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1982.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1981.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1980.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1979.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1978.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1977.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1976.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
-        <dataset src="data/refugees-1975.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/countries-areas.xml" />
+    <dataset src="C:/Data/uni-konstanz/PhotoTrails/sline_test_1.csv" weightAttr="value" xNodeAttr="x" yNodeAttr="y" />
+--> 
 </datasets>

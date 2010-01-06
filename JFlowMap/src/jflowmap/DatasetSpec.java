@@ -1,10 +1,13 @@
 package jflowmap;
 
+import at.fhj.utils.misc.FileUtils;
+
 
 public class DatasetSpec {
-    public DatasetSpec(String filename, String valueAttrName, String xNodeAttr, String yNodeAttr,
+
+    public DatasetSpec(String filename, String weightAttrName, String xNodeAttr, String yNodeAttr,
     		String labelAttrName, String areaMapFilename) {
-        this(filename, valueAttrName, xNodeAttr, yNodeAttr,
+        this(filename, weightAttrName, xNodeAttr, yNodeAttr,
         		labelAttrName, areaMapFilename, Double.NaN);
     }
 
@@ -16,6 +19,7 @@ public class DatasetSpec {
     		String xNodeAttr, String yNodeAttr,
     		String labelAttrName, String areaMapFilename, double valueFilterMin) {
         this.filename = filename;
+        this.name = FileUtils.getFilenameOnly(filename);
         this.areaMapFilename = areaMapFilename;
         this.attrsSpec = new FlowMapAttrsSpec(
                 weightAttrName,
@@ -25,12 +29,14 @@ public class DatasetSpec {
                 valueFilterMin
         );
     }
+
     public final String filename;
+    public final String name;
     public final String areaMapFilename;
     public final FlowMapAttrsSpec attrsSpec;
 
     @Override
     public String toString() {
-        return filename;
+        return name;
     }
 }

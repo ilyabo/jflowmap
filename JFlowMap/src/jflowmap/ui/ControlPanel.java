@@ -156,10 +156,12 @@ public class ControlPanel {
     private TableSorter flowsTableSorter;
     private ClustersTableModel clustersTableModel;
     private VisualFlowMap visualFlowMap;
+    private final List<DatasetSpec> datasetSpecs;
 
 
-    public ControlPanel(JFlowMap flowMap) {
+    public ControlPanel(JFlowMap flowMap, List<DatasetSpec> datasetSpecs) {
         this.jFlowMap = flowMap;
+        this.datasetSpecs = datasetSpecs;
         $$$setupUI$$$();
 
         loadVisualFlowMap(flowMap.getVisualFlowMap());
@@ -223,7 +225,7 @@ public class ControlPanel {
     }
 
     private void initModelsOnce() {
-        datasetCombo.setModel(new DefaultComboBoxModel(jFlowMap.getDatasetSpecs().toArray()));
+        datasetCombo.setModel(new DefaultComboBoxModel(datasetSpecs.toArray()));
     }
 
     public void initEdgeBundlingModels() {

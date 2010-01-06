@@ -43,6 +43,9 @@ import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
+
+import com.google.common.collect.ImmutableList;
+
 import edu.umd.cs.piccolo.PCanvas;
 
 /**
@@ -60,9 +63,11 @@ public class JFlowMap extends JComponent {
     private VisualFlowMap visualFlowMap;
     private final Frame app;
 
-    private final List<DatasetSpec> datasetSpecs;
+    public JFlowMap(FlowMapMain app, DatasetSpec datasetSpec, boolean showControlPanel) {
+        this(app, ImmutableList.of(datasetSpec), showControlPanel);
+    }
 
-    public JFlowMap(FlowMapMain app, List<DatasetSpec> datasetSpecs) {
+    public JFlowMap(FlowMapMain app, List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
         setLayout(new BorderLayout());
 
         this.app = app;
@@ -81,18 +86,17 @@ public class JFlowMap extends JComponent {
             }
         });
 
-        this.datasetSpecs = datasetSpecs;
         visualFlowMap = loadFlowMap(datasetSpecs.get(0));
         canvas.getLayer().addChild(visualFlowMap);
 
-        controlPanel = new ControlPanel(this);
-        add(controlPanel.getPanel(), BorderLayout.SOUTH);
+        if (showControlPanel) {
+            controlPanel = new ControlPanel(this, datasetSpecs);
+            add(controlPanel.getPanel(), BorderLayout.SOUTH);
+        } else {
+            controlPanel = null;
+        }
 
         fitFlowMapInView();
-    }
-
-    public ControlPanel getControlPanel() {
-        return controlPanel;
     }
 
     public PCanvas getCanvas() {
@@ -113,6 +117,9 @@ public class JFlowMap extends JComponent {
         }
         canvas.getLayer().addChild(newFlowMap);
         visualFlowMap = newFlowMap;
+        if (controlPanel != null) {
+            controlPanel.loadVisualFlowMap(newFlowMap);
+        }
     }
 
 	public void fitFlowMapInView() {
@@ -174,10 +181,6 @@ public class JFlowMap extends JComponent {
             logger.error("Couldn't load area map " + areaMapFilename, e);
         }
         return null;
-    }
-
-    public List<DatasetSpec> getDatasetSpecs() {
-        return datasetSpecs;
     }
 
 }
