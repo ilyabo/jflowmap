@@ -12,8 +12,8 @@
     <dataset src="data/test/bundling-test7.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
     <dataset src="data/test/bundling-test8.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
 
+	<dataset src="data/refugees/refugees-2008-nv.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
 	<dataset src="data/refugees/refugees-2008-nv-5000.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" />
-	<dataset src="data/refugees/refugees-2008-no-various.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
 	<dataset src="data/refugees/refugees-2008.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
 	<dataset src="data/refugees/refugees-2007.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
 	<dataset src="data/refugees/refugees-2006.xml" weightAttr="refugees" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml" valueFilterMin="1000" />
