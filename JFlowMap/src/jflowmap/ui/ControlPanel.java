@@ -225,7 +225,11 @@ public class ControlPanel {
     }
 
     private void initModelsOnce() {
-        datasetCombo.setModel(new DefaultComboBoxModel(datasetSpecs.toArray()));
+        if (datasetSpecs != null) {
+            datasetCombo.setModel(new DefaultComboBoxModel(datasetSpecs.toArray()));
+        } else {
+            // TODO: move dataset combo out of the control panel
+        }
     }
 
     public void initEdgeBundlingModels() {

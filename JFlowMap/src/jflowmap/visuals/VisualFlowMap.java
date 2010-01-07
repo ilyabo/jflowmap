@@ -130,7 +130,6 @@ public class VisualFlowMap extends PNode {
         addChild(edgeLayer);
         addChild(nodeLayer);
 
-
         tooltipBox = new Tooltip();
         tooltipBox.setVisible(false);
         tooltipBox.setPickable(false);
@@ -156,23 +155,13 @@ public class VisualFlowMap extends PNode {
         visualNodes = new ArrayList<VisualNode>();
         nodesToVisuals = new LinkedHashMap<Node, VisualNode>();
 
-//        FlowMapStats stats = flowMapModel.getStats();
-//        MinMax xStats = stats.getNodeXStats();
-//        MinMax yStats = stats.getNodeYStats();
-//        double nodeSize = (Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 250);
-        MinMax lenStats = flowMapModel.getEdgeLengthStats();
-        double nodeSize = lenStats.getAvg() / 30;
-//        double nodeSize = Math.max(
-//                lenStats.getAvg() / 70,
-//                Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
-
         for (int i = 0; i < numNodes; i++) {
             Node node = graph.getNode(i);
 
             VisualNode vnode = new VisualNode(this, node,
                     node.getDouble(flowMapModel.getXNodeAttr()),// - xStats.min,
-                    node.getDouble(flowMapModel.getYNodeAttr()),// - yStats.min,
-                    nodeSize);
+                    node.getDouble(flowMapModel.getYNodeAttr())// - yStats.min,
+                    );
             nodeLayer.addChild(vnode);
             visualNodes.add(vnode);
             nodesToVisuals.put(node, vnode);
@@ -201,6 +190,15 @@ public class VisualFlowMap extends PNode {
             return src.toString() + " -> " + target.toString();
         } else {
             return src.getString(labelAttr) + " -> " + target.getString(labelAttr);
+        }
+    }
+
+    public String getLabel(Node node) {
+        String labelAttr = flowMapModel.getNodeLabelAttr();
+        if (labelAttr == null) {
+            return node.toString();
+        } else {
+            return node.getString(labelAttr);
         }
     }
 
@@ -437,13 +435,15 @@ public class VisualFlowMap extends PNode {
 	                updateEdgeVisibility();
 				} else if (prop.equals(FlowMapModel.PROPERTY_SHOW_NODES)) {
 				    updateNodeVisibility();
+				} else if (prop.equals(FlowMapModel.PROPERTY_NODE_SIZE)) {
+				    updateNodeSizes();
 				}
 			}
 		});
     }
 
     @SuppressWarnings("unchecked")
-	private void updateEdgeColors() {
+	protected void updateEdgeColors() {
         for (PNode node : (List<PNode>) edgeLayer.getChildrenReference()) {
             if (node instanceof VisualEdge) {
                 ((VisualEdge) node).updateEdgeColors();
@@ -459,7 +459,7 @@ public class VisualFlowMap extends PNode {
 //        }
 //    }
 
-    private void updateEdgeVisibility() {
+    protected void updateEdgeVisibility() {
         for (VisualEdge ve : visualEdges) {
             ve.updateVisibility();
         }
@@ -468,13 +468,19 @@ public class VisualFlowMap extends PNode {
 //        }
     }
 
-    private void updateNodeVisibility() {
+    protected void updateNodeVisibility() {
         for (VisualNode vn : visualNodes) {
             vn.updateVisibility();
         }
     }
 
-    private void updateEdgeWidths() {
+    protected void updateNodeSizes() {
+        for (VisualNode vn : visualNodes) {
+            vn.updateSize();
+        }
+    }
+
+    protected void updateEdgeWidths() {
         for (VisualEdge ve : visualEdges) {
             ve.updateEdgeWidth();
         }
@@ -899,6 +905,15 @@ public class VisualFlowMap extends PNode {
             cluster.setVisible(visible);
         }
         updateEdgeVisibility();
+    }
+
+    public VisualNode getVisualNodeByLabel(String label) {
+        for (VisualNode node : visualNodes) {
+            if (node.getLabel().equals(label)) {
+                return node;
+            }
+        }
+        return null;
     }
 
 }

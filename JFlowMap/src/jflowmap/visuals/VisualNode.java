@@ -61,7 +61,7 @@ public class VisualNode extends PNode {
     private static final Stroke HIGHLIGHTED_STROKE = new PFixedWidthStroke(1);
     private static final Stroke SELECTED_STROKE = new PFixedWidthStroke(2);
 //    private static final Color PAINT = new Color(255, 255, 255, 70);
-    private static final Color PAINT = new Color(255, 255, 255, 110);
+    private static final Color PAINT = new Color(255, 255, 255, 90);
     private static final Color HIGHLIGHTED_PAINT = new Color(200, 200, 0, 200);
     private static final Color SELECTED_PAINT = HIGHLIGHTED_PAINT;
     private static final Color STROKE_PAINT = new Color(255, 255, 255, 200);
@@ -79,13 +79,12 @@ public class VisualNode extends PNode {
 
     private PPath clusterMarker;
 
-    private final double markerSize;
-    private final PPath marker;
+    private PPath marker;
     private PNode clusterMembers;
 
-    public VisualNode(VisualFlowMap visualFlowMap, Node node, double x, double y, double size) {
-//        super();
-        this.markerSize = size;
+//    private static final Font LABEL_FONT = new Font("Dialog", Font.BOLD, 5);
+
+    public VisualNode(VisualFlowMap visualFlowMap, Node node, double x, double y) {
         if (Double.isNaN(x)  ||  Double.isNaN(y)) {
             logger.error("NaN coordinates passed in for node: " + node);
             throw new IllegalArgumentException("NaN coordinates passed in for node " + node);
@@ -94,26 +93,16 @@ public class VisualNode extends PNode {
         setY(y);
         this.valueX = x;
         this.valueY = y;
-        this.marker = new PPath(createNodeShape(x, y, size));
-//        marker.setStrokePaint(STROKE_PAINT);
-//        marker.setStroke(STROKE);
-        marker.setPaint(PAINT);
-        marker.setStroke(null);
-//    	this.x = x;
-//    	this.y = y;
         this.node = node;
         this.visualFlowMap = visualFlowMap;
         addInputEventListener(INPUT_EVENT_HANDLER);
-//        setVisible(false);
-//        setVisible(true);
-        addChild(marker);
 
         VisualNodeCluster cluster = VisualNodeCluster.getJoinedFlowMapNodeCluster(node);
         if (cluster != null) {
             clusterMembers = new PNode();
             Color origNodePaint = new Color(100, 100, 100, 100);
             for (VisualNode origNode : cluster) {
-                PPath pnode = new PPath(createNodeShape(origNode.getValueX(), origNode.getValueY(), size));
+                PPath pnode = new PPath(createNodeShape(origNode.getValueX(), origNode.getValueY()));
                 pnode.setPaint(origNodePaint);
                 clusterMembers.addChild(pnode);
 
@@ -126,6 +115,15 @@ public class VisualNode extends PNode {
             clusterMembers.moveToBack();
         }
 
+//        PText label = new PText(visualFlowMap.getLabel(node));
+//        label.setFont(LABEL_FONT);
+//        label.setTextPaint(Color.white);
+//        label.setX(x);
+//        label.setY(y + 5);
+//        addChild(label);
+//        label.moveToBack();
+
+        updateSize();
         updateVisibility();
 	}
 
@@ -133,17 +131,28 @@ public class VisualNode extends PNode {
         return new Point2D.Double(valueX, valueY);
     }
 
-    private Shape createNodeShape(double x, double y, double size) {
+    private Shape createNodeShape(double x, double y) {
+        double size = visualFlowMap.getModel().getNodeSize();
         return new Ellipse2D.Double(x - size/2, y - size/2, size, size);
     }
 
-    public void updateVisibility() {
-        boolean visibility =
-            visualFlowMap.getModel().getShowNodes()  ||  isHighlighted()  ||  isSelected();
+    protected void updateVisibility() {
+        boolean visibility = (visualFlowMap.getModel().getShowNodes()  ||  isHighlighted()  ||  isSelected());
         marker.setVisible(visibility);
         if (clusterMembers != null) {
             clusterMembers.setVisible(visibility);
         }
+    }
+
+    protected void updateSize() {
+        if (marker != null) {
+            removeChild(marker);
+        }
+        marker = new PPath(createNodeShape(valueX, valueY));
+        marker.setPaint(PAINT);
+        marker.setStroke(null);
+        addChild(marker);
+        marker.moveToBack();
     }
 
     public double getValueX() {
@@ -336,7 +345,7 @@ public class VisualNode extends PNode {
                 '}';
     }
 
-    public void updatePickability() {
+    protected void updatePickability() {
 //        boolean pickable = false;
 //        for (VisualEdge ve : outgoingEdges) {
 //            if (ve.getVisible()) {
@@ -356,7 +365,7 @@ public class VisualNode extends PNode {
     }
 
 
-    private void updateClusterMarker() {
+    protected void updateClusterMarker() {
         ClusterTag clusterTag = getClusterTag();
         if (clusterTag == null  ||  !clusterTag.isVisible()) {
             if (clusterMarker != null) {    // hide marker
@@ -365,7 +374,7 @@ public class VisualNode extends PNode {
             }
         } else {
             if (clusterMarker == null) {    // show marker
-                double size = markerSize * 2;
+                double size = visualFlowMap.getModel().getNodeSize() * 2;
                 clusterMarker = new PPath(new Ellipse2D.Double(getValueX() - size/2, getValueY() - size/2, size, size));
                 clusterMarker.setStroke(new PFixedWidthStroke(1));
                 addChild(clusterMarker);

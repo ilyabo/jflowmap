@@ -69,6 +69,7 @@ public class FlowMapModel {
     private boolean autoAdjustEdgeColorScale;
     private double maxEdgeWidth = 1.0;
     private double directionMarkerSize = 0.1;
+    private double nodeSize;
 
     private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private final FlowMapStats stats;
@@ -99,6 +100,15 @@ public class FlowMapModel {
         } else {
             maxEdgeWidth = Math.floor(weightStats.getMax() - weightStats.getMin());
         }
+
+//      MinMax xStats = stats.getNodeXStats();
+//      MinMax yStats = stats.getNodeYStats();
+//      nodeSize = (Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 250);
+//      nodeSize = Math.max(
+//              lenStats.getAvg() / 70,
+//              Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
+
+        nodeSize = lengthStats.getAvg() / 50;
     }
 
     public Graph getGraph() {
@@ -240,13 +250,25 @@ public class FlowMapModel {
     }
 
     public boolean getShowNodes() {
-		return showNodes;
+        return showNodes;
+    }
+
+    public void setShowNodes(boolean value) {
+        if (showNodes != value) {
+            showNodes = value;
+            changes.firePropertyChange(PROPERTY_SHOW_NODES, !value, value);
+        }
+    }
+
+    public double getNodeSize() {
+		return nodeSize;
 	}
 
-	public void setShowNodes(boolean value) {
-		if (showNodes != value) {
-			showNodes = value;
-			changes.firePropertyChange(PROPERTY_SHOW_NODES, !value, value);
+	public void setNodeSize(double size) {
+		if (nodeSize != size) {
+		    double old = nodeSize;
+		    nodeSize = size;
+			changes.firePropertyChange(PROPERTY_NODE_SIZE, old, nodeSize);
 		}
 	}
 
@@ -334,6 +356,7 @@ public class FlowMapModel {
     public static final String PROPERTY_FILL_EDGES_WITH_GRADIENT = "fillEdgesWithGradient";
     public static final String PROPERTY_SHOW_DIRECTION_MARKERS = "showDirectionMarkers";
     public static final String PROPERTY_SHOW_NODES = "showNodes";
+    public static final String PROPERTY_NODE_SIZE = "nodeSize";
 
     public MinMax getEdgeLengthStats() {
         return stats.getEdgeLengthStats();

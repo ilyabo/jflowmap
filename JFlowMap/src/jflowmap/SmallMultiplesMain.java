@@ -29,31 +29,48 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import jflowmap.models.FlowMapModel;
+import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.VisualNode;
+
+import org.apache.log4j.Logger;
+
 import at.fhj.utils.misc.FileUtils;
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
 public class SmallMultiplesMain {
 
-    private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 64);
+    private static Logger logger = Logger.getLogger(SmallMultiplesMain.class);
+
+    private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
+    private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
     private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
-    public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
-        final int startYear = 2008;
-//        final int endYear = 1988;
-        final int endYear = 1975;
-        final int n = Math.abs(endYear - startYear);
-        final int numColumns = 4;
-        final int paddingX = 10;
-        final int paddingY = 5;
-        final int frameWidth = 1024;
-        final int frameHeight = 768;
+    private static final int FRAME_WIDTH = 1280;
+    private static final int FRAME_HEIGHT = 1024;
 
+    static class RenderTask extends SwingWorker<Void, Void> {
+        private static final double ZOOM_LEVEL = 1.0;
+        final int startYear = 2008;
+//        final int endYear = 2004;
+        final int endYear = 1975;
+        final int yearStep = -2;
+        final int n = ((endYear - startYear) / yearStep) + 1;
+        final int numColumns = 6;
+        final int paddingX = 5;
+        final int paddingY = 5;
 
         final String filenameTemplate = "data/refugees/refugees-{year}.xml";
         final DatasetSpec datasetSpec = new DatasetSpec(
@@ -62,79 +79,180 @@ public class SmallMultiplesMain {
         );
         final String outputFileName = "refugees-small-multiples.png";
 
+        private final ProgressMonitor progress;
+        private final JFlowMap jFlowMap;
+        private final int width;
+        private final int height;
+        private final int totalWidth;
+        private final int totalHeight;
+        private final BufferedImage image;
+        private final JFrame parentFrame;
+
+        public RenderTask(JFrame parent, JFlowMap jFlowMap) {
+            this.jFlowMap = jFlowMap;
+            this.parentFrame = parent;
+            progress = new ProgressMonitor(parent, "Rendering small multiples", "", 0, n);
+
+            width = jFlowMap.getWidth();
+            height = jFlowMap.getHeight();
+            totalWidth = Math.min(n, numColumns) * (width + paddingX) + paddingX;
+            totalHeight = ((int)Math.ceil((double)n / numColumns)) * (height + paddingY) + paddingY;
+
+            image = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_RGB);
+
+        }
+
+        @Override
+        public Void doInBackground() {
+            try {
+                renderFlowMap();
+            } catch (Exception e) {
+                logger.error(e);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        private void renderFlowMap() throws InterruptedException, InvocationTargetException {
+            final Graphics2D g = (Graphics2D)image.getGraphics();
+
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(BACKGROUND_COLOR);
+            g.fillRect(0, 0, totalWidth, totalHeight);
 
 
+            for (int i = 0; i < n; i++) {
+                if (progress.isCanceled()) {
+                    break;
+                }
+                final String year = Integer.toString(startYear + i * yearStep);
+                final DatasetSpec ds = datasetSpec.withFilename(filenameTemplate.replace("{year}", year));
+                final int I = i;
+
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        parentFrame.setTitle(year);
+                        jFlowMap.loadFlowMap(ds);
+
+                        FlowMapModel model = jFlowMap.getVisualFlowMap().getModel();
+                        model.setShowNodes(true);
+                        model.setNodeSize(3);
+                        model.setShowDirectionMarkers(true);
+                        model.setDirectionMarkerSize(.1);
+                        model.setDirectionMarkerAlpha(210);
+                        model.setEdgeAlpha(36);
+
+                    }
+                });
+                if (progress.isCanceled()) {
+                    break;
+                }
+                final VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
+                if (I == 0) {
+                    // Run only the first time
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        public void run() {
+                            visualFlowMap.fitInCameraView();
+                        }
+                    });
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        public void run() {
+                            PCamera camera = visualFlowMap.getCamera();
+                            PBounds viewBounds = camera.getViewBounds();
+                            camera.scaleViewAboutPoint(ZOOM_LEVEL, viewBounds.x + viewBounds.width / 2, viewBounds.y + viewBounds.height / 2);
+                        }
+                    });
+                }
+                if (progress.isCanceled()) {
+                    break;
+                }
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        visualFlowMap.addChild(createTitleNode(year, visualFlowMap.getCamera().getViewBounds()));
+                        visualFlowMap.addChild(createLabelsNode(year, visualFlowMap));
+
+                        // Pain the plot
+                        final int x = paddingX + (width + paddingX) * (I % numColumns);
+                        final int y = paddingY + (height + paddingY) * (I / numColumns);
+
+                        g.translate(x, y);
+
+                        jFlowMap.paint(g);
+
+                        g.setColor(Color.white);
+                        g.setFont(LABEL_FONT);
+
+                        g.translate(-x, -y);
+
+                        progress.setProgress(I);
+                    }
+                });
+
+
+            }
+        }
+
+        @Override
+        public void done() {
+            if (!progress.isCanceled()) {
+                try {
+                    ImageIO.write(image, FileUtils.getExtension(outputFileName), new File(outputFileName));
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(parentFrame,  "Couldn't save image [" + e.getClass().getSimpleName()+ "] " + e.getMessage());
+                    logger.error(e);
+                }
+            }
+            System.exit(0);
+        }
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
         final JFrame frame = new JFrame();
-        final JFlowMap jFlowmap = new JFlowMap(null, datasetSpec, false);
-        frame.add(jFlowmap);
+        final JFlowMap jFlowMap = new JFlowMap(null, false);
+        frame.add(jFlowMap);
 
-        final ProgressMonitor progress = new ProgressMonitor(frame, "Rendering small multiples", "", 0, n);
-
-        Dimension size = new Dimension(frameWidth, frameHeight);
+        Dimension size = new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setSize(size);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+//        jFlowMap.fitFlowMapInView();
 
-        jFlowmap.fitFlowMapInView();
-
-        final int width = jFlowmap.getWidth();
-        final int height = jFlowmap.getHeight();
-        final int totalWidth = Math.min(n, numColumns) * (width + paddingX) + paddingX;
-        final int totalHeight = ((int)Math.ceil((double)n / numColumns)) * (height + paddingY) + paddingY;
-
+        RenderTask task = new RenderTask(frame, jFlowMap);
+//        task.addPropertyChangeListener(this);
+        task.execute();
+    }
 
 
-        BufferedImage image = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_RGB);
+    private static PNode createTitleNode(final String title, PBounds cameraBounds) {
+        PText ptext = new PText(title);
+        ptext.setX(cameraBounds.getX());
+        ptext.setY(cameraBounds.getY() + cameraBounds.getHeight() - TITLE_FONT.getSize2D());
+        ptext.setFont(TITLE_FONT);
+        ptext.setTextPaint(Color.white);
+        return ptext;
+    }
 
-        final Graphics2D g = (Graphics2D)image.getGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(BACKGROUND_COLOR);
-        g.fillRect(0, 0, totalWidth, totalHeight);
+    private static PNode createLabelsNode(String year, VisualFlowMap visualFlowMap) {
+        PNode labelLayer = new PNode();
+        addLabelTextNode("Stateless", visualFlowMap, labelLayer);
+        addLabelTextNode("Various", visualFlowMap, labelLayer);
+        return labelLayer;
+    }
 
-        for (int i = 0; i < n; i++) {
-            final String year = Integer.toString(startYear + i * (startYear < endYear ? 1 : -1));
-            final DatasetSpec ds = datasetSpec.withFilename(filenameTemplate.replace("{year}", year));
-            final int I = i;
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    frame.setTitle(year);
-//                    if (I > 0) {
-                        jFlowmap.loadFlowMap(ds);
-//                    }
 
-                    FlowMapModel model = jFlowmap.getVisualFlowMap().getModel();
-//                    model.setShowNodes(true);
-                    model.setShowDirectionMarkers(true);
-                    model.setDirectionMarkerSize(.19);
-                    model.setDirectionMarkerAlpha(40);
-                    model.setEdgeAlpha(40);
-                }
-            });
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    // Pain the plot
-                    final int x = paddingX + (width + paddingX) * (I % numColumns);
-                    final int y = paddingY + (height + paddingY) * (I / numColumns);
-
-                    g.translate(x, y);
-
-                    jFlowmap.paint(g);
-
-                    g.setColor(Color.white);
-                    g.setFont(TITLE_FONT);
-                    g.drawString(year, 10, TITLE_FONT.getSize() + 7);
-
-                    g.translate(-x, -y);
-
-                    progress.setProgress(I);
-                }
-            });
-        }
-
-        ImageIO.write(image, FileUtils.getExtension(outputFileName), new File(outputFileName));
-        System.exit(0);
+    private static PText addLabelTextNode(String label, VisualFlowMap visualFlowMap, PNode labelLayer) {
+        VisualNode node = visualFlowMap.getVisualNodeByLabel(label);
+        PText ptext = new PText(node.getLabel());
+        ptext.setFont(LABEL_FONT);
+        ptext.setTextPaint(Color.white);
+        double width = 20;
+        double height = LABEL_FONT.getSize2D();
+        ptext.setBounds(node.getX() - width/2, node.getY() + visualFlowMap.getModel().getNodeSize() * 1.1, width, height);
+        ptext.setJustification(JLabel.CENTER_ALIGNMENT);
+        labelLayer.addChild(ptext);
+        return ptext;
     }
 }

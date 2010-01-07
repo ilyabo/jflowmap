@@ -61,6 +61,10 @@ public class JFlowMap extends JComponent {
     private VisualFlowMap visualFlowMap;
     private final Frame app;
 
+    public JFlowMap(FlowMapMain app, boolean showControlPanel) {
+        this(app, (List<DatasetSpec>)null, showControlPanel);
+    }
+
     public JFlowMap(FlowMapMain app, DatasetSpec datasetSpec, boolean showControlPanel) {
         this(app, ImmutableList.of(datasetSpec), showControlPanel);
     }
@@ -73,6 +77,7 @@ public class JFlowMap extends JComponent {
         canvas = new PCanvas();
         canvas.setBackground(Color.BLACK);
 //        canvas.setBackground(Color.WHITE);
+        canvas.setBackground(new Color(0x20, 0x20, 0x20));
 //        canvas.addInputEventListener(new ZoomHandler(.5, 50));
         canvas.addInputEventListener(new ZoomHandler());
         canvas.setPanEventHandler(new PanHandler());
@@ -84,8 +89,10 @@ public class JFlowMap extends JComponent {
 //            }
 //        });
 
-        loadFlowMap(datasetSpecs.get(0));
-        canvas.getLayer().addChild(visualFlowMap);
+        if (datasetSpecs != null) {
+            loadFlowMap(datasetSpecs.get(0));
+            canvas.getLayer().addChild(visualFlowMap);
+        }
 
         if (showControlPanel) {
             controlPanel = new ControlPanel(this, datasetSpecs);
