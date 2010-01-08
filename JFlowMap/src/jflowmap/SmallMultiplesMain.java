@@ -61,14 +61,24 @@ public class SmallMultiplesMain {
     private static final int FRAME_WIDTH = 1280;
     private static final int FRAME_HEIGHT = 1024;
 
+    private static void setupFlowMapModel(FlowMapModel model) {
+        model.setShowNodes(true);
+        model.setMaxEdgeWidth(20);
+        model.setNodeSize(3);
+        model.setShowDirectionMarkers(true);
+        model.setDirectionMarkerSize(.1);
+        model.setDirectionMarkerAlpha(210);
+        model.setEdgeAlpha(50);
+    }
+
     static class RenderTask extends SwingWorker<Void, Void> {
         private static final double ZOOM_LEVEL = 1.0;
         final int startYear = 2008;
-//        final int endYear = 2004;
-        final int endYear = 1975;
+//        final int endYear = 2000;
+        final int endYear = 1978;
         final int yearStep = -2;
         final int n = ((endYear - startYear) / yearStep) + 1;
-        final int numColumns = 6;
+        final int numColumns = 4;
         final int paddingX = 5;
         final int paddingY = 5;
 
@@ -136,12 +146,7 @@ public class SmallMultiplesMain {
                         jFlowMap.loadFlowMap(ds);
 
                         FlowMapModel model = jFlowMap.getVisualFlowMap().getModel();
-                        model.setShowNodes(true);
-                        model.setNodeSize(3);
-                        model.setShowDirectionMarkers(true);
-                        model.setDirectionMarkerSize(.1);
-                        model.setDirectionMarkerAlpha(210);
-                        model.setEdgeAlpha(36);
+                        setupFlowMapModel(model);
 
                     }
                 });
@@ -187,6 +192,7 @@ public class SmallMultiplesMain {
                         g.translate(-x, -y);
 
                         progress.setProgress(I);
+                        progress.setNote("Rendering graphic " + (I + 1) + " of " + n);
                     }
                 });
 
@@ -197,6 +203,7 @@ public class SmallMultiplesMain {
         @Override
         public void done() {
             if (!progress.isCanceled()) {
+                progress.setNote("Writing image to file " + outputFileName);
                 try {
                     ImageIO.write(image, FileUtils.getExtension(outputFileName), new File(outputFileName));
                 } catch (IOException e) {
