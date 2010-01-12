@@ -30,6 +30,7 @@ import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.models.FlowMapModel;
+import jflowmap.util.ColorUtils;
 
 import org.apache.log4j.Logger;
 
@@ -53,10 +54,6 @@ public abstract class VisualEdge extends PNode {
 	private static final int MIN_COLOR_INTENSITY = 25;
 	private static final float[] DEFAULT_GRADIENT_FRACTIONS = new float[] { 0.0f, 1.0f };
     private static final float MIN_FRACTION_DIFF = 1e-5f;
-
-    private static final Color STROKE_HIGHLIGHTED_PAINT = new Color(0, 0, 255, 200);
-    private static final Color STROKE_HIGHLIGHTED_INCOMING_PAINT = new Color(255, 0, 0, 200);
-    private static final Color STROKE_HIGHLIGHTED_OUTGOING_PAINT = new Color(0, 255, 0, 200);
 
     private final VisualFlowMap visualFlowMap;
 
@@ -245,21 +242,21 @@ public abstract class VisualEdge extends PNode {
     }
 
     public double getNormalizedLogValue() {
-        FlowMapModel model = getVisualFlowMap().getModel();
+//        FlowMapModel model = getVisualFlowMap().getModel();
         double value = getEdgeWeight();
         double nv;
-        if (model.getAutoAdjustEdgeColorScale()) {
-            double minLog = 1.0;
-            double maxLog = Math.log(model.getEdgeWeightFilterMax() - model.getEdgeWeightFilterMin());
-            if (maxLog == minLog) {
-                nv = 1.0;
-            } else {
-                nv = (Math.log(value - model.getEdgeWeightFilterMin()) - minLog) / (maxLog - minLog);
-            }
-        } else {
+//        if (model.getAutoAdjustEdgeColorScale()) {
+//            double minLog = 1.0;
+//            double maxLog = Math.log(model.getEdgeWeightFilterMax() - model.getEdgeWeightFilterMin());
+//            if (maxLog == minLog) {
+//                nv = 1.0;
+//            } else {
+//                nv = (Math.log(value - model.getEdgeWeightFilterMin()) - minLog) / (maxLog - minLog);
+//            }
+//        } else {
             MinMax stats = visualFlowMap.getStats().getEdgeWeightStats();
             nv = stats.normalizeLog(value);
-        }
+//        }
         if (Double.isNaN(nv)) {
             logger.error("NaN normalized log value for edge: " + this);
         }
@@ -283,21 +280,39 @@ public abstract class VisualEdge extends PNode {
 		// TODO: use colors from color scheme
         FlowMapModel model = getVisualFlowMap().getModel();
         final double normalizedValue = getNormalizedLogValue();
-        int intensity = (int)Math.round(MIN_COLOR_INTENSITY + (255 - MIN_COLOR_INTENSITY) * normalizedValue);
+//            int value = (int)Math.round(MIN_COLOR_INTENSITY + (255 - MIN_COLOR_INTENSITY) * normalizedValue);
         int alpha = model.getEdgeAlpha();
         if (isSelfLoop) {
-            return new Color(intensity, intensity, 0, alpha);	// mix of red and green
+            return ColorUtils.colorBetween(
+                    visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT),
+                    visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT),
+                    normalizedValue, alpha);
         } else {
         	if (!model.getShowDirectionMarkers()  &&  !model.getFillEdgesWithGradient()) {
-        		return new Color(intensity, intensity, intensity, alpha);	// white
+        		return ColorUtils.colorBetween(
+                        visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
+                        visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT),
+                        normalizedValue, alpha);
         	} else {
         		Color startEdgeColor, endEdgeColor;
         		if (model.getFillEdgesWithGradient()) {
-    				startEdgeColor = new Color(intensity, 0, 0, alpha);
-    				endEdgeColor = new Color(0, intensity, 0, alpha);
+//        		    startEdgeColor = new Color(value, 0, 0, alpha);
+//        		    endEdgeColor = new Color(0, value, 0, alpha);
+    				startEdgeColor = ColorUtils.colorBetween(
+    	                    visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT),
+    	                    visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT),
+    	                    normalizedValue, alpha);
+                    endEdgeColor = ColorUtils.colorBetween(
+                            visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT),
+                            visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT),
+                            normalizedValue, alpha);
         		} else {
         			// TODO: use a special paint (not gradient) for this case
-					startEdgeColor = new Color(intensity, intensity, intensity, alpha);
+//        		    startEdgeColor = new Color(value, value, value, alpha);
+					startEdgeColor = ColorUtils.colorBetween(
+                            visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
+                            visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT),
+                            normalizedValue, alpha);
 					endEdgeColor = startEdgeColor;
         		}
 
@@ -324,8 +339,16 @@ public abstract class VisualEdge extends PNode {
 		        		markerSize = 0.5f - MIN_FRACTION_DIFF;
 		        	}
 		            int markerAlpha = model.getDirectionMarkerAlpha();
-		        	Color startMarkerColor = new Color(intensity, 0, 0, markerAlpha);
-		        	Color endMarkerColor = new Color(0, intensity, 0, markerAlpha);
+//		            Color startMarkerColor = new Color(value, 0, 0, markerAlpha);
+//		            Color endMarkerColor = new Color(0, value, 0, markerAlpha);
+		        	Color startMarkerColor = ColorUtils.colorBetween(
+                            visualFlowMap.getColor(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT),
+                            visualFlowMap.getColor(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT),
+                            normalizedValue, markerAlpha);
+		        	Color endMarkerColor = ColorUtils.colorBetween(
+                            visualFlowMap.getColor(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT),
+                            visualFlowMap.getColor(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT),
+                            normalizedValue, markerAlpha);
 					fractions = new float[] {
 							markerSize - MIN_FRACTION_DIFF,			// start marker
 							markerSize, 1.0f - markerSize,			// line
@@ -366,9 +389,13 @@ public abstract class VisualEdge extends PNode {
             if (value) {
                 Color color;
                 if (showDirection) {
-                    color = (asOutgoing ? STROKE_HIGHLIGHTED_OUTGOING_PAINT : STROKE_HIGHLIGHTED_INCOMING_PAINT);
+                    if (asOutgoing) {
+                        color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT);
+                    } else {
+                        color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT);
+                    }
                 } else {
-                    color = STROKE_HIGHLIGHTED_PAINT;
+                    color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT);
                 }
 //                paint = getValueColor(color, false);
                 paint = color;

@@ -21,30 +21,36 @@ package jflowmap.visuals;
 import java.awt.Color;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * @author Ilya Boyandin
  */
 public class ColorScheme {
 
-    public enum Codes {
-        BACKGROUND,
-        EDGE_START,
-        EDGE_END,
-        EDGE_MARKER_START,
-        EDGE_MARKER_END,
-        NODE
+    private final String name;
+    private final Map<ColorCodes, Color> colors;
+
+    private ColorScheme(String name, Map<ColorCodes, Color> colors) {
+        this.name = name;
+        for (ColorCodes code : ColorCodes.values()) {
+            if (!colors.containsKey(code)) {
+                throw new IllegalArgumentException("Color " + code + " is missing");
+            }
+        }
+        this.colors = ImmutableMap.copyOf(colors);
     }
 
-    private String name;
-    private Map<Codes, Color> colors;
-
-    public ColorScheme() {
-
+    public String getName() {
+        return name;
     }
 
-    public Color get(Codes code) {
-        return null;
+    public Color get(ColorCodes code) {
+        return colors.get(code);
     }
 
+    public static ColorScheme of(String name, Map<ColorCodes, Color> colors) {
+        return new ColorScheme(name, colors);
+    }
 
 }

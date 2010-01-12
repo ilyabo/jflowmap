@@ -34,6 +34,8 @@ import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.util.PanHandler;
 import jflowmap.util.ZoomHandler;
+import jflowmap.visuals.ColorCodes;
+import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualAreaMap;
 import jflowmap.visuals.VisualFlowMap;
 
@@ -43,6 +45,8 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 import edu.umd.cs.piccolo.PCanvas;
 
@@ -60,6 +64,7 @@ public class JFlowMap extends JComponent {
     private final ControlPanel controlPanel;
     private VisualFlowMap visualFlowMap;
     private final Frame app;
+    private ColorScheme colorScheme;
 
     public JFlowMap(FlowMapMain app, boolean showControlPanel) {
         this(app, (List<DatasetSpec>)null, showControlPanel);
@@ -74,10 +79,44 @@ public class JFlowMap extends JComponent {
 
         this.app = app;
 
+        Builder<ColorCodes, Color> colors = ImmutableMap.builder();
+        this.colorScheme =
+            ColorScheme.of("Dark", colors
+                .put(ColorCodes.BACKGROUND, new Color(0x20, 0x20, 0x20))
+                .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
+                .put(ColorCodes.AREA_STROKE, new Color(55, 55, 55))
+                .put(ColorCodes.NODE_PAINT, new Color(255, 255, 255, 90))
+                .put(ColorCodes.NODE_HIGHLIGHTED_PAINT, new Color(200, 200, 0, 200))
+                .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
+                .put(ColorCodes.NODE_STROKE_PAINT, new Color(255, 255, 255, 200))
+                .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
+                .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT, new Color(100, 100, 100, 100))
+                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
+                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
+                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
+                .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(255, 255, 0))
+                .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(255, 255, 255))
+                .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
+                .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 255, 0))
+                .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 0, 0))
+                .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
+                .build());
+
+//            ColorScheme.of("Light", colors
+//                .put(ColorCodes.BACKGROUND, new Color(0xff, 0xff, 0xff))
+//                .put(ColorCodes.AREA_PAINT, new Color(235, 235, 235))
+//                .put(ColorCodes.AREA_STROKE, new Color(225, 225, 225))
+//                .build());
+
+
         canvas = new PCanvas();
-        canvas.setBackground(Color.BLACK);
-//        canvas.setBackground(Color.WHITE);
-        canvas.setBackground(new Color(0x20, 0x20, 0x20));
+        canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
 //        canvas.addInputEventListener(new ZoomHandler(.5, 50));
         canvas.addInputEventListener(new ZoomHandler());
         canvas.setPanEventHandler(new PanHandler());
@@ -102,6 +141,18 @@ public class JFlowMap extends JComponent {
         }
 
 //        fitFlowMapInView();
+    }
+
+    public void setColorScheme(ColorScheme colorScheme) {
+        this.colorScheme = colorScheme;
+    }
+
+    public ColorScheme getColorScheme() {
+        return colorScheme;
+    }
+
+    public Color getColor(ColorCodes code) {
+        return colorScheme.get(code);
     }
 
     public PCanvas getCanvas() {
@@ -138,35 +189,35 @@ public class JFlowMap extends JComponent {
     public void loadFlowMap(DatasetSpec dataset) {
         logger.info("> Loading flow map \"" + dataset + "\"");
         try {
-            VisualAreaMap areaMap = null;
-            if (dataset.getAreaMapFilename() != null) {
-                areaMap = loadAreaMap(dataset.getAreaMapFilename());
-            }
-            setVisualFlowMap(createVisualFlowMap(dataset.getAttrsSpec(), loadGraph(dataset.getFilename()), areaMap));
-
-        } catch (DataIOException e) {
+            load(dataset);
+        } catch (Exception e) {
             logger.error("Couldn't load flow map " + dataset, e);
-            JOptionPane.showMessageDialog(this,  "Couldn't load flow map: [" + e.getClass().getSimpleName()+ "] " + e.getMessage());
+            JOptionPane.showMessageDialog(this,
+                    "Couldn't load flow map: [" + e.getClass().getSimpleName()+ "] " + e.getMessage());
         }
     }
 
-    public VisualFlowMap createVisualFlowMap(FlowMapAttrsSpec attrs, Graph graph, VisualAreaMap areaMap) {
+    private void load(DatasetSpec dataset) throws IOException, DataIOException {
+        VisualFlowMap visualFlowMap = createVisualFlowMap(dataset.getAttrsSpec(), loadGraph(dataset.getFilename()));
+        if (dataset.getAreaMapFilename() != null) {
+            visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, AreaMap.load(dataset.getAreaMapFilename())));
+        }
+        setVisualFlowMap(visualFlowMap);
+    }
+
+    public VisualFlowMap createVisualFlowMap(FlowMapAttrsSpec attrs, Graph graph) {
         return createVisualFlowMap(attrs.getWeightAttrName(), attrs.getLabelAttrName(),
-                attrs.getXNodeAttr(), attrs.getYNodeAttr(), attrs.getWeightFilterMin(), graph, areaMap);
+                attrs.getXNodeAttr(), attrs.getYNodeAttr(), attrs.getWeightFilterMin(), graph);
     }
 
     public VisualFlowMap createVisualFlowMap(String weightAttrName, String nodeLabelAttrName,
-            String xNodeAttr, String yNodeAttr, double weightFilterMin, Graph graph, VisualAreaMap areaMap) {
+            String xNodeAttr, String yNodeAttr, double weightFilterMin, Graph graph) {
         FlowMapModel params = new FlowMapModel(graph, weightAttrName, xNodeAttr, yNodeAttr, nodeLabelAttrName);
         logger.info("Edge weight stats: " + params.getStats().getEdgeWeightStats());
         if (!Double.isNaN(weightFilterMin)) {
             params.setEdgeWeightFilterMin(weightFilterMin);
         }
-        VisualFlowMap visualFlowMap = new VisualFlowMap(this, graph, params.getStats(), params);
-        if (areaMap != null) {
-            visualFlowMap.setAreaMap(areaMap);
-        }
-        return visualFlowMap;
+        return new VisualFlowMap(this, graph, params.getStats(), params);
     }
 
     private Graph loadGraph(String filename) throws DataIOException {
@@ -174,18 +225,6 @@ public class JFlowMap extends JComponent {
         Graph graph = GraphFileFormats.createReaderFor(filename).readGraph(filename);
         logger.info("Graph loaded: " + graph.getNodeCount() + " nodes, " + graph.getEdgeCount() + " edges");
         return graph;
-    }
-
-    private VisualAreaMap loadAreaMap(String areaMapFilename) {
-        try {
-            return new VisualAreaMap(AreaMap.load(areaMapFilename));
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Couldn't load area map " + areaMapFilename + ":\n" + e.getMessage()
-            );
-            logger.error("Couldn't load area map " + areaMapFilename, e);
-        }
-        return null;
     }
 
 }

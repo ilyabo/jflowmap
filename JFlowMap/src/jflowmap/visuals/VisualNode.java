@@ -60,12 +60,6 @@ public class VisualNode extends PNode {
     private static final Stroke STROKE = null;
     private static final Stroke HIGHLIGHTED_STROKE = new PFixedWidthStroke(1);
     private static final Stroke SELECTED_STROKE = new PFixedWidthStroke(2);
-//    private static final Color PAINT = new Color(255, 255, 255, 70);
-    private static final Color PAINT = new Color(255, 255, 255, 90);
-    private static final Color HIGHLIGHTED_PAINT = new Color(200, 200, 0, 200);
-    private static final Color SELECTED_PAINT = HIGHLIGHTED_PAINT;
-    private static final Color STROKE_PAINT = new Color(255, 255, 255, 200);
-    private static final Color SELECTED_STROKE_PAINT = new Color(255, 255, 0, 255);
 
     private final List<VisualEdge> outgoingEdges = new ArrayList<VisualEdge>();
     private final List<VisualEdge> incomingEdges = new ArrayList<VisualEdge>();
@@ -100,7 +94,7 @@ public class VisualNode extends PNode {
         VisualNodeCluster cluster = VisualNodeCluster.getJoinedFlowMapNodeCluster(node);
         if (cluster != null) {
             clusterMembers = new PNode();
-            Color origNodePaint = new Color(100, 100, 100, 100);
+            Color origNodePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT);
             for (VisualNode origNode : cluster) {
                 PPath pnode = new PPath(createNodeShape(origNode.getValueX(), origNode.getValueY()));
                 pnode.setPaint(origNodePaint);
@@ -149,7 +143,7 @@ public class VisualNode extends PNode {
             removeChild(marker);
         }
         marker = new PPath(createNodeShape(valueX, valueY));
-        marker.setPaint(PAINT);
+        marker.setPaint(visualFlowMap.getColor(ColorCodes.NODE_PAINT));
         marker.setStroke(null);
         addChild(marker);
         marker.moveToBack();
@@ -311,16 +305,16 @@ public class VisualNode extends PNode {
         boolean highlighted = isHighlighted();
         if (selected) {
             marker.setStroke(SELECTED_STROKE);
-            marker.setStrokePaint(SELECTED_STROKE_PAINT);
-            marker.setPaint(SELECTED_PAINT);
+            marker.setStrokePaint(visualFlowMap.getColor(ColorCodes.NODE_SELECTED_STROKE_PAINT));
+            marker.setPaint(visualFlowMap.getColor(ColorCodes.NODE_SELECTED_PAINT));
         } else if (highlighted) {
             marker.setStroke(HIGHLIGHTED_STROKE);
-            marker.setStrokePaint(STROKE_PAINT);
-            marker.setPaint(HIGHLIGHTED_PAINT);
+            marker.setStrokePaint(visualFlowMap.getColor(ColorCodes.NODE_STROKE_PAINT));
+            marker.setPaint(visualFlowMap.getColor(ColorCodes.NODE_HIGHLIGHTED_PAINT));
         } else {
             marker.setStroke(STROKE);
-            marker.setStrokePaint(STROKE_PAINT);
-            marker.setPaint(PAINT);
+            marker.setStrokePaint(visualFlowMap.getColor(ColorCodes.NODE_STROKE_PAINT));
+            marker.setPaint(visualFlowMap.getColor(ColorCodes.NODE_PAINT));
         }
     }
 

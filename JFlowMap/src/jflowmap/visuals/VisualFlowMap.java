@@ -116,8 +116,7 @@ public class VisualFlowMap extends PNode {
     // endOf clustering fields
     private boolean bundled;
 
-    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats,
-    		FlowMapModel model) {
+    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, FlowMapModel model) {
         this.jFlowMap = jFlowMap;
     	this.flowMapModel = model;
 
@@ -145,6 +144,9 @@ public class VisualFlowMap extends PNode {
         return bundled;
     }
 
+    public Color getColor(ColorCodes code) {
+        return jFlowMap.getColor(code);
+    }
 
     private void createNodeVisuals() {
         nodeLayer.removeAllChildren();
@@ -871,9 +873,11 @@ public class VisualFlowMap extends PNode {
                 FlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
                 FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
                 0,
-                clusteredGraph,
-                areaMap == null ? null : (VisualAreaMap)areaMap.clone()
+                clusteredGraph
         );
+        if (areaMap != null) {
+            clusteredFlowMap.setAreaMap((VisualAreaMap)areaMap.clone());
+        }
         clusteredFlowMap.setOriginalVisualFlowMap(this);
         jFlowMap.setVisualFlowMap(clusteredFlowMap);
     }

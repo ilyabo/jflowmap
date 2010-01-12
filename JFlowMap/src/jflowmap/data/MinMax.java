@@ -46,7 +46,7 @@ public class MinMax {
         this.minLog = Math.log(min);
         this.maxLog = Math.log(max);
     }
-    
+
     public double getMax() {
         return max;
     }
@@ -66,7 +66,7 @@ public class MinMax {
     public double getMinLog() {
         return minLog;
     }
-    
+
     public static MinMax createFor(Iterator<Double> it) {
         double max = Double.MIN_VALUE;
         double min = Double.MAX_VALUE;
@@ -74,7 +74,7 @@ public class MinMax {
         int count = 0;
 
         while (it.hasNext()) {
-            double v = (Double)it.next();
+            double v = it.next();
             if (v > max) {
                 max = v;
             }
@@ -90,35 +90,40 @@ public class MinMax {
     /**
      * Returns a normalized value between 0 and 1 for the dataset
      * the min and max were calculated for.
-     * In case if max == min the method always returns 1. 
+     * In case if max == min the method always returns 1.
      */
     public double normalize(double value) {
         if (getMax() == getMin()) return 1.0;
-        return (value - getMin()) / (getMax() - getMin());
+        double rv = (value - getMin()) / (getMax() - getMin());
+        assert(rv >= 0.0  &&  rv <= 1.0);
+        return rv;
     }
 
     /**
      * Returns a normalized log(value) between 0 and 1.
-     * In case if max == min the method always returns 1. 
+     * In case if max == min the method always returns 1.
      */
     public double normalizeLog(double value) {
         if (getMax() == getMin()) return 1.0;
-        return (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
+        double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
+        assert(rv >= 0.0  &&  rv <= 1.0);
+        return rv;
     }
 
     /**
      * Constructs a <code>String</code> with all attributes
      * in name = value format.
      *
-     * @return a <code>String</code> representation 
+     * @return a <code>String</code> representation
      * of this object.
      */
+    @Override
     public String toString()
     {
         final String TAB = "    ";
-        
+
         String retValue = "";
-        
+
         retValue = "MinMax ( "
             + super.toString() + TAB
             + "min = " + this.min + TAB
@@ -127,9 +132,9 @@ public class MinMax {
             + "minLog = " + this.minLog + TAB
             + "maxLog = " + this.maxLog + TAB
             + " )";
-    
+
         return retValue;
     }
-   
+
 
 }

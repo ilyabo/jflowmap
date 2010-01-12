@@ -18,22 +18,20 @@
 
 package jflowmap.visuals;
 
+import jflowmap.models.map.Area;
+import jflowmap.models.map.AreaMap;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
-
-import java.awt.*;
-
-import jflowmap.models.map.*;
 
 /**
  * @author Ilya Boyandin
  */
 public class VisualAreaMap extends PNode {
 
-    public VisualAreaMap(AreaMap mapModel) {
+    private static final long serialVersionUID = -6938288211394773330L;
+
+    public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
         for (Area area : mapModel.getAreas()) {
-            addChild(new VisualArea(area));
+            addChild(new VisualArea(visualFlowMap, area));
         }
     }
 

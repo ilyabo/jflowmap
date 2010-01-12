@@ -36,4 +36,25 @@ public class ColorUtils {
         return colors;
     }
 
+    /**
+     * Returns a color "between" min and max, corresponding to the given weight.
+     * If the weight is 0.0 then the method returns min color,
+     * if it's 1.0 then the max color, otherwise something in between.
+     * @param weight Between 0.0 and 1.0
+     */
+    public static Color colorBetween(Color min, Color max, double weight, int alpha) {
+        if (weight < 0.0  ||  weight > 1.0) {
+            throw new IllegalArgumentException("Weight must be between 0.0 and 1.0. Actual: " + weight);
+        }
+        int r1 = min.getRed(), r2 = max.getRed();
+        int g1 = min.getGreen(), g2 = max.getGreen();
+        int b1 = min.getBlue(), b2 = max.getBlue();
+        return new Color(
+                (int)Math.round(r1 + (r2 - r1) * weight),
+                (int)Math.round(g1 + (g2 - g1) * weight),
+                (int)Math.round(b1 + (b2 - b1) * weight),
+                alpha
+        );
+    }
+
 }

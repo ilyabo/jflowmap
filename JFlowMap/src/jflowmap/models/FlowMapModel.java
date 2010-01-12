@@ -189,6 +189,7 @@ public class FlowMapModel {
         return edgeLengthFilterMax;
     }
 
+    @Deprecated
     public boolean getAutoAdjustEdgeColorScale() {
         return autoAdjustEdgeColorScale;
     }
