@@ -96,12 +96,4 @@ public class BSplineVisualEdge extends VisualEdge {
 //        update();
     }
 
-    @Override
-    public void updateEdgeColors() {
-        PPath ppath = getEdgePPath();
-        if (ppath != null) {
-            ppath.setStrokePaint(createPaint());
-        }
-    }
-
 }
