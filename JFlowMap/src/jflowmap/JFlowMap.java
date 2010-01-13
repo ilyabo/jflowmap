@@ -81,38 +81,129 @@ public class JFlowMap extends JComponent {
 
         Builder<ColorCodes, Color> colors = ImmutableMap.builder();
         this.colorScheme =
-            ColorScheme.of("Dark", colors
-                .put(ColorCodes.BACKGROUND, new Color(0x20, 0x20, 0x20))
-                .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
-                .put(ColorCodes.AREA_STROKE, new Color(55, 55, 55))
-                .put(ColorCodes.NODE_PAINT, new Color(255, 255, 255, 90))
-                .put(ColorCodes.NODE_HIGHLIGHTED_PAINT, new Color(200, 200, 0, 200))
-                .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
-                .put(ColorCodes.NODE_STROKE_PAINT, new Color(255, 255, 255, 200))
-                .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
-                .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT, new Color(100, 100, 100, 100))
-                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
-                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
-                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
-                .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(0, 0, 0))
-                .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(255, 255, 0))
-                .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(0, 0, 0))
-                .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(255, 255, 255))
-                .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(0, 0, 0))
-                .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
-                .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(0, 0, 0))
-                .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 255, 0))
-                .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
-                .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 0, 0))
-                .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
-                .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
-                .build());
-
-//            ColorScheme.of("Light", colors
-//                .put(ColorCodes.BACKGROUND, new Color(0xff, 0xff, 0xff))
-//                .put(ColorCodes.AREA_PAINT, new Color(235, 235, 235))
-//                .put(ColorCodes.AREA_STROKE, new Color(225, 225, 225))
+//            ColorScheme.of("Dark", colors
+//                .put(ColorCodes.BACKGROUND, new Color(0x20, 0x20, 0x20))
+//                .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
+//                .put(ColorCodes.AREA_STROKE, new Color(55, 55, 55))
+//                .put(ColorCodes.NODE_PAINT, new Color(255, 255, 255, 90))
+//                .put(ColorCodes.NODE_HIGHLIGHTED_PAINT, new Color(200, 200, 0, 200))
+//                .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
+//                .put(ColorCodes.NODE_STROKE_PAINT, new Color(255, 255, 255, 200))
+//                .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
+//                .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT, new Color(100, 100, 100, 100))
+//                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
+//                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
+//                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
+//                .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(0, 0, 0))
+//                .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(255, 255, 0))
+//                .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(0, 0, 0))
+//                .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(255, 255, 255))
+//                .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(0, 0, 0))
+//                .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
+//                .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(0, 0, 0))
+//                .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 255, 0))
+//                .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
+//                .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 0, 0))
+//                .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
+//                .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
 //                .build());
+//
+//            ColorScheme.of("Light Blue", colors
+//                .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
+//                .put(ColorCodes.AREA_PAINT, new Color(255, 255, 255))
+//                .put(ColorCodes.AREA_STROKE, new Color(225, 225, 225))
+//
+//                .put(ColorCodes.NODE_PAINT, new Color(0, 0, 0, 90))
+//                .put(ColorCodes.NODE_HIGHLIGHTED_PAINT, new Color(200, 200, 0, 200))
+//                .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
+//                .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
+//                .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
+//                .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT, new Color(100, 100, 100, 100))
+//
+//                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
+//                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
+//                .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
+//                .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(255, 255, 0))
+//                .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(0, 0, 0))
+//
+//                .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(255, 255, 255))
+//                .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
+//
+//                .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(255, 255, 255))
+//                .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
+//
+//                .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(255, 255, 255))
+//                .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 255, 0))
+//
+//                .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(255, 255, 255))
+//                .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 0, 0))
+//                .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(255, 255, 255))
+//                .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
+//                .build());
+
+//            ColorScheme.of("Inverted", colors
+//                  .put(ColorCodes.BACKGROUND, new Color(223, 223, 223))
+//                  .put(ColorCodes.AREA_PAINT, new Color(210, 210, 210))
+//                  .put(ColorCodes.AREA_STROKE, new Color(200, 200, 200))
+//                  .put(ColorCodes.NODE_PAINT, new Color(0, 0, 0, 90))
+//
+//                  .put(ColorCodes.NODE_HIGHLIGHTED_PAINT, new Color(55, 55, 255, 200))
+//                  .put(ColorCodes.NODE_SELECTED_PAINT, new Color(55, 55, 255, 200))
+//                  .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
+//                  .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(0, 0, 255, 255))
+//                  .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT, new Color(155, 155, 155, 100))
+//                  .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(255, 255, 0, 200))
+//                  .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(0, 255, 255, 200))
+//                  .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(255, 0, 255, 200))
+//
+//                  .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(223, 223, 223))
+//                  .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(0, 0, 255))
+//
+//                  .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(223, 223, 223))
+//                  .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
+//
+//                  .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(223, 223, 223))
+//                  .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 255))
+//                  .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(223, 223, 223))
+//                  .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 255, 255))
+//
+//                  .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(223, 223, 223))
+//                  .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 0, 255))
+//                  .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(223, 223, 223))
+//                  .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 255))
+//                  .build());
+
+            ColorScheme.of("Gray red-green", colors
+                  .put(ColorCodes.BACKGROUND, new Color(223, 223, 223))
+                  .put(ColorCodes.AREA_PAINT, new Color(210, 210, 210))
+                  .put(ColorCodes.AREA_STROKE, new Color(200, 200, 200))
+                  .put(ColorCodes.NODE_PAINT, new Color(0, 0, 0, 90))
+
+                  .put(ColorCodes.NODE_HIGHLIGHTED_PAINT, new Color(55, 55, 255, 200))
+                  .put(ColorCodes.NODE_SELECTED_PAINT, new Color(55, 55, 255, 200))
+                  .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
+                  .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(0, 0, 255, 255))
+                  .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT, new Color(155, 155, 155, 100))
+                  .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(255, 255, 0, 200))
+                  .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(0, 255, 255, 200))
+                  .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(255, 0, 255, 200))
+
+                  .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(223, 223, 223))
+                  .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(255, 255, 0))
+
+                  .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(223, 223, 223))
+                  .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
+
+                  .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(223, 223, 223))
+                  .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(188, 35, 39))
+                  .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(223, 223, 223))
+                  .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(48, 156, 1))
+
+                  .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(223, 223, 223))
+                  .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(188, 35, 39))
+                  .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(223, 223, 223))
+                  .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(48, 156, 1))
+                  .build());
 
 
         canvas = new PCanvas();

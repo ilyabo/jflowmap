@@ -47,7 +47,7 @@ public class FlowMapModel {
     private boolean autoAdjustColorScale;
     private boolean useLogColorScale;
     private boolean useLogWidthScale;
-    private boolean showNodes = false;
+    private boolean showNodes = true;
     private boolean showDirectionMarkers = true;
     private boolean fillEdgesWithGradient = true;
     private boolean useProportionalDirectionMarkers = true;
@@ -57,8 +57,10 @@ public class FlowMapModel {
     private final String yNodeAttr;
     private String nodeLabelAttr = "tooltip";
 
-    private int edgeAlpha = 150;
-    private int directionMarkerAlpha = 200;
+//    private int edgeAlpha = 150;
+    private int edgeAlpha = 50;
+//    private int directionMarkerAlpha = 200;
+    private int directionMarkerAlpha = 210;
 
     private double edgeWeightFilterMin = Double.MIN_VALUE;
     private double edgeWeightFilterMax = Double.MAX_VALUE;
