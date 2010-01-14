@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Source: UNHCR Statistical Database | United Nations High Commissioner for Refugees
+    http://data.un.org
+
+    refugees - Persons recognized as refugees under the 1951 UN Convention/1967 Protocol, the 1969 OAU Convention, 
+    in accordance with the UNHCR Statute, persons granted a complementary form of protection and those granted
+    temporary protection. In the absence of Government estimates, UNHCR has estimated the refugee population in
+    24 industrialized countries based on 10 years of individual refugee recognition.
+
+    refugees-and-like - The category of people in refugee-like situations is descriptive in nature and includes groups 
+    of personswho are outside their country or territory of origin and who face protection risks similar to those of
+    refugees, but for whom refugee status has, for practical or other reasons, not been ascertained.
+ -->
 <graphml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://graphml.graphdrawing.org/xmlns"
          xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
