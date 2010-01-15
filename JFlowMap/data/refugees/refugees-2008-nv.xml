@@ -5,7 +5,7 @@
    <key id="x" for="node" attr.name="x" attr.type="double"/>
    <key id="y" for="node" attr.name="y" attr.type="double"/>
    <key id="name" for="node" attr.name="name" attr.type="string"/>
-   <key id="refugees" for="edge" attr.name="refugees" attr.type="double"/>
+   <key id="refugees" for="edge" attr.name="refugees" attr.type="double"/><key id="refugees-in-this-year" for="edge" attr.name="refugees-in-this-year" attr.type="double"/>
    <key id="refugees-unhcr" for="edge" attr.name="refugees-unhcr" attr.type="double"/>
    <key id="refugees-and-like" for="edge" attr.name="refugees-and-like"
         attr.type="double"/>

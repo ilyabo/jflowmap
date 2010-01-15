@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<graphml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!--
+	Source: UNHCR Statistical Database | United Nations High Commissioner for Refugees
+	http://data.un.org
+
+	NOTE! The "refugees" and "refugees-and-like" fields don't really represent FLOWS of refugees, 
+	instead they represent the numbers of refugees from country A  RESIDING in country B in the year N. 
+	E.g. the 2008 values actually represent all the refugees who came from A to B sometime before 2008,
+	not only in the year 2008. So maybe what you need is "refugees-in-this-year"
+
+	refugees - Persons recognized as refugees under the 1951 UN Convention/1967 Protocol, the 1969 OAU Convention, 
+	in accordance with the UNHCR Statute, persons granted a complementary form of protection and those granted
+	temporary protection. In the absence of Government estimates, UNHCR has estimated the refugee population in
+	24 industrialized countries based on 10 years of individual refugee recognition.
+	
+	refugees-and-like - The category of people in refugee-like situations is descriptive in nature and includes groups 
+	of personswho are outside their country or territory of origin and who face protection risks similar to those of
+	refugees, but for whom refugee status has, for practical or other reasons, not been ascertained.
+
+	refugees-in-this-year - Is calculated as refugees of this year minus refugees of the previous year
+
+			-->
+	      <graphml xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://graphml.graphdrawing.org/xmlns"
          xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
    <key id="x" for="node" attr.name="x" attr.type="double"/>
    <key id="y" for="node" attr.name="y" attr.type="double"/>
    <key id="name" for="node" attr.name="name" attr.type="string"/>
-   <key id="refugees" for="edge" attr.name="refugees" attr.type="double"/>
-   <key id="refugees-unhcr" for="edge" attr.name="refugees-unhcr" attr.type="double"/>
-   <key id="refugees-and-like" for="edge" attr.name="refugees-and-like"
-        attr.type="double"/>
-   <key id="refugees-and-like-unhcr" for="edge" attr.name="refugees-and-like-unhcr"
-        attr.type="double"/>
+   <!-- refugees-in-this-year --><key attr.name="rity" for="edge" id="rity" attr.type="double"/>
+   <!-- refugees-in-this-year-pos --><key attr.name="rityp" for="edge" id="rityp" attr.type="double"/>
+   <!-- refugees-in-this-year-pos-no-various--><key attr.name="ritypnv" for="edge" id="ritypnv" attr.type="double"/>
+   <!-- refugees-in-this-year-neg --><key attr.name="rityn" for="edge" id="rityn" attr.type="double"/>
+   <!-- refugees --><key attr.name="r" for="edge" id="r" attr.type="double"/>
+   <!-- refugees-unhcr --><key attr.name="ru" for="edge" id="ru" attr.type="double"/>
+   <!-- refugees-and-like --><key attr.name="ral" for="edge" id="ral" attr.type="double"/>
+   <!-- refugees-and-like-unhcr --><key attr.name="ralu" for="edge" id="ralu" attr.type="double"/>
    <graph edgedefault="directed" name="Refugees of the year 1977">
       <node id="NRU">
          <data key="x">685.1733042000001</data>
@@ -740,7 +764,7 @@
       <node id="MNE">
          <data key="x">393.60970467500005</data>
          <data key="y">232.82159302980324</data>
-         <data key="name">MONTENEGRO</data>
+         <data key="name">Montenegro</data>
       </node>
       <node id="MNG">
          <data key="x">560.5121416000001</data>
@@ -1090,7 +1114,7 @@
       <node id="TUV">
          <data key="x">707.6093930750002</data>
          <data key="y">375.8479993848716</data>
-         <data key="name">Tuvula</data>
+         <data key="name">Tuvalu</data>
       </node>
       <node id="TWN">
          <data key="x">594.17782175</data>
@@ -1208,766 +1232,1274 @@
          <data key="name">Occupied Palestinian Territory</data>
       </node>
       <edge source="CHL" target="DZA" id="1">
-         <data key="refugees">2000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">2000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1350</data>
+         <data key="rityp">1350</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1350</data>
+         <data key="r">2000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">2000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ESH" target="DZA" id="2">
-         <data key="refugees">50000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">15000</data>
+         <data key="rityp">15000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">15000</data>
+         <data key="r">50000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="COD" target="AGO" id="3">
-         <data key="refugees">225000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">225000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">220000</data>
+         <data key="rityp">220000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">220000</data>
+         <data key="r">225000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">225000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="NAM" target="AGO" id="4">
-         <data key="refugees">10000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">10000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">5000</data>
+         <data key="rityp">5000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">5000</data>
+         <data key="r">10000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">10000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="ARG" id="5">
-         <data key="refugees">35000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">35000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-3320</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">3320</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">35000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">35000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="AUT" id="6">
-         <data key="refugees">20000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">20000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-5000</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">5000</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">20000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">20000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="BEL" id="7">
-         <data key="refugees">17000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">17000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">17000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">17000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="AGO" target="BWA" id="8">
-         <data key="refugees">130</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">130</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">10</data>
+         <data key="rityp">10</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">10</data>
+         <data key="r">130</data>
+         <data key="ru">NaN</data>
+         <data key="ral">130</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="LSO" target="BWA" id="9">
-         <data key="refugees">90</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">90</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">90</data>
+         <data key="rityp">90</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">90</data>
+         <data key="r">90</data>
+         <data key="ru">NaN</data>
+         <data key="ral">90</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="NAM" target="BWA" id="10">
-         <data key="refugees">80</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">80</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-480</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">480</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">80</data>
+         <data key="ru">NaN</data>
+         <data key="ral">80</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="BWA" id="11">
-         <data key="refugees">510</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">510</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-270</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">270</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">510</data>
+         <data key="ru">NaN</data>
+         <data key="ral">510</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZWE" target="BWA" id="12">
-         <data key="refugees">4000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">4000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">2900</data>
+         <data key="rityp">2900</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">2900</data>
+         <data key="r">4000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">4000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="BRA" id="13">
-         <data key="refugees">36000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">36000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">6000</data>
+         <data key="rityp">6000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">36000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">36000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="RWA" target="BDI" id="14">
-         <data key="refugees">50000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">500</data>
+         <data key="rityp">500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">500</data>
+         <data key="r">50000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="GNQ" target="CMR" id="15">
-         <data key="refugees">30000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">30000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">30000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">30000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="CAN" id="16">
-         <data key="refugees">29537</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">29537</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">2150</data>
+         <data key="rityp">2150</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">29537</data>
+         <data key="ru">NaN</data>
+         <data key="ral">29537</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="CHL" id="17">
-         <data key="refugees">5200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">5200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1200</data>
+         <data key="rityp">1200</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">5200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">5200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="COL" id="18">
-         <data key="refugees">1800</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1800</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1800</data>
+         <data key="rityp">1800</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1800</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1800</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="CRI" id="19">
-         <data key="refugees">3500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">3500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">3500</data>
+         <data key="rityp">3500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">3500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">3500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="CUB" id="20">
-         <data key="refugees">2600</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">2600</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">2600</data>
+         <data key="rityp">2600</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">2600</data>
+         <data key="ru">NaN</data>
+         <data key="ral">2600</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="CYP" target="CYP" id="21">
-         <data key="refugees">700</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">700</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">700</data>
+         <data key="rityp">700</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">700</data>
+         <data key="r">700</data>
+         <data key="ru">NaN</data>
+         <data key="ral">700</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="AGO" target="COD" id="22">
-         <data key="refugees">500000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">500000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">28660</data>
+         <data key="rityp">28660</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">28660</data>
+         <data key="r">500000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">500000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="BDI" target="COD" id="23">
-         <data key="refugees">11300</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">11300</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-6920</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">6920</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">11300</data>
+         <data key="ru">NaN</data>
+         <data key="ral">11300</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="RWA" target="COD" id="24">
-         <data key="refugees">18000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">18000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-6500</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">6500</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">18000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">18000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="COD" id="25">
-         <data key="refugees">1000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">810</data>
+         <data key="rityp">810</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="DNK" id="26">
-         <data key="refugees">1764</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1764</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-336</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">336</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1764</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1764</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ETH" target="DJI" id="27">
-         <data key="refugees">8000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">8000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">8000</data>
+         <data key="rityp">8000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">8000</data>
+         <data key="r">8000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">8000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="DOM" id="28">
-         <data key="refugees">500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">500</data>
+         <data key="rityp">500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="ECU" id="29">
-         <data key="refugees">200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">200</data>
+         <data key="rityp">200</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ARM" target="EGY" id="30">
-         <data key="refugees">440</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">440</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">440</data>
+         <data key="rityp">440</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">440</data>
+         <data key="r">440</data>
+         <data key="ru">NaN</data>
+         <data key="ral">440</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ETH" target="EGY" id="31">
-         <data key="refugees">530</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">530</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">530</data>
+         <data key="rityp">530</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">530</data>
+         <data key="r">530</data>
+         <data key="ru">NaN</data>
+         <data key="ral">530</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="RUS" target="EGY" id="32">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">50</data>
+         <data key="rityp">50</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">50</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="EGY" id="33">
-         <data key="refugees">70</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">70</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">70</data>
+         <data key="rityp">70</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">70</data>
+         <data key="r">70</data>
+         <data key="ru">NaN</data>
+         <data key="ral">70</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="TUR" target="EGY" id="34">
-         <data key="refugees">70</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">70</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">70</data>
+         <data key="rityp">70</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">70</data>
+         <data key="r">70</data>
+         <data key="ru">NaN</data>
+         <data key="ral">70</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="EGY" id="35">
-         <data key="refugees">3350</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">3350</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-650</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">650</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">3350</data>
+         <data key="ru">NaN</data>
+         <data key="ral">3350</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="SDN" target="ETH" id="36">
-         <data key="refugees">10850</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">10850</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">250</data>
+         <data key="rityp">250</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">250</data>
+         <data key="r">10850</data>
+         <data key="ru">NaN</data>
+         <data key="ral">10850</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="ETH" id="37">
-         <data key="refugees">90</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">90</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">90</data>
+         <data key="ru">NaN</data>
+         <data key="ral">90</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="FRA" id="38">
-         <data key="refugees">119413</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">119413</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">4779</data>
+         <data key="rityp">4779</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">119413</data>
+         <data key="ru">NaN</data>
+         <data key="ral">119413</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="GNQ" target="GAB" id="39">
-         <data key="refugees">90000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">90000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">30000</data>
+         <data key="rityp">30000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">30000</data>
+         <data key="r">90000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">90000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="DEU" id="40">
-         <data key="refugees">120000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">120000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-2000</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">2000</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">120000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">120000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="NAM" target="GHA" id="41">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">50</data>
+         <data key="rityp">50</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">50</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="GHA" id="42">
-         <data key="refugees">120</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">120</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-60</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">60</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">120</data>
+         <data key="ru">NaN</data>
+         <data key="ral">120</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="GRC" target="GRC" id="43">
-         <data key="refugees">410</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">410</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-40</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">40</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">410</data>
+         <data key="ru">NaN</data>
+         <data key="ral">410</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="GRC" id="44">
-         <data key="refugees">2200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">2200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">90</data>
+         <data key="rityp">90</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">2200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">2200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="ITA" id="45">
-         <data key="refugees">11700</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">11700</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-200</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">200</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">11700</data>
+         <data key="ru">NaN</data>
+         <data key="ral">11700</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="VNM" target="JPN" id="46">
-         <data key="refugees">600</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">600</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">600</data>
+         <data key="rityp">600</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">600</data>
+         <data key="r">600</data>
+         <data key="ru">NaN</data>
+         <data key="ral">600</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ETH" target="KEN" id="47">
-         <data key="refugees">820</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">820</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">190</data>
+         <data key="rityp">190</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">190</data>
+         <data key="r">820</data>
+         <data key="ru">NaN</data>
+         <data key="ral">820</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="MOZ" target="KEN" id="48">
-         <data key="refugees">120</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">120</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-10</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">10</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">120</data>
+         <data key="ru">NaN</data>
+         <data key="ral">120</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="NAM" target="KEN" id="49">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-10</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">10</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="RWA" target="KEN" id="50">
-         <data key="refugees">570</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">570</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">240</data>
+         <data key="rityp">240</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">240</data>
+         <data key="r">570</data>
+         <data key="ru">NaN</data>
+         <data key="ral">570</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="SOM" target="KEN" id="51">
-         <data key="refugees">60</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">60</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">10</data>
+         <data key="rityp">10</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">10</data>
+         <data key="r">60</data>
+         <data key="ru">NaN</data>
+         <data key="ral">60</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="KEN" id="52">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="UGA" target="KEN" id="53">
-         <data key="refugees">4280</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">4280</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">3830</data>
+         <data key="rityp">3830</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">3830</data>
+         <data key="r">4280</data>
+         <data key="ru">NaN</data>
+         <data key="ral">4280</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="KEN" id="54">
-         <data key="refugees">60</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">60</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-740</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">740</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">60</data>
+         <data key="ru">NaN</data>
+         <data key="ral">60</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="KHM" target="LAO" id="55">
-         <data key="refugees">100</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">100</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-10</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">10</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">100</data>
+         <data key="ru">NaN</data>
+         <data key="ral">100</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="LBN" id="56">
-         <data key="refugees">700000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">700000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">700000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">700000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="LSO" id="57">
-         <data key="refugees">930</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">930</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">30</data>
+         <data key="rityp">30</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">30</data>
+         <data key="r">930</data>
+         <data key="ru">NaN</data>
+         <data key="ral">930</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="LSO" id="58">
-         <data key="refugees">200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">200</data>
+         <data key="rityp">200</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="GIN" target="LBR" id="59">
-         <data key="refugees">1500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1500</data>
+         <data key="rityp">1500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1500</data>
+         <data key="r">1500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="LBR" id="60">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">50</data>
+         <data key="rityp">50</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="KHM" target="MYS" id="61">
-         <data key="refugees">1580</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1580</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1580</data>
+         <data key="rityp">1580</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1580</data>
+         <data key="r">1580</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1580</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="PHL" target="MYS" id="62">
-         <data key="refugees">90000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">90000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">90000</data>
+         <data key="rityp">90000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">90000</data>
+         <data key="r">90000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">90000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="MYS" id="63">
-         <data key="refugees">540</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">540</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">540</data>
+         <data key="rityp">540</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">540</data>
+         <data key="ru">NaN</data>
+         <data key="ral">540</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="VNM" target="MYS" id="64">
-         <data key="refugees">3880</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">3880</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">3880</data>
+         <data key="rityp">3880</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">3880</data>
+         <data key="r">3880</data>
+         <data key="ru">NaN</data>
+         <data key="ral">3880</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="MEX" id="65">
-         <data key="refugees">4000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">4000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">4000</data>
+         <data key="rityp">4000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">4000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">4000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="MAR" id="66">
-         <data key="refugees">500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">360</data>
+         <data key="rityp">360</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="MOZ" id="67">
-         <data key="refugees">60</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">60</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">60</data>
+         <data key="rityp">60</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">60</data>
+         <data key="ru">NaN</data>
+         <data key="ral">60</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZWE" target="MOZ" id="68">
-         <data key="refugees">42400</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">42400</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">12400</data>
+         <data key="rityp">12400</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">12400</data>
+         <data key="r">42400</data>
+         <data key="ru">NaN</data>
+         <data key="ral">42400</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*TB" target="NPL" id="69">
-         <data key="refugees">8400</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">8400</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">100</data>
+         <data key="rityp">100</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">100</data>
+         <data key="r">8400</data>
+         <data key="ru">NaN</data>
+         <data key="ral">8400</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="NLD" id="70">
-         <data key="refugees">8000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">8000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">100</data>
+         <data key="rityp">100</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">8000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">8000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="GIN" target="NER" id="71">
-         <data key="refugees">1500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1500</data>
+         <data key="rityp">1500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1500</data>
+         <data key="r">1500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="NAM" target="NGA" id="72">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="NGA" id="73">
-         <data key="refugees">160</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">160</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">160</data>
+         <data key="rityp">160</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">160</data>
+         <data key="r">160</data>
+         <data key="ru">NaN</data>
+         <data key="ral">160</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="NGA" id="74">
-         <data key="refugees">90</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">90</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">90</data>
+         <data key="rityp">90</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">90</data>
+         <data key="ru">NaN</data>
+         <data key="ral">90</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="NOR" id="75">
-         <data key="refugees">6000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">6000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">5000</data>
+         <data key="rityp">5000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">6000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">6000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="PAN" id="76">
-         <data key="refugees">500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">500</data>
+         <data key="rityp">500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="PRY" id="77">
-         <data key="refugees">1500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1500</data>
+         <data key="rityp">1500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="PER" id="78">
-         <data key="refugees">1200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1200</data>
+         <data key="rityp">1200</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="VNM" target="PHL" id="79">
-         <data key="refugees">1300</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1300</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">360</data>
+         <data key="rityp">360</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">360</data>
+         <data key="r">1300</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1300</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="PRT" id="80">
-         <data key="refugees">7500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">7500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">7500</data>
+         <data key="rityp">7500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">7500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">7500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="CHL" target="ROU" id="81">
-         <data key="refugees">1000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1000</data>
+         <data key="rityp">1000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1000</data>
+         <data key="r">1000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="BDI" target="RWA" id="82">
-         <data key="refugees">7500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">7500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">7500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">7500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="GNB" target="SEN" id="83">
-         <data key="refugees">5000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">5000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-32000</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">32000</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">5000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">5000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ALB" target="SRB" id="84">
-         <data key="refugees">2000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">2000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">2000</data>
+         <data key="rityp">2000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">2000</data>
+         <data key="r">2000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">2000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="SLE" id="85">
-         <data key="refugees">150</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">150</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-20</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">20</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">150</data>
+         <data key="ru">NaN</data>
+         <data key="ral">150</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ETH" target="SOM" id="86">
-         <data key="refugees">500000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">500000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">500000</data>
+         <data key="rityp">500000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">500000</data>
+         <data key="r">500000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">500000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="ESP" id="87">
-         <data key="refugees">15000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">15000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-1500</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">1500</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">15000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">15000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="COD" target="SDN" id="88">
-         <data key="refugees">4500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">4500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">4500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">4500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ETH" target="SDN" id="89">
-         <data key="refugees">145500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">145500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">40500</data>
+         <data key="rityp">40500</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">40500</data>
+         <data key="r">145500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">145500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="SWZ" id="90">
-         <data key="refugees">135</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">135</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">55</data>
+         <data key="rityp">55</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">55</data>
+         <data key="r">135</data>
+         <data key="ru">NaN</data>
+         <data key="ral">135</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="SWE" id="91">
-         <data key="refugees">20000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">20000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">0</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">20000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">20000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="CHE" id="92">
-         <data key="refugees">30000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">30000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-5000</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">5000</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">30000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">30000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="KHM" target="THA" id="93">
-         <data key="refugees">15030</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">15030</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-2060</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">2060</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">15030</data>
+         <data key="ru">NaN</data>
+         <data key="ral">15030</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="LAO" target="THA" id="94">
-         <data key="refugees">78970</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">78970</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">16250</data>
+         <data key="rityp">16250</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">16250</data>
+         <data key="r">78970</data>
+         <data key="ru">NaN</data>
+         <data key="ral">78970</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="VNM" target="THA" id="95">
-         <data key="refugees">3600</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">3600</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">540</data>
+         <data key="rityp">540</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">540</data>
+         <data key="r">3600</data>
+         <data key="ru">NaN</data>
+         <data key="ral">3600</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="TUR" id="96">
-         <data key="refugees">1050</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1050</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-10</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">10</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1050</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1050</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="COD" target="UGA" id="97">
-         <data key="refugees">34710</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">34710</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">480</data>
+         <data key="rityp">480</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">480</data>
+         <data key="r">34710</data>
+         <data key="ru">NaN</data>
+         <data key="ral">34710</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ETH" target="UGA" id="98">
-         <data key="refugees">500</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">500</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">430</data>
+         <data key="rityp">430</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">430</data>
+         <data key="r">500</data>
+         <data key="ru">NaN</data>
+         <data key="ral">500</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="KEN" target="UGA" id="99">
-         <data key="refugees">1200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1200</data>
+         <data key="rityp">1200</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1200</data>
+         <data key="r">1200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="RWA" target="UGA" id="100">
-         <data key="refugees">76840</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">76840</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-1640</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">1640</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">76840</data>
+         <data key="ru">NaN</data>
+         <data key="ral">76840</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="UGA" id="101">
-         <data key="refugees">80</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">80</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">80</data>
+         <data key="rityp">80</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">80</data>
+         <data key="r">80</data>
+         <data key="ru">NaN</data>
+         <data key="ral">80</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="UGA" id="102">
-         <data key="refugees">120</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">120</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">60</data>
+         <data key="rityp">60</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">120</data>
+         <data key="ru">NaN</data>
+         <data key="ral">120</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZWE" target="UGA" id="103">
-         <data key="refugees">120</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">120</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">120</data>
+         <data key="rityp">120</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">120</data>
+         <data key="r">120</data>
+         <data key="ru">NaN</data>
+         <data key="ral">120</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="UGA" target="ARE" id="104">
-         <data key="refugees">90</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">90</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">90</data>
+         <data key="rityp">90</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">90</data>
+         <data key="r">90</data>
+         <data key="ru">NaN</data>
+         <data key="ral">90</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="TZA" target="ARE" id="105">
-         <data key="refugees">300</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">300</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">300</data>
+         <data key="rityp">300</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">300</data>
+         <data key="r">300</data>
+         <data key="ru">NaN</data>
+         <data key="ral">300</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="GBR" id="106">
-         <data key="refugees">148000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">148000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-5000</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">5000</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">148000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">148000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="BDI" target="TZA" id="107">
-         <data key="refugees">134750</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">134750</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">8150</data>
+         <data key="rityp">8150</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">8150</data>
+         <data key="r">134750</data>
+         <data key="ru">NaN</data>
+         <data key="ral">134750</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="COD" target="TZA" id="108">
-         <data key="refugees">530</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">530</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">190</data>
+         <data key="rityp">190</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">190</data>
+         <data key="r">530</data>
+         <data key="ru">NaN</data>
+         <data key="ral">530</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="MWI" target="TZA" id="109">
-         <data key="refugees">100</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">100</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">40</data>
+         <data key="rityp">40</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">40</data>
+         <data key="r">100</data>
+         <data key="ru">NaN</data>
+         <data key="ral">100</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="RWA" target="TZA" id="110">
-         <data key="refugees">24370</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">24370</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">770</data>
+         <data key="rityp">770</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">770</data>
+         <data key="r">24370</data>
+         <data key="ru">NaN</data>
+         <data key="ral">24370</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="TZA" id="111">
-         <data key="refugees">310</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">310</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">310</data>
+         <data key="rityp">310</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">310</data>
+         <data key="r">310</data>
+         <data key="ru">NaN</data>
+         <data key="ral">310</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="UGA" target="TZA" id="112">
-         <data key="refugees">3630</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">3630</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1430</data>
+         <data key="rityp">1430</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1430</data>
+         <data key="r">3630</data>
+         <data key="ru">NaN</data>
+         <data key="ral">3630</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="TZA" id="113">
-         <data key="refugees">920</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">920</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-280</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">280</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">920</data>
+         <data key="ru">NaN</data>
+         <data key="ral">920</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="USA" id="114">
-         <data key="refugees">684700</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">684700</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">184700</data>
+         <data key="rityp">184700</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">684700</data>
+         <data key="ru">NaN</data>
+         <data key="ral">684700</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="URY" id="115">
-         <data key="refugees">2000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">2000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">2000</data>
+         <data key="rityp">2000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">2000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">2000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="*VA" id="116">
-         <data key="refugees">118200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">118200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-485100</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">485100</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">118200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">118200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="VNM" target="*VA" id="117">
-         <data key="refugees">5000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">5000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">5000</data>
+         <data key="rityp">5000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">5000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">5000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="VEN" id="118">
-         <data key="refugees">16000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">16000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">16000</data>
+         <data key="rityp">16000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">16000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">16000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="KHM" target="VNM" id="119">
-         <data key="refugees">60000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">60000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">60000</data>
+         <data key="rityp">60000</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">60000</data>
+         <data key="r">60000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">60000</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="YEM" id="120">
-         <data key="refugees">50</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">50</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">50</data>
+         <data key="rityp">50</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">50</data>
+         <data key="ru">NaN</data>
+         <data key="ral">50</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="AGO" target="ZMB" id="121">
-         <data key="refugees">29700</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">29700</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">1970</data>
+         <data key="rityp">1970</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">1970</data>
+         <data key="r">29700</data>
+         <data key="ru">NaN</data>
+         <data key="ral">29700</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="COD" target="ZMB" id="122">
-         <data key="refugees">200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">200</data>
+         <data key="rityp">200</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">200</data>
+         <data key="r">200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="MWI" target="ZMB" id="123">
-         <data key="refugees">950</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">950</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">950</data>
+         <data key="rityp">950</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">950</data>
+         <data key="r">950</data>
+         <data key="ru">NaN</data>
+         <data key="ral">950</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="NAM" target="ZMB" id="124">
-         <data key="refugees">2700</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">2700</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-650</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">650</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">2700</data>
+         <data key="ru">NaN</data>
+         <data key="ral">2700</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZAF" target="ZMB" id="125">
-         <data key="refugees">150</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">150</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-220</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">220</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">150</data>
+         <data key="ru">NaN</data>
+         <data key="ral">150</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="*VA" target="ZMB" id="126">
-         <data key="refugees">1200</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">1200</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">-850</data>
+         <data key="rityp">NaN</data>
+         <data key="rityn">850</data>
+         <data key="ritypnv">NaN</data>
+         <data key="r">1200</data>
+         <data key="ru">NaN</data>
+         <data key="ral">1200</data>
+         <data key="ralu">NaN</data>
       </edge>
       <edge source="ZWE" target="ZMB" id="127">
-         <data key="refugees">30000</data>
-         <data key="refugees-unhcr">NaN</data>
-         <data key="refugees-and-like">30000</data>
-         <data key="refugees-and-like-unhcr">NaN</data>
+         <data key="rity">29880</data>
+         <data key="rityp">29880</data>
+         <data key="rityn">NaN</data>
+         <data key="ritypnv">29880</data>
+         <data key="r">30000</data>
+         <data key="ru">NaN</data>
+         <data key="ral">30000</data>
+         <data key="ralu">NaN</data>
       </edge>
    </graph>
 </graphml>
