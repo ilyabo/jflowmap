@@ -52,10 +52,12 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class SmallMultiplesMain {
 
+
     private static Logger logger = Logger.getLogger(SmallMultiplesMain.class);
 
     private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
     private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
+    private static final Color LABEL_COLOR = Color.gray;
     private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
     private static final int FRAME_WIDTH = 1280;
@@ -63,29 +65,32 @@ public class SmallMultiplesMain {
 
     private static void setupFlowMapModel(FlowMapModel model) {
         model.setShowNodes(true);
-        model.setMaxEdgeWidth(20);
+        model.setMaxEdgeWidth(30);
         model.setNodeSize(3);
         model.setShowDirectionMarkers(true);
-        model.setDirectionMarkerSize(.1);
-        model.setDirectionMarkerAlpha(210);
-        model.setEdgeAlpha(50);
+        model.setDirectionMarkerSize(.17);
+        model.setDirectionMarkerAlpha(255);
+        model.setEdgeAlpha(70);
     }
 
     static class RenderTask extends SwingWorker<Void, Void> {
-        private static final double ZOOM_LEVEL = 1.0;
-        final int startYear = 2008;
+//        private static final double ZOOM_LEVEL = 1.3;
+        private static final double ZOOM_LEVEL = 1.3;
+        private static final double MOVE_DX = 30;
+        private static final double MOVE_DY = -50;
+        final int startYear = 2004;
 //        final int endYear = 2000;
-        final int endYear = 1978;
-        final int yearStep = -2;
+        final int endYear = 2008;
+        final int yearStep = +2;
         final int n = ((endYear - startYear) / yearStep) + 1;
-        final int numColumns = 4;
+        final int numColumns = 3;
         final int paddingX = 5;
         final int paddingY = 5;
 
         final String filenameTemplate = "data/refugees/refugees-{year}.xml";
         final DatasetSpec datasetSpec = new DatasetSpec(
                 filenameTemplate.replace("{year}", Integer.toString(startYear)),
-                "refugees", "x", "y", "name", "data/refugees/countries-areas.xml"
+                "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
         );
         final String outputFileName = "refugees-small-multiples.png";
 
@@ -166,6 +171,10 @@ public class SmallMultiplesMain {
                             PCamera camera = visualFlowMap.getCamera();
                             PBounds viewBounds = camera.getViewBounds();
                             camera.scaleViewAboutPoint(ZOOM_LEVEL, viewBounds.x + viewBounds.width / 2, viewBounds.y + viewBounds.height / 2);
+                            viewBounds = (PBounds) camera.getViewBounds().clone();
+                            viewBounds.x += MOVE_DX;
+                            viewBounds.y += MOVE_DY;
+                            camera.setViewBounds(viewBounds);
                         }
                     });
                 }
@@ -186,7 +195,7 @@ public class SmallMultiplesMain {
 
                         jFlowMap.paint(g);
 
-                        g.setColor(Color.white);
+                        g.setColor(LABEL_COLOR);
                         g.setFont(LABEL_FONT);
 
                         g.translate(-x, -y);
@@ -238,7 +247,7 @@ public class SmallMultiplesMain {
         ptext.setX(cameraBounds.getX());
         ptext.setY(cameraBounds.getY() + cameraBounds.getHeight() - TITLE_FONT.getSize2D());
         ptext.setFont(TITLE_FONT);
-        ptext.setTextPaint(Color.white);
+        ptext.setTextPaint(LABEL_COLOR);
         return ptext;
     }
 
@@ -254,7 +263,7 @@ public class SmallMultiplesMain {
         VisualNode node = visualFlowMap.getVisualNodeByLabel(label);
         PText ptext = new PText(node.getLabel());
         ptext.setFont(LABEL_FONT);
-        ptext.setTextPaint(Color.white);
+        ptext.setTextPaint(LABEL_COLOR);
         double width = 20;
         double height = LABEL_FONT.getSize2D();
         ptext.setBounds(node.getX() - width/2, node.getY() + visualFlowMap.getModel().getNodeSize() * 1.1, width, height);
