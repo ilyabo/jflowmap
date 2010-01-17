@@ -342,8 +342,8 @@ public class ControlPanel {
 
     public void setData(FlowMapModel data) {
         autoAdjustColorScaleCheckBox.setSelected(data.getAutoAdjustColorScale());
-        useLogWidthScaleCheckbox.setSelected(data.isUseLogWidthScale());
-        useLogColorScaleCheckbox.setSelected(data.isUseLogColorScale());
+        useLogWidthScaleCheckbox.setSelected(data.getUseLogWidthScale());
+        useLogColorScaleCheckbox.setSelected(data.getUseLogColorScale());
 
         minLengthFilterSpinner.setValue(data.getEdgeLengthFilterMin());
         maxLengthFilterSpinner.setValue(data.getEdgeLengthFilterMax());
@@ -368,6 +368,7 @@ public class ControlPanel {
     private void initUIChangeListeners() {
         initDatasetListeners();
         initFilterListeners();
+        initScalesListeners();
         initAestheticsListeners();
         initEdgeBundlingListeners();
         initNodeClusterListeners();
@@ -426,6 +427,21 @@ public class ControlPanel {
             public void stateChanged(ChangeEvent e) {
                 if (initializing) return;
                 getFlowMapModel().setEdgeLengthFilterMax((Double) maxLengthFilterSpinner.getValue());
+            }
+        });
+    }
+
+    private void initScalesListeners() {
+        useLogColorScaleCheckbox.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (initializing) return;
+                getFlowMapModel().setUseLogColorScale(useLogColorScaleCheckbox.isSelected());
+            }
+        });
+        useLogWidthScaleCheckbox.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (initializing) return;
+                getFlowMapModel().setUseLogWidthScale(useLogWidthScaleCheckbox.isSelected());
             }
         });
     }
@@ -973,11 +989,11 @@ public class ControlPanel {
         separator4.setOrientation(1);
         panel5.add(separator4, cc.xywh(3, 1, 1, 5, CellConstraints.CENTER, CellConstraints.FILL));
         useLogWidthScaleCheckbox = new JCheckBox();
-        useLogWidthScaleCheckbox.setEnabled(false);
+        useLogWidthScaleCheckbox.setEnabled(true);
         useLogWidthScaleCheckbox.setText("Use log width scale");
         panel5.add(useLogWidthScaleCheckbox, cc.xy(2, 1));
         useLogColorScaleCheckbox = new JCheckBox();
-        useLogColorScaleCheckbox.setEnabled(false);
+        useLogColorScaleCheckbox.setEnabled(true);
         useLogColorScaleCheckbox.setText("Use log color scale");
         panel5.add(useLogColorScaleCheckbox, cc.xyw(1, 3, 2));
         mapEdgeValueToCheckBox = new JCheckBox();

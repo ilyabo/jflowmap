@@ -26,10 +26,14 @@ import java.util.Iterator;
  * @author Ilya Boyandin
  */
 public final class GeomUtils {
-    
+
     private GeomUtils() {
     }
-    
+
+    public static boolean isSelfLoopEdge(double srcX, double srcY, double targetX, double targetY) {
+        return srcX == targetX  &&  srcY == targetY;
+    }
+
     public static Point centroid(Iterator<Point> points) {
         double x = 0, y = 0;
         int count = 0;
@@ -39,8 +43,8 @@ public final class GeomUtils {
             y += p.y();
             count++;
         }
-        x /= (double)count;
-        y /= (double)count;
+        x /= count;
+        y /= count;
         return new Point(x, y);
     }
 
@@ -49,19 +53,19 @@ public final class GeomUtils {
         double dy = y1 - y2;
         return Math.sqrt(dx * dx + dy * dy);
     }
-    
+
     public static Point2D projectPointToLine(Point2D line1, Point2D line2, Point2D point) {
         return projectPointToLine(
                 line1.getX(), line1.getY(), line2.getX(), line2.getY(),
                 point.getX(), point.getY()).asPoint2D();
     }
-    
+
     public static Point projectPointToLine(Point line1, Point line2, Point point) {
         return projectPointToLine(
                 line1.x(), line1.y(), line2.x(), line2.y(),
                 point.x(), point.y());
     }
-    
+
     /**
      * See http://www.exaflop.org/docs/cgafaq/cga1.html
      */
@@ -74,7 +78,7 @@ public final class GeomUtils {
     public static Point2D midpoint(Point2D a, Point2D b) {
         return between(a, b, 0.5);
     }
-    
+
     /**
      * Returns a point on a segment between the two points
      * @param alpha Between 0 and 1
@@ -85,7 +89,7 @@ public final class GeomUtils {
                 a.getY() + (b.getY() - a.getY()) * alpha
         );
     }
-    
+
     public static Point midpoint(Point a, Point b) {
         return between(a, b, 0.5);
     }
@@ -100,5 +104,5 @@ public final class GeomUtils {
                 a.y() + (b.y() - a.y()) * alpha
         );
     }
-    
+
 }

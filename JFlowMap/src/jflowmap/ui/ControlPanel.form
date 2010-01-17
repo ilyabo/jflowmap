@@ -371,7 +371,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <text value="Use log width scale"/>
                 </properties>
               </component>
@@ -381,7 +381,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <text value="Use log color scale"/>
                 </properties>
               </component>
@@ -1188,26 +1188,6 @@
                   <selected value="true"/>
                   <text value="Combine with Euclidean clusters"/>
                 </properties>
-              </component>
-            </children>
-          </grid>
-          <grid id="b6d37" layout-manager="FormLayout">
-            <rowspec value="center:d:noGrow"/>
-            <colspec value="fill:d:noGrow"/>
-            <constraints>
-              <tabbedpane title="Untitled"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="b15b3" class="javax.swing.JFormattedTextField" binding="formattedTextField1" default-binding="true">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                  <forms defaultalign-horz="false"/>
-                </constraints>
-                <properties/>
               </component>
             </children>
           </grid>

@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -73,34 +74,49 @@ public class SmallMultiplesMain {
 
     private static void setupFlowMapModel(FlowMapModel model) {
         model.setShowNodes(true);
-        model.setMaxEdgeWidth(20);
+        model.setMaxEdgeWidth(15);
         model.setNodeSize(3);
         model.setShowDirectionMarkers(true);
         model.setDirectionMarkerSize(.17);
         model.setDirectionMarkerAlpha(255);
-        model.setEdgeAlpha(70);
+        model.setEdgeAlpha(100);
     }
 
     static class RenderTask extends SwingWorker<Void, Void> {
-//        private static final double ZOOM_LEVEL = 1.3;
+
+        private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = true;
+
         private static final double ZOOM_LEVEL = 1.3;
         private static final double MOVE_DX = 30;
         private static final double MOVE_DY = -50;
-        final int startYear = 2002;
-//        final int endYear = 2000;
-        final int endYear = 2008;
-        final int yearStep = +3;
-        final int n = ((endYear - startYear) / yearStep) + 1;
+
+        final Map<String, DatasetSpec> datasets;
+
+        final DatasetSpec datasetSpec = new DatasetSpec(
+                "data/refugees/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+        );
+        final String outputFileName = "refugees-small-multiples.png";
+
+//        final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
+//        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
+        final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
+
+//        final List<String> datasetNames;
+//        final int startYear = 2001;
+//        final int endYear = 2008;
+//        final int yearStep = +1;
+//        final int n = ((endYear - startYear) / yearStep) + 1;
+//        {
+//            datasetNames = Lists.newArrayList();
+//            for (int i = 0; i < n; i++) {
+//                datasetNames.add(Integer.toString(startYear + i * yearStep));
+//            }
+//        }
+
+
         final int numColumns = 3;
         final int paddingX = 5;
         final int paddingY = 5;
-
-        final String filenameTemplate = "data/refugees/refugees-{year}.xml";
-        final DatasetSpec datasetSpec = new DatasetSpec(
-                filenameTemplate.replace("{year}", Integer.toString(startYear)),
-                "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
-        );
-        final String outputFileName = "refugees-small-multiples.png";
 
         private final ProgressMonitor progress;
         private final JFlowMap jFlowMap;
@@ -114,6 +130,13 @@ public class SmallMultiplesMain {
         public RenderTask(JFrame parent, JFlowMap jFlowMap) {
             this.jFlowMap = jFlowMap;
             this.parentFrame = parent;
+
+            datasets = Maps.newLinkedHashMap();
+            for (String name : datasetNames) {
+                datasets.put(name, datasetSpec.withFilename(datasetSpec.getFilename().replace("{name}", name)));
+            }
+
+            final int n = datasets.size();
             progress = new ProgressMonitor(parent, "Rendering small multiples", "", 0, n);
 
             width = jFlowMap.getWidth();
@@ -137,20 +160,21 @@ public class SmallMultiplesMain {
         }
 
         private void renderFlowMap() throws InterruptedException, InvocationTargetException, DataIOException {
-            Map<String, DatasetSpec> datasets = Maps.newLinkedHashMap();
-            for (int i = 0; i < n; i++) {
-                String name = Integer.toString(startYear + i * yearStep);
-                datasets.put(name, datasetSpec.withFilename(filenameTemplate.replace("{year}", name)));
+
+            final FlowMapStats stats;
+            if (USE_GLOBAL_VISUAL_MAPPINGS) {
+                // calc the global stats
+                List<FlowMapGraphWithAttrSpecs> gs = Lists.newArrayList();
+                for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
+                    final String name = entry.getKey();
+                    final DatasetSpec ds = entry.getValue();
+                    progress.setNote("Gathering stats for " + name);
+                    gs.add(new FlowMapGraphWithAttrSpecs(JFlowMap.loadGraph(ds.getFilename()), ds.getAttrsSpec()));
+                }
+                stats = FlowMapStats.createFor(gs);
+            } else {
+                stats = null;
             }
-
-
-            // calc the global stats
-            List<FlowMapGraphWithAttrSpecs> gs = Lists.newArrayList();
-            for (DatasetSpec ds : datasets.values()) {
-                gs.add(new FlowMapGraphWithAttrSpecs(JFlowMap.loadGraph(ds.getFilename()), ds.getAttrsSpec()));
-            }
-
-            final FlowMapStats stats = FlowMapStats.createFor(gs);
 
 
             final Graphics2D g = (Graphics2D)image.getGraphics();
@@ -229,7 +253,7 @@ public class SmallMultiplesMain {
                         g.translate(-x, -y);
 
                         progress.setProgress(_cycle);
-                        progress.setNote("Rendering graphic " + (_cycle + 1) + " of " + n);
+                        progress.setNote("Rendering graphic " + (_cycle + 1) + " of " + datasets.size());
                     }
                 });
 

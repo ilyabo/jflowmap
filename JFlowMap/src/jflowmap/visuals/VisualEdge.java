@@ -19,18 +19,15 @@
 package jflowmap.visuals;
 
 import java.awt.Color;
-import java.awt.LinearGradientPaint;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.util.Arrays;
 
-import jflowmap.data.MinMax;
 import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.models.FlowMapModel;
-import jflowmap.util.ColorUtils;
 
 import org.apache.log4j.Logger;
 
@@ -40,7 +37,6 @@ import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  * @author Ilya Boyandin
@@ -51,12 +47,7 @@ public abstract class VisualEdge extends PNode {
 
 	private static Logger logger = Logger.getLogger(VisualEdge.class);
 
-	private static final int MIN_COLOR_INTENSITY = 25;
-	private static final float[] DEFAULT_GRADIENT_FRACTIONS = new float[] { 0.0f, 1.0f };
-    private static final float MIN_FRACTION_DIFF = 1e-5f;
-
     private final VisualFlowMap visualFlowMap;
-
     private final VisualNode sourceNode;
     private final VisualNode targetNode;
     private final Edge edge;
@@ -112,8 +103,6 @@ public abstract class VisualEdge extends PNode {
                 new Point(x1 + size/2, y1 + size/2),
                 new Point(x1, y1)
         }));
-
-
         return shape;
     }
 
@@ -241,145 +230,23 @@ public abstract class VisualEdge extends PNode {
         '}';
     }
 
-    public double getNormalizedLogValue() {
-//        FlowMapModel model = getVisualFlowMap().getModel();
-        double value = getEdgeWeight();
-        double nv;
-//        if (model.getAutoAdjustEdgeColorScale()) {
-//            double minLog = 1.0;
-//            double maxLog = Math.log(model.getEdgeWeightFilterMax() - model.getEdgeWeightFilterMin());
-//            if (maxLog == minLog) {
-//                nv = 1.0;
-//            } else {
-//                nv = (Math.log(value - model.getEdgeWeightFilterMin()) - minLog) / (maxLog - minLog);
-//            }
-//        } else {
-            MinMax stats = visualFlowMap.getStats().getEdgeWeightStats();
-            nv = stats.normalizeLog(value);
-//        }
-        if (Double.isNaN(nv)) {
-            logger.error("NaN normalized log value for edge: " + this);
-        }
-        return nv;
-    }
-
-    public double getNormalizedValue() {
-        double nv;
-
-        MinMax stats = visualFlowMap.getStats().getEdgeWeightStats();
-        nv = stats.normalize(getEdgeWeight());
-
-        if (Double.isNaN(nv)) {
-            logger.error("NaN normalized value for edge: " + this);
-        }
-
-        return nv;
-    }
-
-    protected Paint createPaint() {
-		// TODO: use colors from color scheme
-        FlowMapModel model = getVisualFlowMap().getModel();
-        final double normalizedValue = getNormalizedLogValue();
-//            int value = (int)Math.round(MIN_COLOR_INTENSITY + (255 - MIN_COLOR_INTENSITY) * normalizedValue);
-        int alpha = model.getEdgeAlpha();
-        if (isSelfLoop) {
-            return ColorUtils.colorBetween(
-                    visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT),
-                    visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT),
-                    normalizedValue, alpha);
-        } else {
-        	if (!model.getShowDirectionMarkers()  &&  !model.getFillEdgesWithGradient()) {
-        		return ColorUtils.colorBetween(
-                        visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
-                        visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT),
-                        normalizedValue, alpha);
-        	} else {
-        		Color startEdgeColor, endEdgeColor;
-        		if (model.getFillEdgesWithGradient()) {
-//        		    startEdgeColor = new Color(value, 0, 0, alpha);
-//        		    endEdgeColor = new Color(0, value, 0, alpha);
-    				startEdgeColor = ColorUtils.colorBetween(
-    	                    visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT),
-    	                    visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT),
-    	                    normalizedValue, alpha);
-                    endEdgeColor = ColorUtils.colorBetween(
-                            visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT),
-                            visualFlowMap.getColor(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT),
-                            normalizedValue, alpha);
-        		} else {
-        			// TODO: use a special paint (not gradient) for this case
-//        		    startEdgeColor = new Color(value, value, value, alpha);
-					startEdgeColor = ColorUtils.colorBetween(
-                            visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
-                            visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT),
-                            normalizedValue, alpha);
-					endEdgeColor = startEdgeColor;
-        		}
-
-				float[] fractions = null;
-        		Color[] colors = null;
-	        	if (model.getShowDirectionMarkers()) {
-	        		float markerSize;
-		        	if (model.getUseProportionalDirectionMarkers()) {
-		        		markerSize = (float)model.getDirectionMarkerSize();
-		        	} else {
-		        		MinMax lstats = visualFlowMap.getStats().getEdgeLengthStats();
-						markerSize = (float)Math.min(
-								.5 - MIN_FRACTION_DIFF,	 // the markers must not be longer than half of an edge
-								((lstats.getMin() + model.getDirectionMarkerSize() * (lstats.getMax() - lstats.getMin()))
-								/ 2)
-								/ edgeLength	// the markers must be of equal length for every edge
-												// (excepting the short ones)
-						);
-		        	}
-		        	if (markerSize - MIN_FRACTION_DIFF < 0) {
-		        		markerSize = MIN_FRACTION_DIFF;
-		        	}
-		        	if (markerSize > 0.5f - MIN_FRACTION_DIFF) {
-		        		markerSize = 0.5f - MIN_FRACTION_DIFF;
-		        	}
-		            int markerAlpha = model.getDirectionMarkerAlpha();
-//		            Color startMarkerColor = new Color(value, 0, 0, markerAlpha);
-//		            Color endMarkerColor = new Color(0, value, 0, markerAlpha);
-		        	Color startMarkerColor = ColorUtils.colorBetween(
-                            visualFlowMap.getColor(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT),
-                            visualFlowMap.getColor(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT),
-                            normalizedValue, markerAlpha);
-		        	Color endMarkerColor = ColorUtils.colorBetween(
-                            visualFlowMap.getColor(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT),
-                            visualFlowMap.getColor(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT),
-                            normalizedValue, markerAlpha);
-					fractions = new float[] {
-							markerSize - MIN_FRACTION_DIFF,			// start marker
-							markerSize, 1.0f - markerSize,			// line
-							1.0f - markerSize + MIN_FRACTION_DIFF	// end marker
-					};
-					colors = new Color[] {
-							startMarkerColor,
-							startEdgeColor,
-							endEdgeColor,
-							endMarkerColor,
-					};
-	        	} else {
-	        		fractions = DEFAULT_GRADIENT_FRACTIONS;
-	        		colors = new Color[] { startEdgeColor, endEdgeColor };
-	        	}
-				return new LinearGradientPaint(
-	                    (float)getSourceX(), (float)getSourceY(),
-	                    (float)getTargetX(), (float)getTargetY(),
-	                    fractions,
-	                    colors
-	            );
-        	}
-
-        }
-    }
-
     public void updateEdgeColors() {
         PPath ppath = getEdgePPath();
         if (ppath != null) {
             ppath.setStrokePaint(createPaint());
         }
+    }
+
+    private Paint createPaint() {
+        double normalizedValue = visualFlowMap.getModel().normalizeEdgeWeightForColorScale(getEdgeWeight());
+        return visualFlowMap.getVisualEdgePaintFactory().createPaint(
+                normalizedValue, getSourceX(), getSourceY(), getTargetX(), getTargetY(),
+                edgeLength, isSelfLoop);
+    }
+
+    protected Stroke createStroke() {
+        double normalizedValue = visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(getEdgeWeight());
+        return visualFlowMap.getVisualEdgeStrokeFactory().createStroke(normalizedValue);
     }
 
     public void setHighlighted(boolean value, boolean showDirection, boolean asOutgoing) {
@@ -406,13 +273,6 @@ public abstract class VisualEdge extends PNode {
 //            getSourceNode().setVisible(value);
 //            getTargetNode().setVisible(value);
         }
-    }
-
-    protected Stroke createStroke() {
-        double nv = getNormalizedValue();
-        float width = (float)(1 + nv * getVisualFlowMap().getModel().getMaxEdgeWidth());
-        return new PFixedWidthStroke(width);
-//        return new BasicStroke(width);
     }
 
     public void update() {

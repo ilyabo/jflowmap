@@ -129,7 +129,7 @@ public class JFlowMap extends JComponent {
                 .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(0, 0, 0))
 
                 .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(255, 255, 255))
-                .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
+                .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(20, 20, 200))
 
                 .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(255, 255, 255))
                 .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
@@ -144,6 +144,10 @@ public class JFlowMap extends JComponent {
                 .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(255, 255, 255))
 //                .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
                 .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(8, 156, 1))
+
+                .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
+                .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
+                .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
                 .build());
 
 //            ColorScheme.of("Inverted", colors
@@ -266,6 +270,7 @@ public class JFlowMap extends JComponent {
     public void setVisualFlowMap(VisualFlowMap newFlowMap) {
         if (visualFlowMap != null) {
             canvas.getLayer().removeChild(visualFlowMap);
+            visualFlowMap.removeChildrenFromCamera();
         }
         canvas.getLayer().addChild(newFlowMap);
         visualFlowMap = newFlowMap;

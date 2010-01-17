@@ -116,11 +116,18 @@ public class VisualFlowMap extends PNode {
     // endOf clustering fields
     private boolean bundled;
 
+    private final VisualEdgePaintFactory visualEdgePaintFactory;
+    private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
+    private final VisualLegend visualLegend;
+
     public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, FlowMapModel model) {
         this.jFlowMap = jFlowMap;
     	this.flowMapModel = model;
 
-        nodeLayer = new PNode();
+    	visualEdgePaintFactory = new VisualEdgePaintFactory(this);
+    	visualEdgeStrokeFactory = new VisualEdgeStrokeFactory(this);
+
+    	nodeLayer = new PNode();
         createNodeVisuals();
 
         edgeLayer = new PNode();
@@ -135,9 +142,17 @@ public class VisualFlowMap extends PNode {
         PCamera camera = getCamera();
 	    camera.addChild(tooltipBox);
 
+	    visualLegend = new VisualLegend(this);
+        camera.addChild(visualLegend);
+
         initModelChangeListeners(model);
 //        fitInCameraView();
 //        fitInCameraView(false);
+    }
+
+    public void removeChildrenFromCamera() {
+        getCamera().removeChild(tooltipBox);
+        getCamera().removeChild(visualLegend);
     }
 
     public boolean isBundled() {
@@ -146,6 +161,14 @@ public class VisualFlowMap extends PNode {
 
     public Color getColor(ColorCodes code) {
         return jFlowMap.getColor(code);
+    }
+
+    public VisualEdgePaintFactory getVisualEdgePaintFactory() {
+        return visualEdgePaintFactory;
+    }
+
+    public VisualEdgeStrokeFactory getVisualEdgeStrokeFactory() {
+        return visualEdgeStrokeFactory;
     }
 
     private void createNodeVisuals() {
@@ -418,19 +441,24 @@ public class VisualFlowMap extends PNode {
 				if (prop.equals(FlowMapModel.PROPERTY_AUTO_ADJUST_COLOR_SCALE)  ||
 					prop.equals(FlowMapModel.PROPERTY_EDGE_ALPHA)  ||
 					prop.equals(FlowMapModel.PROPERTY_DIRECTION_MARKER_ALPHA)  ||
+					prop.equals(FlowMapModel.PROPERTY_USE_LOG_COLOR_SCALE)  ||
 					prop.equals(FlowMapModel.PROPERTY_FILL_EDGES_WITH_GRADIENT) ||
 					prop.equals(FlowMapModel.PROPERTY_SHOW_DIRECTION_MARKERS)  ||
 					prop.equals(FlowMapModel.PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS)  ||
 					prop.equals(FlowMapModel.PROPERTY_DIRECTION_MARKER_SIZE)
 				) {
 					updateEdgeColors();
-				} else if (prop.equals(FlowMapModel.PROPERTY_MAX_EDGE_WIDTH)) {
+					visualLegend.update();
+				} else if (prop.equals(FlowMapModel.PROPERTY_MAX_EDGE_WIDTH)  ||
+				           prop.equals(FlowMapModel.PROPERTY_USE_LOG_WIDTH_SCALE)
+				        ) {
 					updateEdgeWidths();
+                    visualLegend.update();
 				} else if (prop.equals(FlowMapModel.PROPERTY_VALUE_FILTER_MIN) ||
 						prop.equals(FlowMapModel.PROPERTY_VALUE_FILTER_MAX))
 				{
 	                updateEdgeVisibility();
-	                updateEdgeColors();
+//	                updateEdgeColors();
 				} else if (prop.equals(FlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MIN) ||
 						prop.equals(FlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MAX))
 				{

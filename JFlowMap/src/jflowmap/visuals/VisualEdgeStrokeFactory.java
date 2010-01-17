@@ -16,37 +16,27 @@
  * limitations under the License.
  */
 
-package jflowmap.geom;
+package jflowmap.visuals;
+
+import java.awt.Stroke;
+
+import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  * @author Ilya Boyandin
  */
-public class Segment {
-    
-    private final Point a;
-    private final Point b;
+public class VisualEdgeStrokeFactory {
 
-    public Segment(Point a, Point b) {
-        this.a = a;
-        this.b = b;
+    private final VisualFlowMap visualFlowMap;
+
+    public VisualEdgeStrokeFactory(VisualFlowMap visualFlowMap) {
+        this.visualFlowMap = visualFlowMap;
     }
 
-    public Point getA() {
-        return a;
+    public Stroke createStroke(double normalizedValue) {
+        float width = (float)(1 + normalizedValue * visualFlowMap.getModel().getMaxEdgeWidth());
+        return new PFixedWidthStroke(width);
+//        return new BasicStroke(width);
     }
 
-    public Point getB() {
-        return b;
-    }
-    
-    public double length() {
-        return a.distanceTo(b);
-    }
-
-    public String toString() {
-        return "Segment ( "
-            + "a = " + this.a + ", "
-            + "b = " + this.b + ", "
-            + " )";
-    }
 }

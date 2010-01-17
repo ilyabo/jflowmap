@@ -26,6 +26,7 @@ import java.util.List;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
+import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -46,8 +47,8 @@ public class FlowMapModel {
     private static final String SUBDIVISION_POINTS_ATTR_NAME = "_subdivp";
 
     private boolean autoAdjustColorScale;
-    private boolean useLogColorScale;
-    private boolean useLogWidthScale;
+    private boolean useLogColorScale = true;
+    private boolean useLogWidthScale = false;
     private boolean showNodes = true;
     private boolean showDirectionMarkers = true;
     private boolean fillEdgesWithGradient = true;
@@ -131,7 +132,7 @@ public class FlowMapModel {
         changes.firePropertyChange(PROPERTY_AUTO_ADJUST_COLOR_SCALE, old, autoAdjustColorScale);
     }
 
-    public boolean isUseLogColorScale() {
+    public boolean getUseLogColorScale() {
         return useLogColorScale;
     }
 
@@ -141,12 +142,12 @@ public class FlowMapModel {
         changes.firePropertyChange(PROPERTY_USE_LOG_COLOR_SCALE, old, useLogColorScale);
     }
 
-    public boolean isUseLogWidthScale() {
+    public boolean getUseLogWidthScale() {
         return useLogWidthScale;
     }
 
     public void setUseLogWidthScale(final boolean useLogWidthScale) {
-        boolean old = useLogWidthScale;
+        boolean old = this.useLogWidthScale;
         this.useLogWidthScale = useLogWidthScale;
         changes.firePropertyChange(PROPERTY_USE_LOG_WIDTH_SCALE, old, useLogWidthScale);
     }
@@ -389,9 +390,10 @@ public class FlowMapModel {
         if (src == target) {
             return true;
         }
-        return
-            (src.getDouble(xNodeAttr) == target.getDouble(xNodeAttr))  &&
-            (src.getDouble(yNodeAttr) == target.getDouble(yNodeAttr));
+        return GeomUtils.isSelfLoopEdge(
+                src.getDouble(xNodeAttr), target.getDouble(xNodeAttr),
+                src.getDouble(yNodeAttr), target.getDouble(yNodeAttr)
+        );
     }
 
     public boolean hasEdgeSubdivisionPoints(Edge edge) {
@@ -442,4 +444,20 @@ public class FlowMapModel {
         return new Point(target.getDouble(xNodeAttr), target.getDouble(yNodeAttr));
     }
 
+    public double normalize(double edgeWeight, boolean useLogValue) {
+        MinMax ws = getStats().getEdgeWeightStats();
+        if (useLogValue) {
+            return ws.normalizeLog(edgeWeight);
+        } else {
+            return ws.normalize(edgeWeight);
+        }
+    }
+
+    public double normalizeEdgeWeightForColorScale(double edgeWeight) {
+        return normalize(edgeWeight, useLogColorScale);
+    }
+
+    public double normalizeEdgeWeightForWidthScale(double edgeWeight) {
+        return normalize(edgeWeight, useLogWidthScale);
+    }
 }

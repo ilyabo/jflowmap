@@ -30,12 +30,12 @@ import java.util.List;
  * Based on the BSpline example from the book
  * "Computer Graphics Using Java 2D and 3D"
  * by Hong Zhang and Y.Daniel Liang.
- * 
+ *
  * @author Ilya Boyandin
  */
 public class BSplinePath extends Path2D.Double {
-    
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 3838887297097056901L;
 
     public BSplinePath(List<Point> points) {
         int n = points.size();
@@ -43,7 +43,7 @@ public class BSplinePath extends Path2D.Double {
             throw new IllegalArgumentException(
                     "BSplinePath needs at least 4 points");
         }
-        
+
         Point p1 = null;
         Point p2 = null;
         Point p3 = null;
@@ -100,5 +100,5 @@ public class BSplinePath extends Path2D.Double {
 //        curveTo(x1, y1, x2, y2, x3, y3);
         curveTo(x1, y1, x3, y3, x3, y3);
     }
-    
+
 }
