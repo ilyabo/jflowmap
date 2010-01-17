@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -69,8 +68,12 @@ public class SmallMultiplesMain {
     private static final Color LABEL_COLOR = Color.gray;
     private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
-    private static final int FRAME_WIDTH = 1280;
-    private static final int FRAME_HEIGHT = 1024;
+//    private static final int FRAME_WIDTH = 1280;
+//    private static final int FRAME_HEIGHT = 1024;
+//    private static final int FRAME_WIDTH = 1024;
+//    private static final int FRAME_HEIGHT = 768;
+    private static final int FRAME_WIDTH = 800;
+    private static final int FRAME_HEIGHT = 600;
 
     private static void setupFlowMapModel(FlowMapModel model) {
         model.setShowNodes(true);
@@ -84,7 +87,7 @@ public class SmallMultiplesMain {
 
     static class RenderTask extends SwingWorker<Void, Void> {
 
-        private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = true;
+        private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = false;
 
         private static final double ZOOM_LEVEL = 1.3;
         private static final double MOVE_DX = 30;
@@ -99,22 +102,22 @@ public class SmallMultiplesMain {
 
 //        final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
 //        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
-        final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
+//        final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
 
-//        final List<String> datasetNames;
-//        final int startYear = 2001;
-//        final int endYear = 2008;
-//        final int yearStep = +1;
-//        final int n = ((endYear - startYear) / yearStep) + 1;
-//        {
-//            datasetNames = Lists.newArrayList();
-//            for (int i = 0; i < n; i++) {
-//                datasetNames.add(Integer.toString(startYear + i * yearStep));
-//            }
-//        }
+        final List<String> datasetNames;
+        final int startYear = 1989;
+        final int endYear = 2008;
+        final int yearStep = +1;
+        final int n = ((endYear - startYear) / yearStep) + 1;
+        {
+            datasetNames = Lists.newArrayList();
+            for (int i = 0; i < n; i++) {
+                datasetNames.add(Integer.toString(startYear + i * yearStep));
+            }
+        }
 
 
-        final int numColumns = 3;
+        final int numColumns = 5;
         final int paddingX = 5;
         final int paddingY = 5;
 
