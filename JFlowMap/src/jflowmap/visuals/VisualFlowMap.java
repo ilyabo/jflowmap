@@ -873,7 +873,8 @@ public class VisualFlowMap extends PNode {
                 FlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
                 FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
                 0,
-                clusteredGraph
+                clusteredGraph,
+                null
         );
         if (areaMap != null) {
             clusteredFlowMap.setAreaMap((VisualAreaMap)areaMap.clone());

@@ -26,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -35,13 +37,19 @@ import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import jflowmap.data.FlowMapStats;
 import jflowmap.models.FlowMapModel;
 import jflowmap.visuals.VisualFlowMap;
 import jflowmap.visuals.VisualNode;
 
 import org.apache.log4j.Logger;
 
+import prefuse.data.io.DataIOException;
 import at.fhj.utils.misc.FileUtils;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PText;
@@ -65,7 +73,7 @@ public class SmallMultiplesMain {
 
     private static void setupFlowMapModel(FlowMapModel model) {
         model.setShowNodes(true);
-        model.setMaxEdgeWidth(30);
+        model.setMaxEdgeWidth(20);
         model.setNodeSize(3);
         model.setShowDirectionMarkers(true);
         model.setDirectionMarkerSize(.17);
@@ -78,10 +86,10 @@ public class SmallMultiplesMain {
         private static final double ZOOM_LEVEL = 1.3;
         private static final double MOVE_DX = 30;
         private static final double MOVE_DY = -50;
-        final int startYear = 2004;
+        final int startYear = 2002;
 //        final int endYear = 2000;
         final int endYear = 2008;
-        final int yearStep = +2;
+        final int yearStep = +3;
         final int n = ((endYear - startYear) / yearStep) + 1;
         final int numColumns = 3;
         final int paddingX = 5;
@@ -128,7 +136,23 @@ public class SmallMultiplesMain {
             return null;
         }
 
-        private void renderFlowMap() throws InterruptedException, InvocationTargetException {
+        private void renderFlowMap() throws InterruptedException, InvocationTargetException, DataIOException {
+            Map<String, DatasetSpec> datasets = Maps.newLinkedHashMap();
+            for (int i = 0; i < n; i++) {
+                String name = Integer.toString(startYear + i * yearStep);
+                datasets.put(name, datasetSpec.withFilename(filenameTemplate.replace("{year}", name)));
+            }
+
+
+            // calc the global stats
+            List<FlowMapGraphWithAttrSpecs> gs = Lists.newArrayList();
+            for (DatasetSpec ds : datasets.values()) {
+                gs.add(new FlowMapGraphWithAttrSpecs(JFlowMap.loadGraph(ds.getFilename()), ds.getAttrsSpec()));
+            }
+
+            final FlowMapStats stats = FlowMapStats.createFor(gs);
+
+
             final Graphics2D g = (Graphics2D)image.getGraphics();
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -136,19 +160,23 @@ public class SmallMultiplesMain {
             g.fillRect(0, 0, totalWidth, totalHeight);
 
 
-            for (int i = 0; i < n; i++) {
+            int cycle = 0;
+            for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
+                final String name = entry.getKey();
+                final DatasetSpec ds = entry.getValue();
+
                 if (progress.isCanceled()) {
                     break;
                 }
-                final String year = Integer.toString(startYear + i * yearStep);
-                final DatasetSpec ds = datasetSpec.withFilename(filenameTemplate.replace("{year}", year));
-                final int I = i;
+//                final String name = Integer.toString(startYear + i * yearStep);
+//                final DatasetSpec ds = datasetSpec.withFilename(filenameTemplate.replace("{year}", name));
+                final int _cycle = cycle;
 
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        parentFrame.setTitle(year);
-                        jFlowMap.loadFlowMap(ds);
+                        parentFrame.setTitle(name);
+                        jFlowMap.loadFlowMap(ds, stats);
 
                         FlowMapModel model = jFlowMap.getVisualFlowMap().getModel();
                         setupFlowMapModel(model);
@@ -159,7 +187,7 @@ public class SmallMultiplesMain {
                     break;
                 }
                 final VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
-                if (I == 0) {
+                if (_cycle == 0) {
                     // Run only the first time
                     SwingUtilities.invokeAndWait(new Runnable() {
                         public void run() {
@@ -184,12 +212,12 @@ public class SmallMultiplesMain {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        visualFlowMap.addChild(createTitleNode(year, visualFlowMap.getCamera().getViewBounds()));
-                        visualFlowMap.addChild(createLabelsNode(year, visualFlowMap));
+                        visualFlowMap.addChild(createTitleNode(name, visualFlowMap.getCamera().getViewBounds()));
+                        visualFlowMap.addChild(createLabelsNode(name, visualFlowMap));
 
                         // Pain the plot
-                        final int x = paddingX + (width + paddingX) * (I % numColumns);
-                        final int y = paddingY + (height + paddingY) * (I / numColumns);
+                        final int x = paddingX + (width + paddingX) * (_cycle % numColumns);
+                        final int y = paddingY + (height + paddingY) * (_cycle / numColumns);
 
                         g.translate(x, y);
 
@@ -200,12 +228,12 @@ public class SmallMultiplesMain {
 
                         g.translate(-x, -y);
 
-                        progress.setProgress(I);
-                        progress.setNote("Rendering graphic " + (I + 1) + " of " + n);
+                        progress.setProgress(_cycle);
+                        progress.setNote("Rendering graphic " + (_cycle + 1) + " of " + n);
                     }
                 });
 
-
+                cycle++;
             }
         }
 
@@ -225,6 +253,7 @@ public class SmallMultiplesMain {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
+
         final JFrame frame = new JFrame();
         final JFlowMap jFlowMap = new JFlowMap(null, false);
         frame.add(jFlowMap);

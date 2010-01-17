@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import jflowmap.data.FlowMapStats;
 import jflowmap.data.GraphFileFormats;
 import jflowmap.models.FlowMapModel;
 import jflowmap.models.map.AreaMap;
@@ -281,10 +282,14 @@ public class JFlowMap extends JComponent {
         });
 	}
 
-    public void loadFlowMap(DatasetSpec dataset) {
+	public void loadFlowMap(DatasetSpec dataset) {
+	    loadFlowMap(dataset, null);
+	}
+
+    public void loadFlowMap(DatasetSpec dataset, FlowMapStats stats) {
         logger.info("> Loading flow map \"" + dataset + "\"");
         try {
-            load(dataset);
+            load(dataset, stats);
         } catch (Exception e) {
             logger.error("Couldn't load flow map " + dataset, e);
             JOptionPane.showMessageDialog(this,
@@ -292,30 +297,38 @@ public class JFlowMap extends JComponent {
         }
     }
 
-    private void load(DatasetSpec dataset) throws IOException, DataIOException {
-        VisualFlowMap visualFlowMap = createVisualFlowMap(dataset.getAttrsSpec(), loadGraph(dataset.getFilename()));
+    private void load(DatasetSpec dataset, FlowMapStats stats) throws IOException, DataIOException {
+        FlowMapGraphWithAttrSpecs graphAndSpecs =
+            new FlowMapGraphWithAttrSpecs(loadGraph(dataset.getFilename()), dataset.getAttrsSpec());
+        if (stats == null) {
+            stats = FlowMapStats.createFor(graphAndSpecs);
+        }
+        VisualFlowMap visualFlowMap = createVisualFlowMap(graphAndSpecs, stats);
         if (dataset.getAreaMapFilename() != null) {
             visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, AreaMap.load(dataset.getAreaMapFilename())));
         }
         setVisualFlowMap(visualFlowMap);
     }
 
-    public VisualFlowMap createVisualFlowMap(FlowMapAttrsSpec attrs, Graph graph) {
-        return createVisualFlowMap(attrs.getWeightAttrName(), attrs.getLabelAttrName(),
-                attrs.getXNodeAttr(), attrs.getYNodeAttr(), attrs.getWeightFilterMin(), graph);
-    }
-
-    public VisualFlowMap createVisualFlowMap(String weightAttrName, String nodeLabelAttrName,
-            String xNodeAttr, String yNodeAttr, double weightFilterMin, Graph graph) {
-        FlowMapModel params = new FlowMapModel(graph, weightAttrName, xNodeAttr, yNodeAttr, nodeLabelAttrName);
+    public VisualFlowMap createVisualFlowMap(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
+        FlowMapModel params = new FlowMapModel(graphAndSpecs, stats);
         logger.info("Edge weight stats: " + params.getStats().getEdgeWeightStats());
-        if (!Double.isNaN(weightFilterMin)) {
-            params.setEdgeWeightFilterMin(weightFilterMin);
+        double minWeight = graphAndSpecs.getAttrsSpec().getWeightFilterMin();
+        if (!Double.isNaN(minWeight)) {
+            params.setEdgeWeightFilterMin(minWeight);
         }
-        return new VisualFlowMap(this, graph, params.getStats(), params);
+        return new VisualFlowMap(this, graphAndSpecs.getGraph(), params.getStats(), params);
     }
 
-    private Graph loadGraph(String filename) throws DataIOException {
+    public VisualFlowMap createVisualFlowMap(String edgeWeightAttr, String nodeLabelAttr,
+            String xNodeAttr, String yNodeAttr, double weightFilterMin, Graph graph, FlowMapStats stats) {
+        return createVisualFlowMap(
+                new FlowMapGraphWithAttrSpecs(graph,
+                new FlowMapAttrsSpec(edgeWeightAttr, nodeLabelAttr, xNodeAttr, yNodeAttr, weightFilterMin)),
+                stats);
+    }
+
+    public static Graph loadGraph(String filename) throws DataIOException {
         logger.info("Loading \"" + filename + "\"");
         Graph graph = GraphFileFormats.createReaderFor(filename).readGraph(filename);
         logger.info("Graph loaded: " + graph.getNodeCount() + " nodes, " + graph.getEdgeCount() + " edges");

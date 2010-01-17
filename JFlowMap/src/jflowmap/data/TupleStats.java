@@ -19,36 +19,60 @@
 package jflowmap.data;
 
 import java.util.Iterator;
-
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import java.util.List;
 
 import prefuse.data.Tuple;
 import prefuse.data.tuple.TupleSet;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * @author Ilya Boyandin
  */
 public class TupleStats {
-    
+
     private TupleStats() {
     }
 
-    public static MinMax createFor(TupleSet tupleSet, final String attrName) {
-        return MinMax.createFor(iteratorFor(tupleSet, attrName));
-    }
-    
     @SuppressWarnings("unchecked")
-    static Iterator<Double> iteratorFor(TupleSet tupleSet, final String attrName) {
-        return Iterators.transform(
-                tupleSet.tuples(), 
+    public static MinMax createFor(Iterator<TupleSet> tupleSetIt, Iterator<String> attrNameIt) {
+        List<Iterator<Double>> iterators = Lists.newArrayList();
+        while (tupleSetIt.hasNext()) {
+            assert(attrNameIt.hasNext());
+
+            final TupleSet tuples = tupleSetIt.next();
+            final String attrName = attrNameIt.next();
+
+            iterators.add(Iterators.transform(
+                tuples.tuples(),
                 new Function<Tuple, Double>() {
                     public Double apply(Tuple from) {
                         return from.getDouble(attrName);
                     }
                 }
-        );
+            ));
+        }
+        assert(!attrNameIt.hasNext());
+
+        return MinMax.createFor(Iterators.concat(iterators.iterator()));
     }
+
+//    public static MinMax createFor(TupleSet tupleSet, final String attrName) {
+//        return MinMax.createFor(iteratorFor(tupleSet.tuples(), attrName));
+//    }
+//
+//    @SuppressWarnings("unchecked")
+//    public static Iterator<Double> iteratorFor(Iterator tupleIt, final String attrName) {
+//        return Iterators.transform(
+//                tupleIt,
+//                new Function<Tuple, Double>() {
+//                    public Double apply(Tuple from) {
+//                        return from.getDouble(attrName);
+//                    }
+//                }
+//        );
+//    };
 
 }

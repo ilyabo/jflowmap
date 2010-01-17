@@ -23,6 +23,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.List;
 
+import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geom.Point;
@@ -77,14 +78,13 @@ public class FlowMapModel {
     private final FlowMapStats stats;
     private final Graph graph;
 
-    public FlowMapModel(Graph graph, String edgeWeightAttr,
-    		String xNodeAttr, String yNodeAttr, String nodeLabelAttr) {
-        this.graph = graph;
-        this.edgeWeightAttr = edgeWeightAttr;
-        this.xNodeAttr = xNodeAttr;
-        this.yNodeAttr = yNodeAttr;
-        this.nodeLabelAttr = nodeLabelAttr;
-        this.stats = FlowMapStats.createFor(this);
+    public FlowMapModel(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
+        this.graph = graphAndSpecs.getGraph();
+        this.edgeWeightAttr = graphAndSpecs.getAttrsSpec().getEdgeWeightAttr();
+        this.xNodeAttr = graphAndSpecs.getAttrsSpec().getXNodeAttr();
+        this.yNodeAttr = graphAndSpecs.getAttrsSpec().getYNodeAttr();
+        this.nodeLabelAttr = graphAndSpecs.getAttrsSpec().getNodeLabelAttr();
+        this.stats = stats;
         initFromStats();
     }
 
