@@ -305,9 +305,6 @@ public class JFlowMap extends JComponent {
     private void load(DatasetSpec dataset, FlowMapStats stats) throws IOException, DataIOException {
         FlowMapGraphWithAttrSpecs graphAndSpecs =
             new FlowMapGraphWithAttrSpecs(loadGraph(dataset.getFilename()), dataset.getAttrsSpec());
-        if (stats == null) {
-            stats = FlowMapStats.createFor(graphAndSpecs);
-        }
         VisualFlowMap visualFlowMap = createVisualFlowMap(graphAndSpecs, stats);
         if (dataset.getAreaMapFilename() != null) {
             visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, AreaMap.load(dataset.getAreaMapFilename())));
@@ -316,6 +313,9 @@ public class JFlowMap extends JComponent {
     }
 
     public VisualFlowMap createVisualFlowMap(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
+        if (stats == null) {
+            stats = FlowMapStats.createFor(graphAndSpecs);
+        }
         FlowMapModel params = new FlowMapModel(graphAndSpecs, stats);
         logger.info("Edge weight stats: " + params.getStats().getEdgeWeightStats());
         double minWeight = graphAndSpecs.getAttrsSpec().getWeightFilterMin();
