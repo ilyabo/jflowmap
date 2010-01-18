@@ -148,6 +148,8 @@ public class JFlowMap extends JComponent {
                 .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
                 .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
                 .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
+
+
                 .build());
 
 //            ColorScheme.of("Inverted", colors
@@ -268,12 +270,16 @@ public class JFlowMap extends JComponent {
 	}
 
     public void setVisualFlowMap(VisualFlowMap newFlowMap) {
+        if (newFlowMap == visualFlowMap) {
+            return;
+        }
         if (visualFlowMap != null) {
             canvas.getLayer().removeChild(visualFlowMap);
-            visualFlowMap.removeChildrenFromCamera();
+            visualFlowMap.removeNodesFromCamera();
         }
         canvas.getLayer().addChild(newFlowMap);
         visualFlowMap = newFlowMap;
+        newFlowMap.addNodesToCamera();
         if (controlPanel != null) {
             controlPanel.loadVisualFlowMap(newFlowMap);
         }

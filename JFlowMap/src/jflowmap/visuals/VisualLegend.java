@@ -47,7 +47,7 @@ public class VisualLegend extends PPath {
     private static final int NUM_LEGEND_WEIGHT_VALUES = 5;
 
     private final VisualFlowMap visualFlowMap;
-    private final double lineWidth = 50, gapBetweenLines = 3, gapBeforeText = 7, paddingX = 5, paddingY = 5;
+    private final double lineWidth = 50, gapBetweenLines = 3, gapBeforeText = 7, paddingX = 2, paddingY = 2;
     private final double spaceForArrow = 10;
     private final double startY = 10;
     private final double startX = 10;

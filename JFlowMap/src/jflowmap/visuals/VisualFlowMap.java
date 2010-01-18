@@ -140,17 +140,20 @@ public class VisualFlowMap extends PNode {
         tooltipBox.setVisible(false);
         tooltipBox.setPickable(false);
         PCamera camera = getCamera();
-	    camera.addChild(tooltipBox);
 
 	    visualLegend = new VisualLegend(this);
-        camera.addChild(visualLegend);
 
         initModelChangeListeners(model);
 //        fitInCameraView();
 //        fitInCameraView(false);
     }
 
-    public void removeChildrenFromCamera() {
+    public void addNodesToCamera() {
+        getCamera().addChild(tooltipBox);
+        getCamera().addChild(visualLegend);
+    }
+
+    public void removeNodesFromCamera() {
         getCamera().removeChild(tooltipBox);
         getCamera().removeChild(visualLegend);
     }
@@ -247,7 +250,16 @@ public class VisualFlowMap extends PNode {
         while (it.hasNext()) {
             Edge edge = graph.getEdge(it.next());
 
-            if (edge.getSourceNode().equals(edge.getTargetNode())) {
+            Node srcNode = edge.getSourceNode();
+            Node targetNode = edge.getTargetNode();
+
+//            if (edgeVisualsForNodesFilter != null) {
+//                if (!edgeVisualsForNodesFilter.accept(srcNode)  &&  !edgeVisualsForNodesFilter.accept(targetNode)) {
+//                    continue;  // skip the edge
+//                }
+//            }
+
+            if (srcNode.equals(targetNode)) {
                 logger.warn(
                         "Self-loop edge: " +
                         " [" + edge + "]"
@@ -257,14 +269,14 @@ public class VisualFlowMap extends PNode {
             double value = edge.getDouble(flowMapModel.getEdgeWeightAttr());
             if (Double.isNaN(value)) {
                 logger.warn(
-                    "Omitting NaN value for edge: " +
-                    edge.getSourceNode().getString(flowMapModel.getNodeLabelAttr()) + " -> " +
-                    edge.getTargetNode().getString(flowMapModel.getNodeLabelAttr()) +
+                    "Omitting edge with NaN value: " +
+                    srcNode.getString(flowMapModel.getNodeLabelAttr()) + " -> " +
+                    targetNode.getString(flowMapModel.getNodeLabelAttr()) +
                     " [" + edge + "]"
                 );
             } else {
-                VisualNode fromNode = nodesToVisuals.get(edge.getSourceNode());
-                VisualNode toNode = nodesToVisuals.get(edge.getTargetNode());
+                VisualNode fromNode = nodesToVisuals.get(srcNode);
+                VisualNode toNode = nodesToVisuals.get(targetNode);
 
                 VisualEdge visualEdge;
                 if (flowMapModel.hasEdgeSubdivisionPoints(edge)) {

@@ -37,6 +37,7 @@ import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.data.FlowMapStats;
 import jflowmap.models.FlowMapModel;
 import jflowmap.visuals.VisualFlowMap;
@@ -68,26 +69,42 @@ public class SmallMultiplesMain {
     private static final Color LABEL_COLOR = Color.gray;
     private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
+    private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = false;
+    private static final boolean USE_FDEB = false;
+
 //    private static final int FRAME_WIDTH = 1280;
 //    private static final int FRAME_HEIGHT = 1024;
-//    private static final int FRAME_WIDTH = 1024;
-//    private static final int FRAME_HEIGHT = 768;
-    private static final int FRAME_WIDTH = 800;
-    private static final int FRAME_HEIGHT = 600;
+    private static final int FRAME_WIDTH = 1024, FRAME_HEIGHT = 768;
+//    private static final int FRAME_WIDTH = 800, FRAME_HEIGHT = 600;
+//    private static final int FRAME_WIDTH = 800, FRAME_HEIGHT = 600;
+//    private static final int FRAME_WIDTH = 640, FRAME_HEIGHT = 480;
 
     private static void setupFlowMapModel(FlowMapModel model) {
         model.setShowNodes(true);
-        model.setMaxEdgeWidth(15);
+        model.setMaxEdgeWidth(10);
+//        model.setMaxEdgeWidth(15);
         model.setNodeSize(3);
-        model.setShowDirectionMarkers(true);
-        model.setDirectionMarkerSize(.17);
-        model.setDirectionMarkerAlpha(255);
-        model.setEdgeAlpha(100);
+
+//        if (USE_FDEB) {
+//            model.setShowDirectionMarkers(false);
+//            model.setEdgeAlpha(245);
+//        } else {
+            model.setShowDirectionMarkers(true);
+            model.setDirectionMarkerSize(.17);
+            model.setDirectionMarkerAlpha(255);
+            model.setEdgeAlpha(100);
+//        }
+
+//        model.setEdgeWeightFilterMin(20);
+    }
+
+    private static void setupBundlerParams(ForceDirectedBundlerParameters bundlerParams) {
+////        bundlerParams.setEdgeValueAffectsAttraction(true);
+////        bundlerParams.setS(5);
     }
 
     static class RenderTask extends SwingWorker<Void, Void> {
 
-        private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = false;
 
         private static final double ZOOM_LEVEL = 1.3;
         private static final double MOVE_DX = 30;
@@ -101,8 +118,10 @@ public class SmallMultiplesMain {
         final String outputFileName = "refugees-small-multiples.png";
 
 //        final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
-//        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
 //        final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
+
+//        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
+//        final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
 
         final List<String> datasetNames;
         final int startYear = 1989;
@@ -208,6 +227,11 @@ public class SmallMultiplesMain {
                         FlowMapModel model = jFlowMap.getVisualFlowMap().getModel();
                         setupFlowMapModel(model);
 
+                        if (USE_FDEB) {
+                            ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(model);
+                            setupBundlerParams(bundlerParams);
+                            jFlowMap.getVisualFlowMap().bundleEdges(bundlerParams);
+                        }
                     }
                 });
                 if (progress.isCanceled()) {
