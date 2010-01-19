@@ -139,7 +139,6 @@ public class VisualFlowMap extends PNode {
         tooltipBox = new Tooltip();
         tooltipBox.setVisible(false);
         tooltipBox.setPickable(false);
-        PCamera camera = getCamera();
 
 	    visualLegend = new VisualLegend(this);
 

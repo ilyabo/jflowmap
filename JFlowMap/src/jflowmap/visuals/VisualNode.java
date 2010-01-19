@@ -94,15 +94,18 @@ public class VisualNode extends PNode {
         VisualNodeCluster cluster = VisualNodeCluster.getJoinedFlowMapNodeCluster(node);
         if (cluster != null) {
             clusterMembers = new PNode();
-            Color origNodePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE_PAINT);
+            Color origNodePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE);
+            Color origNodeStrokePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE);
+            Color origNodeLinePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE);
             for (VisualNode origNode : cluster) {
                 PPath pnode = new PPath(createNodeShape(origNode.getValueX(), origNode.getValueY()));
                 pnode.setPaint(origNodePaint);
+                pnode.setStrokePaint(origNodeStrokePaint);
                 clusterMembers.addChild(pnode);
 
 
                 PPath pline = new PPath(new Line2D.Double(origNode.getPosition(), this.getPosition()));
-                pline.setStrokePaint(origNodePaint);
+                pline.setStrokePaint(origNodeLinePaint);
                 clusterMembers.addChild(pline);
             }
             visualFlowMap.addChild(clusterMembers);
@@ -116,6 +119,16 @@ public class VisualNode extends PNode {
 //        label.setY(y + 5);
 //        addChild(label);
 //        label.moveToBack();
+
+
+//        if (Arrays.asList("MEX", "BLZ", "SLV", "JAM", "DOM", "KNA", "ATG", "DMA", "LCA", "VCT", "BRB", "GRD", "TTO", "GUY").contains(node.getString("code"))) {
+//            double size = visualFlowMap.getModel().getNodeSize() * 2;
+//            clusterMarker = new PPath(new Ellipse2D.Double(getValueX() - size/2, getValueY() - size/2, size, size));
+//            clusterMarker.setStroke(new PFixedWidthStroke(1));
+//            addChild(clusterMarker);
+//            clusterMarker.moveToBack();
+//            clusterMarker.setPaint(new Color(242, 75, 63, 150));
+//        }
 
         updateSize();
         updateVisibility();

@@ -90,7 +90,7 @@ public abstract class VisualEdge extends PNode {
 //                SELF_LOOP_CIRCLE_SIZE, SELF_LOOP_CIRCLE_SIZE);
 
 //        final double size = SELF_LOOP_CIRCLE_SIZE;
-        final double size = visualFlowMap.getStats().getEdgeLengthStats().getAvg() / 5;
+        final double size = visualFlowMap.getStats().getEdgeLengthStats().getAvg() / 8;
 //        MinMax xstats = visualFlowMap.getGraphStats().getNodeXStats();
 //        MinMax ystats = visualFlowMap.getGraphStats().getNodeYStats();
 //
