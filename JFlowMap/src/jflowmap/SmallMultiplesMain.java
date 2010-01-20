@@ -72,10 +72,17 @@ public class SmallMultiplesMain extends JFrame {
     private static final Color LABEL_COLOR = Color.gray;
     private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
+    private static final double ZOOM_LEVEL = 1.3;
+//    private static final double ZOOM_LEVEL = 2.0;
+    private static final double MOVE_DX = 30;
+//    private static final double MOVE_DY = -50;
+    private static final double MOVE_DY = -30;
+//    private static final double MOVE_DX = -70;
+//    private static final double MOVE_DY = -60;
+
     private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = false;
-    private static final boolean USE_FDEB = true;
-    private static final boolean USE_CLUSTERING = false;
-//    private static final boolean USE_CLUSTER_EDGE_JOINING = true;
+    private static final boolean USE_FDEB = false;
+    private static final boolean USE_CLUSTERING = true;
 
 //    private static final int FRAME_WIDTH = 1280;
 //    private static final int FRAME_HEIGHT = 1024;
@@ -90,8 +97,9 @@ public class SmallMultiplesMain extends JFrame {
         VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
         visualFlowMap.clusterNodes(
                 NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
-        visualFlowMap.setClusterDistanceThreshold(0.9);
-        visualFlowMap.setEuclideanClusterDistanceThreshold(90);
+        visualFlowMap.setClusterDistanceThreshold(0.82);
+//        visualFlowMap.setEuclideanClusterDistanceThreshold(55);
+        visualFlowMap.setEuclideanClusterDistanceThreshold(40);
         visualFlowMap.joinClusterEdges();
         setupFlowMapModel(jFlowMap.getVisualFlowMap().getModel());
     }
@@ -109,16 +117,18 @@ public class SmallMultiplesMain extends JFrame {
             model.setDirectionMarkerSize(.17);
             model.setDirectionMarkerAlpha(255);
             model.setEdgeAlpha(100);
-//            model.setEdgeAlpha(200);
+            model.setEdgeAlpha(150);
 //        }
 
 //        model.setEdgeWeightFilterMin(20);
-            model.setShowNodes(false);
+            model.setShowNodes(true);
+
+//            model.setEdgeLengthFilterMax(75);
     }
 
     private static void setupBundlerParams(ForceDirectedBundlerParameters bundlerParams) {
 ////        bundlerParams.setEdgeValueAffectsAttraction(true);
-////        bundlerParams.setS(5);
+//        bundlerParams.setS(5);
     }
 
 
@@ -135,23 +145,19 @@ public class SmallMultiplesMain extends JFrame {
 
     class RenderTask extends SwingWorker<Void, Void> {
 
-
-        private static final double ZOOM_LEVEL = 1.3;
-        private static final double MOVE_DX = 30;
-        private static final double MOVE_DY = -50;
-
         final Map<String, DatasetSpec> datasets;
 
         final DatasetSpec datasetSpec = new DatasetSpec(
-                "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+//                "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+                "data/refugees/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
         );
         final String outputFileName = "refugees-small-multiples.png";
 
 //        final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
 //        final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
 
-//        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
-        final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
+        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
+//        final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
 
 //        final List<String> datasetNames;
 //        final int startYear = 1989;
