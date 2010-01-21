@@ -75,14 +75,14 @@ public class SmallMultiplesMain extends JFrame {
     private static final double ZOOM_LEVEL = 1.3;
 //    private static final double ZOOM_LEVEL = 2.0;
     private static final double MOVE_DX = 30;
-//    private static final double MOVE_DY = -50;
-    private static final double MOVE_DY = -30;
+    private static final double MOVE_DY = -50;
+//    private static final double MOVE_DY = -30;
 //    private static final double MOVE_DX = -70;
 //    private static final double MOVE_DY = -60;
 
     private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = false;
     private static final boolean USE_FDEB = false;
-    private static final boolean USE_CLUSTERING = true;
+    private static final boolean USE_CLUSTERING = false;
 
 //    private static final int FRAME_WIDTH = 1280;
 //    private static final int FRAME_HEIGHT = 1024;
@@ -90,6 +90,31 @@ public class SmallMultiplesMain extends JFrame {
 //    private static final int FRAME_WIDTH = 800, FRAME_HEIGHT = 600;
 //    private static final int FRAME_WIDTH = 800, FRAME_HEIGHT = 600;
 //    private static final int FRAME_WIDTH = 640, FRAME_HEIGHT = 480;
+    private Map<String, DatasetSpec> datasets;
+
+    private final DatasetSpec datasetSpec = new DatasetSpec(
+//            "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+            "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+    );
+    private final String outputFileName = "refugees-small-multiples.png";
+
+//    final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
+//    final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
+
+    private final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
+//    final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
+
+//    final List<String> datasetNames;
+//    final int startYear = 1989;
+//    final int endYear = 2008;
+//    final int yearStep = +1;
+//    final int n = ((endYear - startYear) / yearStep) + 1;
+//    {
+//        datasetNames = Lists.newArrayList();
+//        for (int i = 0; i < n; i++) {
+//            datasetNames.add(Integer.toString(startYear + i * yearStep));
+//        }
+//    }
 
     private final JFlowMap jFlowMap;
 
@@ -115,9 +140,10 @@ public class SmallMultiplesMain extends JFrame {
 //        } else {
             model.setShowDirectionMarkers(true);
             model.setDirectionMarkerSize(.17);
-            model.setDirectionMarkerAlpha(255);
+//            model.setDirectionMarkerAlpha(255);
+            model.setDirectionMarkerAlpha(245);
             model.setEdgeAlpha(100);
-            model.setEdgeAlpha(150);
+//            model.setEdgeAlpha(150);
 //        }
 
 //        model.setEdgeWeightFilterMin(20);
@@ -144,33 +170,6 @@ public class SmallMultiplesMain extends JFrame {
     }
 
     class RenderTask extends SwingWorker<Void, Void> {
-
-        final Map<String, DatasetSpec> datasets;
-
-        final DatasetSpec datasetSpec = new DatasetSpec(
-//                "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
-                "data/refugees/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
-        );
-        final String outputFileName = "refugees-small-multiples.png";
-
-//        final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
-//        final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
-
-        final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
-//        final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
-
-//        final List<String> datasetNames;
-//        final int startYear = 1989;
-//        final int endYear = 2008;
-//        final int yearStep = +1;
-//        final int n = ((endYear - startYear) / yearStep) + 1;
-//        {
-//            datasetNames = Lists.newArrayList();
-//            for (int i = 0; i < n; i++) {
-//                datasetNames.add(Integer.toString(startYear + i * yearStep));
-//            }
-//        }
-
 
         final int numColumns = 5;
         final int paddingX = 5;
