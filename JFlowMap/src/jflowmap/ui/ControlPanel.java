@@ -55,6 +55,7 @@ import jflowmap.JFlowMap;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.FlowMapLoader;
 import jflowmap.data.MinMax;
 import jflowmap.models.FlowMapModel;
 import jflowmap.util.Pair;
@@ -378,7 +379,7 @@ public class ControlPanel {
         datasetCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (initializing) return;
-                jFlowMap.loadFlowMap((DatasetSpec) datasetCombo.getSelectedItem());
+                FlowMapLoader.loadFlowMap(jFlowMap, (DatasetSpec) datasetCombo.getSelectedItem(), null);
                 jFlowMap.fitFlowMapInView();
             }
         });

@@ -18,7 +18,6 @@
 
 package jflowmap.data;
 
-import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 import prefuse.data.io.GraphReader;
 import at.fhj.utils.misc.FileUtils;
@@ -29,38 +28,43 @@ import at.fhj.utils.misc.FileUtils;
 public enum GraphFileFormats {
     GRAPH_ML("graphml") {
         @Override
-        public GraphReader createReader() {
+        public GraphReader createReader(String fileName) {
             return new GraphMLReader();
         }
     },
     XML("xml") {
         @Override
-        public GraphReader createReader() {
-            return GRAPH_ML.createReader();
+        public GraphReader createReader(String fileName) {
+            return GRAPH_ML.createReader(fileName);
         }
     },
     CSV("csv") {
         @Override
-        public GraphReader createReader() {
+        public GraphReader createReader(String fileName) {
             return new CsvFlowMapReader();
         }
-    }
-    ;
+    },
+    GZIP("gz") {
+        @Override
+        public GraphReader createReader(String fileName) {
+            return new GZipFlowMapReader(createReaderFor(FileUtils.cutOffExtension(fileName)));
+        }
+    };
     private String extension;
 
     private GraphFileFormats(String extension) {
         this.extension = extension;
     }
-    
-    public abstract GraphReader createReader();
-    
-    public static GraphReader createReaderFor(String filename) throws DataIOException {
-        String ext = FileUtils.getExtension(filename).toLowerCase();
+
+    public abstract GraphReader createReader(String fileName);
+
+    public static GraphReader createReaderFor(String fileName) {
+        String ext = FileUtils.getExtension(fileName).toLowerCase();
         for (GraphFileFormats fmt : values()) {
             if (fmt.extension.equals(ext)) {
-                return fmt.createReader();
+                return fmt.createReader(fileName);
             }
         }
-        throw new DataIOException("Unsupported graph file format extension: " + ext);
+        throw new RuntimeException("Unsupported graph file format extension: " + ext);
     }
 }

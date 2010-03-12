@@ -37,12 +37,15 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import jflowmap.FlowMapAttrsSpec;
+import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.JFlowMap;
 import jflowmap.aggregation.EdgeSegment;
 import jflowmap.aggregation.EdgeSegmentAggregator;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
+import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geom.FPoint;
@@ -147,6 +150,10 @@ public class VisualFlowMap extends PNode {
 //        fitInCameraView(false);
     }
 
+    public void setLegendVisible(boolean visible) {
+        visualLegend.setVisible(visible);
+    }
+
     public void addNodesToCamera() {
         getCamera().addChild(tooltipBox);
         getCamera().addChild(visualLegend);
@@ -184,11 +191,10 @@ public class VisualFlowMap extends PNode {
 
         for (int i = 0; i < numNodes; i++) {
             Node node = graph.getNode(i);
-
             VisualNode vnode = new VisualNode(this, node,
-                    node.getDouble(flowMapModel.getXNodeAttr()),// - xStats.min,
+                    node.getDouble(flowMapModel.getXNodeAttr()), // - xStats.min,
                     node.getDouble(flowMapModel.getYNodeAttr())// - yStats.min,
-                    );
+            );
             nodeLayer.addChild(vnode);
             visualNodes.add(vnode);
             nodesToVisuals.put(node, vnode);
@@ -341,6 +347,7 @@ public class VisualFlowMap extends PNode {
 //    }
 
     public void fitInCameraView() {
+        System.out.println("VisualFlowMap.fitInCameraView()");
         PBounds boundRect = getNodesBounds();
 //        PPath boundRectPath = new PPath(boundRect);
 //        addChild(boundRectPath);
@@ -556,7 +563,7 @@ public class VisualFlowMap extends PNode {
                 return null;
             }
         };
-        ProgressDialog dialog = new ProgressDialog(jFlowMap.getApp(), "Edge Bundling", worker, true);
+        ProgressDialog dialog = new ProgressDialog(jFlowMap.getParentFrame(), "Edge Bundling", worker, true);
         pt.addProgressListener(dialog);
         pt.addTaskCompletionListener(new TaskCompletionListener() {
             public void taskCompleted(int taskId) {
@@ -624,7 +631,7 @@ public class VisualFlowMap extends PNode {
             }
         };
         ProgressDialog dialog = new ProgressDialog(
-                jFlowMap.getApp(), "Edge Segment Aggregation", worker, true);
+                jFlowMap.getParentFrame(), "Edge Segment Aggregation", worker, true);
         pt.addProgressListener(dialog);
         worker.start();
         dialog.setVisible(true);
@@ -907,12 +914,16 @@ public class VisualFlowMap extends PNode {
 
         Graph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(visualNodeClusters);
         VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(
-                FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
-                FlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME,
-                FlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
-                FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
-                0,
-                clusteredGraph,
+                new FlowMapGraphWithAttrSpecs(
+                    clusteredGraph,
+                    new FlowMapAttrsSpec(
+                        FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
+                        FlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME,
+                        FlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
+                        FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
+                        0
+                    )
+                ),
                 null
         );
         if (areaMap != null) {
@@ -958,6 +969,10 @@ public class VisualFlowMap extends PNode {
             }
         }
         return null;
+    }
+
+    public String getName() {
+        return FlowMapLoader.idOf(flowMapModel.getGraph());
     }
 
 }

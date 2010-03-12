@@ -18,6 +18,10 @@
 
 package jflowmap;
 
+import jflowmap.data.FlowMapLoader;
+import prefuse.data.Graph;
+import prefuse.data.Table;
+
 /**
  * @author Ilya Boyandin
  */
@@ -55,5 +59,18 @@ public class FlowMapAttrsSpec {
 
     public double getWeightFilterMin() {
         return weightFilterMin;
+    }
+
+    public void validateFor(Graph graph) {
+        validateAttr(graph, graph.getNodeTable(), xNodeAttr, double.class);
+        validateAttr(graph, graph.getNodeTable(), yNodeAttr, double.class);
+        validateAttr(graph, graph.getNodeTable(), nodeLabelAttr, String.class);
+        validateAttr(graph, graph.getEdgeTable(), edgeWeightAttr, double.class);
+    }
+
+    private void validateAttr(Graph graph, Table table, String attr, Class<?> type) {
+        if (!table.canGet(attr, type)) {
+            throw new IllegalArgumentException("Can't get graph's attr:'" + attr + "', graph id:'" + FlowMapLoader.idOf(graph) + "'");
+        }
     }
 }

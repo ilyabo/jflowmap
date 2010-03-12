@@ -40,6 +40,7 @@ import javax.swing.SwingWorker;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.FlowMapLoader;
 import jflowmap.models.FlowMapModel;
 import jflowmap.visuals.VisualFlowMap;
 import jflowmap.visuals.VisualNode;
@@ -72,10 +73,10 @@ public class SmallMultiplesMain extends JFrame {
     private static final Color LABEL_COLOR = Color.gray;
     private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
-    private static final double ZOOM_LEVEL = 1.3;
-//    private static final double ZOOM_LEVEL = 2.0;
-    private static final double MOVE_DX = 30;
-    private static final double MOVE_DY = -50;
+//    private static final double ZOOM_LEVEL = 1.3;
+    private static final double ZOOM_LEVEL = 2.0;
+//    private static final double MOVE_DX = 30, MOVE_DY = -50;
+    private static final double MOVE_DX = 120, MOVE_DY = -70;
 //    private static final double MOVE_DY = -30;
 //    private static final double MOVE_DX = -70;
 //    private static final double MOVE_DY = -60;
@@ -94,14 +95,15 @@ public class SmallMultiplesMain extends JFrame {
 
     private final DatasetSpec datasetSpec = new DatasetSpec(
 //            "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
-            "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+            "data/refugees/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
     );
     private final String outputFileName = "refugees-small-multiples.png";
 
 //    final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
 //    final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
 
-    private final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
+    private final List<String> datasetNames = Arrays.asList("2008");
+//    private final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
 //    final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
 
 //    final List<String> datasetNames;
@@ -146,7 +148,11 @@ public class SmallMultiplesMain extends JFrame {
 //            model.setEdgeAlpha(150);
 //        }
 
-//        model.setEdgeWeightFilterMin(20);
+
+//       model.setEdgeWeightFilterMin(2500);
+       model.setEdgeLengthFilterMax(70);
+//       model.setEdgeLengthFilterMin(300);
+
             model.setShowNodes(true);
 
 //            model.setEdgeLengthFilterMax(75);
@@ -226,7 +232,7 @@ public class SmallMultiplesMain extends JFrame {
                     final String name = entry.getKey();
                     final DatasetSpec ds = entry.getValue();
                     progress.setNote("Gathering stats for " + name);
-                    gs.add(new FlowMapGraphWithAttrSpecs(JFlowMap.loadGraph(ds.getFilename()), ds.getAttrsSpec()));
+                    gs.add(new FlowMapGraphWithAttrSpecs(FlowMapLoader.loadGraph(ds.getFilename()), ds.getAttrsSpec()));
                 }
                 stats = FlowMapStats.createFor(gs);
             } else {
@@ -257,7 +263,7 @@ public class SmallMultiplesMain extends JFrame {
                     @Override
                     public void run() {
                         parentFrame.setTitle(name);
-                        jFlowMap.loadFlowMap(ds, stats);
+                        FlowMapLoader.loadFlowMap(jFlowMap, ds, stats);
 
                         VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
                         FlowMapModel model = visualFlowMap.getModel();

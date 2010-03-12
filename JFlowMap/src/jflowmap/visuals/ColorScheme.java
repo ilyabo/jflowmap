@@ -53,4 +53,23 @@ public class ColorScheme {
         return new ColorScheme(name, colors);
     }
 
+    public static class Builder {
+        private final String name;
+        private final ImmutableMap.Builder<ColorCodes, Color> mapBuilder;
+
+        public Builder(String name) {
+            this.name = name;
+            this.mapBuilder = ImmutableMap.builder();
+        }
+
+        public Builder put(ColorCodes code, Color paint) {
+            mapBuilder.put(code, paint);
+            return this;
+        }
+
+        public ColorScheme build() {
+            return ColorScheme.of(name, mapBuilder.build());
+        }
+    }
+
 }

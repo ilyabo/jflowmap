@@ -29,6 +29,7 @@ public class FlowMapGraphWithAttrSpecs {
 
     public FlowMapGraphWithAttrSpecs(Graph graph, FlowMapAttrsSpec attrsSpec) {
         this.graph = graph;
+        attrsSpec.validateFor(graph);
         this.attrsSpec = attrsSpec;
     }
 
