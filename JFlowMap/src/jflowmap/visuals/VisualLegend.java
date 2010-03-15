@@ -24,9 +24,9 @@ import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
-import java.text.DecimalFormat;
 import java.util.List;
 
+import jflowmap.JFlowMap;
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
 import jflowmap.models.FlowMapModel;
@@ -43,7 +43,6 @@ public class VisualLegend extends PPath {
     private static final long serialVersionUID = -8907313603307434727L;
 
     private static final Font LABEL_FONT = new Font("Dialog", Font.BOLD, 13);
-    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
     private static final int NUM_LEGEND_WEIGHT_VALUES = 5;
 
     private final VisualFlowMap visualFlowMap;
@@ -139,7 +138,7 @@ public class VisualLegend extends PPath {
     }
 
     private PText createText(double weight, double leftX, double middleY) {
-        PText ptext = new PText(NUMBER_FORMAT.format(weight));
+        PText ptext = new PText(JFlowMap.NUMBER_FORMAT.format(weight));
         ptext.setX(leftX);
         ptext.setY(middleY - LABEL_FONT.getSize2D()/2 - 1);
         ptext.setFont(LABEL_FONT);

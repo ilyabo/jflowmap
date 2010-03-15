@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -34,12 +35,16 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author Ilya Boyandin
  *         Date: 21-Sep-2009
  */
 public class FlowMapStats {
+
+    public static final String NODE_STATS_COLUMN__SUM_OUTGOING = "sumOutgoing";
+    public static final String NODE_STATS_COLUMN__SUM_INCOMING = "sumIncoming";
 
     private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
     private final List<FlowMapGraphWithAttrSpecs> graphAndSpecs;
@@ -178,5 +183,58 @@ public class FlowMapStats {
             },
             ;
         };
+    }
+
+
+    /**
+     * This method adds additional columns to the nodes table providing
+     * the nodes with useful stats.
+     */
+    public static FlowMapGraphWithAttrSpecs supplyNodesWithStats(FlowMapGraphWithAttrSpecs graphAndSpecs) {
+
+        Graph g = graphAndSpecs.getGraph();
+        FlowMapAttrsSpec as = graphAndSpecs.getAttrsSpec();
+
+        Map<Integer, Double> outsums = Maps.newHashMap();
+        Map<Integer, Double> insums = Maps.newHashMap();
+
+        for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
+            Edge e = g.getEdge(i);
+
+            double w = e.getDouble(as.getEdgeWeightAttr());
+            if (!Double.isNaN(w)) {
+                int src = e.getSourceNode().getRow();
+                int trg = e.getTargetNode().getRow();
+
+                Double outsum = outsums.get(src);
+                if (outsum == null) {
+                    outsums.put(src, w);
+                } else {
+                    outsums.put(src, outsum + w);
+                }
+
+                Double inval = insums.get(trg);
+                if (inval == null) {
+                    insums.put(trg, w);
+                } else {
+                    insums.put(trg, inval + w);
+                }
+            }
+        }
+
+
+        g.addColumn(NODE_STATS_COLUMN__SUM_OUTGOING, double.class);
+        g.addColumn(NODE_STATS_COLUMN__SUM_INCOMING, double.class);
+        for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
+            Node node = g.getNode(i);
+            if (outsums.containsKey(i)) {
+                node.setDouble(NODE_STATS_COLUMN__SUM_OUTGOING, outsums.get(i));
+            }
+            if (insums.containsKey(i)) {
+                node.setDouble(NODE_STATS_COLUMN__SUM_INCOMING, insums.get(i));
+            }
+        }
+
+        return graphAndSpecs;
     }
 }

@@ -38,7 +38,6 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -56,6 +55,7 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import at.fhj.utils.swing.InternalFrameUtils;
 import at.fhj.utils.swing.JMemoryIndicator;
+import at.fhj.utils.swing.JMsgPane;
 
 import com.google.common.collect.Lists;
 
@@ -131,6 +131,21 @@ public class FlowMapMain extends JFrame {
             }
         });
 
+
+        // TODO: remove hardcoded filename to open
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    showFlowTimeline("data/refugees-one-file/refugees_1975-2008.xml");
+                    desktopPane.getAllFrames()[0].setMaximum(true);
+                } catch (Exception ex) {
+                    JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
+                            + ex.getMessage());
+                    logger.error("Cant open file", ex);
+                }
+            }
+        });
     }
 
     private void initActions() {
@@ -341,14 +356,14 @@ public class FlowMapMain extends JFrame {
 
     public boolean confirmExit() {
         if (desktopPane.getAllFrames().length > 0) {
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "Close all views and exit application?", "Exit",
-                    JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
+//            int confirm = JOptionPane.showConfirmDialog(this,
+//                    "Close all views and exit application?", "Exit",
+//                    JOptionPane.YES_NO_OPTION);
+//            if (confirm == JOptionPane.YES_OPTION) {
                 return true;
-            } else {
-                return false;
-            }
+//            } else {
+//                return false;
+//            }
         }
         return true;
     }

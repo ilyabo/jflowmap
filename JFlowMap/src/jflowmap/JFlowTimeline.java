@@ -19,9 +19,11 @@
 package jflowmap;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JComponent;
 
+import jflowmap.data.FlowMapStats;
 import jflowmap.util.PanHandler;
 import jflowmap.util.ZoomHandler;
 import jflowmap.visuals.timeline.VisualFlowTimeline;
@@ -33,19 +35,26 @@ import edu.umd.cs.piccolo.PCanvas;
  */
 public class JFlowTimeline extends JComponent {
 
+    private static final Color CANVAS_BACKGROUND_COLOR = new Color(47, 89, 134);
     private final PCanvas canvas;
     private final VisualFlowTimeline visualTimeline;
 
-    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
+    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
         setLayout(new BorderLayout());
 
         canvas = new PCanvas();
+        canvas.setBackground(CANVAS_BACKGROUND_COLOR);
 //        canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
         canvas.addInputEventListener(new ZoomHandler());
         canvas.setPanEventHandler(new PanHandler());
         add(canvas, BorderLayout.CENTER);
 
-        visualTimeline = new VisualFlowTimeline(graphs, attrSpecs);
+
+        for (Graph graph : graphs) {
+            FlowMapStats.supplyNodesWithStats(new FlowMapGraphWithAttrSpecs(graph, attrSpec));
+        }
+
+        visualTimeline = new VisualFlowTimeline(graphs, attrSpec);
         canvas.getLayer().addChild(visualTimeline);
     }
 
