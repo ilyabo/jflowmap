@@ -27,6 +27,8 @@ import javax.swing.JComponent;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.JFlowMap;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.MinMax;
+import jflowmap.util.ColorUtils;
 import jflowmap.util.PiccoloUtils;
 import prefuse.data.Node;
 import edu.umd.cs.piccolo.PNode;
@@ -42,13 +44,19 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualTimelineNodeCell extends PNode {
 
+    private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
+    private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
+
+    private static final Color NODE_NAME_COLOR1 = new Color(0, 0, 0);
+    private static final Color NODE_NAME_COLOR2 = new Color(255, 255, 255);
+
     private static final Color SELECTION_STROKE_PAINT = new Color(200, 100, 30);
     private static final PFixedWidthStroke SELECTION_STROKE = new PFixedWidthStroke(4);
     private static final Font CELL_CAPTION_FONT = new Font("Arial", Font.PLAIN, 18);
     private static final Font CELL_VALUE_FONT = new Font("Arial", Font.PLAIN, 10);
     private final Node graphNode;
     private final VisualFlowTimeline timeline;
-    private final PPath rectNode;
+    private final PPath rect;
 
     public VisualTimelineNodeCell(VisualFlowTimeline timeline, Node graphNode, double x, double y, double width, double height) {
         this.graphNode = graphNode;
@@ -58,33 +66,50 @@ public class VisualTimelineNodeCell extends PNode {
 
         setBounds(x, y, width, height);
 
-        rectNode = new PPath(new Rectangle2D.Double(x, y, width, height));
+        rect = new PPath(new Rectangle2D.Double(x, y, width, height));
 //        rect.setStrokePaint(Color.darkGray);
-        rectNode.setStroke(null);
-        rectNode.setPaint(Color.white);
-        addChild(rectNode);
+        rect.setStroke(null);
+//        rectNode.setPaint(Color.white);
+        addChild(rect);
 
-        String label = graphNode.getString(specs.getNodeLabelAttr());
-        PText caption = new PText(label);
-        caption.setFont(CELL_CAPTION_FONT);
+
+        PText nodeNameText = new PText(graphNode.getString(specs.getNodeLabelAttr()));
+        nodeNameText.setFont(CELL_CAPTION_FONT);
 //        text.setBounds(rect.getBounds());
 //        text.setJustification(JComponent.CENTER_ALIGNMENT);
-        caption.setTextPaint(Color.gray);
-        caption.setX(x + 3);
-        caption.setY(y + 2);
-        addChild(caption);
+        nodeNameText.setX(x + 3);
+        nodeNameText.setY(y + 2);
+        addChild(nodeNameText);
 
         double sumOutgoing = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        if (!Double.isNaN(sumOutgoing)) {
-            PText v = new PText(JFlowMap.NUMBER_FORMAT.format(sumOutgoing));
-            v.setFont(CELL_VALUE_FONT);
-            v.setJustification(JComponent.RIGHT_ALIGNMENT);
-            v.setTextPaint(Color.gray);
-            v.setBounds(
-                    x - v.getWidth() + width, y - v.getHeight() + height,
-                    v.getWidth(), v.getHeight());
-            addChild(v);
+
+        PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(sumOutgoing));
+        valueText.setFont(CELL_VALUE_FONT);
+        valueText.setJustification(JComponent.RIGHT_ALIGNMENT);
+        valueText.setTextPaint(Color.gray);
+        valueText.setBounds(
+                x - valueText.getWidth() + width, y - valueText.getHeight() + height,
+                valueText.getWidth(), valueText.getHeight());
+        addChild(valueText);
+
+
+        Color rectColor;
+        MinMax ws = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
+        if (sumOutgoing > 0) {
+            double normalizedValue = ws.normalizeLog(sumOutgoing);
+            rectColor = ColorUtils.colorBetween(
+                    VALUE_COLOR_MIN,
+                    VALUE_COLOR_MAX,
+                    normalizedValue, 255
+            );
+        } else {
+            rectColor = VALUE_COLOR_MIN;
         }
+
+        rect.setPaint(rectColor);
+        Color textColor = ColorUtils.farthestColor(NODE_NAME_COLOR1, NODE_NAME_COLOR2, rectColor);
+        nodeNameText.setTextPaint(textColor);
+        valueText.setTextPaint(textColor);
 
 //
 
@@ -97,8 +122,8 @@ public class VisualTimelineNodeCell extends PNode {
         public void mouseEntered(PInputEvent event) {
             VisualTimelineNodeCell vc = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualTimelineNodeCell.class);
             if (vc != null) {
-                vc.rectNode.setStroke(SELECTION_STROKE);
-                vc.rectNode.setStrokePaint(SELECTION_STROKE_PAINT);
+                vc.rect.setStroke(SELECTION_STROKE);
+                vc.rect.setStrokePaint(SELECTION_STROKE_PAINT);
             }
         }
 
@@ -106,8 +131,8 @@ public class VisualTimelineNodeCell extends PNode {
         public void mouseExited(PInputEvent event) {
             VisualTimelineNodeCell vc = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualTimelineNodeCell.class);
             if (vc != null) {
-                vc.rectNode.setStroke(null);
-                vc.rectNode.setStrokePaint(null);
+                vc.rect.setStroke(null);
+                vc.rect.setStrokePaint(null);
             }
         }
     };

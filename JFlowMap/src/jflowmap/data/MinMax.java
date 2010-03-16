@@ -27,8 +27,9 @@ public class MinMax {
     private final double min;
     private final double max;
 	private final double avg;
-    private final double minLog;
-    private final double maxLog;
+//    private final double minLog;
+//    private final double maxLog;
+    private final double distLog;
 
     private MinMax(double minValue, double avg, double maxValue) {
         if (minValue > maxValue) {
@@ -43,8 +44,9 @@ public class MinMax {
         this.avg = avg;
         this.min = minValue;
         this.max = maxValue;
-        this.minLog = Math.log(min);
-        this.maxLog = Math.log(max);
+//        this.minLog = Math.log(min);
+//        this.maxLog = Math.log(max);
+        this.distLog = Math.log(1.0 + (max - min));
     }
 
     public double getMax() {
@@ -59,13 +61,13 @@ public class MinMax {
         return avg;
     }
 
-    public double getMaxLog() {
-        return maxLog;
-    }
-
-    public double getMinLog() {
-        return minLog;
-    }
+//    public double getMaxLog() {
+//        return maxLog;
+//    }
+//
+//    public double getMinLog() {
+//        return minLog;
+//    }
 
     public static MinMax createFor(Iterator<Double> it) {
         double max = Double.MIN_VALUE;
@@ -104,11 +106,19 @@ public class MinMax {
      * In case if max == min the method always returns 1.
      */
     public double normalizeLog(double value) {
-        if (getMax() == getMin()) return 1.0;
-        double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
+//        if (getMax() == getMin()) return 1.0;
+//        double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
+//        double rv = Math.log(logarithmize(value)) / LOG_SCALE_MAX_LOG;
+        double rv = Math.log(1.0 + value - min) / distLog;
         assert(rv >= 0.0  &&  rv <= 1.0);
         return rv;
     }
+
+//    private static final double LOG_SCALE_MAX = 1e5;
+//    private static final double LOG_SCALE_MAX_LOG = Math.log(LOG_SCALE_MAX);
+//    private double logarithmize(double v) {
+//        return 1 + (LOG_SCALE_MAX - 1) * (v - min) / (max - min);
+//    }
 
     /**
      * Constructs a <code>String</code> with all attributes
@@ -129,8 +139,8 @@ public class MinMax {
             + "min = " + this.min + TAB
             + "max = " + this.max + TAB
             + "avg = " + this.avg + TAB
-            + "minLog = " + this.minLog + TAB
-            + "maxLog = " + this.maxLog + TAB
+//            + "minLog = " + this.minLog + TAB
+//            + "maxLog = " + this.maxLog + TAB
             + " )";
 
         return retValue;

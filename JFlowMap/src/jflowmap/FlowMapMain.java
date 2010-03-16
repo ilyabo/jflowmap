@@ -349,8 +349,8 @@ public class FlowMapMain extends JFrame {
     }
 
     public void shutdown() {
+        logger.info(">>> Exiting JFlowMap");
 //        savePreferences();
-        logger.info("Exiting application");
         System.exit(0);
     }
 

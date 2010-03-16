@@ -20,6 +20,7 @@ package jflowmap;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -28,6 +29,9 @@ import jflowmap.util.PanHandler;
 import jflowmap.util.ZoomHandler;
 import jflowmap.visuals.timeline.VisualFlowTimeline;
 import prefuse.data.Graph;
+
+import com.google.common.collect.Lists;
+
 import edu.umd.cs.piccolo.PCanvas;
 
 /**
@@ -38,6 +42,7 @@ public class JFlowTimeline extends JComponent {
     private static final Color CANVAS_BACKGROUND_COLOR = new Color(47, 89, 134);
     private final PCanvas canvas;
     private final VisualFlowTimeline visualTimeline;
+    private final FlowMapStats globalStats;
 
     public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
         setLayout(new BorderLayout());
@@ -50,14 +55,23 @@ public class JFlowTimeline extends JComponent {
         add(canvas, BorderLayout.CENTER);
 
 
+
+        List<FlowMapGraphWithAttrSpecs> graphsAndSpecs = Lists.newArrayList();
         for (Graph graph : graphs) {
-            FlowMapStats.supplyNodesWithStats(new FlowMapGraphWithAttrSpecs(graph, attrSpec));
+            FlowMapGraphWithAttrSpecs gs = new FlowMapGraphWithAttrSpecs(graph, attrSpec);
+            FlowMapStats.supplyNodesWithStats(gs);
+            graphsAndSpecs.add(gs);
         }
 
-        visualTimeline = new VisualFlowTimeline(graphs, attrSpec);
+        globalStats = FlowMapStats.createFor(graphsAndSpecs);
+
+        visualTimeline = new VisualFlowTimeline(this, graphs, attrSpec);
         canvas.getLayer().addChild(visualTimeline);
+
     }
 
-
+    public FlowMapStats getGlobalStats() {
+        return globalStats;
+    }
 
 }

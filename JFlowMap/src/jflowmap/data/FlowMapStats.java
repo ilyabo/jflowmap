@@ -43,6 +43,8 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapStats {
 
+    private static final String NODE_ATTR_KEY_SUFFIX = "_nodeAttr";
+    private static final String EDGE_ATTR_KEY_SUFFIX = "_edgeAttr";
     public static final String NODE_STATS_COLUMN__SUM_OUTGOING = "sumOutgoing";
     public static final String NODE_STATS_COLUMN__SUM_INCOMING = "sumIncoming";
 
@@ -97,6 +99,28 @@ public class FlowMapStats {
         return getAttrStats(Attrs.NODE_Y);
     }
 
+    /**
+     * NOTE: this method suggests that every graph in this graphAndSpecs
+     * has the attribute with <code>attrName</code>.
+     */
+    public MinMax getNodeAttrStats(final String attrName) {
+        String key = attrName + NODE_ATTR_KEY_SUFFIX;
+        MinMax stats = statsCache.get(key);
+        if (stats == null) {
+            stats = TupleStats.createFor(
+                    attrIterator(Tuples.NODES),
+                    attrIterator(new Function<FlowMapGraphWithAttrSpecs, String>() {
+                        @Override
+                        public String apply(FlowMapGraphWithAttrSpecs from) {
+                            return attrName;
+                        }
+                    })
+            );
+            statsCache.put(key, stats);
+        }
+        return stats;
+    }
+
     public MinMax getAttrStats(Attrs attr) {
     	String key = attr.name();
         MinMax stats = statsCache.get(key);
@@ -114,6 +138,20 @@ public class FlowMapStats {
     private <T> Iterator<T> attrIterator(Function<FlowMapGraphWithAttrSpecs, T> function) {
         return Iterators.concat(Iterators.transform(graphAndSpecs.iterator(), function));
     }
+
+    enum Tuples implements Function<FlowMapGraphWithAttrSpecs, TupleSet> {
+        EDGES {
+            public TupleSet apply(FlowMapGraphWithAttrSpecs from) {
+                return from.getGraph().getEdges();
+            }
+        },
+        NODES {
+            public TupleSet apply(FlowMapGraphWithAttrSpecs from) {
+                return from.getGraph().getNodes();
+            }
+        },
+        ;
+    };
 
     public enum Attrs  {
         EDGE_WEIGHT {
@@ -170,21 +208,7 @@ public class FlowMapStats {
             },
             ;
         };
-        private enum Tuples implements Function<FlowMapGraphWithAttrSpecs, TupleSet> {
-            EDGES {
-                public TupleSet apply(FlowMapGraphWithAttrSpecs from) {
-                    return from.getGraph().getEdges();
-                }
-            },
-            NODES {
-                public TupleSet apply(FlowMapGraphWithAttrSpecs from) {
-                    return from.getGraph().getNodes();
-                }
-            },
-            ;
-        };
     }
-
 
     /**
      * This method adds additional columns to the nodes table providing

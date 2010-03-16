@@ -20,12 +20,14 @@ package jflowmap.visuals.timeline;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JComponent;
 
 import jflowmap.FlowMapAttrsSpec;
+import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import prefuse.data.Graph;
@@ -41,9 +43,12 @@ import edu.umd.cs.piccolo.nodes.PText;
  */
 public class VisualFlowTimeline extends PNode {
 
-    private static final int ROW_CAPTION_TO_CELLS_GAP = 15;
+    enum Orientation { HORIZONTAL, VERTICAL };
+    private static final Orientation ORIENTATION = Orientation.VERTICAL;
+
+    private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
+    private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
     private static final Font ROW_CAPTION_FONT = new Font("Arial", Font.BOLD, 15);
-    private static final int X_OFFSET = 70;
     private final List<Graph> graphs;
     private final FlowMapAttrsSpec attrSpecs;
 
@@ -51,11 +56,18 @@ public class VisualFlowTimeline extends PNode {
     private final double cellHeight = 35;
     private final double cellSpacingX = 2;
     private final double cellSpacingY = 2;
+    private final JFlowTimeline jFlowTimeline;
 
-    public VisualFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
+    public VisualFlowTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
+        this.jFlowTimeline = jFlowTimeline;
         this.graphs = Lists.newArrayList(graphs);
+        Collections.reverse(this.graphs);
         this.attrSpecs = attrSpecs;
         buildTimeline();
+    }
+
+    public FlowMapStats getGlobalStats() {
+        return jFlowTimeline.getGlobalStats();
     }
 
     public FlowMapAttrsSpec getAttrSpecs() {
@@ -77,30 +89,53 @@ public class VisualFlowTimeline extends PNode {
 
         int i = 0;
         for (Graph g : graphs) {
-            double y = cellSpacingY + i * (cellHeight + cellSpacingY);
             PText t = new PText(FlowMapLoader.idOf(g));
             t.setFont(ROW_CAPTION_FONT);
             t.setTextPaint(Color.white);
-            t.setJustification(JComponent.RIGHT_ALIGNMENT);
-            t.setBounds(
-                    X_OFFSET + t.getX() - t.getWidth() - ROW_CAPTION_TO_CELLS_GAP,
-                    y + (cellHeight - ROW_CAPTION_FONT.getSize2D())/2,
-                    t.getWidth(), t.getHeight());
+            double x = 0, y = 0;
+            switch (ORIENTATION) {
+                case HORIZONTAL:
+                    x = ROW_CAPTION_TO_CELLS_X_GAP + t.getX() - t.getWidth();
+                    y = cellSpacingY + i * (cellHeight + cellSpacingY) + (cellHeight - ROW_CAPTION_FONT.getSize2D())/2;
+                    t.setJustification(JComponent.RIGHT_ALIGNMENT);
+                    t.setBounds(x , y, t.getWidth(), t.getHeight());
+                    break;
+                case VERTICAL:
+                    x = cellSpacingX + i * (cellWidth + cellSpacingX);
+                    y = 0 ;
+                    t.setJustification(JComponent.LEFT_ALIGNMENT);
+                    t.setBounds(x + (cellWidth - t.getWidth())/2, y, t.getWidth(), t.getHeight());
+                break;
+            }
             addChild(t);
 
 //            int j = 0;
+
             int j = g.getNodeCount() - 1;  // workaround for the bug in rowsSortedBy
+            @SuppressWarnings("unchecked")
             Iterator<Integer> it = g.getNodeTable().rowsSortedBy(
 //                    attrSpecs.nodeLabelAttr, true
                     FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true
             );
             while (it.hasNext()) {
                 Node n = g.getNode(it.next());
-                addChild(new VisualTimelineNodeCell(
-                        this, n,
-                        X_OFFSET + cellSpacingX + j * (cellWidth + cellSpacingX),
-                        y,
-                        cellWidth, cellHeight));
+                double nx = 0, ny = 0;
+                switch (ORIENTATION) {
+                    case HORIZONTAL:
+                        nx = 10 + ROW_CAPTION_TO_CELLS_X_GAP + cellSpacingX + j * (cellWidth + cellSpacingX);
+                        ny = cellSpacingY + i * (cellHeight + cellSpacingY);
+                        break;
+                    case VERTICAL:
+                        nx = cellSpacingX + i * (cellWidth + cellSpacingX);
+                        ny = ROW_CAPTION_FONT.getSize2D() + ROW_CAPTION_TO_CELLS_Y_GAP + cellSpacingY + j * (cellHeight + cellSpacingY);
+                        break;
+                }
+
+//                if (ORIENTATION == Orientation.VERTICAL) {
+//                    double _n = nx; nx = ny; ny = _n;   // swap
+//                }
+
+                addChild(new VisualTimelineNodeCell(this, n, nx, ny, cellWidth, cellHeight));
 //                j++;
                 j--;
             }
@@ -109,3 +144,4 @@ public class VisualFlowTimeline extends PNode {
     }
 
 }
+

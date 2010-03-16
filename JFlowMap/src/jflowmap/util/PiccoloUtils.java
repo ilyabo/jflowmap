@@ -149,10 +149,13 @@ public class PiccoloUtils {
     @SuppressWarnings("unchecked")
     public static final <T extends PNode> T getParentNodeOfType(PNode node, Class<T> klass) {
         PNode parent = node;
-        while (parent != null && !(parent.getClass().isAssignableFrom(klass))) {
+        while (parent != null) {
             parent = parent.getParent();
+            if (klass.isAssignableFrom(parent.getClass())) {
+                return (T) parent;
+            }
         }
-        return (T) parent;
+        return null;
     }
 
 }

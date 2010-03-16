@@ -57,4 +57,18 @@ public class ColorUtils {
         );
     }
 
+    public static Color farthestColor(Color from1, Color from2, Color to) {
+        if (dist(from1, to) > dist(from2, to)) {
+            return from1;
+        } else {
+            return from2;
+        }
+    }
+
+    public static int dist(Color c1, Color c2) {
+        return
+            Math.abs(c1.getRed() - c2.getRed()) +
+            Math.abs(c1.getGreen() - c2.getGreen()) +
+            Math.abs(c1.getBlue() - c2.getBlue());
+    }
 }
