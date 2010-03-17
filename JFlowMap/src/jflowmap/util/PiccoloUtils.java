@@ -151,7 +151,7 @@ public class PiccoloUtils {
         PNode parent = node;
         while (parent != null) {
             parent = parent.getParent();
-            if (klass.isAssignableFrom(parent.getClass())) {
+            if (parent != null  &&  klass.isAssignableFrom(parent.getClass())) {
                 return (T) parent;
             }
         }

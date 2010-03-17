@@ -63,6 +63,8 @@ public class JFlowTimeline extends JComponent {
             graphsAndSpecs.add(gs);
         }
 
+        FlowMapStats.supplyNodesWithDiffStats(graphs, attrSpec);
+
         globalStats = FlowMapStats.createFor(graphsAndSpecs);
 
         visualTimeline = new VisualFlowTimeline(this, graphs, attrSpec);

@@ -97,6 +97,7 @@ public class GraphMLReader2 {
     private void readKeys(XmlElement root) throws DataIOException {
         // Read the attr definitions
         nodeSchema = new Schema();
+        nodeSchema.addColumn(FlowMapLoader.GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
         edgeSchema = new Schema();
         edgeSchema.addColumn(SRC, int.class);
         edgeSchema.addColumn(TRG, int.class);
@@ -153,7 +154,10 @@ public class GraphMLReader2 {
             for (Iterator<?> nit = graphElt.elements(namespace, "node").iterator(); nit.hasNext(); ) {
                 XmlElement nodeElt = (XmlElement) nit.next();
                 int ri = nodeTable.addRow();
-                nodeIdToIndex.put(nodeElt.getAttributeValue(null, "id"), ri);
+                String nodeId = nodeElt.getAttributeValue(null, "id");
+                nodeIdToIndex.put(nodeId, ri);
+
+                nodeTable.set(ri, FlowMapLoader.GRAPH_NODE_TABLE_COLUMN_NAME__ID, nodeId);
 
                 readData(nodeElt, nodeTable, ri);
             }

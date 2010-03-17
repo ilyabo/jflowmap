@@ -95,10 +95,29 @@ public class MinMax {
      * In case if max == min the method always returns 1.
      */
     public double normalize(double value) {
+        checkInterval(value);
+        if (Double.isNaN(value)) {
+            return Double.NaN;
+        }
         if (getMax() == getMin()) return 1.0;
         double rv = (value - getMin()) / (getMax() - getMin());
-        assert(rv >= 0.0  &&  rv <= 1.0);
+        checkNormalized(value, rv);
         return rv;
+    }
+
+    private void checkNormalized(double input, double normalized) throws AssertionError {
+        if (!(normalized >= 0.0  &&  normalized <= 1.0)) {
+            throw new AssertionError("Normalized value must be between 0.0 and 1.0. " +
+                    "Input value: " + input + ", " +
+            		"Normalized value: " + normalized + ". " + this);
+        }
+    }
+
+    private void checkInterval(double value) {
+        if (value < min || value > max) {
+            throw new IllegalArgumentException(
+                    "Value must be between " + min + " and " + max + ". Actual value = " + value);
+        }
     }
 
     /**
@@ -106,11 +125,12 @@ public class MinMax {
      * In case if max == min the method always returns 1.
      */
     public double normalizeLog(double value) {
+        checkInterval(value);
 //        if (getMax() == getMin()) return 1.0;
 //        double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
 //        double rv = Math.log(logarithmize(value)) / LOG_SCALE_MAX_LOG;
         double rv = Math.log(1.0 + value - min) / distLog;
-        assert(rv >= 0.0  &&  rv <= 1.0);
+        checkNormalized(value, rv);
         return rv;
     }
 

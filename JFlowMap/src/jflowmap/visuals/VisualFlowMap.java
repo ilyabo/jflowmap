@@ -972,7 +972,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public String getName() {
-        return FlowMapLoader.idOf(flowMapModel.getGraph());
+        return FlowMapLoader.getGraphId(flowMapModel.getGraph());
     }
 
 }

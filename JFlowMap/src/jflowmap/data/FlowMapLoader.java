@@ -27,6 +27,7 @@ import jflowmap.models.map.AreaMap;
 import jflowmap.visuals.VisualAreaMap;
 import jflowmap.visuals.VisualFlowMap;
 import prefuse.data.Graph;
+import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
 
 import com.google.common.collect.Iterables;
@@ -37,17 +38,46 @@ import com.google.common.collect.Iterables;
 public class FlowMapLoader {
 
     private static final String GRAPH_CLIENT_PROPERTY__ID = "id";
+    static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
 
     private FlowMapLoader() {
     }
 
-    public static String idOf(Graph graph) {
-        return (String) graph.getClientProperty(FlowMapLoader.GRAPH_CLIENT_PROPERTY__ID);
+
+    // TODO: create class FlowMap encapsulating Graph and move these methods there
+    public static String getGraphId(Graph graph) {
+        return (String) graph.getClientProperty(GRAPH_CLIENT_PROPERTY__ID);
     }
 
     public static void setGraphId(Graph graph, String name) {
-        graph.putClientProperty(FlowMapLoader.GRAPH_CLIENT_PROPERTY__ID, name);
+        graph.putClientProperty(GRAPH_CLIENT_PROPERTY__ID, name);
     }
+
+
+    public static String getNodeId(Node node) {
+        return node.getString(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
+    }
+
+    public static Node findNodeById(Graph graph, String nodeId) {
+        for (int i = 0, len = graph.getNodeCount(); i < len; i++) {
+            Node node = graph.getNode(i);
+            if (nodeId.equals(getNodeId(node))) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+//    public static void setNodeId(Node node, String id) {
+//        Table table = node.getGraph().getNodeTable();
+//        if (table.getColumn(GRAPH_NODE_TABLE_COLUMN_NAME__ID) == null) {
+//            table.addColumn(GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
+//        }
+//        node.setString(GRAPH_NODE_TABLE_COLUMN_NAME__ID, id);
+//    }
+
+
+
 
     public static Graph loadGraph(String filename) throws DataIOException {
         JFlowMap.logger.info("Loading \"" + filename + "\"");

@@ -20,7 +20,6 @@ package jflowmap.visuals.timeline;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Table;
 
 import com.google.common.collect.Lists;
 
@@ -61,7 +61,6 @@ public class VisualFlowTimeline extends PNode {
     public VisualFlowTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
         this.jFlowTimeline = jFlowTimeline;
         this.graphs = Lists.newArrayList(graphs);
-        Collections.reverse(this.graphs);
         this.attrSpecs = attrSpecs;
         buildTimeline();
     }
@@ -87,9 +86,11 @@ public class VisualFlowTimeline extends PNode {
 //            addChild(new VisualTimelineNodeCell(node));
 //        }
 
+        Table selectedGraph = graphs.get(graphs.size() - 1).getNodeTable();
+
         int i = 0;
         for (Graph g : graphs) {
-            PText t = new PText(FlowMapLoader.idOf(g));
+            PText t = new PText(FlowMapLoader.getGraphId(g));
             t.setFont(ROW_CAPTION_FONT);
             t.setTextPaint(Color.white);
             double x = 0, y = 0;
@@ -113,9 +114,10 @@ public class VisualFlowTimeline extends PNode {
 
             int j = g.getNodeCount() - 1;  // workaround for the bug in rowsSortedBy
             @SuppressWarnings("unchecked")
-            Iterator<Integer> it = g.getNodeTable().rowsSortedBy(
-//                    attrSpecs.nodeLabelAttr, true
+//            Iterator<Integer> it = g.getNodeTable().rowsSortedBy(
+            Iterator<Integer> it = selectedGraph.rowsSortedBy(
                     FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true
+////                    attrSpecs.nodeLabelAttr, true
             );
             while (it.hasNext()) {
                 Node n = g.getNode(it.next());

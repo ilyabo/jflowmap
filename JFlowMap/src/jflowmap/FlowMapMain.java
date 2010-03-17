@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -161,12 +162,17 @@ public class FlowMapMain extends JFrame {
     }
 
 
-    private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec("ritypnv", "code", "x", "y", 0);
+    private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
+//            "ritypnv",
+            "r",
+            "code", "x", "y", 0);
 
     public void showFlowTimeline(String filename) throws DataIOException {
         Iterable<Graph> graphs = loadFile(filename);
+        List<Graph> list = Lists.newArrayList(graphs);
+        Collections.reverse(list);
         // TODO: let the user choose the attr specs
-        showView(new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS));
+        showView(new JFlowTimeline(list, REFUGEES_ATTR_SPECS));
     }
 
 
