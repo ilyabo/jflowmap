@@ -26,11 +26,14 @@ import javax.swing.JComponent;
 
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.JFlowMap;
+import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
+import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.PiccoloUtils;
 import prefuse.data.Node;
+import prefuse.util.ColorLib;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -46,12 +49,17 @@ public class VisualTimelineNodeCell extends PNode {
 
     private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
     private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
-    private static final Color VALUE_COLOR_NAN = new Color(200, 200, 200);
+    private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
 
-    private static final Color DIFF_COLOR_MIN = new Color(140, 81, 10);
-    private static final Color DIFF_COLOR_ZERO = new Color(245, 245, 245);
-    private static final Color DIFF_COLOR_MAX = new Color(1, 102, 94);
-    private static final Color DIFF_COLOR_NAN = new Color(200, 200, 200);
+    public static final int[] DIFF_COLORS = ArrayUtils.reverse(new int[] {
+        ColorLib.rgb(165, 0, 38), ColorLib.rgb(215, 48, 39), ColorLib.rgb(244, 109, 67), ColorLib.rgb(253, 174, 97), ColorLib.rgb(254, 224, 139),
+        ColorLib.rgb(255, 255, 191),
+        ColorLib.rgb(217, 239, 139), ColorLib.rgb(166, 217, 106), ColorLib.rgb(102, 189, 99), ColorLib.rgb(26, 152, 80), ColorLib.rgb(0, 104, 55),
+    });
+    private static final Color DIFF_COLOR_MIN = new Color(26, 152, 80);
+    private static final Color DIFF_COLOR_ZERO = new Color(255, 255, 191);
+    private static final Color DIFF_COLOR_MAX = new Color(215, 48, 39);
+    private static final Color DIFF_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR;
 
     private static final double DIFF_BOX_WIDTH = 10;
     private static final double DIFF_BOX_GAP = 0;
@@ -137,14 +145,15 @@ public class VisualTimelineNodeCell extends PNode {
                 FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
         if (!Double.isNaN(diff)) {
             // TODO: Use ColorMap instead
-            double normalizedDiff =
-//                diffStats.normalizeLog(diff);
-                diffStats.normalize(diff);
-            diffRectColor = ColorUtils.colorBetween(
-                    DIFF_COLOR_MIN,
-                    DIFF_COLOR_MAX,
-                    normalizedDiff, 255
-            );
+//            double normalizedDiff =
+////                diffStats.normalizeLog(diff);
+//                diffStats.normalize(diff);
+//            diffRectColor = ColorUtils.colorBetween(
+//                    DIFF_COLOR_MIN,
+//                    DIFF_COLOR_MAX,
+//                    normalizedDiff, 255
+//            );
+            diffRectColor = ColorLib.getColor(timeline.getSumOutgoingDiffColorMap().getColor(diff));
         } else {
             diffRectColor = DIFF_COLOR_NAN;
         }
@@ -157,6 +166,8 @@ public class VisualTimelineNodeCell extends PNode {
 
         addInputEventListener(inputEventListener);
     }
+
+
 
 
     private static final PInputEventListener inputEventListener = new PBasicInputEventHandler() {

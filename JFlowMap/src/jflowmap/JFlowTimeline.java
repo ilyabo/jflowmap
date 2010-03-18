@@ -39,7 +39,7 @@ import edu.umd.cs.piccolo.PCanvas;
  */
 public class JFlowTimeline extends JComponent {
 
-    private static final Color CANVAS_BACKGROUND_COLOR = new Color(47, 89, 134);
+    public static final Color CANVAS_BACKGROUND_COLOR = new Color(47, 89, 134);
     private final PCanvas canvas;
     private final VisualFlowTimeline visualTimeline;
     private final FlowMapStats globalStats;

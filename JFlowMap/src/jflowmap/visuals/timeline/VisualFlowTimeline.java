@@ -29,9 +29,11 @@ import jflowmap.FlowMapAttrsSpec;
 import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.MinMax;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
+import prefuse.util.ColorMap;
 
 import com.google.common.collect.Lists;
 
@@ -46,6 +48,9 @@ public class VisualFlowTimeline extends PNode {
     enum Orientation { HORIZONTAL, VERTICAL };
     private static final Orientation ORIENTATION = Orientation.VERTICAL;
 
+    enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, GEO }
+    private static final SortMode SORT_MODE = SortMode.QTY_IN_EACH_YEAR;
+
     private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
     private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
     private static final Font ROW_CAPTION_FONT = new Font("Arial", Font.BOLD, 15);
@@ -54,15 +59,26 @@ public class VisualFlowTimeline extends PNode {
 
     private final double cellWidth = 60;
     private final double cellHeight = 35;
-    private final double cellSpacingX = 2;
-    private final double cellSpacingY = 2;
+    private final double cellSpacingX = 4;
+    private final double cellSpacingY = 1;
     private final JFlowTimeline jFlowTimeline;
+
+    private final ColorMap sumOutgoingDiffColorMap;
+
 
     public VisualFlowTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
         this.jFlowTimeline = jFlowTimeline;
         this.graphs = Lists.newArrayList(graphs);
         this.attrSpecs = attrSpecs;
+        MinMax diffStats = getGlobalStats().getNodeAttrStats(
+                FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+        double diff_r = Math.max(Math.abs(diffStats.getMin()), Math.abs(diffStats.getMax()));
+        this.sumOutgoingDiffColorMap = new ColorMap(VisualTimelineNodeCell.DIFF_COLORS, -diff_r, diff_r);
         buildTimeline();
+    }
+
+    public ColorMap getSumOutgoingDiffColorMap() {
+        return sumOutgoingDiffColorMap;
     }
 
     public FlowMapStats getGlobalStats() {
@@ -73,6 +89,8 @@ public class VisualFlowTimeline extends PNode {
         return attrSpecs;
     }
 
+
+    @SuppressWarnings("unchecked")
     private void buildTimeline() {
         if (graphs.size() == 0) {
             return;
@@ -113,12 +131,20 @@ public class VisualFlowTimeline extends PNode {
 //            int j = 0;
 
             int j = g.getNodeCount() - 1;  // workaround for the bug in rowsSortedBy
-            @SuppressWarnings("unchecked")
-//            Iterator<Integer> it = g.getNodeTable().rowsSortedBy(
-            Iterator<Integer> it = selectedGraph.rowsSortedBy(
-                    FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true
-////                    attrSpecs.nodeLabelAttr, true
-            );
+
+            Iterator<Integer> it;
+
+            switch (SORT_MODE) {
+            case QTY_IN_EACH_YEAR:
+                it = g.getNodeTable().rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
+                break;
+            case QTY_IN_SELECTED_YEAR:
+                it = selectedGraph.rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
+                break;
+            default:
+                throw new UnsupportedOperationException();
+            }
+
             while (it.hasNext()) {
                 Node n = g.getNode(it.next());
                 double nx = 0, ny = 0;
