@@ -49,7 +49,7 @@ public class VisualFlowTimeline extends PNode {
     private static final Orientation ORIENTATION = Orientation.VERTICAL;
 
     enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, GEO }
-    private static final SortMode SORT_MODE = SortMode.QTY_IN_EACH_YEAR;
+    private static final SortMode SORT_MODE = SortMode.QTY_IN_SELECTED_YEAR;
 
     private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
     private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
@@ -59,7 +59,7 @@ public class VisualFlowTimeline extends PNode {
 
     private final double cellWidth = 60;
     private final double cellHeight = 35;
-    private final double cellSpacingX = 4;
+    private final double cellSpacingX = 0; // 4
     private final double cellSpacingY = 1;
     private final JFlowTimeline jFlowTimeline;
 
