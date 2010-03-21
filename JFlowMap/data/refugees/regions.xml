@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<regions>
+	<region name="Africa">
+
+		<region name="Eastern Africa">
+			<country name="Burundi" isoCode="BDI"></country>
+			<country name="Comoros" isoCode="COM"></country>
+			<country name="Djibouti" isoCode="DJI"></country>
+			<country name="Eritrea" isoCode="ERI"></country>
+			<country name="Ethiopia" isoCode="ETH"></country>
+			<country name="Kenya" isoCode="KEN"></country>
+			<country name="Madagascar" isoCode="MDG"></country>
+			<country name="Malawi" isoCode="MWI"></country>
+			<country name="Mauritius" isoCode="MUS"></country>
+			<country name="Mayotte" isoCode="MYT"></country>
+			<country name="Mozambique" isoCode="MOZ"></country>
+			<country name="Réunion" isoCode="REU"></country>
+			<country name="Rwanda" isoCode="RWA"></country>
+			<country name="Seychelles" isoCode="SYC"></country>
+			<country name="Somalia" isoCode="SOM"></country>
+			<country name="Uganda" isoCode="UGA"></country>
+			<country name="United Republic of Tanzania" isoCode="TZA"></country>
+			<country name="Zambia" isoCode="ZMB"></country>
+			<country name="Zimbabwe" isoCode="ZWE"></country>
+
+		</region>
+		<region name="Middle Africa">
+			<country name="Angola" isoCode="AGO"></country>
+			<country name="Cameroon" isoCode="CMR"></country>
+			<country name="Central African Republic" isoCode="CAF"></country>
+			<country name="Chad" isoCode="TCD"></country>
+			<country name="Congo" isoCode="COG"></country>
+			<country name="Democratic Republic of the Congo" isoCode="COD"></country>
+			<country name="Equatorial Guinea" isoCode="GNQ"></country>
+			<country name="Gabon" isoCode="GAB"></country>
+			<country name="Sao Tome and Principe" isoCode="STP"></country>
+
+		</region>
+		<region name="Northern Africa">
+			<country name="Algeria" isoCode="DZA"></country>
+			<country name="Egypt" isoCode="EGY"></country>
+			<country name="Libyan Arab Jamahiriya" isoCode="LBY"></country>
+			<country name="Morocco" isoCode="MAR"></country>
+			<country name="Sudan" isoCode="SDN"></country>
+			<country name="Tunisia" isoCode="TUN"></country>
+			<country name="Western Sahara" isoCode="ESH"></country>
+
+		</region>
+		<region name="Southern Africa">
+			<country name="Botswana" isoCode="BWA"></country>
+			<country name="Lesotho" isoCode="LSO"></country>
+			<country name="Namibia" isoCode="NAM"></country>
+			<country name="South Africa" isoCode="ZAF"></country>
+			<country name="Swaziland" isoCode="SWZ"></country>
+
+		</region>
+		<region name="Western Africa">
+			<country name="Benin" isoCode="BEN"></country>
+			<country name="Burkina Faso" isoCode="BFA"></country>
+			<country name="Cape Verde" isoCode="CPV"></country>
+			<country name="Côte d'Ivoire" isoCode="CIV"></country>
+			<country name="Gambia" isoCode="GMB"></country>
+			<country name="Ghana" isoCode="GHA"></country>
+			<country name="Guinea" isoCode="GIN"></country>
+			<country name="Guinea-Bissau" isoCode="GNB"></country>
+			<country name="Liberia" isoCode="LBR"></country>
+			<country name="Mali" isoCode="MLI"></country>
+			<country name="Mauritania" isoCode="MRT"></country>
+			<country name="Niger" isoCode="NER"></country>
+			<country name="Nigeria" isoCode="NGA"></country>
+			<country name="Saint Helena" isoCode="SHN"></country>
+			<country name="Senegal" isoCode="SEN"></country>
+			<country name="Sierra Leone" isoCode="SLE"></country>
+			<country name="Togo" isoCode="TGO"></country>
+
+		</region>
+	</region>
+	<region name="Americas">
+
+		<region name="Latin America and the Caribbean">
+
+			<region name="Caribbean">
+				<country name="Anguilla" isoCode="AIA"></country>
+				<country name="Antigua and Barbuda" isoCode="ATG"></country>
+				<country name="Aruba" isoCode="ABW"></country>
+				<country name="Bahamas" isoCode="BHS"></country>
+				<country name="Barbados" isoCode="BRB"></country>
+				<country name="British Virgin Islands" isoCode="VGB"></country>
+				<country name="Cayman Islands" isoCode="CYM"></country>
+				<country name="Cuba" isoCode="CUB"></country>
+				<country name="Dominica" isoCode="DMA"></country>
+				<country name="Dominican Republic" isoCode="DOM"></country>
+				<country name="Grenada" isoCode="GRD"></country>
+				<country name="Guadeloupe" isoCode="GLP"></country>
+				<country name="Haiti" isoCode="HTI"></country>
+				<country name="Jamaica" isoCode="JAM"></country>
+				<country name="Martinique" isoCode="MTQ"></country>
+				<country name="Montserrat" isoCode="MSR"></country>
+				<country name="Netherlands Antilles" isoCode="ANT"></country>
+				<country name="Puerto Rico" isoCode="PRI"></country>
+				<country name="Saint-Barthélemy" isoCode="BLM"></country>
+				<country name="Saint Kitts and Nevis" isoCode="KNA"></country>
+				<country name="Saint Lucia" isoCode="LCA"></country>
+				<country name="Saint-Martin (French part)" isoCode="MAF"></country>
+				<country name="Saint Vincent and the Grenadines" isoCode="VCT"></country>
+				<country name="Trinidad and Tobago" isoCode="TTO"></country>
+				<country name="Turks and Caicos Islands" isoCode="TCA"></country>
+				<country name="United States Virgin Islands" isoCode="VIR"></country>
+
+			</region>
+			<region name="Central America">
+				<country name="Belize" isoCode="BLZ"></country>
+				<country name="Costa Rica" isoCode="CRI"></country>
+				<country name="El Salvador" isoCode="SLV"></country>
+				<country name="Guatemala" isoCode="GTM"></country>
+				<country name="Honduras" isoCode="HND"></country>
+				<country name="Mexico" isoCode="MEX"></country>
+				<country name="Nicaragua" isoCode="NIC"></country>
+				<country name="Panama" isoCode="PAN"></country>
+
+			</region>
+			<region name="South America">
+				<country name="Argentina" isoCode="ARG"></country>
+				<country name="Bolivia (Plurinational State of)" isoCode="BOL"></country>
+				<country name="Brazil" isoCode="BRA"></country>
+				<country name="Chile" isoCode="CHL"></country>
+				<country name="Colombia" isoCode="COL"></country>
+				<country name="Ecuador" isoCode="ECU"></country>
+				<country name="Falkland Islands (Malvinas)" isoCode="FLK"></country>
+				<country name="French Guiana" isoCode="GUF"></country>
+				<country name="Guyana" isoCode="GUY"></country>
+				<country name="Paraguay" isoCode="PRY"></country>
+				<country name="Peru" isoCode="PER"></country>
+				<country name="Suriname" isoCode="SUR"></country>
+				<country name="Uruguay" isoCode="URY"></country>
+				<country name="Venezuela (Bolivarian Republic of)" isoCode="VEN"></country>
+
+			</region>
+			<region name="Northern America">
+				<country name="Bermuda" isoCode="BMU"></country>
+				<country name="Canada" isoCode="CAN"></country>
+				<country name="Greenland" isoCode="GRL"></country>
+				<country name="Saint Pierre and Miquelon" isoCode="SPM"></country>
+				<country name="United States of America" isoCode="USA"></country>
+
+			</region>
+		</region>
+	</region>
+	<region name="Asia">
+
+		<region name="Central Asia">
+			<country name="Kazakhstan" isoCode="KAZ"></country>
+			<country name="Kyrgyzstan" isoCode="KGZ"></country>
+			<country name="Tajikistan" isoCode="TJK"></country>
+			<country name="Turkmenistan" isoCode="TKM"></country>
+			<country name="Uzbekistan" isoCode="UZB"></country>
+
+		</region>
+		<region name="Eastern Asia">
+			<country name="China" isoCode="CHN"></country>
+			<country name="Hong Kong Special Administrative Region of China"
+				isoCode="HKG"></country>
+			<country name="Macao Special Administrative Region of China"
+				isoCode="MAC"></country>
+			<country name="Democratic People's Republic of Korea"
+				isoCode="PRK"></country>
+			<country name="Japan" isoCode="JPN"></country>
+			<country name="Mongolia" isoCode="MNG"></country>
+			<country name="Republic of Korea" isoCode="KOR"></country>
+
+		</region>
+		<region name="Southern Asia">
+			<country name="Afghanistan" isoCode="AFG"></country>
+			<country name="Bangladesh" isoCode="BGD"></country>
+			<country name="Bhutan" isoCode="BTN"></country>
+			<country name="India" isoCode="IND"></country>
+			<country name="Iran (Islamic Republic of)" isoCode="IRN"></country>
+			<country name="Maldives" isoCode="MDV"></country>
+			<country name="Nepal" isoCode="NPL"></country>
+			<country name="Pakistan" isoCode="PAK"></country>
+			<country name="Sri Lanka" isoCode="LKA"></country>
+
+		</region>
+		<region name="South-Eastern Asia">
+			<country name="Brunei Darussalam" isoCode="BRN"></country>
+			<country name="Cambodia" isoCode="KHM"></country>
+			<country name="Indonesia" isoCode="IDN"></country>
+			<country name="Lao People's Democratic Republic" isoCode="LAO"></country>
+			<country name="Malaysia" isoCode="MYS"></country>
+			<country name="Myanmar" isoCode="MMR"></country>
+			<country name="Philippines" isoCode="PHL"></country>
+			<country name="Singapore" isoCode="SGP"></country>
+			<country name="Thailand" isoCode="THA"></country>
+			<country name="Timor-Leste" isoCode="TLS"></country>
+			<country name="Viet Nam" isoCode="VNM"></country>
+
+		</region>
+		<region name="Western Asia">
+			<country name="Armenia" isoCode="ARM"></country>
+			<country name="Azerbaijan" isoCode="AZE"></country>
+			<country name="Bahrain" isoCode="BHR"></country>
+			<country name="Cyprus" isoCode="CYP"></country>
+			<country name="Georgia" isoCode="GEO"></country>
+			<country name="Iraq" isoCode="IRQ"></country>
+			<country name="Israel" isoCode="ISR"></country>
+			<country name="Jordan" isoCode="JOR"></country>
+			<country name="Kuwait" isoCode="KWT"></country>
+			<country name="Lebanon" isoCode="LBN"></country>
+			<country name="Occupied Palestinian Territory" isoCode="PSE"></country>
+			<country name="Oman" isoCode="OMN"></country>
+			<country name="Qatar" isoCode="QAT"></country>
+			<country name="Saudi Arabia" isoCode="SAU"></country>
+			<country name="Syrian Arab Republic" isoCode="SYR"></country>
+			<country name="Turkey" isoCode="TUR"></country>
+			<country name="United Arab Emirates" isoCode="ARE"></country>
+			<country name="Yemen" isoCode="YEM"></country>
+
+		</region>
+	</region>
+	<region name="Europe">
+
+		<region name="Eastern Europe">
+			<country name="Belarus" isoCode="BLR"></country>
+			<country name="Bulgaria" isoCode="BGR"></country>
+			<country name="Czech Republic" isoCode="CZE"></country>
+			<country name="Hungary" isoCode="HUN"></country>
+			<country name="Poland" isoCode="POL"></country>
+			<country name="Republic of Moldova" isoCode="MDA"></country>
+			<country name="Romania" isoCode="ROU"></country>
+			<country name="Russian Federation" isoCode="RUS"></country>
+			<country name="Slovakia" isoCode="SVK"></country>
+			<country name="Ukraine" isoCode="UKR"></country>
+
+		</region>
+		<region name="Northern Europe">
+			<country name="Åland Islands" isoCode="ALA"></country>
+			<country name="Channel Islands" isoCode="_CI"></country>
+			<country name="Denmark" isoCode="DNK"></country>
+			<country name="Estonia" isoCode="EST"></country>
+			<country name="Faeroe Islands" isoCode="FRO"></country>
+			<country name="Finland" isoCode="FIN"></country>
+			<country name="Guernsey" isoCode="GGY"></country>
+			<country name="Iceland" isoCode="ISL"></country>
+			<country name="Ireland" isoCode="IRL"></country>
+			<country name="Isle of Man" isoCode="IMN"></country>
+			<country name="Jersey" isoCode="JEY"></country>
+			<country name="Latvia" isoCode="LVA"></country>
+			<country name="Lithuania" isoCode="LTU"></country>
+			<country name="Norway" isoCode="NOR"></country>
+			<country name="Svalbard and Jan Mayen Islands" isoCode="SJM"></country>
+			<country name="Sweden" isoCode="SWE"></country>
+			<country name="United Kingdom of Great Britain and Northern Ireland"
+				isoCode="GBR"></country>
+
+		</region>
+		<region name="Southern Europe">
+			<country name="Albania" isoCode="ALB"></country>
+			<country name="Andorra" isoCode="AND"></country>
+			<country name="Bosnia and Herzegovina" isoCode="BIH"></country>
+			<country name="Croatia" isoCode="HRV"></country>
+			<country name="Gibraltar" isoCode="GIB"></country>
+			<country name="Greece" isoCode="GRC"></country>
+			<country name="Holy See" isoCode="VAT"></country>
+			<country name="Italy" isoCode="ITA"></country>
+			<country name="Malta" isoCode="MLT"></country>
+			<country name="Montenegro" isoCode="MNE"></country>
+			<country name="Portugal" isoCode="PRT"></country>
+			<country name="San Marino" isoCode="SMR"></country>
+			<country name="Serbia" isoCode="SRB"></country>
+			<country name="Slovenia" isoCode="SVN"></country>
+			<country name="Spain" isoCode="ESP"></country>
+			<country name="The former Yugoslav Republic of Macedonia"
+				isoCode="MKD"></country>
+
+		</region>
+		<region name="Western Europe">
+			<country name="Austria" isoCode="AUT"></country>
+			<country name="Belgium" isoCode="BEL"></country>
+			<country name="France" isoCode="FRA"></country>
+			<country name="Germany" isoCode="DEU"></country>
+			<country name="Liechtenstein" isoCode="LIE"></country>
+			<country name="Luxembourg" isoCode="LUX"></country>
+			<country name="Monaco" isoCode="MCO"></country>
+			<country name="Netherlands" isoCode="NLD"></country>
+			<country name="Switzerland" isoCode="CHE"></country>
+
+		</region>
+	</region>
+	<region name="Oceania">
+
+		<region name="Australia and New Zealand">
+			<country name="Australia" isoCode="AUS"></country>
+			<country name="New Zealand" isoCode="NZL"></country>
+			<country name="Norfolk Island" isoCode="NFK"></country>
+
+		</region>
+		<region name="Melanesia">
+			<country name="Fiji" isoCode="FJI"></country>
+			<country name="New Caledonia" isoCode="NCL"></country>
+			<country name="Papua New Guinea" isoCode="PNG"></country>
+			<country name="Solomon Islands" isoCode="SLB"></country>
+			<country name="Vanuatu" isoCode="VUT"></country>
+
+		</region>
+		<region name="Micronesia">
+			<country name="Guam" isoCode="GUM"></country>
+			<country name="Kiribati" isoCode="KIR"></country>
+			<country name="Marshall Islands" isoCode="MHL"></country>
+			<country name="Micronesia (Federated States of)" isoCode="FSM"></country>
+			<country name="Nauru" isoCode="NRU"></country>
+			<country name="Northern Mariana Islands" isoCode="MNP"></country>
+			<country name="Palau" isoCode="PLW"></country>
+
+		</region>
+		<region name="Polynesia">
+			<country name="American Samoa" isoCode="ASM"></country>
+			<country name="Cook Islands" isoCode="COK"></country>
+			<country name="French Polynesia" isoCode="PYF"></country>
+			<country name="Niue" isoCode="NIU"></country>
+			<country name="Pitcairn" isoCode="PCN"></country>
+			<country name="Samoa" isoCode="WSM"></country>
+			<country name="Tokelau" isoCode="TKL"></country>
+			<country name="Tonga" isoCode="TON"></country>
+			<country name="Tuvalu" isoCode="TUV"></country>
+			<country name="Wallis and Futuna Islands" isoCode="WLF"></country>
+
+		</region>
+	</region>
+</regions>
