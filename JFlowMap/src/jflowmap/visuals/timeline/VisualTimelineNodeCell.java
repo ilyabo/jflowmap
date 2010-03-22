@@ -20,6 +20,7 @@ package jflowmap.visuals.timeline;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
@@ -51,7 +52,8 @@ public class VisualTimelineNodeCell extends PNode {
     private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
     private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
     private static final boolean SHOW_NODE_LABEL = false;
-    private static final boolean SHOW_DIFF = true;
+    private static final boolean SHOW_DIFF = false;
+    private static final boolean SHOW_HALF_CIRCLES = true;
 
     public static final int[] DIFF_COLORS = ArrayUtils.reverse(new int[] {
         ColorLib.rgb(165, 0, 38), ColorLib.rgb(215, 48, 39), ColorLib.rgb(244, 109, 67), ColorLib.rgb(253, 174, 97), ColorLib.rgb(254, 224, 139),
@@ -108,9 +110,10 @@ public class VisualTimelineNodeCell extends PNode {
             addChild(nodeLabelText);
         }
 
-        double value = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
+        double outgValue = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
+        double incValue = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
 
-        PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(value));
+        PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(outgValue));
         valueText.setFont(CELL_VALUE_FONT);
         valueText.setJustification(JComponent.RIGHT_ALIGNMENT);
         valueText.setTextPaint(Color.gray);
@@ -122,9 +125,9 @@ public class VisualTimelineNodeCell extends PNode {
 
         Color rectColor;
         MinMax vstats = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        if (!Double.isNaN(value)) {
+        if (!Double.isNaN(outgValue)) {
             double normalizedValue =
-                vstats.normalizeLog(value);
+                vstats.normalizeLog(outgValue);
 //                vstats.normalize(value);
             rectColor = ColorUtils.colorBetween(
                     VALUE_COLOR_MIN,
@@ -172,6 +175,20 @@ public class VisualTimelineNodeCell extends PNode {
 
 
 
+        if (SHOW_HALF_CIRCLES) {
+            // outgoing
+            double wh = Math.min(width, height);
+            double r = Math.sqrt(vstats.normalize(outgValue)) * wh;
+            double off = (wh - r)/2;
+            PPath leftArc = new PPath(new Arc2D.Double(x + off, y + off, r, r, 90, 180, Arc2D.PIE));
+            addChild(leftArc);
+
+            // incoming
+            r = Math.sqrt(vstats.normalize(incValue)) * wh;
+            off = (wh - r)/2;
+            PPath rightArc = new PPath(new Arc2D.Double(x + off, y + off, r, r, -90, 180, Arc2D.PIE));
+            addChild(rightArc);
+        }
 
 //
 
