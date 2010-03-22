@@ -165,7 +165,7 @@ public class FlowMapMain extends JFrame {
     private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
 //            "ritypnv",
             "r",
-            "code", "x", "y", 0);
+            "name", "x", "y", 0);
 
     public void showFlowTimeline(String filename) throws DataIOException {
         Iterable<Graph> graphs = loadFile(filename);

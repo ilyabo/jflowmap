@@ -32,6 +32,7 @@ import prefuse.data.Graph;
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 
 /**
@@ -74,6 +75,14 @@ public class JFlowTimeline extends JComponent {
 
     public FlowMapStats getGlobalStats() {
         return globalStats;
+    }
+
+    public PCanvas getCanvas() {
+        return canvas;
+    }
+
+    public PCamera getCamera() {
+        return canvas.getCamera();
     }
 
 }

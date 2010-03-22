@@ -287,8 +287,8 @@ public class FlowMapStats {
                 if (prevNode == null) {
                     diffIn = diffOut = Double.NaN;
                 } else {
-                    diffIn = node.getDouble(NODE_STATS_COLUMN__SUM_INCOMING) - prevNode.getDouble(NODE_STATS_COLUMN__SUM_INCOMING);
-                    diffOut = node.getDouble(NODE_STATS_COLUMN__SUM_OUTGOING) - prevNode.getDouble(NODE_STATS_COLUMN__SUM_OUTGOING);
+                    diffIn = diffPercentage(node.getDouble(NODE_STATS_COLUMN__SUM_INCOMING), prevNode.getDouble(NODE_STATS_COLUMN__SUM_INCOMING));
+                    diffOut = diffPercentage(node.getDouble(NODE_STATS_COLUMN__SUM_OUTGOING), prevNode.getDouble(NODE_STATS_COLUMN__SUM_OUTGOING));
                 }
 
                 node.setDouble(NODE_STATS_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR, diffIn);
@@ -296,5 +296,9 @@ public class FlowMapStats {
             }
             prevg = g;
         }
+    }
+
+    private static double diffPercentage(double current, double prev) {
+        return (current - prev)/prev;
     }
 }

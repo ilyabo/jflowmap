@@ -20,8 +20,13 @@ package jflowmap.visuals.timeline;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.swing.JComponent;
 
@@ -30,13 +35,22 @@ import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
+import jflowmap.data.XmlRegionsReader;
+import jflowmap.util.CollectionUtils;
+
+import org.apache.log4j.Logger;
+
 import prefuse.data.Graph;
 import prefuse.data.Node;
-import prefuse.data.Table;
 import prefuse.util.ColorMap;
+import at.fhj.utils.swing.JMsgPane;
+import at.fhjoanneum.cgvis.plots.FloatingLabelsNode;
+import at.fhjoanneum.cgvis.plots.FloatingLabelsNode.LabelIterator;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PText;
 
@@ -44,12 +58,13 @@ import edu.umd.cs.piccolo.nodes.PText;
  * @author Ilya Boyandin
  */
 public class VisualFlowTimeline extends PNode {
+    public static Logger logger = Logger.getLogger(VisualFlowTimeline.class);
 
-    enum Orientation { HORIZONTAL, VERTICAL };
-    private static final Orientation ORIENTATION = Orientation.VERTICAL;
+    enum Orientation { /* The timeline is */ VERTICAL, HORIZONTAL };
+    private static final Orientation ORIENTATION = Orientation.HORIZONTAL;
 
-    enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, GEO }
-    private static final SortMode SORT_MODE = SortMode.QTY_IN_SELECTED_YEAR;
+    enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, HIERARCHY }
+    private static final SortMode SORT_MODE = SortMode.HIERARCHY;
 
     private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
     private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
@@ -60,10 +75,14 @@ public class VisualFlowTimeline extends PNode {
     private final double cellWidth = 60;
     private final double cellHeight = 35;
     private final double cellSpacingX = 0; // 4
-    private final double cellSpacingY = 1;
+    private final double cellSpacingY = 0;
     private final JFlowTimeline jFlowTimeline;
 
     private final ColorMap sumOutgoingDiffColorMap;
+
+    private FloatingLabelsNode elementLabels;
+
+    private Graph selectedGraph;
 
 
     public VisualFlowTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
@@ -72,8 +91,13 @@ public class VisualFlowTimeline extends PNode {
         this.attrSpecs = attrSpecs;
         MinMax diffStats = getGlobalStats().getNodeAttrStats(
                 FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
-        double diff_r = Math.max(Math.abs(diffStats.getMin()), Math.abs(diffStats.getMax()));
-        this.sumOutgoingDiffColorMap = new ColorMap(VisualTimelineNodeCell.DIFF_COLORS, -diff_r, diff_r);
+        double diffR = Math.max(Math.abs(diffStats.getMin()), Math.abs(diffStats.getMax()));
+        this.sumOutgoingDiffColorMap = new ColorMap(VisualTimelineNodeCell.DIFF_COLORS, -diffR, diffR);
+
+        // TODO: implement selectedGraph
+        if (this.graphs.size() > 0) {
+            this.selectedGraph = this.graphs.get(this.graphs.size() - 1);
+        }
         buildTimeline();
     }
 
@@ -90,36 +114,29 @@ public class VisualFlowTimeline extends PNode {
     }
 
 
-    @SuppressWarnings("unchecked")
     private void buildTimeline() {
         if (graphs.size() == 0) {
             return;
         }
 
-        // the graphs are supposed to share the same nodes: TODO: build a joint nodeset
-//        Graph firstOne = graphs.get(0);
-//        final int numNodes = firstOne.getNodeCount();
-//        for (int i = 0; i < numNodes; i++) {
-//            Node node = firstOne.getNode(i);
-//            addChild(new VisualTimelineNodeCell(node));
-//        }
-
-        Table selectedGraph = graphs.get(graphs.size() - 1).getNodeTable();
+        // TODO: build a joint nodeset (now the graphs are supposed to have exactly the same nodes)
 
         int i = 0;
         for (Graph g : graphs) {
+
+            // Graph ID labels
             PText t = new PText(FlowMapLoader.getGraphId(g));
             t.setFont(ROW_CAPTION_FONT);
             t.setTextPaint(Color.white);
             double x = 0, y = 0;
             switch (ORIENTATION) {
-                case HORIZONTAL:
+                case VERTICAL:
                     x = ROW_CAPTION_TO_CELLS_X_GAP + t.getX() - t.getWidth();
                     y = cellSpacingY + i * (cellHeight + cellSpacingY) + (cellHeight - ROW_CAPTION_FONT.getSize2D())/2;
                     t.setJustification(JComponent.RIGHT_ALIGNMENT);
                     t.setBounds(x , y, t.getWidth(), t.getHeight());
                     break;
-                case VERTICAL:
+                case HORIZONTAL:
                     x = cellSpacingX + i * (cellWidth + cellSpacingX);
                     y = 0 ;
                     t.setJustification(JComponent.LEFT_ALIGNMENT);
@@ -128,48 +145,161 @@ public class VisualFlowTimeline extends PNode {
             }
             addChild(t);
 
-//            int j = 0;
-
-            int j = g.getNodeCount() - 1;  // workaround for the bug in rowsSortedBy
-
-            Iterator<Integer> it;
-
-            switch (SORT_MODE) {
-            case QTY_IN_EACH_YEAR:
-                it = g.getNodeTable().rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
-                break;
-            case QTY_IN_SELECTED_YEAR:
-                it = selectedGraph.rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
-                break;
-            default:
-                throw new UnsupportedOperationException();
-            }
-
+            // Cells
+            Iterator<Integer> it = nodeIterator(g);
+            int j = 0;
             while (it.hasNext()) {
                 Node n = g.getNode(it.next());
-                double nx = 0, ny = 0;
-                switch (ORIENTATION) {
-                    case HORIZONTAL:
-                        nx = 10 + ROW_CAPTION_TO_CELLS_X_GAP + cellSpacingX + j * (cellWidth + cellSpacingX);
-                        ny = cellSpacingY + i * (cellHeight + cellSpacingY);
-                        break;
-                    case VERTICAL:
-                        nx = cellSpacingX + i * (cellWidth + cellSpacingX);
-                        ny = ROW_CAPTION_FONT.getSize2D() + ROW_CAPTION_TO_CELLS_Y_GAP + cellSpacingY + j * (cellHeight + cellSpacingY);
-                        break;
-                }
-
-//                if (ORIENTATION == Orientation.VERTICAL) {
-//                    double _n = nx; nx = ny; ny = _n;   // swap
-//                }
-
-                addChild(new VisualTimelineNodeCell(this, n, nx, ny, cellWidth, cellHeight));
-//                j++;
-                j--;
+                addChild(new VisualTimelineNodeCell(this, n, cellX(i, j), cellY(i, j), cellWidth, cellHeight));
+                j++;
             }
             i++;
         }
+
+        elementLabels = new FloatingLabelsNode(ORIENTATION == Orientation.VERTICAL, createElementsLabelIterator());
+        jFlowTimeline.getCamera().addChild(elementLabels);
+
+        jFlowTimeline.getCamera().addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (ORIENTATION == Orientation.HORIZONTAL) {
+                    elementLabels.setX(jFlowTimeline.getCamera().getWidth() - elementLabels.getWidth());
+                }
+            }
+        });
+
     }
 
+    private double cellX(int graphIndex, int nodeIndex) {
+        switch (ORIENTATION) {
+        case VERTICAL:
+            return 10 + ROW_CAPTION_TO_CELLS_X_GAP + cellSpacingX + nodeIndex * (cellWidth + cellSpacingX);
+        case HORIZONTAL:
+            return cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
+        }
+        throw new AssertionError();
+    }
+
+
+    private double cellY(int graphIndex, int nodeIndex) {
+        switch (ORIENTATION) {
+        case HORIZONTAL:
+            return ROW_CAPTION_FONT.getSize2D() + ROW_CAPTION_TO_CELLS_Y_GAP + cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
+        case VERTICAL:
+            return cellSpacingY + graphIndex * (cellHeight + cellSpacingY);
+        }
+        throw new AssertionError();
+    }
+
+    private double cellOffset(int nodeIndex) {
+        switch (ORIENTATION) {
+        case VERTICAL:
+            return cellX(0, nodeIndex);
+        case HORIZONTAL:
+            return cellY(0, nodeIndex);
+        }
+        throw new AssertionError();
+    }
+
+    private List<Integer> createHierarchyOrdering() {
+        List<Integer> hierarchyOrdering = Lists.newArrayList();
+        if (SORT_MODE == SortMode.HIERARCHY) {
+            try {
+                Map<String, String> regions = XmlRegionsReader.readFrom("data/refugees/regions.xml");
+                Set<Integer> usedIndices = Sets.newHashSet();
+                for (Map.Entry<String, String> e : regions.entrySet()) {
+                    int index = FlowMapLoader.findNodeIndexById(selectedGraph, e.getKey());
+                    if (index >= 0) {
+                        hierarchyOrdering.add(index);
+                        usedIndices.add(index);
+                    } else {
+                        // ignore: we don't need the nodes which are not in the dataset
+                    }
+
+                }
+                // Ensure that all the nodes from the Graph were added to the list
+                for (int i = 0, numNodes = selectedGraph.getNodeCount(); i < numNodes; i++) {
+                    if (!usedIndices.contains(i)) {
+                        logger.warn("Node " + selectedGraph.getNode(i) + " not in the regions list");
+                        throw new RuntimeException("Node " + selectedGraph.getNode(i) + " not in the regions list");
+                    }
+                }
+//                Collections.reverse(hierarchyOrdering);
+
+            } catch (Exception e) {
+                logger.error(e);
+                JMsgPane.showErrorDialog(jFlowTimeline, e.getClass().getSimpleName() + ": " + e.getMessage());
+            }
+        }
+        return hierarchyOrdering;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Iterator<Integer> nodeIterator(Graph graph) {
+        Iterator<Integer> it;
+        switch (SORT_MODE) {
+        case QTY_IN_EACH_YEAR:
+            it = graph.getNodeTable().rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
+            it = CollectionUtils.reverse(it);
+            break;
+        case QTY_IN_SELECTED_YEAR:
+            it = selectedGraph.getNodeTable().rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
+            it = CollectionUtils.reverse(it);
+            break;
+        case HIERARCHY:
+            it = createHierarchyOrdering().iterator();
+            break;
+        default:
+            throw new UnsupportedOperationException();
+        }
+        return it;
+    }
+
+
+    private LabelIterator createElementsLabelIterator() {
+        return new LabelIterator() {
+            Iterator<Integer> nodeIt = null;
+            int nodeIndex = 0;
+            double pos;
+
+            private Iterator<Integer> nodeIt() {
+                if (nodeIt == null) {
+                    nodeIt = nodeIterator(selectedGraph);
+                }
+                return nodeIt;
+            }
+
+            public double getPosition() {
+                return pos;
+            }
+
+            public double getSize() {
+                return cellHeight;
+            }
+
+            public boolean hasNext() {
+                return nodeIt().hasNext();
+            }
+
+            public String next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                Node node = selectedGraph.getNode(nodeIt().next());
+                String label = node.getString(attrSpecs.getNodeLabelAttr());
+
+                pos = cellOffset(nodeIndex);
+
+                nodeIndex++;
+                return label;
+            }
+
+            public void reset() {
+                nodeIt = null;
+                nodeIndex = 0;
+                pos = Double.NaN;
+            }
+        };
+    }
 }
 

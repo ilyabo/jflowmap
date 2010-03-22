@@ -59,13 +59,21 @@ public class FlowMapLoader {
     }
 
     public static Node findNodeById(Graph graph, String nodeId) {
+        int index = findNodeIndexById(graph, nodeId);
+        if (index >= 0) {
+            return graph.getNode(index);
+        }
+        return null;
+    }
+
+    public static int findNodeIndexById(Graph graph, String nodeId) {
         for (int i = 0, len = graph.getNodeCount(); i < len; i++) {
             Node node = graph.getNode(i);
             if (nodeId.equals(getNodeId(node))) {
-                return node;
+                return i;
             }
         }
-        return null;
+        return -1;
     }
 
 //    public static void setNodeId(Node node, String id) {

@@ -50,6 +50,8 @@ public class VisualTimelineNodeCell extends PNode {
     private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
     private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
     private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
+    private static final boolean SHOW_NODE_LABEL = false;
+    private static final boolean SHOW_DIFF = true;
 
     public static final int[] DIFF_COLORS = ArrayUtils.reverse(new int[] {
         ColorLib.rgb(165, 0, 38), ColorLib.rgb(215, 48, 39), ColorLib.rgb(244, 109, 67), ColorLib.rgb(253, 174, 97), ColorLib.rgb(254, 224, 139),
@@ -59,7 +61,7 @@ public class VisualTimelineNodeCell extends PNode {
     private static final Color DIFF_COLOR_MIN = new Color(26, 152, 80);
     private static final Color DIFF_COLOR_ZERO = new Color(255, 255, 191);
     private static final Color DIFF_COLOR_MAX = new Color(215, 48, 39);
-    private static final Color DIFF_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR;
+    private static final Color DIFF_COLOR_NAN = new Color(100, 100, 100); //JFlowTimeline.CANVAS_BACKGROUND_COLOR;
 
     private static final double DIFF_BOX_WIDTH = 10;
     private static final double DIFF_BOX_GAP = 0;
@@ -74,7 +76,7 @@ public class VisualTimelineNodeCell extends PNode {
     private final Node graphNode;
     private final VisualFlowTimeline timeline;
     private final PPath rect;
-    private final PPath diffRect;
+    private PPath diffRect;
 
     public VisualTimelineNodeCell(VisualFlowTimeline timeline, Node graphNode, double x, double y, double width, double height) {
         this.graphNode = graphNode;
@@ -84,7 +86,10 @@ public class VisualTimelineNodeCell extends PNode {
 
         setBounds(x, y, width, height);
 
-        rect = new PPath(new Rectangle2D.Double(x + DIFF_BOX_WIDTH + DIFF_BOX_GAP, y, width - DIFF_BOX_WIDTH - DIFF_BOX_GAP, height));
+        rect = new PPath(new Rectangle2D.Double(
+                x + (SHOW_DIFF ? DIFF_BOX_WIDTH + DIFF_BOX_GAP : 0), y,
+                width - (SHOW_DIFF ? DIFF_BOX_WIDTH + DIFF_BOX_GAP : 0), height));
+
 //        rect.setStrokePaint(Color.white);
         rect.setStroke(null);
 //        rectNode.setPaint(Color.white);
@@ -92,14 +97,16 @@ public class VisualTimelineNodeCell extends PNode {
 
 
 
-
-        PText nodeNameText = new PText(graphNode.getString(specs.getNodeLabelAttr()));
-        nodeNameText.setFont(CELL_CAPTION_FONT);
-//        text.setBounds(rect.getBounds());
-//        text.setJustification(JComponent.CENTER_ALIGNMENT);
-        nodeNameText.setX(rect.getX() + 3);
-        nodeNameText.setY(rect.getY() + 2);
-        addChild(nodeNameText);
+        PText nodeLabelText = null;
+        if (SHOW_NODE_LABEL) {
+            nodeLabelText = new PText(graphNode.getString(specs.getNodeLabelAttr()));
+            nodeLabelText.setFont(CELL_CAPTION_FONT);
+    //        text.setBounds(rect.getBounds());
+    //        text.setJustification(JComponent.CENTER_ALIGNMENT);
+            nodeLabelText.setX(rect.getX() + 3);
+            nodeLabelText.setY(rect.getY() + 2);
+            addChild(nodeLabelText);
+        }
 
         double value = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
 
@@ -129,35 +136,39 @@ public class VisualTimelineNodeCell extends PNode {
         }
         rect.setPaint(rectColor);
         Color textColor = ColorUtils.farthestColor(NODE_NAME_COLOR1, NODE_NAME_COLOR2, rectColor);
-        nodeNameText.setTextPaint(textColor);
+        if (SHOW_NODE_LABEL) {
+            nodeLabelText.setTextPaint(textColor);
+        }
         valueText.setTextPaint(textColor);
 
 
-        diffRect = new PPath(new Rectangle2D.Double(x, y, DIFF_BOX_WIDTH, height));
-        diffRect.setPaint(new Color(0, 68, 27));
-        diffRect.setStroke(null);
-        addChild(diffRect);
+        if (SHOW_DIFF) {
+            diffRect = new PPath(new Rectangle2D.Double(x, y, DIFF_BOX_WIDTH, height));
+            diffRect.setPaint(new Color(0, 68, 27));
+            diffRect.setStroke(null);
+            addChild(diffRect);
 
-        Color diffRectColor;
-        double diff = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+            Color diffRectColor;
+            double diff = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
 
-        MinMax diffStats = timeline.getGlobalStats().getNodeAttrStats(
-                FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
-        if (!Double.isNaN(diff)) {
-            // TODO: Use ColorMap instead
-//            double normalizedDiff =
-////                diffStats.normalizeLog(diff);
-//                diffStats.normalize(diff);
-//            diffRectColor = ColorUtils.colorBetween(
-//                    DIFF_COLOR_MIN,
-//                    DIFF_COLOR_MAX,
-//                    normalizedDiff, 255
-//            );
-            diffRectColor = ColorLib.getColor(timeline.getSumOutgoingDiffColorMap().getColor(diff));
-        } else {
-            diffRectColor = DIFF_COLOR_NAN;
+            MinMax diffStats = timeline.getGlobalStats().getNodeAttrStats(
+                    FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+            if (!Double.isNaN(diff)) {
+                // TODO: Use ColorMap instead
+    //            double normalizedDiff =
+    ////                diffStats.normalizeLog(diff);
+    //                diffStats.normalize(diff);
+    //            diffRectColor = ColorUtils.colorBetween(
+    //                    DIFF_COLOR_MIN,
+    //                    DIFF_COLOR_MAX,
+    //                    normalizedDiff, 255
+    //            );
+                diffRectColor = ColorLib.getColor(timeline.getSumOutgoingDiffColorMap().getColor(diff));
+            } else {
+                diffRectColor = DIFF_COLOR_NAN;
+            }
+            diffRect.setPaint(diffRectColor);
         }
-        diffRect.setPaint(diffRectColor);
 
 
 
