@@ -65,6 +65,13 @@ import com.google.common.collect.Lists;
  */
 public class FlowMapMain extends JFrame {
 
+    private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
+//            "ritypnv",
+          "rityp",
+//          "r",
+          "name", "x", "y", 0);
+
+
     public static final String APP_NAME = "JFlowMap";
 //    private static final String PREFERENCES_FILE_NAME = ".preferences";
 
@@ -138,7 +145,8 @@ public class FlowMapMain extends JFrame {
             @Override
             public void run() {
                 try {
-                    showFlowTimeline("data/refugees-one-file/refugees_1975-2008.xml");
+                    showFlowTimeline("build/JFlowMap.jar$data/refugees-one-file/refugees_1975-2008.xml");
+
                     desktopPane.getAllFrames()[0].setMaximum(true);
                 } catch (Exception ex) {
                     JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
@@ -161,11 +169,6 @@ public class FlowMapMain extends JFrame {
         };
     }
 
-
-    private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
-//            "ritypnv",
-            "r",
-            "name", "x", "y", 0);
 
     public void showFlowTimeline(String filename) throws DataIOException {
         Iterable<Graph> graphs = loadFile(filename);

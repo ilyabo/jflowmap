@@ -49,8 +49,10 @@ public class FlowMapStats {
 
     public static final String NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
     public static final String NODE_STATS_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
+    public static final String NODE_STATS_COLUMN__SUM_OUTGOING_LOCALITY = "outLocality:stat";
+    public static final String NODE_STATS_COLUMN__SUM_INCOMING_LOCALITY = "inLocality:stat";
     public static final String NODE_STATS_COLUMN__SUM_OUTGOING = "sumOut:stat";
-    public static final String NODE_STATS_COLUMN__SUM_INCOMING = "sumIn:stat";
+    public static final String NODE_STATS_COLUMN__SUM_INCOMING= "sumIn:stat";
 
     private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
     private final List<FlowMapGraphWithAttrSpecs> graphAndSpecs;
@@ -226,6 +228,9 @@ public class FlowMapStats {
         Map<Integer, Double> outsums = Maps.newHashMap();
         Map<Integer, Double> insums = Maps.newHashMap();
 
+        Map<Integer, Double> outLocality = Maps.newHashMap();
+        Map<Integer, Double> inLocality = Maps.newHashMap();
+
         for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
             Edge e = g.getEdge(i);
 
@@ -266,7 +271,6 @@ public class FlowMapStats {
         return graphAndSpecs;
     }
 
-
     /**
      * This method requires that supplyNodesWithStats was already called for the graphs
      */
@@ -301,4 +305,6 @@ public class FlowMapStats {
     private static double diffPercentage(double current, double prev) {
         return (current - prev)/prev;
     }
+
+
 }

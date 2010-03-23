@@ -48,12 +48,19 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualTimelineNodeCell extends PNode {
 
+    private static final PFixedWidthStroke HALF_CIRCLE_STROKE =
+//        new PFixedWidthStroke(1);
+        null;
     private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
     private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
     private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
     private static final boolean SHOW_NODE_LABEL = false;
+    private static final boolean SHOW_VALUE_TEXT = false;
     private static final boolean SHOW_DIFF = false;
+    private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
+    private static final boolean FILL_RECT_WITH_REGION_COLOR = true;
     private static final boolean SHOW_HALF_CIRCLES = true;
+    private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = true;
 
     public static final int[] DIFF_COLORS = ArrayUtils.reverse(new int[] {
         ColorLib.rgb(165, 0, 38), ColorLib.rgb(215, 48, 39), ColorLib.rgb(244, 109, 67), ColorLib.rgb(253, 174, 97), ColorLib.rgb(254, 224, 139),
@@ -80,13 +87,19 @@ public class VisualTimelineNodeCell extends PNode {
     private final PPath rect;
     private PPath diffRect;
 
-    public VisualTimelineNodeCell(VisualFlowTimeline timeline, Node graphNode, double x, double y, double width, double height) {
-        this.graphNode = graphNode;
+    public VisualTimelineNodeCell(VisualFlowTimeline timeline, Node node, double x, double y, double width, double height) {
+        this.graphNode = node;
         this.timeline = timeline;
 
         FlowMapAttrsSpec specs = timeline.getAttrSpecs();
 
         setBounds(x, y, width, height);
+
+        double outgValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
+        double incValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
+
+        MinMax outgVstats = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
+        MinMax incVstats = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
 
         rect = new PPath(new Rectangle2D.Double(
                 x + (SHOW_DIFF ? DIFF_BOX_WIDTH + DIFF_BOX_GAP : 0), y,
@@ -98,51 +111,60 @@ public class VisualTimelineNodeCell extends PNode {
         addChild(rect);
 
 
+        Color rectColor = null;
+        if (FILL_RECT_WITH_VALUE_COLOR) {
+            if (!Double.isNaN(outgValue)) {
+                double normalizedValue =
+                    outgVstats.normalizeLog(outgValue);
+    //                vstats.normalize(value);
+                rectColor = ColorUtils.colorBetween(
+                        VALUE_COLOR_MIN,
+                        VALUE_COLOR_MAX,
+                        normalizedValue, 255
+                );
+            } else {
+                rectColor = VALUE_COLOR_NAN;
+            }
+        }
+
+        if (FILL_RECT_WITH_REGION_COLOR) {
+            rectColor = ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
+        }
+
+        if (rectColor != null) {
+            rect.setPaint(rectColor);
+        }
+
+        Color textColor;
+        if (rectColor == null)
+            textColor = NODE_NAME_COLOR1;
+        else
+            textColor = ColorUtils.farthestColor(NODE_NAME_COLOR1, NODE_NAME_COLOR2, rectColor);
 
         PText nodeLabelText = null;
         if (SHOW_NODE_LABEL) {
-            nodeLabelText = new PText(graphNode.getString(specs.getNodeLabelAttr()));
+            nodeLabelText = new PText(node.getString(specs.getNodeLabelAttr()));
             nodeLabelText.setFont(CELL_CAPTION_FONT);
     //        text.setBounds(rect.getBounds());
     //        text.setJustification(JComponent.CENTER_ALIGNMENT);
             nodeLabelText.setX(rect.getX() + 3);
             nodeLabelText.setY(rect.getY() + 2);
             addChild(nodeLabelText);
-        }
-
-        double outgValue = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        double incValue = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
-
-        PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(outgValue));
-        valueText.setFont(CELL_VALUE_FONT);
-        valueText.setJustification(JComponent.RIGHT_ALIGNMENT);
-        valueText.setTextPaint(Color.gray);
-        valueText.setBounds(
-                rect.getX() - valueText.getWidth() + rect.getWidth(), rect.getY() - valueText.getHeight() + rect.getHeight(),
-                valueText.getWidth(), valueText.getHeight());
-        addChild(valueText);
-
-
-        Color rectColor;
-        MinMax vstats = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        if (!Double.isNaN(outgValue)) {
-            double normalizedValue =
-                vstats.normalizeLog(outgValue);
-//                vstats.normalize(value);
-            rectColor = ColorUtils.colorBetween(
-                    VALUE_COLOR_MIN,
-                    VALUE_COLOR_MAX,
-                    normalizedValue, 255
-            );
-        } else {
-            rectColor = VALUE_COLOR_NAN;
-        }
-        rect.setPaint(rectColor);
-        Color textColor = ColorUtils.farthestColor(NODE_NAME_COLOR1, NODE_NAME_COLOR2, rectColor);
-        if (SHOW_NODE_LABEL) {
             nodeLabelText.setTextPaint(textColor);
         }
-        valueText.setTextPaint(textColor);
+
+        if (SHOW_VALUE_TEXT) {
+            PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(outgValue));
+            valueText.setFont(CELL_VALUE_FONT);
+            valueText.setJustification(JComponent.RIGHT_ALIGNMENT);
+            valueText.setTextPaint(Color.gray);
+            valueText.setBounds(
+                    rect.getX() - valueText.getWidth() + rect.getWidth(), rect.getY() - valueText.getHeight() + rect.getHeight(),
+                    valueText.getWidth(), valueText.getHeight());
+            addChild(valueText);
+            valueText.setTextPaint(textColor);
+        }
+
 
 
         if (SHOW_DIFF) {
@@ -152,7 +174,7 @@ public class VisualTimelineNodeCell extends PNode {
             addChild(diffRect);
 
             Color diffRectColor;
-            double diff = graphNode.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+            double diff = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
 
             MinMax diffStats = timeline.getGlobalStats().getNodeAttrStats(
                     FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
@@ -176,18 +198,32 @@ public class VisualTimelineNodeCell extends PNode {
 
 
         if (SHOW_HALF_CIRCLES) {
-            // outgoing
+            // incoming
             double wh = Math.min(width, height);
-            double r = Math.sqrt(vstats.normalize(outgValue)) * wh;
+            double r = Math.sqrt(incVstats.normalize(incValue)) * wh;
             double off = (wh - r)/2;
             PPath leftArc = new PPath(new Arc2D.Double(x + off, y + off, r, r, 90, 180, Arc2D.PIE));
+            leftArc.setStroke(HALF_CIRCLE_STROKE);
             addChild(leftArc);
 
-            // incoming
-            r = Math.sqrt(vstats.normalize(incValue)) * wh;
+            // outgoing
+            r = Math.sqrt(outgVstats.normalize(outgValue)) * wh;
             off = (wh - r)/2;
             PPath rightArc = new PPath(new Arc2D.Double(x + off, y + off, r, r, -90, 180, Arc2D.PIE));
+            rightArc.setStroke(HALF_CIRCLE_STROKE);
             addChild(rightArc);
+            if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
+                leftArc.setPaint(ColorUtils.colorBetween(
+                        VALUE_COLOR_MIN,
+                        VALUE_COLOR_MAX,
+                        incVstats.normalizeLog(incValue), 255
+                ));
+                rightArc.setPaint(ColorUtils.colorBetween(
+                        VALUE_COLOR_MIN,
+                        VALUE_COLOR_MAX,
+                        outgVstats.normalizeLog(outgValue), 255
+                ));
+            }
         }
 
 //

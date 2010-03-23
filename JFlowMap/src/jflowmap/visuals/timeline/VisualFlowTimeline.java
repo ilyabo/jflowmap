@@ -35,17 +35,15 @@ import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
-import jflowmap.data.XmlRegionsReader;
 import jflowmap.util.CollectionUtils;
+import jflowmap.visuals.timeline.FloatingLabelsNode.LabelIterator;
 
 import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
-import at.fhj.utils.swing.JMsgPane;
-import at.fhjoanneum.cgvis.plots.FloatingLabelsNode;
-import at.fhjoanneum.cgvis.plots.FloatingLabelsNode.LabelIterator;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -204,32 +202,26 @@ public class VisualFlowTimeline extends PNode {
     private List<Integer> createHierarchyOrdering() {
         List<Integer> hierarchyOrdering = Lists.newArrayList();
         if (SORT_MODE == SortMode.HIERARCHY) {
-            try {
-                Map<String, String> regions = XmlRegionsReader.readFrom("data/refugees/regions.xml");
-                Set<Integer> usedIndices = Sets.newHashSet();
-                for (Map.Entry<String, String> e : regions.entrySet()) {
-                    int index = FlowMapLoader.findNodeIndexById(selectedGraph, e.getKey());
-                    if (index >= 0) {
-                        hierarchyOrdering.add(index);
-                        usedIndices.add(index);
-                    } else {
-                        // ignore: we don't need the nodes which are not in the dataset
-                    }
-
+            Set<Integer> usedIndices = Sets.newHashSet();
+            for (Map.Entry<String, String> e : jFlowTimeline.getRegions().entrySet()) {
+                int index = FlowMapLoader.findNodeIndexById(selectedGraph, e.getKey());
+                if (index >= 0) {
+                    hierarchyOrdering.add(index);
+                    usedIndices.add(index);
+                } else {
+                    // ignore: we don't need the nodes which are not in the dataset
                 }
-                // Ensure that all the nodes from the Graph were added to the list
-                for (int i = 0, numNodes = selectedGraph.getNodeCount(); i < numNodes; i++) {
-                    if (!usedIndices.contains(i)) {
-                        logger.warn("Node " + selectedGraph.getNode(i) + " not in the regions list");
-                        throw new RuntimeException("Node " + selectedGraph.getNode(i) + " not in the regions list");
-                    }
-                }
-//                Collections.reverse(hierarchyOrdering);
 
-            } catch (Exception e) {
-                logger.error(e);
-                JMsgPane.showErrorDialog(jFlowTimeline, e.getClass().getSimpleName() + ": " + e.getMessage());
             }
+            // Ensure that all the nodes from the Graph were added to the list
+            for (int i = 0, numNodes = selectedGraph.getNodeCount(); i < numNodes; i++) {
+                if (!usedIndices.contains(i)) {
+                    logger.warn("Node " + selectedGraph.getNode(i) + " not in the regions list");
+                    throw new RuntimeException("Node " + selectedGraph.getNode(i) + " not in the regions list");
+                }
+            }
+//          Collections.reverse(hierarchyOrdering);
+
         }
         return hierarchyOrdering;
     }
@@ -261,6 +253,7 @@ public class VisualFlowTimeline extends PNode {
             Iterator<Integer> nodeIt = null;
             int nodeIndex = 0;
             double pos;
+            Node node;
 
             private Iterator<Integer> nodeIt() {
                 if (nodeIt == null) {
@@ -285,7 +278,7 @@ public class VisualFlowTimeline extends PNode {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                Node node = selectedGraph.getNode(nodeIt().next());
+                node = selectedGraph.getNode(nodeIt().next());
                 String label = node.getString(attrSpecs.getNodeLabelAttr());
 
                 pos = cellOffset(nodeIndex);
@@ -298,6 +291,11 @@ public class VisualFlowTimeline extends PNode {
                 nodeIt = null;
                 nodeIndex = 0;
                 pos = Double.NaN;
+            }
+
+            @Override
+            public Color getColor() {
+                return ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
             }
         };
     }
