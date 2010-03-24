@@ -145,7 +145,7 @@ public class FlowMapMain extends JFrame {
             @Override
             public void run() {
                 try {
-                    showFlowTimeline("build/JFlowMap.jar$data/refugees-one-file/refugees_1975-2008.xml");
+                    showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
 
                     desktopPane.getAllFrames()[0].setMaximum(true);
                 } catch (Exception ex) {
@@ -183,7 +183,7 @@ public class FlowMapMain extends JFrame {
         Iterable<Graph> graphs = loadFile(filename);
 
         // TODO: add support for links to external content in GraphML files (use <locator>)
-        AreaMap areaMap = AreaMap.load("data/refugees/countries-areas.xml");
+        AreaMap areaMap = AreaMap.load("data/refugees/countries-areas.xml.gz");
 
         List<JFlowMap> flowMaps = Lists.newArrayList();
         List<JInternalFrame> iframes = Lists.newArrayList();
