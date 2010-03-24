@@ -126,7 +126,7 @@ public class MinMax {
      */
     public double normalizeLog(double value) {
         checkInterval(value);
-//        if (getMax() == getMin()) return 1.0;
+        if (getMax() == getMin()) return 1.0;
 //        double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
 //        double rv = Math.log(logarithmize(value)) / LOG_SCALE_MAX_LOG;
         double rv = Math.log(1.0 + value - min) / distLog;
