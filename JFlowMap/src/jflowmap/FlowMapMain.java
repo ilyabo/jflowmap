@@ -29,7 +29,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -46,19 +49,28 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
+import jflowmap.data.FlowMapLoader;
 import jflowmap.data.GraphMLReader2;
+import jflowmap.data.XmlRegionsReader;
+import jflowmap.geom.Point;
+import jflowmap.models.FlowMapGraphBuilder;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.actions.OpenFileAction;
 
 import org.apache.log4j.Logger;
 
+import prefuse.data.Edge;
 import prefuse.data.Graph;
+import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
+import prefuse.util.ColorLib;
 import at.fhj.utils.swing.InternalFrameUtils;
 import at.fhj.utils.swing.JMemoryIndicator;
 import at.fhj.utils.swing.JMsgPane;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * @author Ilya Boyandin
@@ -137,6 +149,10 @@ public class FlowMapMain extends JFrame {
             public void windowClosing(WindowEvent e) {
                 exit();
             }
+            @Override
+            public void windowOpened(WindowEvent e) {
+                InternalFrameUtils.tile(desktopPane);
+            }
         });
 
 
@@ -147,7 +163,7 @@ public class FlowMapMain extends JFrame {
                 try {
                     showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
 
-                    desktopPane.getAllFrames()[0].setMaximum(true);
+//                    desktopPane.getAllFrames()[0].setMaximum(true);
                 } catch (Exception ex) {
                     JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
                             + ex.getMessage());
@@ -170,14 +186,79 @@ public class FlowMapMain extends JFrame {
     }
 
 
-    public void showFlowTimeline(String filename) throws DataIOException {
-        Iterable<Graph> graphs = loadFile(filename);
-        List<Graph> list = Lists.newArrayList(graphs);
-        Collections.reverse(list);
+    public void showFlowTimeline(String filename) throws Exception {
+        GraphMLReader2 reader = new GraphMLReader2();
+        List<Graph> graphs = Lists.newArrayList(reader.readFromFile(filename));
+
+        Collections.reverse(graphs);
+
+        Map<String, String> countryToRegion = XmlRegionsReader.readFrom("data/refugees/regions.xml");
+        Set<String> regions = Sets.newLinkedHashSet(countryToRegion.values());
+        Map<String, Integer> colorMap = createColorMapForRegions(countryToRegion);
+
         // TODO: let the user choose the attr specs
-        showView(new JFlowTimeline(list, REFUGEES_ATTR_SPECS));
+        showView(new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS, countryToRegion, colorMap));
+
+
+        Map<String, String> regionToRegion = Maps.newLinkedHashMap();
+        for (String r : regions) {
+            regionToRegion.put(r, r);
+        }
+
+        List<Graph> regionSummaryGraphs = Lists.newArrayList();
+        for (Graph g : graphs) {
+
+            FlowMapGraphBuilder builder = new FlowMapGraphBuilder(FlowMapLoader.getGraphId(g))
+//                .withCumulativeEdges()            // TODO: why isn't it working?
+                .withNodeXAttr(REFUGEES_ATTR_SPECS.getXNodeAttr())
+                .withNodeYAttr(REFUGEES_ATTR_SPECS.getYNodeAttr())
+                .withEdgeWeightAttr(REFUGEES_ATTR_SPECS.getEdgeWeightAttr())
+                .withNodeLabelAttr(REFUGEES_ATTR_SPECS.getNodeLabelAttr())
+                ;
+
+            Map<String, Node> regionToNode = Maps.newHashMap();
+            for (String region : regions) {
+                Node node = builder.addNode(region, new Point(0, 0), region);
+                regionToNode.put(region, node);
+            }
+
+            for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
+                Edge e = g.getEdge(i);
+                String src = e.getSourceNode().getString(JFlowTimeline.NODE_COLUMN__REGION);
+                String trg = e.getTargetNode().getString(JFlowTimeline.NODE_COLUMN__REGION);
+                if (src == null) {
+                    throw new IllegalArgumentException("No region for " + e.getSourceNode());
+                }
+                if (trg == null) {
+                    throw new IllegalArgumentException("No region for " + e.getTargetNode());
+                }
+                builder.addEdge(
+                        regionToNode.get(src),
+                        regionToNode.get(trg),
+                        e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr()));
+            }
+
+            regionSummaryGraphs.add(builder.build());
+        }
+
+        showView(new JFlowTimeline(regionSummaryGraphs, REFUGEES_ATTR_SPECS, regionToRegion, colorMap));
+
     }
 
+
+    private Map<String, Integer> createColorMapForRegions(Map<String, String> countryToRegion) {
+        HashSet<String> regions = Sets.newHashSet(countryToRegion.values());
+        int[] palette = ColorLib.getCategoryPalette(regions.size(), 1.f, 0.4f, 1.f, .15f);
+
+        int colorIdx = 0;
+        Map<String, Integer> regionToColor = Maps.newHashMap();
+        for (String region : regions) {
+            regionToColor.put(region, palette[colorIdx]);
+            colorIdx++;
+        }
+
+        return regionToColor;
+    }
 
     public void showFlowMaps(String filename) throws DataIOException, IOException {
         Iterable<Graph> graphs = loadFile(filename);

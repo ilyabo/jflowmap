@@ -117,7 +117,7 @@ public class OpenFileAction extends AbstractAction {
 
 
     private enum Filters {
-        GRAPHML("GraphML", ".xml", ".graphml");
+        GRAPHML("GraphML", ".graphml", ".graphml.gz", ".xml", ".xml.gz");
 
         private final FileFilter filter;
         private final String description;

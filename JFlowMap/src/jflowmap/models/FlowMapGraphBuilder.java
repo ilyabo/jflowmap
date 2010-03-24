@@ -20,6 +20,7 @@ package jflowmap.models;
 
 import java.util.HashMap;
 
+import jflowmap.data.FlowMapLoader;
 import jflowmap.geom.Point;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -30,22 +31,30 @@ import prefuse.data.Node;
  */
 public class FlowMapGraphBuilder {
 
+    private final String nodeIdAttr = FlowMapLoader.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
     private String nodeXAttr = FlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
     private String nodeYAttr = FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
     private String edgeWeightAttr = FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
     private String nodeLabelAttr = FlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME;
 
-    private Graph graph;
+    private final Graph graph;
     private HashMap<EdgeKey, Edge> cumulatedEdges;
+    private boolean columnsInitialized;
 
-    public FlowMapGraphBuilder() {
+    public FlowMapGraphBuilder(String graphId) {
         graph = new Graph();
+        FlowMapLoader.setGraphId(graph, graphId);
+    }
+
+    private void initColumns() {
         graph.addColumn(nodeXAttr, double.class);
         graph.addColumn(nodeYAttr, double.class);
         graph.addColumn(edgeWeightAttr, double.class);
         graph.addColumn(nodeLabelAttr, String.class);
+        graph.addColumn(nodeIdAttr, String.class);
+        columnsInitialized = true;
     }
-    
+
     public FlowMapGraphBuilder addNodeAttr(String name, Class<?> type) {
         graph.addColumn(name, type);
         return this;
@@ -55,7 +64,7 @@ public class FlowMapGraphBuilder {
         this.cumulatedEdges = new HashMap<EdgeKey, Edge>();
         return this;
     }
-    
+
     public FlowMapGraphBuilder withNodeXAttr(String attrName) {
         this.nodeXAttr = attrName;
         return this;
@@ -65,7 +74,7 @@ public class FlowMapGraphBuilder {
         this.nodeYAttr = attrName;
         return this;
     }
-    
+
     public FlowMapGraphBuilder withEdgeWeightAttr(String attrName) {
         this.edgeWeightAttr = attrName;
         return this;
@@ -75,9 +84,17 @@ public class FlowMapGraphBuilder {
         this.nodeLabelAttr = attrName;
         return this;
     }
-    
+
     public Node addNode(Point position, String label) {
+        return addNode(null, position, label);
+    }
+
+    public Node addNode(String id, Point position, String label) {
+        if (!columnsInitialized) {
+            initColumns();
+        }
         Node node = graph.addNode();
+        node.setString(nodeIdAttr, id);
         node.setDouble(nodeXAttr, position.x());
         node.setDouble(nodeYAttr, position.y());
         node.set(nodeLabelAttr, label);
@@ -85,6 +102,9 @@ public class FlowMapGraphBuilder {
     }
 
     public Edge addEdge(Node from, Node to, double weight) {
+        if (!columnsInitialized) {
+            initColumns();
+        }
         EdgeKey key = new EdgeKey(from, to);
         double sumWeight = weight;
         Edge edge;
@@ -104,10 +124,13 @@ public class FlowMapGraphBuilder {
     }
 
     public Graph build() {
+        if (!columnsInitialized) {
+            initColumns();
+        }
         cumulatedEdges = null;
         return graph;
     }
-    
+
     private static class EdgeKey {
         final Node from;
         final Node to;

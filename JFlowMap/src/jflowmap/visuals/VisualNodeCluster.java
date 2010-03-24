@@ -169,7 +169,7 @@ public class VisualNodeCluster implements Iterable<VisualNode> {
 
     public static Graph createClusteredFlowMap(List<VisualNodeCluster> clusters) {
         FlowMapGraphBuilder builder =
-            new FlowMapGraphBuilder().withCumulativeEdges().addNodeAttr(
+            new FlowMapGraphBuilder(null).withCumulativeEdges().addNodeAttr(
                     JOINED_FLOW_MAP_CLUSTER_ATTR, VisualNodeCluster.class);
 
         // Create (visualNode->cluster node) mapping

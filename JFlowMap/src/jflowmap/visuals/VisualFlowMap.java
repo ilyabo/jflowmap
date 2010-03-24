@@ -363,8 +363,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public void showTooltip(PNode component, Point2D pos) {
-        final PBounds cameraBounds = getCamera().getBoundsReference();
-        double maxLabelWidth = cameraBounds.getWidth() - pos.getX();
+        double maxLabelWidth = getCamera().getBoundsReference().getWidth() - pos.getX();
         if (component instanceof VisualNode) {
             VisualNode vnode = (VisualNode) component;
             tooltipBox.setText(
@@ -382,28 +381,7 @@ public class VisualFlowMap extends PNode {
         } else {
             return;
         }
-        final PBounds tooltipBounds = tooltipBox.getBoundsReference();
-        double x = pos.getX();
-        double y = pos.getY();
-        pos = new Point2D.Double(x, y);
-        getCamera().viewToLocal(pos);
-        x = pos.getX();
-        y = pos.getY();
-        if (x + tooltipBounds.getWidth() > cameraBounds.getWidth()) {
-            final double _x = pos.getX() - tooltipBounds.getWidth() - 8;
-            if (cameraBounds.getX() - _x < x + tooltipBounds.getWidth() - cameraBounds.getMaxX()) {
-                x = _x;
-            }
-        }
-        if (y + tooltipBounds.getHeight() > cameraBounds.getHeight()) {
-            final double _y = pos.getY() - tooltipBounds.getHeight() - 8;
-            if (cameraBounds.getY() - _y < y + tooltipBounds.getHeight() - cameraBounds.getMaxY()) {
-                y = _y;
-            }
-        }
-        pos.setLocation(x + 8, y + 8);
-        tooltipBox.setPosition(pos.getX(), pos.getY());
-        tooltipBox.setVisible(true);
+        tooltipBox.showTooltipAt(pos.getX(), pos.getY());
     }
 
     private String wordWrapLabel(String label, double maxWidth) {

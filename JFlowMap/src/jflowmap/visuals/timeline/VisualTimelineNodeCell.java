@@ -20,6 +20,7 @@ package jflowmap.visuals.timeline;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Stroke;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Rectangle2D;
 
@@ -48,8 +49,9 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualTimelineNodeCell extends PNode {
 
-    private static final PFixedWidthStroke HALF_CIRCLE_STROKE =
+    private static final Stroke HALF_CIRCLE_STROKE =
 //        new PFixedWidthStroke(1);
+//        new BasicStroke(1f);
         null;
     private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
     private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
@@ -60,7 +62,8 @@ public class VisualTimelineNodeCell extends PNode {
     private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
     private static final boolean FILL_RECT_WITH_REGION_COLOR = true;
     private static final boolean SHOW_HALF_CIRCLES = true;
-    private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = true;
+    private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = false;
+    private static final boolean FILL_HALF_CIRCLES_WITH_MAX_COLOR = true;
 
     public static final int[] DIFF_COLORS = ArrayUtils.reverse(new int[] {
         ColorLib.rgb(165, 0, 38), ColorLib.rgb(215, 48, 39), ColorLib.rgb(244, 109, 67), ColorLib.rgb(253, 174, 97), ColorLib.rgb(254, 224, 139),
@@ -82,13 +85,13 @@ public class VisualTimelineNodeCell extends PNode {
     private static final PFixedWidthStroke SELECTION_STROKE = new PFixedWidthStroke(4);
     private static final Font CELL_CAPTION_FONT = new Font("Arial", Font.PLAIN, 18);
     private static final Font CELL_VALUE_FONT = new Font("Arial", Font.PLAIN, 10);
-    private final Node graphNode;
-    private final VisualFlowTimeline timeline;
+    private final Node node;
+    private final VisualTimeline timeline;
     private final PPath rect;
     private PPath diffRect;
 
-    public VisualTimelineNodeCell(VisualFlowTimeline timeline, Node node, double x, double y, double width, double height) {
-        this.graphNode = node;
+    public VisualTimelineNodeCell(VisualTimeline timeline, Node node, double x, double y, double width, double height) {
+        this.node = node;
         this.timeline = timeline;
 
         FlowMapAttrsSpec specs = timeline.getAttrSpecs();
@@ -223,6 +226,9 @@ public class VisualTimelineNodeCell extends PNode {
                         VALUE_COLOR_MAX,
                         outgVstats.normalizeLog(outgValue), 255
                 ));
+            } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
+                leftArc.setPaint(VALUE_COLOR_MAX);
+                rightArc.setPaint(VALUE_COLOR_MAX);
             }
         }
 
@@ -232,7 +238,9 @@ public class VisualTimelineNodeCell extends PNode {
     }
 
 
-
+    public Node getNode() {
+        return node;
+    }
 
     private static final PInputEventListener inputEventListener = new PBasicInputEventHandler() {
         @Override
@@ -241,6 +249,7 @@ public class VisualTimelineNodeCell extends PNode {
             if (vc != null) {
                 vc.rect.setStroke(SELECTION_STROKE);
                 vc.rect.setStrokePaint(SELECTION_STROKE_PAINT);
+                vc.timeline.showTooltip(vc);
             }
         }
 
@@ -250,6 +259,7 @@ public class VisualTimelineNodeCell extends PNode {
             if (vc != null) {
                 vc.rect.setStroke(null);
                 vc.rect.setStrokePaint(null);
+                vc.timeline.hideTooltip();
             }
         }
     };

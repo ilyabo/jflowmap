@@ -31,11 +31,13 @@ import java.util.Set;
 import javax.swing.JComponent;
 
 import jflowmap.FlowMapAttrsSpec;
+import jflowmap.JFlowMap;
 import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.util.CollectionUtils;
+import jflowmap.visuals.Tooltip;
 import jflowmap.visuals.timeline.FloatingLabelsNode.LabelIterator;
 
 import org.apache.log4j.Logger;
@@ -51,12 +53,13 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
-public class VisualFlowTimeline extends PNode {
-    public static Logger logger = Logger.getLogger(VisualFlowTimeline.class);
+public class VisualTimeline extends PNode {
+    public static Logger logger = Logger.getLogger(VisualTimeline.class);
 
     enum Orientation { /* The timeline is */ VERTICAL, HORIZONTAL };
     private static final Orientation ORIENTATION = Orientation.HORIZONTAL;
@@ -66,11 +69,12 @@ public class VisualFlowTimeline extends PNode {
 
     private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
     private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
-    private static final Font ROW_CAPTION_FONT = new Font("Arial", Font.BOLD, 15);
+    private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 13);
+    private static final Color CAPTION_COLOR = Color.black;
     private final List<Graph> graphs;
     private final FlowMapAttrsSpec attrSpecs;
 
-    private final double cellWidth = 60;
+    private final double cellWidth = 35;
     private final double cellHeight = 35;
     private final double cellSpacingX = 0; // 4
     private final double cellSpacingY = 0;
@@ -82,8 +86,10 @@ public class VisualFlowTimeline extends PNode {
 
     private Graph selectedGraph;
 
+    private final Tooltip tooltipBox;
 
-    public VisualFlowTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
+
+    public VisualTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
         this.jFlowTimeline = jFlowTimeline;
         this.graphs = Lists.newArrayList(graphs);
         this.attrSpecs = attrSpecs;
@@ -97,6 +103,12 @@ public class VisualFlowTimeline extends PNode {
             this.selectedGraph = this.graphs.get(this.graphs.size() - 1);
         }
         buildTimeline();
+
+        tooltipBox = new Tooltip();
+        tooltipBox.setVisible(false);
+        tooltipBox.setPickable(false);
+
+        jFlowTimeline.getCamera().addChild(tooltipBox);
     }
 
     public ColorMap getSumOutgoingDiffColorMap() {
@@ -124,13 +136,13 @@ public class VisualFlowTimeline extends PNode {
 
             // Graph ID labels
             PText t = new PText(FlowMapLoader.getGraphId(g));
-            t.setFont(ROW_CAPTION_FONT);
-            t.setTextPaint(Color.white);
+            t.setFont(CAPTION_FONT);
+            t.setTextPaint(CAPTION_COLOR);
             double x = 0, y = 0;
             switch (ORIENTATION) {
                 case VERTICAL:
                     x = ROW_CAPTION_TO_CELLS_X_GAP + t.getX() - t.getWidth();
-                    y = cellSpacingY + i * (cellHeight + cellSpacingY) + (cellHeight - ROW_CAPTION_FONT.getSize2D())/2;
+                    y = cellSpacingY + i * (cellHeight + cellSpacingY) + (cellHeight - CAPTION_FONT.getSize2D())/2;
                     t.setJustification(JComponent.RIGHT_ALIGNMENT);
                     t.setBounds(x , y, t.getWidth(), t.getHeight());
                     break;
@@ -182,7 +194,7 @@ public class VisualFlowTimeline extends PNode {
     private double cellY(int graphIndex, int nodeIndex) {
         switch (ORIENTATION) {
         case HORIZONTAL:
-            return ROW_CAPTION_FONT.getSize2D() + ROW_CAPTION_TO_CELLS_Y_GAP + cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
+            return CAPTION_FONT.getSize2D() + ROW_CAPTION_TO_CELLS_Y_GAP + cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
         case VERTICAL:
             return cellSpacingY + graphIndex * (cellHeight + cellSpacingY);
         }
@@ -298,6 +310,28 @@ public class VisualFlowTimeline extends PNode {
                 return ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
             }
         };
+    }
+
+    public void showTooltip(VisualTimelineNodeCell vc) {
+        PBounds b = vc.getBoundsReference();
+        tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY());
+
+        Node node = vc.getNode();
+        double outValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
+        double inValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
+
+        tooltipBox.setText(
+                FlowMapLoader.getGraphId(node.getGraph()) + "\n" +
+                node.getString(attrSpecs.getNodeLabelAttr()),
+                "Incoming: " + JFlowMap.NUMBER_FORMAT.format(inValue) + "\n" +
+                "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue),
+                null
+        );
+        tooltipBox.setVisible(true);
+    }
+
+    public void hideTooltip() {
+        tooltipBox.setVisible(false);
     }
 }
 

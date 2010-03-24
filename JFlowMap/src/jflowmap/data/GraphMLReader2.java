@@ -61,7 +61,6 @@ public class GraphMLReader2 {
     private XmlNamespace namespace;
     private Map<String, String> attrIdToName;
 
-
     public Iterable<Graph> readFromFile(String filename) throws DataIOException {
         try {
             return readFromStream(IOLib.streamFromString(filename));

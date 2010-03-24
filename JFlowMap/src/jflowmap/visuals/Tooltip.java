@@ -23,8 +23,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -43,11 +46,11 @@ public class Tooltip extends PPath {
     private static Font HEADER_FONT = new Font("Helvetica", Font.PLAIN, 12);
     private static Font LABELS_FONT = HEADER_FONT;
     private static Font VALUES_FONT = HEADER_FONT;
-    private Point padding;
+    private final Point padding;
     private int gap;
-    private PText headerNode;
-    private PText labelsNode;
-    private PText valuesNode;
+    private final PText headerNode;
+    private final PText labelsNode;
+    private final PText valuesNode;
 
     public Tooltip(int archw, int archh) {
         super(new RoundRectangle2D.Double(0, 0, 100, 100, archw, archh));
@@ -78,6 +81,14 @@ public class Tooltip extends PPath {
 
     public Tooltip() {
         this(10, 20);
+    }
+
+    @Override
+    public void setParent(PNode newParent) {
+        if (!(newParent instanceof PCamera)) {
+            throw new IllegalArgumentException("Tooltip can only be added to a camera.");
+        }
+        super.setParent(newParent);
     }
 
     public void setTextPaint(Paint textPaint) {
@@ -157,5 +168,41 @@ public class Tooltip extends PPath {
             pc.setRenderQuality(oldQuality);
         }
     }
+
+
+    public PCamera getCamera() {
+        return (PCamera)getParent();
+    }
+
+    /**
+     * This method places the tooltip so that it is still visible on the screen
+     * even if the point is close to the edge.
+     */
+    public void showTooltipAt(double x, double y) {
+        PCamera camera = getCamera();
+        PBounds cameraBounds = camera.getBoundsReference();
+        PBounds tooltipBounds = getBoundsReference();
+
+        Point2D pos = new Point2D.Double(x, y);
+        camera.viewToLocal(pos);
+        x = pos.getX();
+        y = pos.getY();
+        if (x + tooltipBounds.getWidth() > cameraBounds.getWidth()) {
+            final double _x = pos.getX() - tooltipBounds.getWidth() - 8;
+            if (cameraBounds.getX() - _x < x + tooltipBounds.getWidth() - cameraBounds.getMaxX()) {
+                x = _x;
+            }
+        }
+        if (y + tooltipBounds.getHeight() > cameraBounds.getHeight()) {
+            final double _y = pos.getY() - tooltipBounds.getHeight() - 8;
+            if (cameraBounds.getY() - _y < y + tooltipBounds.getHeight() - cameraBounds.getMaxY()) {
+                y = _y;
+            }
+        }
+        pos.setLocation(x + 8, y + 8);
+        setPosition(pos.getX(), pos.getY());
+        setVisible(true);
+    }
+
 
 }

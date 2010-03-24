@@ -38,7 +38,7 @@ import com.google.common.collect.Iterables;
 public class FlowMapLoader {
 
     private static final String GRAPH_CLIENT_PROPERTY__ID = "id";
-    static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
+    public static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
 
     private FlowMapLoader() {
     }
