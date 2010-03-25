@@ -30,8 +30,9 @@ public class MinMax {
 //    private final double minLog;
 //    private final double maxLog;
     private final double distLog;
+    private final int count;
 
-    private MinMax(double minValue, double avg, double maxValue) {
+    private MinMax(double minValue, double avg, double maxValue, int count) {
         if (minValue > maxValue) {
             throw new IllegalArgumentException("minValue > maxValue");
         }
@@ -47,6 +48,20 @@ public class MinMax {
 //        this.minLog = Math.log(min);
 //        this.maxLog = Math.log(max);
         this.distLog = Math.log(1.0 + (max - min));
+        this.count = count;
+    }
+
+    /**
+     * NOTE: the returned MinMax avg value will be NaN, because
+     * it doesn't make sense to
+     */
+    public MinMax mergeWith(MinMax minMax) {
+        return new MinMax(
+                Math.min(min, minMax.min),
+                (avg * count + minMax.count * minMax.count) / (count + minMax.count),
+                Math.max(max, minMax.max),
+                count + minMax.count
+        );
     }
 
     public double getMax() {
@@ -86,7 +101,7 @@ public class MinMax {
             sum += v;
             count++;
         }
-        return new MinMax(min, sum / count, max);
+        return new MinMax(min, sum / count, max, count);
     }
 
     /**

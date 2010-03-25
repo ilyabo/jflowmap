@@ -178,7 +178,7 @@ public class Tooltip extends PPath {
      * This method places the tooltip so that it is still visible on the screen
      * even if the point is close to the edge.
      */
-    public void showTooltipAt(double x, double y) {
+    public void showTooltipAt(double x, double y, double dx, double dy) {
         PCamera camera = getCamera();
         PBounds cameraBounds = camera.getBoundsReference();
         PBounds tooltipBounds = getBoundsReference();
@@ -188,18 +188,18 @@ public class Tooltip extends PPath {
         x = pos.getX();
         y = pos.getY();
         if (x + tooltipBounds.getWidth() > cameraBounds.getWidth()) {
-            final double _x = pos.getX() - tooltipBounds.getWidth() - 8;
+            final double _x = pos.getX() - tooltipBounds.getWidth() - dx;
             if (cameraBounds.getX() - _x < x + tooltipBounds.getWidth() - cameraBounds.getMaxX()) {
                 x = _x;
             }
         }
         if (y + tooltipBounds.getHeight() > cameraBounds.getHeight()) {
-            final double _y = pos.getY() - tooltipBounds.getHeight() - 8;
+            final double _y = pos.getY() - tooltipBounds.getHeight() - dy;
             if (cameraBounds.getY() - _y < y + tooltipBounds.getHeight() - cameraBounds.getMaxY()) {
                 y = _y;
             }
         }
-        pos.setLocation(x + 8, y + 8);
+        pos.setLocation(x + dx, y + dy);
         setPosition(pos.getX(), pos.getY());
         setVisible(true);
     }

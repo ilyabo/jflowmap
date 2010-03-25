@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.JFlowMap;
 import jflowmap.JFlowTimeline;
-import jflowmap.data.FlowMapStats;
+import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
@@ -42,6 +42,7 @@ import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
@@ -55,6 +56,10 @@ public class VisualTimelineNodeCell extends PNode {
         null;
     private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
     private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
+
+    private static final Color LOCALITY_VALUE_COLOR_MIN = new Color(103, 0, 13);
+    private static final Color LOCALITY_VALUE_COLOR_MAX = new Color(255, 245, 240);
+
     private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
     private static final boolean SHOW_NODE_LABEL = false;
     private static final boolean SHOW_VALUE_TEXT = false;
@@ -62,6 +67,7 @@ public class VisualTimelineNodeCell extends PNode {
     private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
     private static final boolean FILL_RECT_WITH_REGION_COLOR = true;
     private static final boolean SHOW_HALF_CIRCLES = true;
+    private static final boolean SHOW_LOCALITY_AS_CIRCLE = true;
     private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = false;
     private static final boolean FILL_HALF_CIRCLES_WITH_MAX_COLOR = true;
 
@@ -98,11 +104,16 @@ public class VisualTimelineNodeCell extends PNode {
 
         setBounds(x, y, width, height);
 
-        double outgValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        double incValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
+        double inValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING);
+        double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
 
-        MinMax outgVstats = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        MinMax incVstats = timeline.getGlobalStats().getNodeAttrStats(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
+        MinMax vstats =
+                timeline.getGlobalStats().getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING)
+                .mergeWith(timeline.getGlobalStats().getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING));
+
+        double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
+        double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
+
 
         rect = new PPath(new Rectangle2D.Double(
                 x + (SHOW_DIFF ? DIFF_BOX_WIDTH + DIFF_BOX_GAP : 0), y,
@@ -116,14 +127,14 @@ public class VisualTimelineNodeCell extends PNode {
 
         Color rectColor = null;
         if (FILL_RECT_WITH_VALUE_COLOR) {
-            if (!Double.isNaN(outgValue)) {
-                double normalizedValue =
-                    outgVstats.normalizeLog(outgValue);
+            if (!Double.isNaN(outValue)) {
+                double normalizedLogValue =
+                    vstats.normalizeLog(outValue);
     //                vstats.normalize(value);
                 rectColor = ColorUtils.colorBetween(
                         VALUE_COLOR_MIN,
                         VALUE_COLOR_MAX,
-                        normalizedValue, 255
+                        normalizedLogValue, 255
                 );
             } else {
                 rectColor = VALUE_COLOR_NAN;
@@ -157,7 +168,7 @@ public class VisualTimelineNodeCell extends PNode {
         }
 
         if (SHOW_VALUE_TEXT) {
-            PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(outgValue));
+            PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(outValue));
             valueText.setFont(CELL_VALUE_FONT);
             valueText.setJustification(JComponent.RIGHT_ALIGNMENT);
             valueText.setTextPaint(Color.gray);
@@ -177,10 +188,10 @@ public class VisualTimelineNodeCell extends PNode {
             addChild(diffRect);
 
             Color diffRectColor;
-            double diff = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+            double diff = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
 
             MinMax diffStats = timeline.getGlobalStats().getNodeAttrStats(
-                    FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+                    FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
             if (!Double.isNaN(diff)) {
                 // TODO: Use ColorMap instead
     //            double normalizedDiff =
@@ -201,40 +212,61 @@ public class VisualTimelineNodeCell extends PNode {
 
 
         if (SHOW_HALF_CIRCLES) {
-            // incoming
-            double wh = Math.min(width, height);
-            double r = Math.sqrt(incVstats.normalize(incValue)) * wh;
-            double off = (wh - r)/2;
-            PPath leftArc = new PPath(new Arc2D.Double(x + off, y + off, r, r, 90, 180, Arc2D.PIE));
-            leftArc.setStroke(HALF_CIRCLE_STROKE);
-            addChild(leftArc);
+            double normalizedIn = vstats.normalize(inValue);
+            double normalizedOut = vstats.normalize(outValue);
 
-            // outgoing
-            r = Math.sqrt(outgVstats.normalize(outgValue)) * wh;
-            off = (wh - r)/2;
-            PPath rightArc = new PPath(new Arc2D.Double(x + off, y + off, r, r, -90, 180, Arc2D.PIE));
-            rightArc.setStroke(HALF_CIRCLE_STROKE);
-            addChild(rightArc);
-            if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
-                leftArc.setPaint(ColorUtils.colorBetween(
-                        VALUE_COLOR_MIN,
-                        VALUE_COLOR_MAX,
-                        incVstats.normalizeLog(incValue), 255
-                ));
-                rightArc.setPaint(ColorUtils.colorBetween(
-                        VALUE_COLOR_MIN,
-                        VALUE_COLOR_MAX,
-                        outgVstats.normalizeLog(outgValue), 255
-                ));
-            } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
-                leftArc.setPaint(VALUE_COLOR_MAX);
-                rightArc.setPaint(VALUE_COLOR_MAX);
+            double normalizedInLocal = vstats.normalize(inLocalValue); // ! normalize using the non-local stats
+            double normalizedOutLocal = vstats.normalize(outLocalValue);
+
+            addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedIn), normalizedIn));
+            addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedIn));
+
+            addChild(colorizeLocalityHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal));
+            addChild(colorizeLocalityHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal));
+
+            if (SHOW_LOCALITY_AS_CIRCLE) {
+
             }
         }
 
-//
-
         addInputEventListener(inputEventListener);
+    }
+
+
+    private PPath createHalfCircle(double x, double y, boolean leftNotRight, double normalizedValue) {
+        PBounds b = getBoundsReference();
+        double wh = Math.min(b.width, b.height);
+        double r = Math.sqrt(normalizedValue) * wh;
+        double off = (wh - r)/2;
+        PPath ppath = new PPath(new Arc2D.Double(x + off, y + off, r, r, (leftNotRight ? 90 : -90), 180, Arc2D.PIE));
+        ppath.setStroke(HALF_CIRCLE_STROKE);
+        return ppath;
+    }
+
+    private PPath colorizeHalfCircle(PPath halfCircle, double normalizedValue) {
+        if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
+            halfCircle.setPaint(ColorUtils.colorBetween(
+                    VALUE_COLOR_MIN,
+                    VALUE_COLOR_MAX,
+                    normalizedValue, 255
+            ));
+        } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
+            halfCircle.setPaint(VALUE_COLOR_MAX);
+        }
+        return halfCircle;
+    }
+
+    private PPath colorizeLocalityHalfCircle(PPath halfCircle, double normalizedLocalityValue) {
+        if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
+            halfCircle.setPaint(ColorUtils.colorBetween(
+                    LOCALITY_VALUE_COLOR_MIN,
+                    LOCALITY_VALUE_COLOR_MAX,
+                    normalizedLocalityValue, 255
+            ));
+        } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
+            halfCircle.setPaint(LOCALITY_VALUE_COLOR_MAX);
+        }
+        return halfCircle;
     }
 
 

@@ -35,6 +35,7 @@ import jflowmap.JFlowMap;
 import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.CollectionUtils;
 import jflowmap.visuals.Tooltip;
@@ -94,7 +95,7 @@ public class VisualTimeline extends PNode {
         this.graphs = Lists.newArrayList(graphs);
         this.attrSpecs = attrSpecs;
         MinMax diffStats = getGlobalStats().getNodeAttrStats(
-                FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+                FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
         double diffR = Math.max(Math.abs(diffStats.getMin()), Math.abs(diffStats.getMax()));
         this.sumOutgoingDiffColorMap = new ColorMap(VisualTimelineNodeCell.DIFF_COLORS, -diffR, diffR);
 
@@ -243,11 +244,11 @@ public class VisualTimeline extends PNode {
         Iterator<Integer> it;
         switch (SORT_MODE) {
         case QTY_IN_EACH_YEAR:
-            it = graph.getNodeTable().rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
+            it = graph.getNodeTable().rowsSortedBy(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, true);
             it = CollectionUtils.reverse(it);
             break;
         case QTY_IN_SELECTED_YEAR:
-            it = selectedGraph.getNodeTable().rowsSortedBy(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING, true);
+            it = selectedGraph.getNodeTable().rowsSortedBy(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, true);
             it = CollectionUtils.reverse(it);
             break;
         case HIERARCHY:
@@ -313,21 +314,25 @@ public class VisualTimeline extends PNode {
     }
 
     public void showTooltip(VisualTimelineNodeCell vc) {
-        PBounds b = vc.getBoundsReference();
-        tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY());
 
         Node node = vc.getNode();
-        double outValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_OUTGOING);
-        double inValue = node.getDouble(FlowMapStats.NODE_STATS_COLUMN__SUM_INCOMING);
+        double inValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING);
+        double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
+        double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
+        double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
 
         tooltipBox.setText(
                 FlowMapLoader.getGraphId(node.getGraph()) + "\n" +
                 node.getString(attrSpecs.getNodeLabelAttr()),
                 "Incoming: " + JFlowMap.NUMBER_FORMAT.format(inValue) + "\n" +
-                "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue),
+                "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue) + "\n" +
+                "Incoming intrareg: " + JFlowMap.NUMBER_FORMAT.format(inLocalValue) + "\n" +
+                "Outgoing intrareg: " + JFlowMap.NUMBER_FORMAT.format(outLocalValue),
                 null
         );
-        tooltipBox.setVisible(true);
+
+        PBounds b = vc.getBoundsReference();
+        tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY(), 0, 0);
     }
 
     public void hideTooltip() {

@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.FlowMapSummaries;
 import jflowmap.util.PanHandler;
 import jflowmap.util.ZoomHandler;
 import jflowmap.visuals.timeline.VisualTimeline;
@@ -59,7 +60,7 @@ public class JFlowTimeline extends JComponent {
     private final Map<String, String> countryToRegion;
 
     public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec,
-            Map<String, String> countryToRegion, Map<String, Integer> regionToColor) {
+            Map<String, String> nodeIdToRegion, Map<String, Integer> regionToColor) {
         setLayout(new BorderLayout());
 
         canvas = new PCanvas();
@@ -69,7 +70,7 @@ public class JFlowTimeline extends JComponent {
         canvas.setPanEventHandler(new PanHandler());
         add(canvas, BorderLayout.CENTER);
 
-        this.countryToRegion = countryToRegion;
+        this.countryToRegion = nodeIdToRegion;
 
         // TODO: introduce regions as node attrs in GraphML
 
@@ -78,7 +79,7 @@ public class JFlowTimeline extends JComponent {
             graph.getNodeTable().addColumn(NODE_COLUMN__REGION, String.class);
             graph.getNodeTable().addColumn(NODE_COLUMN__REGION_COLOR, int.class);
 
-            for (Map.Entry<String, String> e : countryToRegion.entrySet()) {
+            for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
                 Node node = FlowMapLoader.findNodeById(graph, e.getKey());
                 if (node != null) {
                     String region = e.getValue();
@@ -92,11 +93,12 @@ public class JFlowTimeline extends JComponent {
         List<FlowMapGraphWithAttrSpecs> graphsAndSpecs = Lists.newArrayList();
         for (Graph graph : graphs) {
             FlowMapGraphWithAttrSpecs gs = new FlowMapGraphWithAttrSpecs(graph, attrSpec);
-            FlowMapStats.supplyNodesWithStats(gs);
+            FlowMapSummaries.supplyNodesWithSummaries(gs);
+            FlowMapSummaries.supplyNodesWithLocalitySummaries(gs, NODE_COLUMN__REGION);
             graphsAndSpecs.add(gs);
         }
 
-        FlowMapStats.supplyNodesWithDiffStats(graphs, attrSpec);
+        FlowMapSummaries.supplyNodesWithDiffStats(graphs, attrSpec);
 
         globalStats = FlowMapStats.createFor(graphsAndSpecs);
 

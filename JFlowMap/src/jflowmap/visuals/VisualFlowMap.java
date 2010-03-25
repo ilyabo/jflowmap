@@ -381,7 +381,7 @@ public class VisualFlowMap extends PNode {
         } else {
             return;
         }
-        tooltipBox.showTooltipAt(pos.getX(), pos.getY());
+        tooltipBox.showTooltipAt(pos.getX(), pos.getY(), 8, 8);
     }
 
     private String wordWrapLabel(String label, double maxWidth) {

@@ -24,19 +24,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
-import prefuse.data.Table;
 import prefuse.data.tuple.TupleSet;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * @author Ilya Boyandin
@@ -46,13 +43,6 @@ public class FlowMapStats {
 
     private static final String NODE_ATTR_KEY_SUFFIX = "_nodeAttr";
     private static final String EDGE_ATTR_KEY_SUFFIX = "_edgeAttr";
-
-    public static final String NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
-    public static final String NODE_STATS_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
-    public static final String NODE_STATS_COLUMN__SUM_OUTGOING_LOCALITY = "outLocality:stat";
-    public static final String NODE_STATS_COLUMN__SUM_INCOMING_LOCALITY = "inLocality:stat";
-    public static final String NODE_STATS_COLUMN__SUM_OUTGOING = "sumOut:stat";
-    public static final String NODE_STATS_COLUMN__SUM_INCOMING= "sumIn:stat";
 
     private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
     private final List<FlowMapGraphWithAttrSpecs> graphAndSpecs;
@@ -214,96 +204,6 @@ public class FlowMapStats {
             },
             ;
         };
-    }
-
-    /**
-     * This method adds additional columns to the nodes table providing
-     * the nodes with useful stats.
-     */
-    public static FlowMapGraphWithAttrSpecs supplyNodesWithStats(FlowMapGraphWithAttrSpecs graphAndSpecs) {
-        Graph g = graphAndSpecs.getGraph();
-        Table nodeTable = g.getNodeTable();
-        FlowMapAttrsSpec as = graphAndSpecs.getAttrsSpec();
-
-        Map<Integer, Double> outsums = Maps.newHashMap();
-        Map<Integer, Double> insums = Maps.newHashMap();
-
-        Map<Integer, Double> outLocality = Maps.newHashMap();
-        Map<Integer, Double> inLocality = Maps.newHashMap();
-
-        for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
-            Edge e = g.getEdge(i);
-
-            double w = e.getDouble(as.getEdgeWeightAttr());
-            if (!Double.isNaN(w)) {
-                int src = e.getSourceNode().getRow();
-                int trg = e.getTargetNode().getRow();
-
-                Double outsum = outsums.get(src);
-                if (outsum == null) {
-                    outsums.put(src, w);
-                } else {
-                    outsums.put(src, outsum + w);
-                }
-
-                Double inval = insums.get(trg);
-                if (inval == null) {
-                    insums.put(trg, w);
-                } else {
-                    insums.put(trg, inval + w);
-                }
-            }
-        }
-
-
-        nodeTable.addColumn(NODE_STATS_COLUMN__SUM_OUTGOING, double.class);
-        nodeTable.addColumn(NODE_STATS_COLUMN__SUM_INCOMING, double.class);
-        for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
-            Node node = g.getNode(i);
-            if (outsums.containsKey(i)) {
-                node.setDouble(NODE_STATS_COLUMN__SUM_OUTGOING, outsums.get(i));
-            }
-            if (insums.containsKey(i)) {
-                node.setDouble(NODE_STATS_COLUMN__SUM_INCOMING, insums.get(i));
-            }
-        }
-
-        return graphAndSpecs;
-    }
-
-    /**
-     * This method requires that supplyNodesWithStats was already called for the graphs
-     */
-    public static void supplyNodesWithDiffStats(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
-        Graph prevg = null;
-        for (Graph g : graphs) {
-            g.addColumn(NODE_STATS_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR, double.class);
-            g.addColumn(NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR, double.class);
-            for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
-                Node node = g.getNode(i);
-                String nodeId = FlowMapLoader.getNodeId(node);
-                Node prevNode = null;
-                if (prevg != null) {
-                    prevNode = FlowMapLoader.findNodeById(prevg, nodeId);
-                }
-
-                double diffIn, diffOut;
-                if (prevNode == null) {
-                    diffIn = diffOut = Double.NaN;
-                } else {
-                    diffIn = diffPercentage(node.getDouble(NODE_STATS_COLUMN__SUM_INCOMING), prevNode.getDouble(NODE_STATS_COLUMN__SUM_INCOMING));
-                    diffOut = diffPercentage(node.getDouble(NODE_STATS_COLUMN__SUM_OUTGOING), prevNode.getDouble(NODE_STATS_COLUMN__SUM_OUTGOING));
-                }
-
-                node.setDouble(NODE_STATS_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR, diffIn);
-                node.setDouble(NODE_STATS_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR, diffOut);
-            }
-            prevg = g;
-        }
-    }
-
-    private static double diffPercentage(double current, double prev) {
-        return (current - prev)/prev;
     }
 
 

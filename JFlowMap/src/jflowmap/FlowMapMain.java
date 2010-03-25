@@ -79,8 +79,9 @@ public class FlowMapMain extends JFrame {
 
     private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
 //            "ritypnv",
-          "rityp",
-//          "r",
+
+//          "rityp",
+          "r",
           "name", "x", "y", 0);
 
 
