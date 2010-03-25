@@ -120,9 +120,32 @@ public class MinMax {
         return rv;
     }
 
+    /**
+     * Returns a value between -1.0 and 1.0. Zero stays zero.
+     * If both min and max are positive, works in the same way as {@link #normalize(double)}
+     */
+    public double normalizeAroundZero(double value) {
+        if (getMin() >= 0.0) {
+            return normalize(value);
+        }
+        checkInterval(value);
+        if (Double.isNaN(value)) {
+            return Double.NaN;
+        }
+        if (getMax() == getMin()) return 0.0;
+        double r = Math.max(Math.abs(getMin()), Math.abs(getMax()));
+        double rv = value / r;
+        checkNormalized(value, rv, -1.0, 1.0);
+        return rv;
+    }
+
     private void checkNormalized(double input, double normalized) throws AssertionError {
-        if (!(normalized >= 0.0  &&  normalized <= 1.0)) {
-            throw new AssertionError("Normalized value must be between 0.0 and 1.0. " +
+        checkNormalized(input, normalized, 0.0, 1.0);
+    }
+
+    private void checkNormalized(double input, double normalized, double min, double max) throws AssertionError {
+        if (!(normalized >= min  &&  normalized <= max)) {
+            throw new AssertionError("Normalized value must be between " + min + " and " + max + ". " +
                     "Input value: " + input + ", " +
             		"Normalized value: " + normalized + ". " + this);
         }

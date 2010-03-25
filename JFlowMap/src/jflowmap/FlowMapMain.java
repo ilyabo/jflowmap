@@ -78,10 +78,9 @@ import com.google.common.collect.Sets;
 public class FlowMapMain extends JFrame {
 
     private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
-//            "ritypnv",
-
-//          "rityp",
-          "r",
+            // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
+          "rity",
+//          "r",
           "name", "x", "y", 0);
 
 
@@ -207,6 +206,7 @@ public class FlowMapMain extends JFrame {
         }
 
         List<Graph> regionSummaryGraphs = Lists.newArrayList();
+        Graph prevGraph = null;
         for (Graph g : graphs) {
 
             FlowMapGraphBuilder builder = new FlowMapGraphBuilder(FlowMapLoader.getGraphId(g))
@@ -225,21 +225,45 @@ public class FlowMapMain extends JFrame {
 
             for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
                 Edge e = g.getEdge(i);
-                String src = e.getSourceNode().getString(JFlowTimeline.NODE_COLUMN__REGION);
-                String trg = e.getTargetNode().getString(JFlowTimeline.NODE_COLUMN__REGION);
-                if (src == null) {
-                    throw new IllegalArgumentException("No region for " + e.getSourceNode());
+                Node src = e.getSourceNode();
+                Node trg = e.getTargetNode();
+                String srcRegion = src.getString(JFlowTimeline.NODE_COLUMN__REGION);
+                String trgRegion = trg.getString(JFlowTimeline.NODE_COLUMN__REGION);
+                if (srcRegion == null) {
+                    throw new IllegalArgumentException("No region for " + src);
                 }
-                if (trg == null) {
-                    throw new IllegalArgumentException("No region for " + e.getTargetNode());
+                if (trgRegion == null) {
+                    throw new IllegalArgumentException("No region for " + trg);
+                }
+                if (FlowMapLoader.getGraphId(g).equals("1992")) {
+                    if (trgRegion.equals("Asia|Southern Asia")) {
+                        Node prevSrc = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(src));
+                        Node prevTrg = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(trg));
+                        Edge prevEdge = prevGraph.getEdge(prevSrc,  prevTrg);
+
+                        double prevR = prevEdge != null ? prevEdge.getDouble("r") : Double.NaN;
+
+                        double r = e.getDouble("r");
+                        System.out.println(src.getString("code") + " -> " + trg.getString("code")  + ": " +
+                                "\tr=" + r  +
+                                (prevGraph != null?
+                                        "\tprevR=" + prevR +
+                                        "\t(r - prevR)=" + (r - prevR)
+                                  : ""
+                                ) +
+                                "\t"+REFUGEES_ATTR_SPECS.getEdgeWeightAttr() + "="+
+                                e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr())
+                                );
+                    }
                 }
                 builder.addEdge(
-                        regionToNode.get(src),
-                        regionToNode.get(trg),
+                        regionToNode.get(srcRegion),
+                        regionToNode.get(trgRegion),
                         e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr()));
             }
 
             regionSummaryGraphs.add(builder.build());
+            prevGraph = g;
         }
 
         showView(new JFlowTimeline(regionSummaryGraphs, REFUGEES_ATTR_SPECS, regionToRegion, colorMap));

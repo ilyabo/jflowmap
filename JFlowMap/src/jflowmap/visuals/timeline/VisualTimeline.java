@@ -89,12 +89,23 @@ public class VisualTimeline extends PNode {
 
     private final Tooltip tooltipBox;
 
+    private final MinMax valueStats;
+
 
     public VisualTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
         this.jFlowTimeline = jFlowTimeline;
         this.graphs = Lists.newArrayList(graphs);
         this.attrSpecs = attrSpecs;
-        MinMax diffStats = getGlobalStats().getNodeAttrStats(
+
+        FlowMapStats gs = getGlobalStats();
+        valueStats = gs
+            .getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING)
+            .mergeWith(gs.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING))
+            .mergeWith(gs.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG))
+            .mergeWith(gs.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG))
+        ;
+
+        MinMax diffStats = gs.getNodeAttrStats(
                 FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
         double diffR = Math.max(Math.abs(diffStats.getMin()), Math.abs(diffStats.getMax()));
         this.sumOutgoingDiffColorMap = new ColorMap(VisualTimelineNodeCell.DIFF_COLORS, -diffR, diffR);
@@ -109,7 +120,12 @@ public class VisualTimeline extends PNode {
         tooltipBox.setVisible(false);
         tooltipBox.setPickable(false);
 
+
         jFlowTimeline.getCamera().addChild(tooltipBox);
+    }
+
+    public MinMax getValueStats() {
+        return valueStats;
     }
 
     public ColorMap getSumOutgoingDiffColorMap() {
@@ -320,6 +336,8 @@ public class VisualTimeline extends PNode {
         double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
         double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
         double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
+        double inDiffValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR);
+        double outDiffValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
 
         tooltipBox.setText(
                 FlowMapLoader.getGraphId(node.getGraph()) + "\n" +
@@ -327,8 +345,10 @@ public class VisualTimeline extends PNode {
                 "Incoming: " + JFlowMap.NUMBER_FORMAT.format(inValue) + "\n" +
                 "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue) + "\n" +
                 "Incoming intrareg: " + JFlowMap.NUMBER_FORMAT.format(inLocalValue) + "\n" +
-                "Outgoing intrareg: " + JFlowMap.NUMBER_FORMAT.format(outLocalValue),
-                null
+                "Outgoing intrareg: " + JFlowMap.NUMBER_FORMAT.format(outLocalValue)
+//                 + "\n" + "Incoming diff to next: " + JFlowMap.NUMBER_FORMAT.format(inDiffValue) + "\n" +
+//                "Outgoing diff to next: " + JFlowMap.NUMBER_FORMAT.format(outDiffValue)
+                , null
         );
 
         PBounds b = vc.getBoundsReference();

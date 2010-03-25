@@ -98,7 +98,7 @@ public class JFlowTimeline extends JComponent {
             graphsAndSpecs.add(gs);
         }
 
-        FlowMapSummaries.supplyNodesWithDiffStats(graphs, attrSpec);
+        FlowMapSummaries.supplyNodesWithDiffs(graphs, attrSpec);
 
         globalStats = FlowMapStats.createFor(graphsAndSpecs);
 

@@ -62,23 +62,31 @@ public class FlowMapSummaries {
         for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
             Edge e = g.getEdge(i);
 
-            double w = e.getDouble(as.getEdgeWeightAttr());
-            if (!Double.isNaN(w)) {
-                int src = e.getSourceNode().getRow();
-                int trg = e.getTargetNode().getRow();
+            double v = e.getDouble(as.getEdgeWeightAttr());
+            if (!Double.isNaN(v)) {
+                Node src = e.getSourceNode();
+                Node trg = e.getTargetNode();
+                int srcRow = src.getRow();
+                int trgRow = trg.getRow();
 
-                Double outsum = outsums.get(src);
+                Double outsum = outsums.get(srcRow);
                 if (outsum == null) {
-                    outsums.put(src, w);
+                    outsums.put(srcRow, v);
                 } else {
-                    outsums.put(src, outsum + w);
+                    outsums.put(srcRow, outsum + v);
                 }
 
-                Double inval = insums.get(trg);
+                Double inval = insums.get(trgRow);
                 if (inval == null) {
-                    insums.put(trg, w);
+                    insums.put(trgRow, v);
                 } else {
-                    insums.put(trg, inval + w);
+                    insums.put(trgRow, inval + v);
+                }
+                if (FlowMapLoader.getGraphId(g).equals("1992")) {
+                    if (trg.getString("name").equals("Asia|Southern Asia")) {
+                        System.out.println(src.getString("name") + " -> " + trg.getString("name")  + " (" + v
+                                + "), Sum: " + insums.get(trgRow));
+                    }
                 }
             }
         }
@@ -152,9 +160,9 @@ public class FlowMapSummaries {
     }
 
     /**
-     * This method requires that supplyNodesWithStats was already called for the graphs
+     * This method requires that supplyNodesWithSummaries was already called for the graphs
      */
-    public static void supplyNodesWithDiffStats(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
+    public static void supplyNodesWithDiffs(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
         Graph prevg = null;
         for (Graph g : graphs) {
             g.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR, double.class);
@@ -171,10 +179,12 @@ public class FlowMapSummaries {
                 if (prevNode == null) {
                     diffIn = diffOut = Double.NaN;
                 } else {
-                    diffIn = diffPercentage(node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING),
-                            prevNode.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING));
-                    diffOut = diffPercentage(node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING),
-                            prevNode.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING));
+                    diffIn = diff(
+                                node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING),
+                                prevNode.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING));
+                    diffOut = diff(
+                                node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING),
+                                prevNode.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING));
                 }
 
                 node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR, diffIn);
@@ -186,8 +196,12 @@ public class FlowMapSummaries {
 
 
 
+    private static double diff(double current, double prev) {
+        return (current - prev);
+    }
+
     private static double diffPercentage(double current, double prev) {
-        return (current - prev)/prev;
+        return (current - prev)/prev;  // TODO: diffPercentage (ensure it works properly; check for division by zero)
     }
 
 }

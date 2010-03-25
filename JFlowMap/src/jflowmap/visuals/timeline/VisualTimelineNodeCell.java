@@ -54,18 +54,20 @@ public class VisualTimelineNodeCell extends PNode {
 //        new PFixedWidthStroke(1);
 //        new BasicStroke(1f);
         null;
-    private static final Color VALUE_COLOR_MIN = new Color(255, 245, 240);
-    private static final Color VALUE_COLOR_MAX = new Color(103, 0, 13);
+    private static final Color VALUE_COLOR_MIN_NEG = new Color(26, 152, 80);
+    private static final Color VALUE_COLOR_ZERO = new Color(255, 255, 191);
+    private static final Color VALUE_COLOR_MAX_POS = new Color(215, 48, 39);
 
-    private static final Color LOCALITY_VALUE_COLOR_MIN = new Color(103, 0, 13);
-    private static final Color LOCALITY_VALUE_COLOR_MAX = new Color(255, 245, 240);
+    private static final Color INTRAREG_VALUE_COLOR_MIN_NEG = new Color(102, 189, 99);
+    private static final Color INTRAREG_VALUE_COLOR_ZERO = new Color(255, 255, 191);
+    private static final Color INTRAREG_VALUE_COLOR_MAX_POS = new Color(244, 109, 67);
 
     private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
     private static final boolean SHOW_NODE_LABEL = false;
     private static final boolean SHOW_VALUE_TEXT = false;
     private static final boolean SHOW_DIFF = false;
     private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
-    private static final boolean FILL_RECT_WITH_REGION_COLOR = true;
+    private static final boolean FILL_RECT_WITH_REGION_COLOR = false;
     private static final boolean SHOW_HALF_CIRCLES = true;
     private static final boolean SHOW_LOCALITY_AS_CIRCLE = true;
     private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = false;
@@ -107,13 +109,11 @@ public class VisualTimelineNodeCell extends PNode {
         double inValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING);
         double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
 
-        MinMax vstats =
-                timeline.getGlobalStats().getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING)
-                .mergeWith(timeline.getGlobalStats().getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING));
 
         double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
         double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
 
+        final MinMax vstats = timeline.getValueStats();
 
         rect = new PPath(new Rectangle2D.Double(
                 x + (SHOW_DIFF ? DIFF_BOX_WIDTH + DIFF_BOX_GAP : 0), y,
@@ -132,8 +132,8 @@ public class VisualTimelineNodeCell extends PNode {
                     vstats.normalizeLog(outValue);
     //                vstats.normalize(value);
                 rectColor = ColorUtils.colorBetween(
-                        VALUE_COLOR_MIN,
-                        VALUE_COLOR_MAX,
+                        VALUE_COLOR_MIN_NEG,
+                        VALUE_COLOR_MAX_POS,
                         normalizedLogValue, 255
                 );
             } else {
@@ -212,17 +212,17 @@ public class VisualTimelineNodeCell extends PNode {
 
 
         if (SHOW_HALF_CIRCLES) {
-            double normalizedIn = vstats.normalize(inValue);
-            double normalizedOut = vstats.normalize(outValue);
+            double normalizedIn = vstats.normalizeAroundZero(inValue);
+            double normalizedOut = vstats.normalizeAroundZero(outValue);
 
-            double normalizedInLocal = vstats.normalize(inLocalValue); // ! normalize using the non-local stats
-            double normalizedOutLocal = vstats.normalize(outLocalValue);
+            double normalizedInLocal = vstats.normalizeAroundZero(inLocalValue); // ! normalize using the non-local stats
+            double normalizedOutLocal = vstats.normalizeAroundZero(outLocalValue);
 
             addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedIn), normalizedIn));
-            addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedIn));
+            addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedOut));
 
-            addChild(colorizeLocalityHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal));
-            addChild(colorizeLocalityHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal));
+            addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal));
+            addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal));
 
             if (SHOW_LOCALITY_AS_CIRCLE) {
 
@@ -232,11 +232,10 @@ public class VisualTimelineNodeCell extends PNode {
         addInputEventListener(inputEventListener);
     }
 
-
     private PPath createHalfCircle(double x, double y, boolean leftNotRight, double normalizedValue) {
         PBounds b = getBoundsReference();
         double wh = Math.min(b.width, b.height);
-        double r = Math.sqrt(normalizedValue) * wh;
+        double r = Math.sqrt(Math.abs(normalizedValue)) * wh;
         double off = (wh - r)/2;
         PPath ppath = new PPath(new Arc2D.Double(x + off, y + off, r, r, (leftNotRight ? 90 : -90), 180, Arc2D.PIE));
         ppath.setStroke(HALF_CIRCLE_STROKE);
@@ -245,26 +244,54 @@ public class VisualTimelineNodeCell extends PNode {
 
     private PPath colorizeHalfCircle(PPath halfCircle, double normalizedValue) {
         if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
-            halfCircle.setPaint(ColorUtils.colorBetween(
-                    VALUE_COLOR_MIN,
-                    VALUE_COLOR_MAX,
-                    normalizedValue, 255
-            ));
+            if (normalizedValue > 0) {
+                halfCircle.setPaint(ColorUtils.colorBetween(
+                        VALUE_COLOR_ZERO,
+                        VALUE_COLOR_MAX_POS,
+                        normalizedValue, 255
+                ));
+            } else {
+                halfCircle.setPaint(ColorUtils.colorBetween(
+                        VALUE_COLOR_MIN_NEG,
+                        VALUE_COLOR_ZERO,
+                        normalizedValue, 255
+                ));
+            }
         } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
-            halfCircle.setPaint(VALUE_COLOR_MAX);
+            if (normalizedValue > 0) {
+                halfCircle.setPaint(VALUE_COLOR_MAX_POS);
+            } else if (normalizedValue == 0) {
+                halfCircle.setPaint(VALUE_COLOR_ZERO);
+            } else {
+                halfCircle.setPaint(VALUE_COLOR_MIN_NEG);
+            }
         }
         return halfCircle;
     }
 
-    private PPath colorizeLocalityHalfCircle(PPath halfCircle, double normalizedLocalityValue) {
+    private PPath colorizeIntraregHalfCircle(PPath halfCircle, double normalizedValue) {
         if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
-            halfCircle.setPaint(ColorUtils.colorBetween(
-                    LOCALITY_VALUE_COLOR_MIN,
-                    LOCALITY_VALUE_COLOR_MAX,
-                    normalizedLocalityValue, 255
-            ));
+            if (normalizedValue > 0) {
+                halfCircle.setPaint(ColorUtils.colorBetween(
+                        INTRAREG_VALUE_COLOR_ZERO,
+                        INTRAREG_VALUE_COLOR_MAX_POS,
+                        normalizedValue, 255
+                ));
+            } else {
+                halfCircle.setPaint(ColorUtils.colorBetween(
+                        INTRAREG_VALUE_COLOR_MIN_NEG,
+                        INTRAREG_VALUE_COLOR_ZERO,
+                        normalizedValue, 255
+                ));
+            }
         } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
-            halfCircle.setPaint(LOCALITY_VALUE_COLOR_MAX);
+            if (normalizedValue > 0) {
+                halfCircle.setPaint(INTRAREG_VALUE_COLOR_MAX_POS);
+            } else if (normalizedValue == 0) {
+                halfCircle.setPaint(INTRAREG_VALUE_COLOR_ZERO);
+            } else {
+                halfCircle.setPaint(INTRAREG_VALUE_COLOR_MIN_NEG);
+            }
         }
         return halfCircle;
     }
