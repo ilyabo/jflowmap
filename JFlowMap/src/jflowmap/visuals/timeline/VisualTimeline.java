@@ -20,8 +20,6 @@ package jflowmap.visuals.timeline;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,6 @@ import prefuse.util.ColorMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -150,27 +147,8 @@ public class VisualTimeline extends PNode {
 
         int i = 0;
         for (Graph g : graphs) {
-
             // Graph ID labels
-            PText t = new PText(FlowMapLoader.getGraphId(g));
-            t.setFont(CAPTION_FONT);
-            t.setTextPaint(CAPTION_COLOR);
-            double x = 0, y = 0;
-            switch (ORIENTATION) {
-                case VERTICAL:
-                    x = ROW_CAPTION_TO_CELLS_X_GAP + t.getX() - t.getWidth();
-                    y = cellSpacingY + i * (cellHeight + cellSpacingY) + (cellHeight - CAPTION_FONT.getSize2D())/2;
-                    t.setJustification(JComponent.RIGHT_ALIGNMENT);
-                    t.setBounds(x , y, t.getWidth(), t.getHeight());
-                    break;
-                case HORIZONTAL:
-                    x = cellSpacingX + i * (cellWidth + cellSpacingX);
-                    y = 0 ;
-                    t.setJustification(JComponent.LEFT_ALIGNMENT);
-                    t.setBounds(x + (cellWidth - t.getWidth())/2, y, t.getWidth(), t.getHeight());
-                break;
-            }
-            addChild(t);
+            addChild(createCaption(i, FlowMapLoader.getGraphId(g), ORIENTATION == Orientation.HORIZONTAL));
 
             // Cells
             Iterator<Integer> it = nodeIterator(g);
@@ -183,18 +161,49 @@ public class VisualTimeline extends PNode {
             i++;
         }
 
-        elementLabels = new FloatingLabelsNode(ORIENTATION == Orientation.VERTICAL, createElementsLabelIterator());
-        jFlowTimeline.getCamera().addChild(elementLabels);
 
-        jFlowTimeline.getCamera().addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (ORIENTATION == Orientation.HORIZONTAL) {
-                    elementLabels.setX(jFlowTimeline.getCamera().getWidth() - elementLabels.getWidth());
-                }
-            }
-        });
 
+        // Node name labels
+        Graph firstGraph = graphs.get(0);
+        for (int k = 0, numNodes = firstGraph.getNodeCount(); k < numNodes; k++) {
+            Node n = firstGraph.getNode(k);
+            addChild(createCaption(k, n.getString(attrSpecs.getNodeLabelAttr()), ORIENTATION == Orientation.VERTICAL));
+        }
+
+
+
+
+//        elementLabels = new FloatingLabelsNode(ORIENTATION == Orientation.VERTICAL, createElementsLabelIterator());
+//        jFlowTimeline.getCamera().addChild(elementLabels);
+//
+//        jFlowTimeline.getCamera().addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+//            @Override
+//            public void propertyChange(PropertyChangeEvent evt) {
+//                if (ORIENTATION == Orientation.HORIZONTAL) {
+//                    elementLabels.setX(jFlowTimeline.getCamera().getWidth() - elementLabels.getWidth());
+//                }
+//            }
+//        });
+
+    }
+
+    private PText createCaption(int i, String text, boolean horizontalNotVertical) {
+        PText t = new PText(text);
+        t.setFont(CAPTION_FONT);
+        t.setTextPaint(CAPTION_COLOR);
+        double x = 0, y = 0;
+        if (horizontalNotVertical) {
+            x = cellSpacingX + i * (cellWidth + cellSpacingX);
+            y = 0 ;
+            t.setJustification(JComponent.LEFT_ALIGNMENT);
+            t.setBounds(x + (cellWidth - t.getWidth())/2, y, t.getWidth(), t.getHeight());
+        } else {
+            x = t.getX() - t.getWidth();
+            y = cellY(0, i) + (cellHeight - CAPTION_FONT.getSize2D())/2;
+            t.setJustification(JComponent.RIGHT_ALIGNMENT);
+            t.setBounds(x, y, t.getWidth(), t.getHeight());
+        }
+        return t;
     }
 
     private double cellX(int graphIndex, int nodeIndex) {

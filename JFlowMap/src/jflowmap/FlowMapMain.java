@@ -235,27 +235,27 @@ public class FlowMapMain extends JFrame {
                 if (trgRegion == null) {
                     throw new IllegalArgumentException("No region for " + trg);
                 }
-                if (FlowMapLoader.getGraphId(g).equals("1992")) {
-                    if (trgRegion.equals("Asia|Southern Asia")) {
-                        Node prevSrc = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(src));
-                        Node prevTrg = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(trg));
-                        Edge prevEdge = prevGraph.getEdge(prevSrc,  prevTrg);
-
-                        double prevR = prevEdge != null ? prevEdge.getDouble("r") : Double.NaN;
-
-                        double r = e.getDouble("r");
-                        System.out.println(src.getString("code") + " -> " + trg.getString("code")  + ": " +
-                                "\tr=" + r  +
-                                (prevGraph != null?
-                                        "\tprevR=" + prevR +
-                                        "\t(r - prevR)=" + (r - prevR)
-                                  : ""
-                                ) +
-                                "\t"+REFUGEES_ATTR_SPECS.getEdgeWeightAttr() + "="+
-                                e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr())
-                                );
-                    }
-                }
+//                if (FlowMapLoader.getGraphId(g).equals("1992")) {
+//                    if (trgRegion.equals("Asia | Southern Asia")) {
+//                        Node prevSrc = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(src));
+//                        Node prevTrg = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(trg));
+//                        Edge prevEdge = prevGraph.getEdge(prevSrc,  prevTrg);
+//
+//                        double prevR = prevEdge != null ? prevEdge.getDouble("r") : Double.NaN;
+//
+//                        double r = e.getDouble("r");
+//                        System.out.println(src.getString("code") + " -> " + trg.getString("code")  + ": " +
+//                                "\tr=" + r  +
+//                                (prevGraph != null?
+//                                        "\tprevR=" + prevR +
+//                                        "\t(r - prevR)=" + (r - prevR)
+//                                  : ""
+//                                ) +
+//                                "\t"+REFUGEES_ATTR_SPECS.getEdgeWeightAttr() + "="+
+//                                e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr())
+//                                );
+//                    }
+//                }
                 builder.addEdge(
                         regionToNode.get(srcRegion),
                         regionToNode.get(trgRegion),

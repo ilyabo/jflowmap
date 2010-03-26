@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  */
 public class XmlRegionsReader {
 
-    public static final String REGION_SEPARATOR = "|";
+    public static final String REGION_SEPARATOR = " | ";
 
     private XmlRegionsReader() {
     }

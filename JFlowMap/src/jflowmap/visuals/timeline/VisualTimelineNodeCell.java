@@ -145,7 +145,9 @@ public class VisualTimelineNodeCell extends PNode {
             rectColor = ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
         }
 
-        if (rectColor != null) {
+        if (rectColor == null) {
+            rect.setPaint(Color.white);
+        } else {
             rect.setPaint(rectColor);
         }
 

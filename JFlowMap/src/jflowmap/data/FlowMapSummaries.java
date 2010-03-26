@@ -82,12 +82,12 @@ public class FlowMapSummaries {
                 } else {
                     insums.put(trgRow, inval + v);
                 }
-                if (FlowMapLoader.getGraphId(g).equals("1992")) {
-                    if (trg.getString("name").equals("Asia|Southern Asia")) {
-                        System.out.println(src.getString("name") + " -> " + trg.getString("name")  + " (" + v
-                                + "), Sum: " + insums.get(trgRow));
-                    }
-                }
+//                if (FlowMapLoader.getGraphId(g).equals("1992")) {
+//                    if (trg.getString("name").equals("Asia | Southern Asia")) {
+//                        System.out.println(src.getString("name") + " -> " + trg.getString("name")  + " (" + v
+//                                + "), Sum: " + insums.get(trgRow));
+//                    }
+//                }
             }
         }
 

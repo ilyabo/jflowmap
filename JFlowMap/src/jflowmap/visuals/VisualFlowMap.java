@@ -347,7 +347,6 @@ public class VisualFlowMap extends PNode {
 //    }
 
     public void fitInCameraView() {
-        System.out.println("VisualFlowMap.fitInCameraView()");
         PBounds boundRect = getNodesBounds();
 //        PPath boundRectPath = new PPath(boundRect);
 //        addChild(boundRectPath);
