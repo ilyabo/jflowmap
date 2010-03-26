@@ -69,7 +69,7 @@ public class VisualTimelineNodeCell extends PNode {
     private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
     private static final boolean FILL_RECT_WITH_REGION_COLOR = false;
     private static final boolean SHOW_HALF_CIRCLES = true;
-    private static final boolean SHOW_LOCALITY_AS_CIRCLE = true;
+    private static final boolean SHOW_INTRAREG_HALF_CIRCLES = true;
     private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = false;
     private static final boolean FILL_HALF_CIRCLES_WITH_MAX_COLOR = true;
 
@@ -223,11 +223,9 @@ public class VisualTimelineNodeCell extends PNode {
             addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedIn), normalizedIn));
             addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedOut));
 
-            addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal));
-            addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal));
-
-            if (SHOW_LOCALITY_AS_CIRCLE) {
-
+            if (SHOW_INTRAREG_HALF_CIRCLES) {
+                addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal));
+                addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal));
             }
         }
 

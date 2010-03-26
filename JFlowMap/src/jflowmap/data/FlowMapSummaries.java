@@ -107,7 +107,7 @@ public class FlowMapSummaries {
         return graphAndSpecs;
     }
 
-    public static void supplyNodesWithLocalitySummaries(FlowMapGraphWithAttrSpecs graphAndSpecs, String nodeRegionAttr) {
+    public static void supplyNodesWithIntraregSummaries(FlowMapGraphWithAttrSpecs graphAndSpecs, String nodeRegionAttr) {
         Graph g = graphAndSpecs.getGraph();
         Table nodeTable = g.getNodeTable();
         FlowMapAttrsSpec as = graphAndSpecs.getAttrsSpec();

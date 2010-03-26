@@ -94,7 +94,7 @@ public class JFlowTimeline extends JComponent {
         for (Graph graph : graphs) {
             FlowMapGraphWithAttrSpecs gs = new FlowMapGraphWithAttrSpecs(graph, attrSpec);
             FlowMapSummaries.supplyNodesWithSummaries(gs);
-            FlowMapSummaries.supplyNodesWithLocalitySummaries(gs, NODE_COLUMN__REGION);
+            FlowMapSummaries.supplyNodesWithIntraregSummaries(gs, NODE_COLUMN__REGION);
             graphsAndSpecs.add(gs);
         }
 
