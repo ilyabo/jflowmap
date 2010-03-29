@@ -36,6 +36,7 @@ import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.CollectionUtils;
+import jflowmap.util.PiccoloUtils;
 import jflowmap.visuals.Tooltip;
 import jflowmap.visuals.timeline.FloatingLabelsNode.LabelIterator;
 
@@ -51,7 +52,11 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.activities.PActivity;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -88,6 +93,54 @@ public class VisualTimeline extends PNode {
     private final Tooltip tooltipBox;
 
     private final MinMax valueStats;
+
+    private List<PRow> rows;
+
+    class PRow extends PNode {
+        private boolean collapsed = true;
+        private final int index;
+        private PActivity lastActivity;
+
+        public PRow(int index) {
+            this.index = index;
+        }
+
+        public boolean isCollapsed() {
+            return collapsed;
+        }
+
+        @Override
+        public boolean addActivity(PActivity activity) {
+            if (super.addActivity(activity)) {
+                lastActivity = activity;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public void toggleCollapsed() {
+            int dy = collapsed ? +100 : -100;
+            for (int i = index + 1, numRows = rows.size(); i < numRows; i++) {
+                PRow row = rows.get(i);
+                row.terminateIfStepping();
+//                row.setY(row.getY() + dy);
+//                row.offset(0, row.getY() + dy);
+                PAffineTransform t = row.getTransform();
+                t.setOffset(0, t.getTranslateY() + dy);
+                row.animateToTransform(t, 200);
+            }
+            this.collapsed = !collapsed;
+        }
+
+        private void terminateIfStepping() {
+            if (lastActivity != null && lastActivity.isStepping()) {
+                lastActivity.terminate(PActivity.TERMINATE_AND_FINISH_IF_STEPPING);
+                lastActivity = null;
+            }
+        }
+
+    }
 
 
     public VisualTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpecs) {
@@ -164,22 +217,40 @@ public class VisualTimeline extends PNode {
 
 
         {
+            rows = Lists.newArrayList();
             int j = 0;
             for (Map.Entry<String, String> e : nodeIdsToLabels.entrySet()) {
                 String nodeId = e.getKey();
                 String nodeLabel = e.getValue();
 
+                final PRow row = new PRow(j);
+                rows.add(row);
+                addChild(row);
+
                 // Node label
-                addChild(createCaption(j, nodeLabel, ORIENTATION == Orientation.VERTICAL));
+                PText label = createCaption(j, nodeLabel, ORIENTATION == Orientation.VERTICAL);
+                row.addChild(label);
 
                 // Cells
                 int i = 0;
                 for (Graph g : graphs) {
                     Node n = FlowMapLoader.findNodeById(g, nodeId);
-                    addChild(new VisualTimelineNodeCell(this, n, cellX(i, j), cellY(i, j), cellWidth, cellHeight));
+                    row.addChild(new VisualTimelineNodeCell(this, n, cellX(i, j), cellY(i, j), cellWidth, cellHeight));
                     i++;
                 }
                 j++;
+
+
+                label.addInputEventListener(new PBasicInputEventHandler() {
+                    @Override
+                    public void mouseClicked(PInputEvent event) {
+                        PText text = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), PText.class);
+                        if (text != null) {
+                            row.toggleCollapsed();
+                        }
+                    }
+                });
+
             }
         }
 
@@ -219,6 +290,7 @@ public class VisualTimeline extends PNode {
         }
         return t;
     }
+
 
     private double cellX(int graphIndex, int nodeIndex) {
         switch (ORIENTATION) {
