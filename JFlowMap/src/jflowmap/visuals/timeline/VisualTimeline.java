@@ -47,6 +47,7 @@ import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.piccolo.PNode;
@@ -143,32 +144,45 @@ public class VisualTimeline extends PNode {
             return;
         }
 
-        // TODO: build a joint nodeset (now the graphs are supposed to have exactly the same nodes)
-
-        int i = 0;
+        // Build a joint nodeset (the graphs do not necessarily have exactly the same nodes)
+        Map<String, String> nodeIdsToLabels = Maps.newLinkedHashMap();
         for (Graph g : graphs) {
-            // Graph ID labels
-            addChild(createCaption(i, FlowMapLoader.getGraphId(g), ORIENTATION == Orientation.HORIZONTAL));
+            for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
+                Node node = g.getNode(i);
+                nodeIdsToLabels.put(FlowMapLoader.getNodeId(node), node.getString(attrSpecs.getNodeLabelAttr()));
+            }
+        }
 
-            // Cells
-            Iterator<Integer> it = nodeIterator(g);
+        {
+            int i = 0;
+            for (Graph g : graphs) {
+                // Graph ID labels
+                addChild(createCaption(i, FlowMapLoader.getGraphId(g), ORIENTATION == Orientation.HORIZONTAL));
+                i++;
+            }
+        }
+
+
+        {
             int j = 0;
-            while (it.hasNext()) {
-                Node n = g.getNode(it.next());
-                addChild(new VisualTimelineNodeCell(this, n, cellX(i, j), cellY(i, j), cellWidth, cellHeight));
+            for (Map.Entry<String, String> e : nodeIdsToLabels.entrySet()) {
+                String nodeId = e.getKey();
+                String nodeLabel = e.getValue();
+
+                // Node label
+                addChild(createCaption(j, nodeLabel, ORIENTATION == Orientation.VERTICAL));
+
+                // Cells
+                int i = 0;
+                for (Graph g : graphs) {
+                    Node n = FlowMapLoader.findNodeById(g, nodeId);
+                    addChild(new VisualTimelineNodeCell(this, n, cellX(i, j), cellY(i, j), cellWidth, cellHeight));
+                    i++;
+                }
                 j++;
             }
-            i++;
         }
 
-
-
-        // Node name labels
-        Graph firstGraph = graphs.get(0);
-        for (int k = 0, numNodes = firstGraph.getNodeCount(); k < numNodes; k++) {
-            Node n = firstGraph.getNode(k);
-            addChild(createCaption(k, n.getString(attrSpecs.getNodeLabelAttr()), ORIENTATION == Orientation.VERTICAL));
-        }
 
 
 
