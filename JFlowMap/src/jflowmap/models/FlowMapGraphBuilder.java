@@ -20,7 +20,7 @@ package jflowmap.models;
 
 import java.util.HashMap;
 
-import jflowmap.data.FlowMapLoader;
+import jflowmap.FlowMap;
 import jflowmap.geom.Point;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -31,7 +31,7 @@ import prefuse.data.Node;
  */
 public class FlowMapGraphBuilder {
 
-    private final String nodeIdAttr = FlowMapLoader.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
+    private final String nodeIdAttr = FlowMap.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
     private String nodeXAttr = FlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
     private String nodeYAttr = FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
     private String edgeWeightAttr = FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
@@ -43,7 +43,7 @@ public class FlowMapGraphBuilder {
 
     public FlowMapGraphBuilder(String graphId) {
         graph = new Graph();
-        FlowMapLoader.setGraphId(graph, graphId);
+        FlowMap.setGraphId(graph, graphId);
     }
 
     private void initColumns() {

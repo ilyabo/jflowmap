@@ -141,9 +141,9 @@ public class VisualTimelineNodeCell extends PNode {
             }
         }
 
-        if (FILL_RECT_WITH_REGION_COLOR) {
-            rectColor = ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
-        }
+//        if (FILL_RECT_WITH_REGION_COLOR) {
+//            rectColor = ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
+//        }
 
         if (rectColor == null) {
             rect.setPaint(Color.white);
@@ -183,33 +183,33 @@ public class VisualTimelineNodeCell extends PNode {
 
 
 
-        if (SHOW_DIFF) {
-            diffRect = new PPath(new Rectangle2D.Double(x, y, DIFF_BOX_WIDTH, height));
-            diffRect.setPaint(new Color(0, 68, 27));
-            diffRect.setStroke(null);
-            addChild(diffRect);
-
-            Color diffRectColor;
-            double diff = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
-
-            MinMax diffStats = timeline.getGlobalStats().getNodeAttrStats(
-                    FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
-            if (!Double.isNaN(diff)) {
-                // TODO: Use ColorMap instead
-    //            double normalizedDiff =
-    ////                diffStats.normalizeLog(diff);
-    //                diffStats.normalize(diff);
-    //            diffRectColor = ColorUtils.colorBetween(
-    //                    DIFF_COLOR_MIN,
-    //                    DIFF_COLOR_MAX,
-    //                    normalizedDiff, 255
-    //            );
-                diffRectColor = ColorLib.getColor(timeline.getSumOutgoingDiffColorMap().getColor(diff));
-            } else {
-                diffRectColor = DIFF_COLOR_NAN;
-            }
-            diffRect.setPaint(diffRectColor);
-        }
+//        if (SHOW_DIFF) {
+//            diffRect = new PPath(new Rectangle2D.Double(x, y, DIFF_BOX_WIDTH, height));
+//            diffRect.setPaint(new Color(0, 68, 27));
+//            diffRect.setStroke(null);
+//            addChild(diffRect);
+//
+//            Color diffRectColor;
+//            double diff = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+//
+//            MinMax diffStats = timeline.getGlobalStats().getNodeAttrStats(
+//                    FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
+//            if (!Double.isNaN(diff)) {
+//                // TODO: Use ColorMap instead
+//    //            double normalizedDiff =
+//    ////                diffStats.normalizeLog(diff);
+//    //                diffStats.normalize(diff);
+//    //            diffRectColor = ColorUtils.colorBetween(
+//    //                    DIFF_COLOR_MIN,
+//    //                    DIFF_COLOR_MAX,
+//    //                    normalizedDiff, 255
+//    //            );
+//                diffRectColor = ColorLib.getColor(timeline.getSumOutgoingDiffColorMap().getColor(diff));
+//            } else {
+//                diffRectColor = DIFF_COLOR_NAN;
+//            }
+//            diffRect.setPaint(diffRectColor);
+//        }
 
 
 

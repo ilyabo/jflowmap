@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.FlowMap;
+
 import org.xmlpull.v1.builder.XmlDocument;
 import org.xmlpull.v1.builder.XmlElement;
 import org.xmlpull.v1.builder.XmlInfosetBuilder;
@@ -96,7 +98,7 @@ public class GraphMLReader2 {
     private void readKeys(XmlElement root) throws DataIOException {
         // Read the attr definitions
         nodeSchema = new Schema();
-        nodeSchema.addColumn(FlowMapLoader.GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
+        nodeSchema.addColumn(FlowMap.GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
         edgeSchema = new Schema();
         edgeSchema.addColumn(SRC, int.class);
         edgeSchema.addColumn(TRG, int.class);
@@ -156,7 +158,7 @@ public class GraphMLReader2 {
                 String nodeId = nodeElt.getAttributeValue(null, "id");
                 nodeIdToIndex.put(nodeId, ri);
 
-                nodeTable.set(ri, FlowMapLoader.GRAPH_NODE_TABLE_COLUMN_NAME__ID, nodeId);
+                nodeTable.set(ri, FlowMap.GRAPH_NODE_TABLE_COLUMN_NAME__ID, nodeId);
 
                 readData(nodeElt, nodeTable, ri);
             }
@@ -199,7 +201,7 @@ public class GraphMLReader2 {
 
             // Finally, create the graph
             Graph graph = new Graph(nodeTable, edgeTable, directed);
-            FlowMapLoader.setGraphId(graph, graphElt.getAttributeValue(null, "id"));
+            FlowMap.setGraphId(graph, graphElt.getAttributeValue(null, "id"));
             graphs.add(graph);
         }
 

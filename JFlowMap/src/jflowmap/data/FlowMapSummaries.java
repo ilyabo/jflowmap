@@ -20,6 +20,7 @@ package jflowmap.data;
 
 import java.util.Map;
 
+import jflowmap.FlowMap;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import prefuse.data.Edge;
@@ -52,9 +53,12 @@ public class FlowMapSummaries {
      * the nodes with useful stats.
      */
     public static FlowMapGraphWithAttrSpecs supplyNodesWithSummaries(FlowMapGraphWithAttrSpecs graphAndSpecs) {
-        Graph g = graphAndSpecs.getGraph();
+        supplyNodesWithSummaries(graphAndSpecs.getGraph(), graphAndSpecs.getAttrsSpec());
+        return graphAndSpecs;
+    }
+
+    public static void supplyNodesWithSummaries(Graph g, FlowMapAttrsSpec as) {
         Table nodeTable = g.getNodeTable();
-        FlowMapAttrsSpec as = graphAndSpecs.getAttrsSpec();
 
         Map<Integer, Double> outsums = Maps.newHashMap();
         Map<Integer, Double> insums = Maps.newHashMap();
@@ -103,8 +107,6 @@ public class FlowMapSummaries {
                 node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING, insums.get(i));
             }
         }
-
-        return graphAndSpecs;
     }
 
     public static void supplyNodesWithIntraregSummaries(FlowMapGraphWithAttrSpecs graphAndSpecs, String nodeRegionAttr) {
@@ -169,10 +171,10 @@ public class FlowMapSummaries {
             g.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR, double.class);
             for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
                 Node node = g.getNode(i);
-                String nodeId = FlowMapLoader.getNodeId(node);
+                String nodeId = FlowMap.getNodeId(node);
                 Node prevNode = null;
                 if (prevg != null) {
-                    prevNode = FlowMapLoader.findNodeById(prevg, nodeId);
+                    prevNode = FlowMap.findNodeById(prevg, nodeId);
                 }
 
                 double diffIn, diffOut;

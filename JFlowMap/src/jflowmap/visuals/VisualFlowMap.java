@@ -37,6 +37,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import jflowmap.FlowMap;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.JFlowMap;
@@ -45,7 +46,6 @@ import jflowmap.aggregation.EdgeSegmentAggregator;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
-import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geom.FPoint;
@@ -949,7 +949,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public String getName() {
-        return FlowMapLoader.getGraphId(flowMapModel.getGraph());
+        return FlowMap.getGraphId(flowMapModel.getGraph());
     }
 
 }

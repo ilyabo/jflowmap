@@ -85,7 +85,7 @@ public class Tooltip extends PPath {
 
     @Override
     public void setParent(PNode newParent) {
-        if (!(newParent instanceof PCamera)) {
+        if (newParent != null  &&  !(newParent instanceof PCamera)) {
             throw new IllegalArgumentException("Tooltip can only be added to a camera.");
         }
         super.setParent(newParent);

@@ -94,6 +94,7 @@ public class JFlowMap extends JComponent {
         setLayout(new BorderLayout());
 
         this.colorScheme = ColorSchemes.LIGHT_BLUE.getScheme();
+//        this.colorScheme = ColorSchemes.DARK.getScheme();
 
         canvas = new PCanvas();
         canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));

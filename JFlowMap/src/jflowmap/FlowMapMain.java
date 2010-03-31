@@ -29,10 +29,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -49,28 +47,21 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import jflowmap.data.FlowMapLoader;
 import jflowmap.data.GraphMLReader2;
 import jflowmap.data.XmlRegionsReader;
-import jflowmap.geom.Point;
-import jflowmap.models.FlowMapGraphBuilder;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.actions.OpenFileAction;
 
 import org.apache.log4j.Logger;
 
-import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.io.DataIOException;
-import prefuse.util.ColorLib;
 import at.fhj.utils.swing.InternalFrameUtils;
 import at.fhj.utils.swing.JMemoryIndicator;
 import at.fhj.utils.swing.JMsgPane;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * @author Ilya Boyandin
@@ -192,98 +183,32 @@ public class FlowMapMain extends JFrame {
 
         Collections.reverse(graphs);
 
-        Map<String, String> countryToRegion = XmlRegionsReader.readFrom("data/refugees/regions.xml");
-        Set<String> regions = Sets.newLinkedHashSet(countryToRegion.values());
-        Map<String, Integer> colorMap = createColorMapForRegions(countryToRegion);
+        // TODO: introduce regions as node attrs in GraphML
+        Map<String, String> nodeIdToRegion = XmlRegionsReader.readFrom("data/refugees/regions.xml");
+        String regionColumn = "region";
+        for (Graph graph : graphs) {
+            graph.getNodeTable().addColumn(regionColumn, String.class);
+//            graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
+
+            for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
+                Node node = FlowMap.findNodeById(graph, e.getKey());
+                if (node != null) {
+                    String region = e.getValue();
+                    node.set(regionColumn, region);
+//                    node.setInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
+                }
+            }
+        }
 
         // TODO: let the user choose the attr specs
-        showView(new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS, countryToRegion, colorMap));
+        showView(new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS, regionColumn));
 
 
-        Map<String, String> regionToRegion = Maps.newLinkedHashMap();
-        for (String r : regions) {
-            regionToRegion.put(r, r);
-        }
-
-        List<Graph> regionSummaryGraphs = Lists.newArrayList();
-        Graph prevGraph = null;
-        for (Graph g : graphs) {
-
-            FlowMapGraphBuilder builder = new FlowMapGraphBuilder(FlowMapLoader.getGraphId(g))
-//                .withCumulativeEdges()            // TODO: why isn't it working?
-                .withNodeXAttr(REFUGEES_ATTR_SPECS.getXNodeAttr())
-                .withNodeYAttr(REFUGEES_ATTR_SPECS.getYNodeAttr())
-                .withEdgeWeightAttr(REFUGEES_ATTR_SPECS.getEdgeWeightAttr())
-                .withNodeLabelAttr(REFUGEES_ATTR_SPECS.getNodeLabelAttr())
-                ;
-
-            Map<String, Node> regionToNode = Maps.newHashMap();
-            for (String region : regions) {
-                Node node = builder.addNode(region, new Point(0, 0), region);
-                regionToNode.put(region, node);
-            }
-
-            for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
-                Edge e = g.getEdge(i);
-                Node src = e.getSourceNode();
-                Node trg = e.getTargetNode();
-                String srcRegion = src.getString(JFlowTimeline.NODE_COLUMN__REGION);
-                String trgRegion = trg.getString(JFlowTimeline.NODE_COLUMN__REGION);
-                if (srcRegion == null) {
-                    throw new IllegalArgumentException("No region for " + src);
-                }
-                if (trgRegion == null) {
-                    throw new IllegalArgumentException("No region for " + trg);
-                }
-//                if (FlowMapLoader.getGraphId(g).equals("1992")) {
-//                    if (trgRegion.equals("Asia | Southern Asia")) {
-//                        Node prevSrc = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(src));
-//                        Node prevTrg = FlowMapLoader.findNodeById(prevGraph, FlowMapLoader.getNodeId(trg));
-//                        Edge prevEdge = prevGraph.getEdge(prevSrc,  prevTrg);
-//
-//                        double prevR = prevEdge != null ? prevEdge.getDouble("r") : Double.NaN;
-//
-//                        double r = e.getDouble("r");
-//                        System.out.println(src.getString("code") + " -> " + trg.getString("code")  + ": " +
-//                                "\tr=" + r  +
-//                                (prevGraph != null?
-//                                        "\tprevR=" + prevR +
-//                                        "\t(r - prevR)=" + (r - prevR)
-//                                  : ""
-//                                ) +
-//                                "\t"+REFUGEES_ATTR_SPECS.getEdgeWeightAttr() + "="+
-//                                e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr())
-//                                );
-//                    }
-//                }
-                builder.addEdge(
-                        regionToNode.get(srcRegion),
-                        regionToNode.get(trgRegion),
-                        e.getDouble(REFUGEES_ATTR_SPECS.getEdgeWeightAttr()));
-            }
-
-            regionSummaryGraphs.add(builder.build());
-            prevGraph = g;
-        }
-
-        showView(new JFlowTimeline(regionSummaryGraphs, REFUGEES_ATTR_SPECS, regionToRegion, colorMap));
+//        showView(new JFlowTimeline(regionSummaryGraphs, REFUGEES_ATTR_SPECS, regionToRegion, colorMap));
 
     }
 
 
-    private Map<String, Integer> createColorMapForRegions(Map<String, String> countryToRegion) {
-        HashSet<String> regions = Sets.newHashSet(countryToRegion.values());
-        int[] palette = ColorLib.getCategoryPalette(regions.size(), 1.f, 0.4f, 1.f, .15f);
-
-        int colorIdx = 0;
-        Map<String, Integer> regionToColor = Maps.newHashMap();
-        for (String region : regions) {
-            regionToColor.put(region, palette[colorIdx]);
-            colorIdx++;
-        }
-
-        return regionToColor;
-    }
 
     public void showFlowMaps(String filename) throws DataIOException, IOException {
         Iterable<Graph> graphs = loadFile(filename);
@@ -553,10 +478,12 @@ public class FlowMapMain extends JFrame {
 
     private static void initLookAndFeel() {
         try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
+            if (!IS_OS_MAC) {
+                for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                    if ("Nimbus".equals(info.getName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
                 }
             }
 //            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

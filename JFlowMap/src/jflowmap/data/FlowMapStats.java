@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -32,6 +33,7 @@ import prefuse.data.tuple.TupleSet;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
@@ -55,6 +57,15 @@ public class FlowMapStats {
 
     public static FlowMapStats createFor(FlowMapGraphWithAttrSpecs graphAndSpecs) {
         return new FlowMapStats(Arrays.asList(graphAndSpecs));
+    }
+
+    public static FlowMapStats createFor(Iterable<Graph> graphs, final FlowMapAttrsSpec attrSpecs) {
+        return createFor(Iterables.transform(graphs, new Function<Graph, FlowMapGraphWithAttrSpecs>() {
+            @Override
+            public FlowMapGraphWithAttrSpecs apply(Graph from) {
+                return new FlowMapGraphWithAttrSpecs(from, attrSpecs);
+            }
+        }));
     }
 
     public static FlowMapStats createFor(Iterable<FlowMapGraphWithAttrSpecs> graphAndSpecs) {
@@ -205,6 +216,7 @@ public class FlowMapStats {
             ;
         };
     }
+
 
 
 }
