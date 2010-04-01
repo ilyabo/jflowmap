@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JComponent;
 
@@ -41,9 +40,10 @@ import org.apache.log4j.Logger;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Multimap;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PActivity;
@@ -61,9 +61,10 @@ public class VisualTimeline extends PNode {
 
     enum Orientation { /* The timeline is */ VERTICAL, HORIZONTAL };
     private static final Orientation ORIENTATION = Orientation.HORIZONTAL;
+    private static final int COLLAPSE_ANIMATION_DURATION = 200;
 
     enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, HIERARCHY }
-    private static final SortMode SORT_MODE = SortMode.HIERARCHY;
+//    private static final SortMode SORT_MODE = SortMode.HIERARCHY;
 
     private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
     private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
@@ -82,7 +83,7 @@ public class VisualTimeline extends PNode {
 
 //    private FloatingLabelsNode elementLabels;
 
-    private Graph selectedGraph;
+//    private Graph selectedGraph;
     private final Tooltip tooltipBox;
     private final MinMax valueMinMax;
     private List<PRow> rows;
@@ -122,9 +123,9 @@ public class VisualTimeline extends PNode {
 
 
         // TODO: implement selectedGraph
-        if (this.graphs.size() > 0) {
-            this.selectedGraph = this.graphs.get(this.graphs.size() - 1);
-        }
+//        if (this.graphs.size() > 0) {
+//            this.selectedGraph = this.graphs.get(this.graphs.size() - 1);
+//        }
         buildTimeline();
 
         tooltipBox = new Tooltip();
@@ -184,37 +185,32 @@ public class VisualTimeline extends PNode {
                 String nodeId = e.getKey();
                 String nodeLabel = e.getValue();
 
-                final PRow row = createRow(graphs, rowIndex, nodeId);
+                final PRow row = createRow(nodeLabel, graphs, rowIndex, nodeId);
                 rows.add(row);
                 addChild(row);
-
-                // Node label
-                PText label = createCaption(rowIndex, nodeLabel, (ORIENTATION == Orientation.VERTICAL));
-                row.addChild(label);
 
                 rowIndex++;
             }
 
         } else {
             Map<String, String> groupIdsToLabels = nodeIdsToAttrValues(groupedGraphs, attrSpec.getNodeLabelAttr());
-//            Map<String, String> nodeIdsToGroups = nodeIdsToAttrValues(graphs, columnToGroupNodesBy);
+            Multimap<String, String> groupsToNodeIds = groupsToNodeIds(graphs, columnToGroupNodesBy);
             int rowIndex = 0;
             for (Map.Entry<String, String> e : groupIdsToLabels.entrySet()) {
-                String groupId = e.getKey();
+                String group = e.getKey();
                 String groupLabel = e.getValue();
 
-                final PRow row = createRow(groupedGraphs, rowIndex, groupId);
+                final PRow row = createRow(groupLabel, groupedGraphs, rowIndex, group);
                 rows.add(row);
                 addChild(row);
 
-                // Node label
-                PText label = createCaption(rowIndex, groupLabel, (ORIENTATION == Orientation.VERTICAL));
-                row.addChild(label);
+                int ri = 1;
+                for (String nodeId : groupsToNodeIds.get(group)) {
+                    row.addSubRow(createRow(nodeId, graphs, ri, nodeId));
+                    ri++;
+                }
 
-
-                // TODO: get nodes by groupId
-
-                label.addInputEventListener(new PBasicInputEventHandler() {
+                row.getLabel().addInputEventListener(new PBasicInputEventHandler() {
                     @Override
                     public void mouseClicked(PInputEvent event) {
                         PText text = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), PText.class);
@@ -246,13 +242,15 @@ public class VisualTimeline extends PNode {
 
     }
 
-    private PRow createRow(Iterable<Graph> graphs, int j, String nodeId) {
-        final PRow row = new PRow(j);
+    private PRow createRow(String label, Iterable<Graph> graphs, int j, String nodeId) {
+        final PRow row = new PRow(label, j);
         // Cells
         int i = 0;
         for (Graph g : graphs) {
             Node n = FlowMap.findNodeById(g, nodeId);
-            row.addChild(new VisualTimelineNodeCell(this, n, cellX(i, j), cellY(i, j), cellWidth, cellHeight));
+            double x = cellX(i, j);
+            double y = cellY(i, j);
+            row.addChild(new VisualTimelineNodeCell(this, n, x, y, cellWidth, cellHeight));
             i++;
         }
         return row;
@@ -269,18 +267,30 @@ public class VisualTimeline extends PNode {
         return nodeIdsToLabels;
     }
 
-    private static Set<String> nodeIdsByGroup(Iterable<Graph> graphs, String groupByAtrr, String groupToFind) {
-        Set<String> nodeIds = Sets.newLinkedHashSet();
+    @SuppressWarnings("unchecked")
+    private static <T> Multimap<T, String> groupsToNodeIds(Iterable<Graph> graphs, String columnToGroupNodesBy) {
+        Multimap<T, String> map = LinkedHashMultimap.create();
         for (Graph g : graphs) {
             for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
                 Node node = g.getNode(i);
-                if (groupToFind.equals(node.getString(groupByAtrr))) {
-                    nodeIds.add(FlowMap.getNodeId(node));
-                }
+                map.put((T)node.get(columnToGroupNodesBy), FlowMap.getNodeId(node));
             }
         }
-        return nodeIds;
+        return map;
     }
+
+//    private static Set<String> nodeIdsByGroup(Iterable<Graph> graphs, String groupByAtrr, String groupToFind) {
+//        Set<String> nodeIds = Sets.newLinkedHashSet();
+//        for (Graph g : graphs) {
+//            for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
+//                Node node = g.getNode(i);
+//                if (groupToFind.equals(node.getString(groupByAtrr))) {
+//                    nodeIds.add(FlowMap.getNodeId(node));
+//                }
+//            }
+//        }
+//        return nodeIds;
+//    }
 
 
     private PText createCaption(int i, String text, boolean horizontalNotVertical) {
@@ -434,7 +444,6 @@ public class VisualTimeline extends PNode {
 //    }
 
     public void showTooltip(VisualTimelineNodeCell vc) {
-
         Node node = vc.getNode();
         double inValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING);
         double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
@@ -456,7 +465,12 @@ public class VisualTimeline extends PNode {
         );
 
         PBounds b = vc.getBoundsReference();
+//        Point2D off = vc.getOffset();
         tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY(), 0, 0);
+//        tooltipBox.showTooltipAt(off.getX() + b.getMaxX(), off.getY() + b.getMaxY(), 0, 0);
+//        PAffineTransform t = vc.getTransformReference(true);
+//        off = t.transform(off, new Point2D.Double());
+//        tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY(), 0, 0);
     }
 
     public void hideTooltip() {
@@ -469,13 +483,40 @@ public class VisualTimeline extends PNode {
         private boolean collapsed = true;
         private final int index;
         private PActivity lastActivity;
+        private int numSubRows = 0;
+        private final PText labelNode;
 
-        public PRow(int index) {
+        public PRow(String label, int index) {
             this.index = index;
+
+            labelNode = createCaption(index, label, (ORIENTATION == Orientation.VERTICAL));
+            addChild(labelNode);
         }
 
-        public boolean isCollapsed() {
-            return collapsed;
+        public PNode getLabel() {
+            return labelNode;
+        }
+
+        public void addSubRow(PRow sub) {
+            addChild(sub);
+//            sub.setVisible(false);
+//            sub.offset(0, getY() + getHeight());
+//            sub.offset(getX() + getWidth(), 0);
+            numSubRows++;
+        }
+
+        private PAffineTransform shift(PAffineTransform t) {
+            PAffineTransform st = new PAffineTransform();
+            switch (ORIENTATION) {
+            case HORIZONTAL:
+                st.setOffset(0, (collapsed ? +1 : -1) * getSubRowsUnionBounds().getHeight());
+                break;
+            case VERTICAL:
+                st.setOffset((collapsed ? +1 : -1) * getSubRowsUnionBounds().getWidth(), 0);
+                break;
+            }
+            st.concatenate(t);
+            return st;
         }
 
         @Override
@@ -489,17 +530,34 @@ public class VisualTimeline extends PNode {
         }
 
         public void toggleCollapsed() {
-            int dy = collapsed ? +100 : -100;
             for (int i = index + 1, numRows = rows.size(); i < numRows; i++) {
                 PRow row = rows.get(i);
                 row.terminateIfStepping();
-//                row.setY(row.getY() + dy);
-//                row.offset(0, row.getY() + dy);
-                PAffineTransform t = row.getTransform();
-                t.setOffset(0, t.getTranslateY() + dy);
-                row.animateToTransform(t, 200);
+                row.animateToTransform(shift(row.getTransform()), COLLAPSE_ANIMATION_DURATION);
             }
-            this.collapsed = !collapsed;
+
+            collapsed = !collapsed;
+//            setSubRowsVisibile(!collapsed);
+        }
+
+        private void setSubRowsVisibile(boolean v) {
+            for (int i = 0, numChildren = getChildrenCount(); i < numChildren; i++) {
+                PNode ch = getChild(i);
+                if (ch instanceof PRow) {
+                    ch.setVisible(v);
+                }
+            }
+        }
+
+        private PBounds getSubRowsUnionBounds() {
+            PBounds b = new PBounds();
+            for (int i = 0, numChildren = getChildrenCount(); i < numChildren; i++) {
+                PNode row = getChild(i);
+                if (row instanceof PRow) {
+                    b.add(row.getFullBoundsReference());
+                }
+            }
+            return b;
         }
 
         private void terminateIfStepping() {
