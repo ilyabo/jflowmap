@@ -1,10 +1,13 @@
-package jflowmap.util;
-import javax.swing.SwingUtilities;
+package jflowmap.util.piccolo;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolox.nodes.PClip;
 
 /**
  * @author Ilya Boyandin
@@ -16,7 +19,6 @@ public class PAccordion extends PNode {
     private final double itemItemSpacing = 5;
     private final double itemBodySpacing = 5;
     private final int collapseAnimationDuration = 200;
-    private volatile boolean laidOut = false;
 
     public PAccordion() {
         this(true);
@@ -26,79 +28,54 @@ public class PAccordion extends PNode {
         this.collapsedByDefault = collapsedByDefault;
     }
 
-    @Override
-    protected void layoutChildren() {
-        super.layoutChildren();
-        if (!laidOut) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    layoutItems();
-                    laidOut = true;
-                }
-            });
-        }
-    }
-
-
     public void layoutItems() {
-//        setPickable(false);
-//        setChildrenPickable(false);
-
         double labelMaxX = 0;
-        for (Item item : PiccoloUtils.childrenOfType(this, Item.class)) {
+        for (Item item : PNodes.childrenOfType(this, Item.class)) {
             PBounds lb = item.getLabel().getFullBoundsReference();
             double mx = lb.getMaxX();
             if (mx > labelMaxX) labelMaxX = mx;
         }
 
         double accHeight = 0;
-        for (Item item : PiccoloUtils.childrenOfType(this, Item.class)) {
+        for (Item item : PNodes.childrenOfType(this, Item.class)) {
             PNode head = item.getHead();
             PNode label = item.getLabel();
-            PNode body = item.getBody();
+            PClip bodyClip = item.getBodyClip();
 
-            PiccoloUtils.moveNodeTo(label, getX(), getY() + accHeight + itemItemSpacing);
-            PiccoloUtils.moveNodeTo(head, getX() + labelMaxX + itemLabelSpacing, getY() + accHeight);
-            PiccoloUtils.moveNodeTo(body, getX() + labelMaxX + itemLabelSpacing, getY() + accHeight + head.getHeight() + itemBodySpacing);
+            PNodes.moveTo(label, getX(), getY() + accHeight + itemItemSpacing);
+            PNodes.moveTo(head, getX() + labelMaxX + itemLabelSpacing, getY() + accHeight);
+            PNodes.moveTo(bodyClip, getX() + labelMaxX + itemLabelSpacing, getY() + accHeight + head.getHeight() + itemBodySpacing);
 
             accHeight += Math.max(head.getHeight(), label.getHeight()) + itemItemSpacing;
-
-            if (collapsedByDefault) {
-//                    body.setVisible(false);
-            }
         }
 
-//        setPickable(true);
-//        setChildrenPickable(true);
+        repaint();
     }
 
     public Item addNewItem(PNode label, PNode head, PNode body) {
         Item item = new Item(label, head, body, collapsedByDefault);
         addChild(item);
-        laidOut = false;
         return item;
     }
 
     public void toggleCollapsed(Item item) {
-        int index = PiccoloUtils.indexOfChild(this, item);
+        int index = PNodes.indexOfChild(this, item);
         if (index >= 0) {
+            // shift subsequent items
             for (int i = index + 1, numChildren = getChildrenCount(); i < numChildren; i++) {
                 PNode child = getChild(i);
                 if (child instanceof Item) {
-                    Item it = (Item)child;
+                    final Item it = (Item)child;
                     it.terminateAnimationIfStepping();
                     it.animateToTransform(item.shift(it.getTransform()), collapseAnimationDuration);
                 }
             }
-
             item.setCollapsed(!item.isCollapsed());
-//            item.getBody().setVisible(!item.isCollapsed());
         }
     }
 
     public Item findItemByLabel(PNode label) {
-        for (Item item : PiccoloUtils.childrenOfType(this, Item.class)) {
+        for (Item item : PNodes.childrenOfType(this, Item.class)) {
             if (item.getLabel() == label) return item;
         }
         return null;
@@ -107,6 +84,8 @@ public class PAccordion extends PNode {
     public class Item extends PNode {
         private final PNode label;
         private final PNode head;
+        private final PClip bodyClip;
+//        private final Rectangle2D clipRect;
         private final PNode body;
 
         private boolean collapsed;
@@ -116,17 +95,34 @@ public class PAccordion extends PNode {
             this.label = label;
             this.head = head;
             this.body = body;
-            this.collapsed = collapsed;
             if (label != null) {
                 addChild(label);
             }
             if (head != null) {
                 addChild(head);
             }
+            this.bodyClip = new PClip();
+//            this.clipRect = new Rectangle2D.Double();
+//            clipRect.setFrame(getBodyBounds());
+//            this.bodyClip.setPathTo(clipRect);
+            this.bodyClip.setStroke(null);
+
+            updateClip(false);
+            bodyClip.setVisible(false);
+            this.collapsed = collapsed;
+
             if (body != null) {
-                addChild(body);
+                addChild(bodyClip);
+                bodyClip.addChild(body);
+                body.addPropertyChangeListener(PNode.PROPERTY_BOUNDS, new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        updateClip(false);
+                    }
+                });
             }
         }
+
 
         public PNode getLabel() {
             return label;
@@ -140,12 +136,38 @@ public class PAccordion extends PNode {
             return body;
         }
 
+        public PClip getBodyClip() {
+            return bodyClip;
+        }
+
         public boolean isCollapsed() {
             return collapsed;
         }
 
         public void setCollapsed(boolean collapsed) {
+            boolean oldCollapsed = this.collapsed;
             this.collapsed = collapsed;
+            if (oldCollapsed != collapsed) {
+                updateClip(true);
+            }
+        }
+
+        private void updateClip(boolean animate) {
+            bodyClip.setVisible(true);
+
+            PBounds bb = getBodyBounds();
+            if (collapsed) {
+                bb.height = 0;
+            }
+
+            if (animate) {
+                bodyClip.animateToBounds(bb.x, bb.y, bb.width, bb.height, collapseAnimationDuration);
+            } else {
+//                Rectangle2D clipRect = new Rectangle2D.Double();
+//                clipRect.setFrame(bb);
+//                bodyClip.setPathTo(clipRect);
+                bodyClip.setPathToRectangle((float)bb.x, (float)bb.y, (float)bb.width, (float)bb.height);
+            }
         }
 
         private void terminateAnimationIfStepping() {
@@ -174,11 +196,11 @@ public class PAccordion extends PNode {
 
 
         private PBounds getBodyBounds() {
-            PBounds b = new PBounds();
-            for (PNode child : PiccoloUtils.childrenOf(body)) {
-                b.add(child.getFullBoundsReference());
+            PBounds fb = body.getFullBounds();
+            for (PNode child : PNodes.childrenOf(body)) {
+                fb.add(child.getBoundsReference());
             }
-            return b;
+            return fb;
         }
 
     }

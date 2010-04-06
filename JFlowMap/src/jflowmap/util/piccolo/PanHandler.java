@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.util;
+package jflowmap.util.piccolo;
 
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PPanEventHandler;

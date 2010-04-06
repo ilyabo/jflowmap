@@ -33,7 +33,7 @@ import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
-import jflowmap.util.PiccoloUtils;
+import jflowmap.util.piccolo.PNodes;
 import prefuse.data.Node;
 import prefuse.util.ColorLib;
 import edu.umd.cs.piccolo.PNode;
@@ -304,7 +304,7 @@ public class VisualTimelineNodeCell extends PNode {
     private static final PInputEventListener inputEventListener = new PBasicInputEventHandler() {
         @Override
         public void mouseEntered(PInputEvent event) {
-            VisualTimelineNodeCell vc = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualTimelineNodeCell.class);
+            VisualTimelineNodeCell vc = PNodes.getAncestorOfType(event.getPickedNode(), VisualTimelineNodeCell.class);
             if (vc != null) {
                 vc.rect.setStroke(SELECTION_STROKE);
                 vc.rect.setStrokePaint(SELECTION_STROKE_PAINT);
@@ -314,7 +314,7 @@ public class VisualTimelineNodeCell extends PNode {
 
         @Override
         public void mouseExited(PInputEvent event) {
-            VisualTimelineNodeCell vc = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualTimelineNodeCell.class);
+            VisualTimelineNodeCell vc = PNodes.getAncestorOfType(event.getPickedNode(), VisualTimelineNodeCell.class);
             if (vc != null) {
                 vc.rect.setStroke(null);
                 vc.rect.setStrokePaint(null);

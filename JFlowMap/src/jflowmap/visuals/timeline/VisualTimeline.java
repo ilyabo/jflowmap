@@ -32,7 +32,7 @@ import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
-import jflowmap.util.PiccoloUtils;
+import jflowmap.util.piccolo.PNodes;
 import jflowmap.visuals.Tooltip;
 
 import org.apache.log4j.Logger;
@@ -213,7 +213,7 @@ public class VisualTimeline extends PNode {
                 row.getLabel().addInputEventListener(new PBasicInputEventHandler() {
                     @Override
                     public void mouseClicked(PInputEvent event) {
-                        PText text = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), PText.class);
+                        PText text = PNodes.getAncestorOfType(event.getPickedNode(), PText.class);
                         if (text != null) {
                             row.toggleCollapsed();
                         }

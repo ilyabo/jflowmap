@@ -28,7 +28,7 @@ import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.models.FlowMapModel;
-import jflowmap.util.PiccoloUtils;
+import jflowmap.util.piccolo.PNodes;
 
 import org.apache.log4j.Logger;
 
@@ -286,7 +286,7 @@ public abstract class VisualEdge extends PNode {
     private static final PInputEventListener visualEdgeListener = new PBasicInputEventHandler() {
         @Override
         public void mouseEntered(PInputEvent event) {
-            VisualEdge ve = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualEdge.class);
+            VisualEdge ve = PNodes.getAncestorOfType(event.getPickedNode(), VisualEdge.class);
             if (ve != null) {
                 ve.setHighlighted(true, false, false);
                 ve.getVisualFlowMap().showTooltip(ve, event.getPosition());
@@ -296,7 +296,7 @@ public abstract class VisualEdge extends PNode {
 
         @Override
         public void mouseExited(PInputEvent event) {
-            VisualEdge ve = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualEdge.class);
+            VisualEdge ve = PNodes.getAncestorOfType(event.getPickedNode(), VisualEdge.class);
             if (ve != null) {
                 if (!ve.getVisible()) {
                     return;

@@ -31,7 +31,7 @@ import java.util.List;
 
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
-import jflowmap.util.PiccoloUtils;
+import jflowmap.util.piccolo.PNodes;
 
 import org.apache.log4j.Logger;
 
@@ -233,20 +233,20 @@ public class VisualNode extends PNode {
     private static final PInputEventListener INPUT_EVENT_HANDLER = new PBasicInputEventHandler() {
         @Override
         public void mouseClicked(PInputEvent event) {
-            VisualNode vnode = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualNode.class);
+            VisualNode vnode = PNodes.getAncestorOfType(event.getPickedNode(), VisualNode.class);
             vnode.visualFlowMap.setSelectedNode(vnode.isSelected() ? null : vnode);
         }
 
         @Override
         public void mouseEntered(PInputEvent event) {
-            VisualNode vnode = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualNode.class);
+            VisualNode vnode = PNodes.getAncestorOfType(event.getPickedNode(), VisualNode.class);
             vnode.setHighlighted(true);
             vnode.getVisualGraph().showTooltip(vnode, event.getPosition());
         }
 
         @Override
         public void mouseExited(PInputEvent event) {
-            VisualNode vnode = PiccoloUtils.getParentNodeOfType(event.getPickedNode(), VisualNode.class);
+            VisualNode vnode = PNodes.getAncestorOfType(event.getPickedNode(), VisualNode.class);
             vnode.setHighlighted(false);
             vnode.getVisualGraph().hideTooltip();
         }

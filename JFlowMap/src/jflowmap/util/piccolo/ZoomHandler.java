@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.util;
+package jflowmap.util.piccolo;
 
 import java.awt.geom.Point2D;
 

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jflowmap.util;
+package jflowmap.util.piccolo;
 
 import java.awt.BasicStroke;
 import java.awt.Dimension;
@@ -23,14 +23,11 @@ import java.awt.Insets;
 import java.awt.Stroke;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 
 import jflowmap.FlowMapMain;
 
-import com.google.common.collect.Iterables;
 
 import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
@@ -148,64 +145,6 @@ public class PiccoloUtils {
 
         // give up, custom strokes aren't supported on Mac OSX
         return stroke;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static final <T extends PNode> T getParentNodeOfType(PNode node, Class<T> klass) {
-        PNode parent = node;
-        while (parent != null) {
-            if (parent != null  &&  klass.isAssignableFrom(parent.getClass())) {
-                return (T) parent;
-            }
-            parent = parent.getParent();
-        }
-        return null;
-    }
-
-
-    public static final Iterable<PNode> childrenOf(final PNode node) {
-        return new Iterable<PNode>() {
-            @Override
-//            @SuppressWarnings("unchecked")
-            public Iterator<PNode> iterator() {
-//                return node.getChildrenIterator();
-                return new Iterator<PNode>() {          // implement an iterator to avoid ConcurrentModificationException
-                    int nextPos = 0;
-                    @Override
-                    public boolean hasNext() {
-                        return (nextPos < node.getChildrenCount());
-                    }
-
-                    @Override
-                    public PNode next() {
-                        return node.getChild(nextPos++);
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
-            }
-        };
-    }
-
-    public static final <T extends PNode> Iterable<T> childrenOfType(PNode node, Class<T> type) {
-        return Iterables.filter(childrenOf(node), type);
-    }
-
-    public static final PNode moveNodeTo(PNode node, double x, double y) {
-        node.offset(x - node.getX(), y - node.getY());
-        return node;
-    }
-
-    public static final int indexOfChild(PNode parent, PNode child) {
-        for (int i = 0, numChildren = parent.getChildrenCount(); i < numChildren; i++) {
-            if (parent.getChild(i) == child) {
-                return i;
-            }
-        }
-        return -1;
     }
 
 

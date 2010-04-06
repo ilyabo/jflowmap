@@ -29,8 +29,8 @@ import javax.swing.JComponent;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.geom.Point;
 import jflowmap.models.FlowMapGraphBuilder;
-import jflowmap.util.PanHandler;
-import jflowmap.util.ZoomHandler;
+import jflowmap.util.piccolo.PanHandler;
+import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.visuals.timeline.VisualTimeline;
 
 import org.apache.log4j.Logger;
