@@ -12,7 +12,7 @@ import edu.umd.cs.piccolox.nodes.PClip;
 /**
  * @author Ilya Boyandin
  */
-public class PAccordion extends PNode {
+public class PCollapsableItemsContainer extends PNode {
 
     private final boolean collapsedByDefault;
     private final double itemLabelSpacing = 5;
@@ -20,11 +20,11 @@ public class PAccordion extends PNode {
     private final double itemBodySpacing = 5;
     private final int collapseAnimationDuration = 200;
 
-    public PAccordion() {
+    public PCollapsableItemsContainer() {
         this(true);
     }
 
-    public PAccordion(boolean collapsedByDefault) {
+    public PCollapsableItemsContainer(boolean collapsedByDefault) {
         this.collapsedByDefault = collapsedByDefault;
     }
 
@@ -117,6 +117,8 @@ public class PAccordion extends PNode {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
                         updateClip(false);
+                        System.out
+                                .println("PCollapsableItemsContainer.Item.Item(...).new PropertyChangeListener() {...}.propertyChange()");
                     }
                 });
             }

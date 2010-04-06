@@ -1,4 +1,5 @@
 package jflowmap.util.piccolo;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Random;
@@ -11,25 +12,23 @@ import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.PFrame;
 
-
-
 /**
  * @author Ilya Boyandin
  */
-public class PAccordionTest extends PFrame {
+public class PCollapsableItemsContainerTest extends PFrame {
     private static final BasicStroke A_STROKE = new BasicStroke(2);
     private final Random rnd = new Random();
-    final PAccordion acc;
+    final PCollapsableItemsContainer acc;
 
-    public PAccordionTest() {
-        super("PAccordionTest", false, null);
+    public PCollapsableItemsContainerTest() {
+        super("PCollapsableItemsContainerTest", false, null);
         setSize(640, 800);
 
         getCanvas().removeInputEventListener(getCanvas().getPanEventHandler());
 
 //        PNode body;
 //        if (rnd.nextInt() % 2 == 0) {
-//            PAccordion pa = new PAccordion();
+//            PCollapsableItemsContainer pa = new PCollapsableItemsContainer();
 //            pa
 //            pa.layoutItems();
 //            body = pa;
@@ -37,21 +36,29 @@ public class PAccordionTest extends PFrame {
 //            body = createRandomRect(Color.red);
 //        }
 
-
-        acc = createAccordion();
+        acc = createAccordion(0);
         acc.setX(100);
         acc.setY(50);
         acc.layoutItems();
         getCanvas().getLayer().addChild(acc);
-
-
     }
 
-    private PAccordion createAccordion() {
-        PAccordion acc = new PAccordion();
+    private PCollapsableItemsContainer createAccordion(int level) {
+        PCollapsableItemsContainer acc = new PCollapsableItemsContainer();
+        CollapseHandler ch = new CollapseHandler(acc);
         for (int i = 0; i < 5; i++) {
-            PLabel label = new PLabel("Item " + i);
-            PAccordion.Item item = acc.addNewItem(label, createRandomRect(Color.blue), createRandomRect(Color.red));
+            PLabel label = new PLabel("l" + (level + 1) + " item " + i);
+            label.addInputEventListener(ch);
+            PNode body;
+            if (level == 0  &&  rnd.nextInt(2) == 0) {
+                PCollapsableItemsContainer subacc = createAccordion(level + 1);
+                body = subacc;
+                subacc.layoutItems();
+            } else {
+                body = createRandomRect(Color.red);
+            }
+
+            PCollapsableItemsContainer.Item item = acc.addNewItem(label, createRandomRect(Color.blue), body);
             label.setItem(item);
         }
         return acc;
@@ -64,8 +71,8 @@ public class PAccordionTest extends PFrame {
     private static final Color NON_SEL_LABEL_FG = Color.white;
     private static final Color SEL_LABEL_FG = Color.white;
 
-    class PLabel extends PNode {
-        private PAccordion.Item item;
+    static class PLabel extends PNode {
+        private PCollapsableItemsContainer.Item item;
         private final PText textNode;
         private final PPath rectNode;
         public PLabel(String text) {
@@ -79,13 +86,11 @@ public class PAccordionTest extends PFrame {
 
             textNode.setTextPaint(NON_SEL_LABEL_FG);
             addChild(textNode);
-
-            addInputEventListener(collapseHandler);
         }
-        public PAccordion.Item getItem() {
+        public PCollapsableItemsContainer.Item getItem() {
             return item;
         }
-        public void setItem(PAccordion.Item item) {
+        public void setItem(PCollapsableItemsContainer.Item item) {
             this.item = item;
         }
         public PText getTextNode() {
@@ -97,7 +102,13 @@ public class PAccordionTest extends PFrame {
     }
 
 
-    PBasicInputEventHandler collapseHandler = new PBasicInputEventHandler() {
+    static class CollapseHandler extends PBasicInputEventHandler {
+        PCollapsableItemsContainer acc;
+
+        private CollapseHandler(PCollapsableItemsContainer acc) {
+            this.acc = acc;
+        }
+
         @Override
         public void mouseEntered(PInputEvent event) {
             PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
@@ -153,7 +164,7 @@ public class PAccordionTest extends PFrame {
     }
 
     public static void main(String[] args) {
-        new PAccordionTest();
+        new PCollapsableItemsContainerTest();
     }
 
 }
