@@ -25,19 +25,36 @@ public class PAccordionTest extends PFrame {
         super("PAccordionTest", false, null);
         setSize(640, 800);
 
-        acc = new PAccordion();
-        acc.setX(100);
-        acc.setY(50);
-        getCanvas().getLayer().addChild(acc);
         getCanvas().removeInputEventListener(getCanvas().getPanEventHandler());
 
+//        PNode body;
+//        if (rnd.nextInt() % 2 == 0) {
+//            PAccordion pa = new PAccordion();
+//            pa
+//            pa.layoutItems();
+//            body = pa;
+//        } else {
+//            body = createRandomRect(Color.red);
+//        }
+
+
+        acc = createAccordion();
+        acc.setX(100);
+        acc.setY(50);
+        acc.layoutItems();
+        getCanvas().getLayer().addChild(acc);
+
+
+    }
+
+    private PAccordion createAccordion() {
+        PAccordion acc = new PAccordion();
         for (int i = 0; i < 5; i++) {
             PLabel label = new PLabel("Item " + i);
             PAccordion.Item item = acc.addNewItem(label, createRandomRect(Color.blue), createRandomRect(Color.red));
             label.setItem(item);
         }
-        acc.layoutItems();
-
+        return acc;
     }
 
     private static final Color NON_SEL_LABEL_BG = new Color(69, 117, 180);
@@ -62,6 +79,7 @@ public class PAccordionTest extends PFrame {
 
             textNode.setTextPaint(NON_SEL_LABEL_FG);
             addChild(textNode);
+
             addInputEventListener(collapseHandler);
         }
         public PAccordion.Item getItem() {

@@ -102,14 +102,13 @@ public class PAccordion extends PNode {
                 addChild(head);
             }
             this.bodyClip = new PClip();
-//            this.clipRect = new Rectangle2D.Double();
-//            clipRect.setFrame(getBodyBounds());
-//            this.bodyClip.setPathTo(clipRect);
             this.bodyClip.setStroke(null);
 
-            updateClip(false);
-            bodyClip.setVisible(false);
+            PBounds bb = getBodyBounds();
+            bodyClip.setPathToRectangle((float)bb.x, (float)bb.y, (float)bb.width, (float)bb.height);
+
             this.collapsed = collapsed;
+            updateClip(false);
 
             if (body != null) {
                 addChild(bodyClip);
@@ -153,8 +152,6 @@ public class PAccordion extends PNode {
         }
 
         private void updateClip(boolean animate) {
-            bodyClip.setVisible(true);
-
             PBounds bb = getBodyBounds();
             if (collapsed) {
                 bb.height = 0;
@@ -163,10 +160,7 @@ public class PAccordion extends PNode {
             if (animate) {
                 bodyClip.animateToBounds(bb.x, bb.y, bb.width, bb.height, collapseAnimationDuration);
             } else {
-//                Rectangle2D clipRect = new Rectangle2D.Double();
-//                clipRect.setFrame(bb);
-//                bodyClip.setPathTo(clipRect);
-                bodyClip.setPathToRectangle((float)bb.x, (float)bb.y, (float)bb.width, (float)bb.height);
+                bodyClip.setBounds(bb.x, bb.y, bb.width, bb.height);
             }
         }
 
