@@ -5,10 +5,7 @@ import java.awt.Color;
 import java.util.Random;
 
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.PFrame;
 
@@ -37,18 +34,15 @@ public class PCollapsableItemsContainerTest extends PFrame {
 //        }
 
         acc = createAccordion(0);
+        getCanvas().getLayer().addChild(acc);
         acc.setX(100);
         acc.setY(50);
         acc.layoutItems();
-        getCanvas().getLayer().addChild(acc);
     }
 
     private PCollapsableItemsContainer createAccordion(int level) {
         PCollapsableItemsContainer acc = new PCollapsableItemsContainer();
-        CollapseHandler ch = new CollapseHandler(acc);
         for (int i = 0; i < 5; i++) {
-            PLabel label = new PLabel("l" + (level + 1) + " item " + i);
-            label.addInputEventListener(ch);
             PNode body;
             if (level == 0  &&  rnd.nextInt(2) == 0) {
                 PCollapsableItemsContainer subacc = createAccordion(level + 1);
@@ -58,95 +52,10 @@ public class PCollapsableItemsContainerTest extends PFrame {
                 body = createRandomRect(Color.red);
             }
 
-            PCollapsableItemsContainer.Item item = acc.addNewItem(label, createRandomRect(Color.blue), body);
-            label.setItem(item);
+            acc.addNewItem("l" + (level + 1) + " item " + i, createRandomRect(Color.blue), body);
         }
         return acc;
     }
-
-    private static final Color NON_SEL_LABEL_BG = new Color(69, 117, 180);
-    private static final Color SEL_LABEL_BG = new Color(215, 48, 39);
-    private static final Color PRESSED_SEL_LABEL_BG = new Color(225, 58, 49);
-
-    private static final Color NON_SEL_LABEL_FG = Color.white;
-    private static final Color SEL_LABEL_FG = Color.white;
-
-    static class PLabel extends PNode {
-        private PCollapsableItemsContainer.Item item;
-        private final PText textNode;
-        private final PPath rectNode;
-        public PLabel(String text) {
-            this.textNode = new PText(text);
-            final int pad = 5;
-            this.rectNode = PPath.createRoundRectangle(-pad, -pad, (float)textNode.getWidth() + 2*pad, (float)textNode.getHeight() + 2*pad, 5, 5);
-
-            rectNode.setPaint(NON_SEL_LABEL_BG);
-            rectNode.setStroke(null);
-            addChild(rectNode);
-
-            textNode.setTextPaint(NON_SEL_LABEL_FG);
-            addChild(textNode);
-        }
-        public PCollapsableItemsContainer.Item getItem() {
-            return item;
-        }
-        public void setItem(PCollapsableItemsContainer.Item item) {
-            this.item = item;
-        }
-        public PText getTextNode() {
-            return textNode;
-        }
-        public PPath getRectNode() {
-            return rectNode;
-        }
-    }
-
-
-    static class CollapseHandler extends PBasicInputEventHandler {
-        PCollapsableItemsContainer acc;
-
-        private CollapseHandler(PCollapsableItemsContainer acc) {
-            this.acc = acc;
-        }
-
-        @Override
-        public void mouseEntered(PInputEvent event) {
-            PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-            if (label != null) {
-                label.getTextNode().setTextPaint(SEL_LABEL_FG);
-                label.getRectNode().setPaint(SEL_LABEL_BG);
-            }
-        }
-        @Override
-        public void mouseExited(PInputEvent event) {
-            PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-            if (label != null) {
-                label.getTextNode().setTextPaint(NON_SEL_LABEL_FG);
-                label.getRectNode().setPaint(NON_SEL_LABEL_BG);
-            }
-        }
-        @Override
-        public void mousePressed(PInputEvent event) {
-            PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-            if (label != null) {
-                label.getRectNode().setPaint(PRESSED_SEL_LABEL_BG);
-            }
-        }
-        @Override
-        public void mouseReleased(PInputEvent event) {
-            PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-            if (label != null) {
-                label.getRectNode().setPaint(SEL_LABEL_BG);
-            }
-        }
-        @Override
-        public void mouseClicked(PInputEvent event) {
-            PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-            if (label != null) {
-                acc.toggleCollapsed(acc.findItemByLabel(label));
-            }
-        }
-    };
 
     private PPath createRandomRect(Color color) {
         PPath rect = PPath.createRectangle(rnd.nextInt(100), rnd.nextInt(100), rnd.nextInt(100) + 100, rnd.nextInt(50) + 50);

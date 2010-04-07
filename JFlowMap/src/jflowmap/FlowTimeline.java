@@ -24,13 +24,13 @@ import java.util.List;
  * @author Ilya Boyandin
  */
 
-//TODO: finish class FlowMapTimeline
+//TODO: finish class FlowTimeline
 
-public class FlowMapTimeline {
+public class FlowTimeline {
 
     private List<FlowMap> flowMaps;
 
-    private FlowMapTimeline() {
+    private FlowTimeline() {
     }
 
     // ...
