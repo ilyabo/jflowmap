@@ -18,7 +18,6 @@
 package jflowmap;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -26,7 +25,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,18 +36,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import jflowmap.bundling.ForceDirectedBundlerParameters;
-import jflowmap.clustering.NodeDistanceMeasure;
-import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapLoader;
+import jflowmap.data.FlowMapStats;
 import jflowmap.models.FlowMapModel;
+import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualFlowMap;
-import jflowmap.visuals.VisualNode;
 
 import org.apache.log4j.Logger;
 
 import prefuse.data.io.DataIOException;
 import at.fhj.utils.misc.FileUtils;
-import ch.unifr.dmlib.cluster.Linkages;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -70,112 +66,125 @@ public class SmallMultiplesMain extends JFrame {
 
     private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
     private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
-    private static final Color LABEL_COLOR = Color.gray;
-    private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
+    private Color datasetNameLabelColor = Color.gray;
+//    private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
-//    private static final double ZOOM_LEVEL = 1.3;
-    private static final double ZOOM_LEVEL = 2.0;
-//    private static final double MOVE_DX = 30, MOVE_DY = -50;
-    private static final double MOVE_DX = 120, MOVE_DY = -70;
+    private double zoom = 1.0;
+    private double translateX, translateY;
+
+//    private static final double ZOOM_LEVEL = 2.0;
+//    private static final double MOVE_DX = 120, MOVE_DY = -70;
+
 //    private static final double MOVE_DY = -30;
 //    private static final double MOVE_DX = -70;
 //    private static final double MOVE_DY = -60;
 
-    private static final boolean USE_GLOBAL_VISUAL_MAPPINGS = false;
-    private static final boolean USE_FDEB = false;
-    private static final boolean USE_CLUSTERING = false;
+    private boolean useGlobalVisualMappings = true;
 
-//    private static final int FRAME_WIDTH = 1280;
-//    private static final int FRAME_HEIGHT = 1024;
-    private static final int FRAME_WIDTH = 1024, FRAME_HEIGHT = 768;
-//    private static final int FRAME_WIDTH = 800, FRAME_HEIGHT = 600;
-//    private static final int FRAME_WIDTH = 800, FRAME_HEIGHT = 600;
-//    private static final int FRAME_WIDTH = 640, FRAME_HEIGHT = 480;
-    private Map<String, DatasetSpec> datasets;
+    private final Map<String, DatasetSpec> datasets;
 
-    private final DatasetSpec datasetSpec = new DatasetSpec(
-//            "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
-            "data/refugees/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
-    );
-    private final String outputFileName = "refugees-small-multiples.png";
-
-//    final List<String> datasetNames = Arrays.asList("1994", "1996", "2000", "2007", "2008");
-//    final List<String> datasetNames = Arrays.asList("1994", "2000", "2007");
-
-    private final List<String> datasetNames = Arrays.asList("2008");
-//    private final List<String> datasetNames = Arrays.asList("1996", "2000", "2008");
-//    final List<String> datasetNames = Arrays.asList("1996", "2002", "2008");
-
-//    final List<String> datasetNames;
-//    final int startYear = 1989;
-//    final int endYear = 2008;
-//    final int yearStep = +1;
-//    final int n = ((endYear - startYear) / yearStep) + 1;
-//    {
-//        datasetNames = Lists.newArrayList();
-//        for (int i = 0; i < n; i++) {
-//            datasetNames.add(Integer.toString(startYear + i * yearStep));
-//        }
-//    }
-
+    private final String outputFileName;
+    private boolean showLegend = true;
     private final JFlowMap jFlowMap;
 
-    private void cluster() {
-        VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
-        visualFlowMap.clusterNodes(
-                NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
-        visualFlowMap.setClusterDistanceThreshold(0.82);
-//        visualFlowMap.setEuclideanClusterDistanceThreshold(55);
-        visualFlowMap.setEuclideanClusterDistanceThreshold(40);
-        visualFlowMap.joinClusterEdges();
-        setupFlowMapModel(jFlowMap.getVisualFlowMap().getModel());
+    public SmallMultiplesMain(String outputFileName, DatasetSpec datasetSpec, String ... datasetNames) {
+        this(outputFileName, datasetsMap(datasetSpec, datasetNames));
     }
 
-    private static void setupFlowMapModel(FlowMapModel model) {
-        model.setMaxEdgeWidth(10);
-//        model.setMaxEdgeWidth(15);
-        model.setNodeSize(3);
+    public SmallMultiplesMain(String outputFileName,  Map<String, DatasetSpec> datasets) {
+        this.outputFileName = outputFileName;
+        this.datasets = datasets;
 
-//        if (USE_FDEB) {
-//            model.setShowDirectionMarkers(false);
-//            model.setEdgeAlpha(245);
-//        } else {
-            model.setShowDirectionMarkers(true);
-            model.setDirectionMarkerSize(.17);
-//            model.setDirectionMarkerAlpha(255);
-            model.setDirectionMarkerAlpha(245);
-            model.setEdgeAlpha(100);
-//            model.setEdgeAlpha(150);
-//        }
-
-
-//       model.setEdgeWeightFilterMin(2500);
-       model.setEdgeLengthFilterMax(70);
-//       model.setEdgeLengthFilterMin(300);
-
-            model.setShowNodes(true);
-
-//            model.setEdgeLengthFilterMax(75);
-    }
-
-    private static void setupBundlerParams(ForceDirectedBundlerParameters bundlerParams) {
-////        bundlerParams.setEdgeValueAffectsAttraction(true);
-//        bundlerParams.setS(5);
-    }
-
-
-
-
-    public SmallMultiplesMain() {
         jFlowMap = new JFlowMap(null, false);
         add(jFlowMap);
 
-        Dimension size = new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
-        setSize(size);
+        setSize(1024, 768);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    class RenderTask extends SwingWorker<Void, Void> {
+
+    public void setShowLegend(boolean showLegend) {
+        this.showLegend = showLegend;
+    }
+
+    public void setColorScheme(ColorScheme colorScheme) {
+        jFlowMap.setColorScheme(colorScheme);
+    }
+
+    public void setUseGlobalVisualMappings(boolean useGlobalVisualMappings) {
+        this.useGlobalVisualMappings = useGlobalVisualMappings;
+    }
+
+    public void setZoom(double zoom) {
+        this.zoom = zoom;
+    }
+
+    public void setTranslation(double dx, double dy) {
+        this.translateX = dx;
+        this.translateY = dy;
+    }
+
+    public void setDatasetNameLabelColor(Color datasetNameLabelColor) {
+        this.datasetNameLabelColor = datasetNameLabelColor;
+    }
+
+    private FlowMapModelInitializer flowMapModelInitializer;
+    private FDEBInitializer fdebInitializer;
+    private Clusterer clusterer;
+
+    public interface Clusterer {
+        FlowMapModel cluster(JFlowMap jFlowMap);
+    }
+
+    public interface FlowMapModelInitializer {
+        void setupFlowMapModel(FlowMapModel model);
+    }
+
+    public interface FDEBInitializer {
+        void setupFDEB(ForceDirectedBundlerParameters bundlerParams);
+    }
+
+    public void setFlowMapModelInitializer(FlowMapModelInitializer flowMapModelInitializer) {
+        this.flowMapModelInitializer = flowMapModelInitializer;
+    }
+
+    public void setClusterer(Clusterer clusterer) {
+        this.clusterer = clusterer;
+    }
+
+    public void setFdebInitializer(FDEBInitializer fdebInitializer) {
+        this.fdebInitializer = fdebInitializer;
+    }
+
+    private void cluster() {
+        if (clusterer != null) {
+            setupFlowMapModel(clusterer.cluster(jFlowMap));
+        }
+    }
+
+    private void setupFlowMapModel(FlowMapModel model) {
+        if (flowMapModelInitializer != null) {
+            flowMapModelInitializer.setupFlowMapModel(model);
+        }
+    }
+
+    private void setupBundlerParams(ForceDirectedBundlerParameters bundlerParams) {
+        if (fdebInitializer != null) {
+            fdebInitializer.setupFDEB(bundlerParams);
+        }
+    }
+
+    private static Map<String, DatasetSpec> datasetsMap(DatasetSpec datasetSpec, String... datasetNames) {
+        Map<String, DatasetSpec> datasets = Maps.newLinkedHashMap();
+        for (String name : datasetNames) {
+            datasets.put(name, datasetSpec.withFilename(datasetSpec.getFilename().replace("{name}", name)));
+        }
+        return datasets;
+    }
+
+
+    private class RenderTask extends SwingWorker<Void, Void> {
 
         final int numColumns = 5;
         final int paddingX = 5;
@@ -193,11 +202,6 @@ public class SmallMultiplesMain extends JFrame {
         public RenderTask(JFrame parent, JFlowMap jFlowMap) {
             this.jFlowMap = jFlowMap;
             this.parentFrame = parent;
-
-            datasets = Maps.newLinkedHashMap();
-            for (String name : datasetNames) {
-                datasets.put(name, datasetSpec.withFilename(datasetSpec.getFilename().replace("{name}", name)));
-            }
 
             final int n = datasets.size();
             progress = new ProgressMonitor(parent, "Rendering small multiples", "", 0, n);
@@ -225,7 +229,7 @@ public class SmallMultiplesMain extends JFrame {
         private void renderFlowMap() throws InterruptedException, InvocationTargetException, DataIOException {
 
             final FlowMapStats stats;
-            if (USE_GLOBAL_VISUAL_MAPPINGS) {
+            if (useGlobalVisualMappings) {
                 // calc the global stats
                 List<FlowMapGraphWithAttrSpecs> gs = Lists.newArrayList();
                 for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
@@ -243,8 +247,8 @@ public class SmallMultiplesMain extends JFrame {
             final Graphics2D g = (Graphics2D)image.getGraphics();
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setColor(BACKGROUND_COLOR);
-            g.fillRect(0, 0, totalWidth, totalHeight);
+//            g.setColor(BACKGROUND_COLOR);
+//            g.fillRect(0, 0, totalWidth, totalHeight);
 
 
             int cycle = 0;
@@ -260,19 +264,21 @@ public class SmallMultiplesMain extends JFrame {
                 final int _cycle = cycle;
 
                 SwingUtilities.invokeAndWait(new Runnable() {
+
                     @Override
                     public void run() {
                         parentFrame.setTitle(name);
                         FlowMapLoader.loadFlowMap(jFlowMap, ds, stats);
 
                         VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
+                        visualFlowMap.setLegendVisible(showLegend);
                         FlowMapModel model = visualFlowMap.getModel();
                         setupFlowMapModel(model);
 
-                        if (USE_CLUSTERING) {
+                        if (clusterer != null) {
                             cluster();
                         }
-                        if (USE_FDEB) {
+                        if (fdebInitializer != null) {
                             ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(model);
                             setupBundlerParams(bundlerParams);
                             visualFlowMap.bundleEdges(bundlerParams);
@@ -295,10 +301,10 @@ public class SmallMultiplesMain extends JFrame {
                         public void run() {
                             PCamera camera = visualFlowMap.getCamera();
                             PBounds viewBounds = camera.getViewBounds();
-                            camera.scaleViewAboutPoint(ZOOM_LEVEL, viewBounds.x + viewBounds.width / 2, viewBounds.y + viewBounds.height / 2);
+                            camera.scaleViewAboutPoint(zoom, viewBounds.x + viewBounds.width / 2, viewBounds.y + viewBounds.height / 2);
                             viewBounds = (PBounds) camera.getViewBounds().clone();
-                            viewBounds.x += MOVE_DX;
-                            viewBounds.y += MOVE_DY;
+                            viewBounds.x += translateX;
+                            viewBounds.y += translateY;
                             camera.setViewBounds(viewBounds);
                         }
                     });
@@ -320,7 +326,7 @@ public class SmallMultiplesMain extends JFrame {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
-                        visualFlowMap.addChild(createTitleNode(name, visualFlowMap.getCamera().getViewBounds()));
+                        visualFlowMap.addChild(createDatasetNameLabel(name, visualFlowMap.getCamera().getViewBounds()));
 //                        visualFlowMap.addChild(createLabelsNode(name, visualFlowMap));
 
                         // Pain the plot
@@ -331,7 +337,7 @@ public class SmallMultiplesMain extends JFrame {
 
                         jFlowMap.paint(g);
 
-                        g.setColor(LABEL_COLOR);
+                        g.setColor(datasetNameLabelColor);
                         g.setFont(LABEL_FONT);
 
                         g.translate(-x, -y);
@@ -360,26 +366,18 @@ public class SmallMultiplesMain extends JFrame {
         }
     }
 
-
-    public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
-        SmallMultiplesMain sm = new SmallMultiplesMain();
-        sm.setVisible(true);
-        sm.start();
-    }
-
-
     public void start() {
         RenderTask task = new RenderTask(this, jFlowMap);
 //      task.addPropertyChangeListener(this);
       task.execute();
     }
 
-    private static PNode createTitleNode(final String title, PBounds cameraBounds) {
+    private PNode createDatasetNameLabel(final String title, PBounds cameraBounds) {
         PText ptext = new PText(title);
         ptext.setX(cameraBounds.getX());
         ptext.setY(cameraBounds.getY() + cameraBounds.getHeight() - TITLE_FONT.getSize2D());
         ptext.setFont(TITLE_FONT);
-        ptext.setTextPaint(LABEL_COLOR);
+        ptext.setTextPaint(datasetNameLabelColor);
         return ptext;
     }
 //
@@ -403,4 +401,124 @@ public class SmallMultiplesMain extends JFrame {
 //        labelLayer.addChild(ptext);
 //        return ptext;
 //    }
+
+
+    public static String[] eachYear(int startYear, int endYear, int yearStep) {
+        int n = ((endYear - startYear) / yearStep) + 1;
+        String[] years = new String[n];
+        for (int i = 0; i < n; i++) {
+            years[i] = Integer.toString(startYear + i * yearStep);
+        }
+        return years;
+    }
+
+
+    public static final SmallMultiplesMain createSM_Experiment() {
+        SmallMultiplesMain sm = new SmallMultiplesMain(
+                "refugees-small-multiples.png",
+                new DatasetSpec(
+//                      "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
+                      "data/refugees/refugees-{name}.xml.gz",
+                      "ritypnv",
+//                      "r",
+                      "x", "y", "name", "data/refugees/countries-areas.xml.gz"
+              ),
+//              "1994", "1996", "2000", "2007", "2008"
+//              "1994", "2000", "2007"
+//              "1996", "2002", "2008"
+//              "1996", "2000", "2008"
+//              "2008"
+              eachYear(1989, 2008, +1)
+        );
+//        sm.setFrameSize(1280, 1024);
+//        sm.setFrameSize(800, 600);
+//        sm.setFrameSize(640, 480);
+        sm.setZoom(1.3);
+        sm.setTranslation(30, -50);
+        sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+            @Override
+            public void setupFlowMapModel(FlowMapModel model) {
+                model.setMaxEdgeWidth(10);
+//              model.setMaxEdgeWidth(15);
+              model.setNodeSize(3);
+
+//              if (useFdeb) {
+//                  model.setShowDirectionMarkers(false);
+//                  model.setEdgeAlpha(245);
+//              } else {
+                  model.setShowDirectionMarkers(true);
+                  model.setDirectionMarkerSize(.17);
+//                  model.setDirectionMarkerAlpha(255);
+                  model.setDirectionMarkerAlpha(245);
+                  model.setEdgeAlpha(100);
+//                  model.setEdgeAlpha(150);
+//              }
+
+
+//             model.setEdgeWeightFilterMin(2500);
+//             model.setEdgeLengthFilterMax(70);
+//             model.setEdgeLengthFilterMin(300);
+
+                  model.setShowNodes(true);
+
+//                  model.setEdgeLengthFilterMax(75);
+            }
+        });
+//        sm.setFdebInitializer(new FDEBInitializer() {
+//            @Override
+//            public void setupFDEB(ForceDirectedBundlerParameters bundlerParams) {
+////              bundlerParams.setEdgeValueAffectsAttraction(true);
+////              bundlerParams.setS(5);
+//            }
+//        });
+//        sm.setClusterer(new Clusterer() {
+//            @Override
+//            public FlowMapModel cluster(JFlowMap jFlowMap) {
+//                VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
+//                visualFlowMap.clusterNodes(
+//                        NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
+//                visualFlowMap.setClusterDistanceThreshold(0.82);
+////                visualFlowMap.setEuclideanClusterDistanceThreshold(55);
+//                visualFlowMap.setEuclideanClusterDistanceThreshold(40);
+//                visualFlowMap.joinClusterEdges();
+//                return jFlowMap.getVisualFlowMap().getModel();
+//            }
+//        });
+        return sm;
+    }
+
+    public static final SmallMultiplesMain createSM_TLBS_all() {
+        SmallMultiplesMain sm = new SmallMultiplesMain(
+                "refugees-small-multiples.png",
+                new DatasetSpec(
+                    "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
+                    "data/refugees/countries-areas.xml.gz"),
+                eachYear(1989, 2008, +1));
+        sm.setSize(640, 480);
+        sm.setZoom(1.3);
+        sm.setTranslation(30, -50);
+        sm.setUseGlobalVisualMappings(true);
+        sm.setShowLegend(false);
+        sm.setColorScheme(ColorSchemes.DARK.getScheme());
+        sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+            @Override
+            public void setupFlowMapModel(FlowMapModel model) {
+                model.setMaxEdgeWidth(10);
+                model.setNodeSize(3);
+                model.setShowDirectionMarkers(true);
+                model.setDirectionMarkerSize(.17);
+                model.setDirectionMarkerAlpha(245);
+                model.setEdgeAlpha(100);
+                model.setShowNodes(true);
+            }
+        });
+        return sm;
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
+        SmallMultiplesMain sm =
+            createSM_TLBS_all();
+        sm.setVisible(true);
+        sm.start();
+    }
 }

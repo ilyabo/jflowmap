@@ -55,7 +55,7 @@ enum ColorSchemes {
       .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
       .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
 
-      .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
+      .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(140, 140, 140, 200))
       .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
       .build()),

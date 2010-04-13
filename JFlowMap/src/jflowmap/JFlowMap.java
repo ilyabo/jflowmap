@@ -93,14 +93,12 @@ public class JFlowMap extends JComponent {
     private void init() {
         setLayout(new BorderLayout());
 
-        this.colorScheme = ColorSchemes.LIGHT_BLUE.getScheme();
-//        this.colorScheme = ColorSchemes.DARK.getScheme();
-
         canvas = new PCanvas();
-        canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
         canvas.addInputEventListener(new ZoomHandler());
         canvas.setPanEventHandler(new PanHandler());
         add(canvas, BorderLayout.CENTER);
+
+        setColorScheme(ColorSchemes.LIGHT_BLUE.getScheme());
     }
 
     @Override
@@ -110,6 +108,7 @@ public class JFlowMap extends JComponent {
 
     public void setColorScheme(ColorScheme colorScheme) {
         this.colorScheme = colorScheme;
+        canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
     }
 
     public ColorScheme getColorScheme() {
@@ -148,7 +147,7 @@ public class JFlowMap extends JComponent {
             params.setEdgeWeightFilterMin(minWeight);
         }
 
-        return new VisualFlowMap(this, graphAndSpecs.getGraph(), params.getStats(), params);
+        return new VisualFlowMap(this, graphAndSpecs.getGraph(), params.getStats(), params, true);
     }
 
     public VisualFlowMap getVisualFlowMap() {

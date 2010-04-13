@@ -123,7 +123,7 @@ public class VisualFlowMap extends PNode {
     private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
     private final VisualLegend visualLegend;
 
-    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, FlowMapModel model) {
+    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, FlowMapModel model, boolean showLegend) {
         this.jFlowMap = jFlowMap;
     	this.flowMapModel = model;
 
@@ -144,6 +144,7 @@ public class VisualFlowMap extends PNode {
         tooltipBox.setPickable(false);
 
 	    visualLegend = new VisualLegend(this);
+	    setLegendVisible(showLegend);
 
         initModelChangeListeners(model);
 //        fitInCameraView();
