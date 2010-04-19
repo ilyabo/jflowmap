@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Here a B-spline curve (which are not supported by Java2D)
- * is converted to a series of cubic Bézier curves that can
+ * is converted to a series of cubic Bezier curves that can
  * be rendered by Path2D.
  * <p>
  * Based on the BSpline example from the book
