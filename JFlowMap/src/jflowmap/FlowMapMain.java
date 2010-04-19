@@ -46,6 +46,7 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
+import javax.xml.stream.XMLStreamException;
 
 import jflowmap.data.GraphMLReader2;
 import jflowmap.data.XmlRegionsReader;
@@ -70,8 +71,8 @@ public class FlowMapMain extends JFrame {
 
     private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
             // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
-//          "rity",
-          "r",
+          "rity",
+//          "r",
           "name", "x", "y", 0);
 
 
@@ -153,7 +154,8 @@ public class FlowMapMain extends JFrame {
             public void run() {
                 try {
 //                    showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
-                    showFlowTimeline("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz");
+
+                    showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"));
 
 //                    desktopPane.getAllFrames()[0].setMaximum(true);
                 } catch (Exception ex) {
@@ -178,17 +180,35 @@ public class FlowMapMain extends JFrame {
     }
 
 
-    public void showFlowTimeline(String filename) throws Exception {
-        GraphMLReader2 reader = new GraphMLReader2();
-        List<Graph> graphs = Lists.newArrayList(reader.readFromFile(filename));
+    public void showFlowTimeline(String filename) throws DataIOException, XMLStreamException, IOException {
+        showView(loadGraphsWithRegions(filename));
+    }
+
+    public static JFlowTimeline loadGraphsWithRegions(String filename) throws DataIOException, XMLStreamException,
+            IOException {
+        List<Graph> graphs = loadGraphs(filename);
 
         Collections.reverse(graphs);
 
+        String columnToGroupNodesBy = "region";
+        addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
+
+        // TODO: let the user choose the attr specs
+        JFlowTimeline ft = new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS, columnToGroupNodesBy);
+        return ft;
+    }
+
+    private static List<Graph> loadGraphs(String filename) throws DataIOException {
+        GraphMLReader2 reader = new GraphMLReader2();
+        List<Graph> graphs = Lists.newArrayList(reader.readFromFile(filename));
+        return graphs;
+    }
+
+    public static void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws XMLStreamException, IOException {
         // TODO: introduce regions as node attrs in GraphML
         Map<String, String> nodeIdToRegion =
 //            XmlRegionsReader.readFrom("data/refugees/regions.xml");
             XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
-        String regionColumn = "region";
         for (Graph graph : graphs) {
             graph.getNodeTable().addColumn(regionColumn, String.class);
 //            graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
@@ -202,13 +222,6 @@ public class FlowMapMain extends JFrame {
                 }
             }
         }
-
-        // TODO: let the user choose the attr specs
-        showView(new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS, regionColumn));
-
-
-//        showView(new JFlowTimeline(regionSummaryGraphs, REFUGEES_ATTR_SPECS, regionToRegion, colorMap));
-
     }
 
 
@@ -494,5 +507,6 @@ public class FlowMapMain extends JFrame {
             e.printStackTrace();
         }
     }
+
 
 }

@@ -17,7 +17,7 @@ import edu.umd.cs.piccolox.nodes.PClip;
  */
 public class PCollapsableItemsContainer extends PNode {
 
-    private static final Color NON_SEL_LABEL_BG = new Color(69, 117, 180);
+    private static final Color NON_SEL_LABEL_BG = new Color(153, 153, 153);
     private static final Color SEL_LABEL_BG = new Color(215, 48, 39);
     private static final Color PRESSED_SEL_LABEL_BG = new Color(225, 58, 49);
     private static final Color NON_SEL_LABEL_FG = Color.white;
