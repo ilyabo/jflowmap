@@ -152,7 +152,8 @@ public class FlowMapMain extends JFrame {
             @Override
             public void run() {
                 try {
-                    showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
+//                    showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
+                    showFlowTimeline("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz");
 
 //                    desktopPane.getAllFrames()[0].setMaximum(true);
                 } catch (Exception ex) {
@@ -184,7 +185,9 @@ public class FlowMapMain extends JFrame {
         Collections.reverse(graphs);
 
         // TODO: introduce regions as node attrs in GraphML
-        Map<String, String> nodeIdToRegion = XmlRegionsReader.readFrom("data/refugees/regions.xml");
+        Map<String, String> nodeIdToRegion =
+//            XmlRegionsReader.readFrom("data/refugees/regions.xml");
+            XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
         String regionColumn = "region";
         for (Graph graph : graphs) {
             graph.getNodeTable().addColumn(regionColumn, String.class);
