@@ -291,6 +291,32 @@ public class VisualNode extends PNode {
         }
     }
 
+    /**
+     * Throws an exception if there is more than one such node.
+     */
+    public VisualEdge getEdgeByOppositeNode(VisualNode n, boolean incoming) {
+        List<VisualEdge> edges = getEdges(incoming);
+        VisualEdge found = null;
+        for (VisualEdge ve : edges) {
+            if (ve.getOppositeNode(this) == n) {
+                if (found != null) {
+                    throw new IllegalStateException("There are more than one edges between the nodes");
+                }
+                found = ve;
+            }
+        }
+        return found;
+    }
+
+    public List<VisualNode> getEdgeOppositeNodes(boolean incoming) {
+        List<VisualEdge> edges = getEdges(incoming);
+        List<VisualNode> nodes = new ArrayList<VisualNode>(edges.size());
+        for (VisualEdge ve : edges) {
+            nodes.add(ve.getOppositeNode(this));
+        }
+        return nodes;
+    }
+
     public boolean isSelected() {
         return getBooleanAttribute(Attributes.SELECTED.name(), false);
     }

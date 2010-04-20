@@ -71,8 +71,8 @@ public class FlowMapMain extends JFrame {
 
     private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
             // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
-          "rity",
-//          "r",
+//          "rity",
+          "r",
           "name", "x", "y", 0);
 
 
@@ -101,8 +101,8 @@ public class FlowMapMain extends JFrame {
 
     private OpenFileAction openAsTimelineAction;
 
-    public FlowMapMain() {
 
+    public FlowMapMain() {
         setTitle("JFlowMap");
 
         initActions();
