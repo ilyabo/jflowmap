@@ -467,7 +467,7 @@ public class VisualTimeline extends PNode {
                 , null
         );
 
-        PBounds b = vc.getBoundsReference();
+        PBounds b = vc.getGlobalBounds(); // getBoundsReference();
 //        Point2D off = vc.getOffset();
         tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY(), 0, 0);
 //        tooltipBox.showTooltipAt(off.getX() + b.getMaxX(), off.getY() + b.getMaxY(), 0, 0);
