@@ -60,9 +60,9 @@ public class FlowMapModel {
     private String nodeLabelAttr = "tooltip";
 
 //    private int edgeAlpha = 150;
-    private int edgeAlpha = 50;
+    private int edgeAlpha = 100;  //50;
 //    private int directionMarkerAlpha = 200;
-    private int directionMarkerAlpha = 210;
+    private int directionMarkerAlpha = 245; //210;
 
     private double edgeWeightFilterMin = Double.MIN_VALUE;
     private double edgeWeightFilterMax = Double.MAX_VALUE;
@@ -72,7 +72,7 @@ public class FlowMapModel {
 
     private boolean autoAdjustEdgeColorScale;
     private double maxEdgeWidth = 1.0;
-    private double directionMarkerSize = 0.1;
+    private double directionMarkerSize = .17; //0.1;
     private double nodeSize;
 
     private final PropertyChangeSupport changes = new PropertyChangeSupport(this);

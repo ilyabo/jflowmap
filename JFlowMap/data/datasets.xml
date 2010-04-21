@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datasets>
     <dataset src="data/refugees/refugees-2008.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />
-
     <dataset src="data/refugees/refugees-2007.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />
     <dataset src="data/refugees/refugees-2006.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />
     <dataset src="data/refugees/refugees-2005.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />
