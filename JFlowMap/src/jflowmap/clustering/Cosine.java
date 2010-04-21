@@ -28,7 +28,7 @@ public class Cosine {
 
     public static double cosine(double[] v1, double[] v2) {
         if (v1.length != v2.length) {
-            throw new AssertionError();
+            throw new IllegalArgumentException();
         }
         double c = dotProduct(v1, v2) / (length(v1) * length(v2));
         assert(-1.0 <= c  &&  c <= 1.0);
@@ -37,7 +37,7 @@ public class Cosine {
 
     static double dotProduct(double[] v1, double[] v2) {
         if (v1.length != v2.length) {
-            throw new AssertionError();
+            throw new IllegalArgumentException();
         }
         double sum = 0;
         for (int i = 0, length = v1.length; i < length; i++) {
