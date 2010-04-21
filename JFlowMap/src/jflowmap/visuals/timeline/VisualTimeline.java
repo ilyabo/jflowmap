@@ -18,9 +18,13 @@
 
 package jflowmap.visuals.timeline;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JComponent;
 
 import jflowmap.FlowMap;
 import jflowmap.FlowMapAttrsSpec;
@@ -43,25 +47,21 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
 public class VisualTimeline extends PNode {
-    public static Logger logger = Logger.getLogger(VisualTimeline.class);
 
-//    enum Orientation { /* The timeline is */ VERTICAL, HORIZONTAL };
-//    private static final Orientation ORIENTATION = Orientation.HORIZONTAL;
-//    private static final int COLLAPSE_ANIMATION_DURATION = 200;
+    public static Logger logger = Logger.getLogger(VisualTimeline.class);
 
     enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, HIERARCHY }
 //    private static final SortMode SORT_MODE = SortMode.HIERARCHY;
 
-//    private static final int ROW_CAPTION_TO_CELLS_X_GAP = 85;
-//    private static final int ROW_CAPTION_TO_CELLS_Y_GAP = 5;
-//    private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 13);
-//    private static final Color CAPTION_COLOR = Color.black;
+    private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 13);
+    private static final Color CAPTION_COLOR = Color.black;
     private final List<Graph> graphs;
     private final FlowMapAttrsSpec attrSpec;
 
@@ -73,12 +73,9 @@ public class VisualTimeline extends PNode {
 
 //    private final ColorMap sumOutgoingDiffColorMap;
 
-//    private FloatingLabelsNode elementLabels;
-
 //    private Graph selectedGraph;
     private final Tooltip tooltipBox;
     private final MinMax valueMinMax;
-//    private List<PRow> rows;
     private final List<Graph> groupedGraphs;
     private final String columnToGroupNodesBy;
 
@@ -147,13 +144,6 @@ public class VisualTimeline extends PNode {
         return valueMinMax;
     }
 
-//    public ColorMap getSumOutgoingDiffColorMap() {
-//        return sumOutgoingDiffColorMap;
-//    }
-
-//    public FlowMapStats getGlobalStats() {
-//        return globalStats;
-//    }
 
     public FlowMapAttrsSpec getAttrSpecs() {
         return attrSpec;
@@ -164,13 +154,6 @@ public class VisualTimeline extends PNode {
         if (graphs.size() == 0) {
             return;
         }
-
-        // Graph ID labels
-//        int colIndex = 0;
-//        for (Graph g : graphs) {
-//            addChild(createCaption(colIndex, FlowMap.getGraphId(g), ORIENTATION == Orientation.HORIZONTAL));
-//            colIndex++;
-//        }
 
 
 //        rows = Lists.newArrayList();
@@ -229,6 +212,13 @@ public class VisualTimeline extends PNode {
 
         container.layoutItems();
 
+
+        // Graph ID labels
+        int colIndex = 0;
+        for (Graph g : graphs) {
+            addChild(createCaption(colIndex, FlowMap.getGraphId(g)));
+            colIndex++;
+        }
 
 
 //        elementLabels = new FloatingLabelsNode(ORIENTATION == Orientation.VERTICAL, createElementsLabelIterator());
@@ -296,155 +286,17 @@ public class VisualTimeline extends PNode {
 //    }
 
 
-//    private PText createCaption(int i, String text, boolean horizontalNotVertical) {
-//        PText t = new PText(text);
-//        t.setFont(CAPTION_FONT);
-//        t.setTextPaint(CAPTION_COLOR);
-//        double x = 0, y = 0;
-//        if (horizontalNotVertical) {
-//            x = cellSpacingX + i * (cellWidth + cellSpacingX);
-//            y = 0 ;
-//            t.setJustification(JComponent.LEFT_ALIGNMENT);
-//            t.setBounds(x + (cellWidth - t.getWidth())/2, y, t.getWidth(), t.getHeight());
-//        } else {
-//            x = t.getX() - t.getWidth();
-//            y = cellY(0, i) + (cellHeight - CAPTION_FONT.getSize2D())/2;
-//            t.setJustification(JComponent.RIGHT_ALIGNMENT);
-//            t.setBounds(x, y, t.getWidth(), t.getHeight());
-//        }
-//        return t;
-//    }
-//
-//
-//    private double cellX(int graphIndex, int nodeIndex) {
-//        switch (ORIENTATION) {
-//        case VERTICAL:
-//            return 10 + ROW_CAPTION_TO_CELLS_X_GAP + cellSpacingX + nodeIndex * (cellWidth + cellSpacingX);
-//        case HORIZONTAL:
-//            return cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
-//        }
-//        throw new AssertionError();
-//    }
-//
-//
-//    private double cellY(int graphIndex, int nodeIndex) {
-//        switch (ORIENTATION) {
-//        case HORIZONTAL:
-//            return CAPTION_FONT.getSize2D() + ROW_CAPTION_TO_CELLS_Y_GAP + cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
-//        case VERTICAL:
-//            return cellSpacingY + graphIndex * (cellHeight + cellSpacingY);
-//        }
-//        throw new AssertionError();
-//    }
-//
-//    private double cellOffset(int nodeIndex) {
-//        switch (ORIENTATION) {
-//        case VERTICAL:
-//            return cellX(0, nodeIndex);
-//        case HORIZONTAL:
-//            return cellY(0, nodeIndex);
-//        }
-//        throw new AssertionError();
-//    }
-
-//    private List<Integer> createHierarchyOrdering() {
-//        List<Integer> hierarchyOrdering = Lists.newArrayList();
-//        Set<Integer> usedIndices = Sets.newHashSet();
-//        for (Map.Entry<String, String> e : jFlowTimeline.getRegions().entrySet()) {
-//            int index = FlowMap.findNodeIndexById(selectedGraph, e.getKey());
-//            if (index >= 0) {
-//                hierarchyOrdering.add(index);
-//                usedIndices.add(index);
-//            } else {
-//                // ignore: we don't need the nodes which are not in the dataset
-//            }
-//
-//        }
-//        // Sanity check: Ensure that all the nodes from the Graph were added to the list
-//        for (int i = 0, numNodes = selectedGraph.getNodeCount(); i < numNodes; i++) {
-//            if (!usedIndices.contains(i)) {
-//                logger.warn("Node " + selectedGraph.getNode(i) + " not in the regions list");
-//                throw new RuntimeException("Node " + selectedGraph.getNode(i) + " not in the regions list");
-//            }
-//        }
-////      Collections.reverse(hierarchyOrdering);
-//
-//        return hierarchyOrdering;
-//    }
-
-//    @SuppressWarnings("unchecked")
-//    private Iterator<Integer> nodeIterator(Graph graph) {
-//        Iterator<Integer> it;
-//        switch (SORT_MODE) {
-//        case QTY_IN_EACH_YEAR:
-//            it = graph.getNodeTable().rowsSortedBy(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, true);
-//            it = CollectionUtils.reverse(it);
-//            break;
-//        case QTY_IN_SELECTED_YEAR:
-//            it = selectedGraph.getNodeTable().rowsSortedBy(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, true);
-//            it = CollectionUtils.reverse(it);
-//            break;
-//        case HIERARCHY:
-//            it = createHierarchyOrdering().iterator();
-//            break;
-//        default:
-//            throw new UnsupportedOperationException();
-//        }
-//        return it;
-//    }
-
-
-//    private LabelIterator createElementsLabelIterator() {
-//        return new LabelIterator() {
-//            Iterator<Integer> nodeIt = null;
-//            int nodeIndex = 0;
-//            double pos;
-//            Node node;
-//
-//            private Iterator<Integer> nodeIt() {
-//                if (nodeIt == null) {
-//                    nodeIt = nodeIterator(selectedGraph);
-//                }
-//                return nodeIt;
-//            }
-//
-//            public double getPosition() {
-//                return pos;
-//            }
-//
-//            public double getSize() {
-//                return cellHeight;
-//            }
-//
-//            public boolean hasNext() {
-//                return nodeIt().hasNext();
-//            }
-//
-//            public String next() {
-//                if (!hasNext()) {
-//                    throw new NoSuchElementException();
-//                }
-//                node = selectedGraph.getNode(nodeIt().next());
-//                String label = node.getString(attrSpec.getNodeLabelAttr());
-//
-//                pos = cellOffset(nodeIndex);
-//
-//                nodeIndex++;
-//                return label;
-//            }
-//
-//            public void reset() {
-//                nodeIt = null;
-//                nodeIndex = 0;
-//                pos = Double.NaN;
-//            }
-//
-//            @Override
-//            public Color getColor() {
-//                return ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
-//            }
-//        };
-//    }
+    private PText createCaption(int i, String text) {
+        PText t = new PText(text);
+        t.setFont(CAPTION_FONT);
+        t.setTextPaint(CAPTION_COLOR);
+        double x = 0, y = 0;
+        x = cellSpacingX + i * (cellWidth + cellSpacingX);
+        y = 0 ;
+        t.setJustification(JComponent.LEFT_ALIGNMENT);
+        t.setBounds(x + container.getItemsOffsetX() + (cellWidth - t.getWidth())/2, y - t.getHeight()*1.5, t.getWidth(), t.getHeight());
+        return t;
+    }
 
     public void showTooltip(VisualTimelineNodeCell vc) {
         Node node = vc.getNode();
@@ -467,109 +319,13 @@ public class VisualTimeline extends PNode {
                 , null
         );
 
-        PBounds b = vc.getGlobalBounds(); // getBoundsReference();
-//        Point2D off = vc.getOffset();
+        PBounds b = vc.getGlobalBounds();
         tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY(), 0, 0);
-//        tooltipBox.showTooltipAt(off.getX() + b.getMaxX(), off.getY() + b.getMaxY(), 0, 0);
-//        PAffineTransform t = vc.getTransformReference(true);
-//        off = t.transform(off, new Point2D.Double());
-//        tooltipBox.showTooltipAt(b.getMaxX(), b.getMaxY(), 0, 0);
     }
 
     public void hideTooltip() {
         tooltipBox.setVisible(false);
     }
 
-
-
-//    class PRow extends PNode {
-//        private boolean collapsed = true;
-//        private final int index;
-//        private PActivity lastActivity;
-//        private int numSubRows = 0;
-//        private final PText labelNode;
-//
-//        public PRow(String label, int index) {
-//            this.index = index;
-//
-//            labelNode = createCaption(index, label, (ORIENTATION == Orientation.VERTICAL));
-//            addChild(labelNode);
-//        }
-//
-//        public PNode getLabel() {
-//            return labelNode;
-//        }
-//
-//        public void addSubRow(PRow sub) {
-//            addChild(sub);
-////            sub.setVisible(false);
-////            sub.offset(0, getY() + getHeight());
-////            sub.offset(getX() + getWidth(), 0);
-//            numSubRows++;
-//        }
-//
-//        private PAffineTransform shift(PAffineTransform t) {
-//            PAffineTransform st = new PAffineTransform();
-//            switch (ORIENTATION) {
-//            case HORIZONTAL:
-//                st.setOffset(0, (collapsed ? +1 : -1) * getSubRowsUnionBounds().getHeight());
-//                break;
-//            case VERTICAL:
-//                st.setOffset((collapsed ? +1 : -1) * getSubRowsUnionBounds().getWidth(), 0);
-//                break;
-//            }
-//            st.concatenate(t);
-//            return st;
-//        }
-//
-//        @Override
-//        public boolean addActivity(PActivity activity) {
-//            if (super.addActivity(activity)) {
-//                lastActivity = activity;
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-//
-//        public void toggleCollapsed() {
-//            for (int i = index + 1, numRows = rows.size(); i < numRows; i++) {
-//                PRow row = rows.get(i);
-//                row.terminateIfStepping();
-//                row.animateToTransform(shift(row.getTransform()), COLLAPSE_ANIMATION_DURATION);
-//            }
-//
-//            collapsed = !collapsed;
-////            setSubRowsVisibile(!collapsed);
-//        }
-//
-//        private void setSubRowsVisibile(boolean v) {
-//            for (int i = 0, numChildren = getChildrenCount(); i < numChildren; i++) {
-//                PNode ch = getChild(i);
-//                if (ch instanceof PRow) {
-//                    ch.setVisible(v);
-//                }
-//            }
-//        }
-//
-//        private PBounds getSubRowsUnionBounds() {
-//            PBounds b = new PBounds();
-//            for (int i = 0, numChildren = getChildrenCount(); i < numChildren; i++) {
-//                PNode row = getChild(i);
-//                if (row instanceof PRow) {
-//                    b.add(row.getFullBoundsReference());
-//                }
-//            }
-//            return b;
-//        }
-//
-//        private void terminateIfStepping() {
-//            if (lastActivity != null && lastActivity.isStepping()) {
-//                lastActivity.terminate(PActivity.TERMINATE_AND_FINISH_IF_STEPPING);
-//                lastActivity = null;
-//            }
-//        }
-//
-//    }
 }
 
