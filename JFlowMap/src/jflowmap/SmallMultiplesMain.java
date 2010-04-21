@@ -36,16 +36,19 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import jflowmap.bundling.ForceDirectedBundlerParameters;
+import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.models.FlowMapModel;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.VisualNode;
 
 import org.apache.log4j.Logger;
 
 import prefuse.data.io.DataIOException;
 import at.fhj.utils.misc.FileUtils;
+import ch.unifr.dmlib.cluster.Linkages;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -67,7 +70,6 @@ public class SmallMultiplesMain extends JFrame {
     private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
     private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
     private Color datasetNameLabelColor = Color.gray;
-//    private static final Color BACKGROUND_COLOR = new Color(0x60, 0x60, 0x60);
 
     private double zoom = 1.0;
     private double translateX, translateY;
@@ -100,9 +102,10 @@ public class SmallMultiplesMain extends JFrame {
 
         setSize(1024, 768);
 
+        setBackground(new Color(0x60, 0x60, 0x60));
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
 
     public void setShowLegend(boolean showLegend) {
         this.showLegend = showLegend;
@@ -247,8 +250,8 @@ public class SmallMultiplesMain extends JFrame {
             final Graphics2D g = (Graphics2D)image.getGraphics();
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//            g.setColor(BACKGROUND_COLOR);
-//            g.fillRect(0, 0, totalWidth, totalHeight);
+            g.setColor(getBackground());
+            g.fillRect(0, 0, totalWidth, totalHeight);
 
 
             int cycle = 0;
@@ -515,9 +518,150 @@ public class SmallMultiplesMain extends JFrame {
         return sm;
     }
 
+    public static final SmallMultiplesMain createSM_TLBS_3years() {
+        SmallMultiplesMain sm = new SmallMultiplesMain(
+                "refugees-small-multiples_TLBS_3years_global.png",
+                new DatasetSpec(
+                    "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
+                    "data/refugees/countries-areas.xml.gz"),
+                "1996", "2000", "2008");
+        sm.setSize(800, 600);
+        sm.setZoom(1.3);
+        sm.setTranslation(30, -50);
+        sm.setUseGlobalVisualMappings(true);
+        sm.setShowLegend(true);
+        sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+        sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+            @Override
+            public void setupFlowMapModel(FlowMapModel model) {
+                model.setMaxEdgeWidth(10);
+                model.setNodeSize(3);
+                model.setShowDirectionMarkers(true);
+                model.setDirectionMarkerSize(.17);
+                model.setDirectionMarkerAlpha(245);
+                model.setEdgeAlpha(100);
+                model.setShowNodes(true);
+            }
+        });
+        return sm;
+    }
+
+
+    public static final SmallMultiplesMain createSM_TLBS_3years_OneRegion() {
+        SmallMultiplesMain sm = new SmallMultiplesMain(
+                "refugees-eu_global.png",
+                new DatasetSpec(
+                    "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name",
+                    "data/refugees-eu/countries-areas.xml"),
+                "1996", "2000", "2008");
+        sm.setSize(800, 600);
+        sm.setZoom(1.3);
+        sm.setTranslation(30, -50);
+        sm.setUseGlobalVisualMappings(true);
+        sm.setShowLegend(true);
+        sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+        sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+            @Override
+            public void setupFlowMapModel(FlowMapModel model) {
+                model.setMaxEdgeWidth(10);
+                model.setNodeSize(3);
+                model.setShowDirectionMarkers(true);
+                model.setDirectionMarkerSize(.17);
+                model.setDirectionMarkerAlpha(245);
+                model.setEdgeAlpha(100);
+                model.setShowNodes(true);
+            }
+        });
+        return sm;
+    }
+
+
+
+    public static final SmallMultiplesMain createSM_TLBS_bundled() {
+        SmallMultiplesMain sm = new SmallMultiplesMain(
+                "bundled.png",
+                new DatasetSpec(
+                    "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
+                    "data/refugees/countries-areas.xml.gz"),
+//                "1996", "2000", "2008"
+                    "2000"
+                );
+        sm.setSize(1024, 768);
+        sm.setZoom(1.3);
+        sm.setBackground(Color.white);
+        sm.setTranslation(30, -50);
+        sm.setUseGlobalVisualMappings(true);
+        sm.setShowLegend(true);
+        sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+        sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+            @Override
+            public void setupFlowMapModel(FlowMapModel model) {
+                model.setMaxEdgeWidth(10);
+                model.setNodeSize(3);
+                model.setShowDirectionMarkers(true);
+                model.setDirectionMarkerSize(.17);
+                model.setDirectionMarkerAlpha(245);
+                model.setEdgeAlpha(100);
+                model.setShowNodes(true);
+            }
+        });
+        sm.setFdebInitializer(new FDEBInitializer() {
+        @Override
+        public void setupFDEB(ForceDirectedBundlerParameters bundlerParams) {
+//            bundlerParams.setEdgeValueAffectsAttraction(true);
+//            bundlerParams.setS(5);
+        }
+        });
+        return sm;
+    }
+
+    public static final SmallMultiplesMain createSM_TLBS_clustered() {
+        SmallMultiplesMain sm = new SmallMultiplesMain(
+                "clustered.png",
+                new DatasetSpec(
+                    "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
+                    "data/refugees/countries-areas.xml.gz"),
+//                    "1996", "2000", "2008"
+                    "2000"
+                    );
+        sm.setSize(1024, 768);
+        sm.setBackground(Color.white);
+        sm.setZoom(1.3);
+        sm.setTranslation(30, -20);
+        sm.setUseGlobalVisualMappings(true);
+        sm.setShowLegend(true);
+        sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+        sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+            @Override
+            public void setupFlowMapModel(FlowMapModel model) {
+                model.setMaxEdgeWidth(10);
+                model.setNodeSize(3);
+                model.setShowDirectionMarkers(true);
+                model.setDirectionMarkerSize(.17);
+                model.setDirectionMarkerAlpha(245);
+                model.setEdgeAlpha(100);
+                model.setShowNodes(true);
+            }
+        });
+          sm.setClusterer(new Clusterer() {
+          @Override
+          public FlowMapModel cluster(JFlowMap jFlowMap) {
+              VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
+              visualFlowMap.clusterNodes(
+                      NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
+              visualFlowMap.setClusterDistanceThreshold(0.82);
+//              visualFlowMap.setEuclideanClusterDistanceThreshold(55);
+              visualFlowMap.setEuclideanClusterDistanceThreshold(40);
+              visualFlowMap.joinClusterEdges();
+              return jFlowMap.getVisualFlowMap().getModel();
+          }
+          });
+
+        return sm;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
-        SmallMultiplesMain sm =
-            createSM_TLBS_all();
+        SmallMultiplesMain sm = createSM_TLBS_bundled();
         sm.setVisible(true);
         sm.start();
     }
