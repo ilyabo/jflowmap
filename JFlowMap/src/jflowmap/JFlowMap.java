@@ -98,7 +98,7 @@ public class JFlowMap extends JComponent {
         canvas.setPanEventHandler(new PanHandler());
         add(canvas, BorderLayout.CENTER);
 
-        setColorScheme(ColorSchemes.LIGHT_BLUE.getScheme());
+        setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
     }
 
     @Override
