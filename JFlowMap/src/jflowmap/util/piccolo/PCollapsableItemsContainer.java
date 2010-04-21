@@ -29,6 +29,7 @@ public class PCollapsableItemsContainer extends PNode {
     private final double itemBodySpacing = 5;
     private final int collapseAnimationDuration = 200;
     private final CollapseHandler collapseHandler;
+    private double labelsWidth;
 
     public PCollapsableItemsContainer() {
         this(true);
@@ -47,6 +48,8 @@ public class PCollapsableItemsContainer extends PNode {
             if (mx > labelMaxX) labelMaxX = mx;
         }
 
+        this.labelsWidth = labelMaxX;
+
         double accHeight = 0;
         for (Item item : PNodes.childrenOfType(this, Item.class)) {
             PNode head = item.getHead();
@@ -62,6 +65,10 @@ public class PCollapsableItemsContainer extends PNode {
         }
 
         repaint();
+    }
+
+    public double getItemsOffsetX() {
+        return labelsWidth + itemLabelSpacing;
     }
 
     public Item addNewItem(String labelText, PNode head, PNode body) {
