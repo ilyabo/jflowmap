@@ -31,6 +31,7 @@ import jflowmap.geom.Point;
 import jflowmap.models.FlowMapGraphBuilder;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.ZoomHandler;
+import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.timeline.VisualTimeline;
 
 import org.apache.log4j.Logger;
@@ -60,6 +61,8 @@ public class JFlowTimeline extends JComponent {
 //        new Color(47, 89, 134);
     private final PCanvas canvas;
     private final VisualTimeline visualTimeline;
+    private ColorScheme colorScheme;
+
 
     public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
         this(graphs, attrSpec, null);
@@ -85,6 +88,9 @@ public class JFlowTimeline extends JComponent {
         canvas.getLayer().addChild(visualTimeline);
     }
 
+    public ColorScheme getColorScheme() {
+        return colorScheme;
+    }
 
     private List<Graph> createGraphsWithGroupedNodes(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec,
             String columnToGroupNodesBy) {

@@ -26,7 +26,7 @@ import jflowmap.visuals.ColorScheme;
 /**
  * @author Ilya Boyandin
  */
-enum ColorSchemes {
+public enum ColorSchemes {
     DARK(new ColorScheme.Builder("Dark")
       .put(ColorCodes.BACKGROUND, new Color(0x20, 0x20, 0x20))
       .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
@@ -275,6 +275,14 @@ GRAY_RED_GREEN(new ColorScheme.Builder("Gray red-green")
 
     public ColorScheme getScheme() {
         return scheme;
+    }
+
+    public Color get(ColorCodes code) {
+        return getScheme().get(code);
+    }
+
+    public Color getForValue(ColorCodes code, double value) {
+        return getScheme().getForValue(code, value);
     }
 
 }
