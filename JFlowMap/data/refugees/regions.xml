@@ -326,25 +326,25 @@
 
 		</region>
 	</region>
-
-    <region name="Stateless">
-        <country name="Stateless" iso-code="_ST"/>
-    </region>
     
     <region name="Various">
         <country name="Various" iso-code="_VA"/>
+
+        <country name="Stateless" iso-code="_ST"/>
+
+        <!-- 
+	    <region name="Other">
+	        <country name="Antartica" iso-code="ATA"/>
+	        <country name="Bouvet Island" iso-code="BVT"/>
+	        <country name="British Indian Ocean Territory" iso-code="IOT"/>
+	        <country name="Christmas Island" iso-code="CXR"/>
+	        <country name="Cocos (Keeling) Islands" iso-code="CCK"/>
+	        <country name="French Southern Territories" iso-code="ATF"/>
+	        <country name="Heard and McDonald Islands" iso-code="HMD"/>
+	        <country name="IMY" iso-code="IMY"/>
+	    </region>
+         -->
     </region>
     
-	<region name="Other">
-        <!--  TODO: sort these -->		
-        <country name="Antartica" iso-code="ATA"/>
-        <country name="Bouvet Island" iso-code="BVT"/>
-        <country name="British Indian Ocean Territory" iso-code="IOT"/>
-        <country name="Christmas Island" iso-code="CXR"/>
-        <country name="Cocos (Keeling) Islands" iso-code="CCK"/>
-        <country name="French Southern Territories" iso-code="ATF"/>
-        <country name="Heard and McDonald Islands" iso-code="HMD"/>
-        <country name="IMY" iso-code="IMY"/>
-	</region>
 	
 </regions>
