@@ -28,12 +28,13 @@ import javax.swing.JComponent;
 
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.JFlowMap;
-import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.piccolo.PNodes;
+import jflowmap.visuals.ColorCodes;
+import jflowmap.visuals.ColorScheme;
 import prefuse.data.Node;
 import prefuse.util.ColorLib;
 import edu.umd.cs.piccolo.PNode;
@@ -50,38 +51,41 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualTimelineNodeCell extends PNode {
 
+    private static final double LEFT_RIGHT_HALF_CIRCLE_GAP = 0; //.5;
     private static final Stroke HALF_CIRCLE_STROKE =
 //        new PFixedWidthStroke(1);
 //        new BasicStroke(1f);
         null;
-    private static final Color VALUE_COLOR_MIN_NEG = new Color(26, 152, 80);
-    private static final Color VALUE_COLOR_ZERO = new Color(255, 255, 191);
-    private static final Color VALUE_COLOR_MAX_POS = new Color(215, 48, 39);
+//    private static final Color VALUE_COLOR_MIN_NEG = new Color(26, 152, 80);
+//    private static final Color VALUE_COLOR_ZERO =  new Color(255, 255, 191);
+//    private static final Color VALUE_COLOR_MAX_POS = new Color(215, 48, 39);
 
-    private static final Color INTRAREG_VALUE_COLOR_MIN_NEG = new Color(102, 189, 99);
-    private static final Color INTRAREG_VALUE_COLOR_ZERO = new Color(255, 255, 191);
-    private static final Color INTRAREG_VALUE_COLOR_MAX_POS = new Color(244, 109, 67);
+//    private static final Color INTRAREG_VALUE_COLOR_MIN_NEG = new Color(102, 189, 99);
+//    private static final Color INTRAREG_VALUE_COLOR_ZERO = new Color(255, 255, 191);
+//    private static final Color INTRAREG_VALUE_COLOR_MAX_POS = new Color(244, 109, 67);
 
-    private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
+
+
+    private static final boolean FILL_HALF_CIRCLES_WITH_QTY_GRADIENT_COLOR = false;
+
+//    private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
     private static final boolean SHOW_NODE_LABEL = false;
     private static final boolean SHOW_VALUE_TEXT = false;
     private static final boolean SHOW_DIFF = false;
-    private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
-    private static final boolean FILL_RECT_WITH_REGION_COLOR = false;
+//    private static final boolean FILL_RECT_WITH_VALUE_COLOR = false;
+//    private static final boolean FILL_RECT_WITH_REGION_COLOR = false;
     private static final boolean SHOW_HALF_CIRCLES = true;
     private static final boolean SHOW_INTRAREG_HALF_CIRCLES = true;
-    private static final boolean FILL_HALF_CIRCLES_WITH_QTY_COLOR = false;
-    private static final boolean FILL_HALF_CIRCLES_WITH_MAX_COLOR = true;
 
     public static final int[] DIFF_COLORS = ArrayUtils.reverse(new int[] {
         ColorLib.rgb(165, 0, 38), ColorLib.rgb(215, 48, 39), ColorLib.rgb(244, 109, 67), ColorLib.rgb(253, 174, 97), ColorLib.rgb(254, 224, 139),
         ColorLib.rgb(255, 255, 191),
         ColorLib.rgb(217, 239, 139), ColorLib.rgb(166, 217, 106), ColorLib.rgb(102, 189, 99), ColorLib.rgb(26, 152, 80), ColorLib.rgb(0, 104, 55),
     });
-    private static final Color DIFF_COLOR_MIN = new Color(26, 152, 80);
-    private static final Color DIFF_COLOR_ZERO = new Color(255, 255, 191);
-    private static final Color DIFF_COLOR_MAX = new Color(215, 48, 39);
-    private static final Color DIFF_COLOR_NAN = new Color(100, 100, 100); //JFlowTimeline.CANVAS_BACKGROUND_COLOR;
+//    private static final Color DIFF_COLOR_MIN = new Color(26, 152, 80);
+//    private static final Color DIFF_COLOR_ZERO = new Color(255, 255, 191);
+//    private static final Color DIFF_COLOR_MAX = new Color(215, 48, 39);
+//    private static final Color DIFF_COLOR_NAN = new Color(100, 100, 100); //JFlowTimeline.CANVAS_BACKGROUND_COLOR;
 
     private static final double DIFF_BOX_WIDTH = 10;
     private static final double DIFF_BOX_GAP = 0;
@@ -126,20 +130,20 @@ public class VisualTimelineNodeCell extends PNode {
 
 
         Color rectColor = null;
-        if (FILL_RECT_WITH_VALUE_COLOR) {
-            if (!Double.isNaN(outValue)) {
-                double normalizedLogValue =
-                    vstats.normalizeLog(outValue);
-    //                vstats.normalize(value);
-                rectColor = ColorUtils.colorBetween(
-                        VALUE_COLOR_MIN_NEG,
-                        VALUE_COLOR_MAX_POS,
-                        normalizedLogValue, 255
-                );
-            } else {
-                rectColor = VALUE_COLOR_NAN;
-            }
-        }
+//        if (FILL_RECT_WITH_VALUE_COLOR) {
+//            if (!Double.isNaN(outValue)) {
+//                double normalizedLogValue =
+//                    vstats.normalizeLog(outValue);
+//    //                vstats.normalize(value);
+//                rectColor = ColorUtils.colorBetween(
+//                        VALUE_COLOR_MIN_NEG,
+//                        VALUE_COLOR_MAX_POS,
+//                        normalizedLogValue, 255
+//                );
+//            } else {
+//                rectColor = VALUE_COLOR_NAN;
+//            }
+//        }
 
 //        if (FILL_RECT_WITH_REGION_COLOR) {
 //            rectColor = ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
@@ -220,12 +224,12 @@ public class VisualTimelineNodeCell extends PNode {
             double normalizedInLocal = vstats.normalizeAroundZero(inLocalValue); // ! normalize using the non-local stats
             double normalizedOutLocal = vstats.normalizeAroundZero(outLocalValue);
 
-            addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedIn), normalizedIn));
-            addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedOut));
+            addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedIn), normalizedIn, true, false));
+            addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedOut, false, false));
 
             if (SHOW_INTRAREG_HALF_CIRCLES) {
-                addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal));
-                addChild(colorizeIntraregHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal));
+                addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedInLocal), normalizedInLocal, true, true));
+                addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOutLocal), normalizedOutLocal, false, true));
             }
         }
 
@@ -237,64 +241,89 @@ public class VisualTimelineNodeCell extends PNode {
         double wh = Math.min(b.width, b.height);
         double r = Math.sqrt(Math.abs(normalizedValue)) * wh;
         double off = (wh - r)/2;
-        PPath ppath = new PPath(new Arc2D.Double(x + off, y + off, r, r, (leftNotRight ? 90 : -90), 180, Arc2D.PIE));
+        PPath ppath = new PPath(new Arc2D.Double(
+                x + off + (leftNotRight ? -1 : +1) * LEFT_RIGHT_HALF_CIRCLE_GAP,   y + off,
+                r, r, (leftNotRight ? 90 : -90), 180, Arc2D.PIE));
         ppath.setStroke(HALF_CIRCLE_STROKE);
         return ppath;
     }
 
-    private PPath colorizeHalfCircle(PPath halfCircle, double normalizedValue) {
-        if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
+    private PPath colorizeHalfCircle(PPath halfCircle, double normalizedValue, boolean leftNotRight, boolean intrareg) {
+        ColorScheme cs = timeline.getColorScheme();
+
+        Color cmax = cs.get(leftNotRight ? ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT : ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT);
+
+//        if (!intrareg) {
+//            // TODO: cache this color (in ColorLib) or add it to the scheme
+//            cmax = new Color(cmax.getRed()/2, cmax.getGreen()/2, cmax.getBlue()/2);
+//        }
+      if (intrareg) {
+          // TODO: cache this color (in ColorLib) or add it to the scheme
+          cmax = new Color(
+                  cmax.getRed() + (255 - cmax.getRed())/2,
+                  cmax.getGreen() + (255 - cmax.getGreen())/2,
+                  cmax.getBlue() + (255 - cmax.getBlue())/2);
+      } else {
+          cmax = new Color(cmax.getRed()/2, cmax.getGreen()/2, cmax.getBlue()/2);
+      }
+
+        if (FILL_HALF_CIRCLES_WITH_QTY_GRADIENT_COLOR) {
             if (normalizedValue > 0) {
+                Color cmin = cs.get(leftNotRight ? ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT : ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT);
                 halfCircle.setPaint(ColorUtils.colorBetween(
-                        VALUE_COLOR_ZERO,
-                        VALUE_COLOR_MAX_POS,
+                        cmin,
+                        cmax,
+//                        VALUE_COLOR_ZERO,
+//                        VALUE_COLOR_MAX_POS,
                         normalizedValue, 255
                 ));
-            } else {
-                halfCircle.setPaint(ColorUtils.colorBetween(
-                        VALUE_COLOR_MIN_NEG,
-                        VALUE_COLOR_ZERO,
-                        normalizedValue, 255
-                ));
+//            } else {
+//                halfCircle.setPaint(ColorUtils.colorBetween(
+//                        VALUE_COLOR_MIN_NEG,
+//                        VALUE_COLOR_ZERO,
+//                        normalizedValue, 255
+//                ));
             }
-        } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
-            if (normalizedValue > 0) {
-                halfCircle.setPaint(VALUE_COLOR_MAX_POS);
-            } else if (normalizedValue == 0) {
-                halfCircle.setPaint(VALUE_COLOR_ZERO);
-            } else {
-                halfCircle.setPaint(VALUE_COLOR_MIN_NEG);
-            }
+//        } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
+//            if (normalizedValue > 0) {
+//                halfCircle.setPaint(VALUE_COLOR_MAX_POS);
+//            } else if (normalizedValue == 0) {
+//                halfCircle.setPaint(VALUE_COLOR_ZERO);
+//            } else {
+//                halfCircle.setPaint(VALUE_COLOR_MIN_NEG);
+//            }
+        } else {
+            halfCircle.setPaint(cmax);
         }
         return halfCircle;
     }
 
-    private PPath colorizeIntraregHalfCircle(PPath halfCircle, double normalizedValue) {
-        if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
-            if (normalizedValue > 0) {
-                halfCircle.setPaint(ColorUtils.colorBetween(
-                        INTRAREG_VALUE_COLOR_ZERO,
-                        INTRAREG_VALUE_COLOR_MAX_POS,
-                        normalizedValue, 255
-                ));
-            } else {
-                halfCircle.setPaint(ColorUtils.colorBetween(
-                        INTRAREG_VALUE_COLOR_MIN_NEG,
-                        INTRAREG_VALUE_COLOR_ZERO,
-                        normalizedValue, 255
-                ));
-            }
-        } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
-            if (normalizedValue > 0) {
-                halfCircle.setPaint(INTRAREG_VALUE_COLOR_MAX_POS);
-            } else if (normalizedValue == 0) {
-                halfCircle.setPaint(INTRAREG_VALUE_COLOR_ZERO);
-            } else {
-                halfCircle.setPaint(INTRAREG_VALUE_COLOR_MIN_NEG);
-            }
-        }
-        return halfCircle;
-    }
+//    private PPath colorizeIntraregHalfCircle(PPath halfCircle, double normalizedValue) {
+//        if (FILL_HALF_CIRCLES_WITH_QTY_COLOR) {
+//            if (normalizedValue > 0) {
+//                halfCircle.setPaint(ColorUtils.colorBetween(
+//                        INTRAREG_VALUE_COLOR_ZERO,
+//                        INTRAREG_VALUE_COLOR_MAX_POS,
+//                        normalizedValue, 255
+//                ));
+//            } else {
+//                halfCircle.setPaint(ColorUtils.colorBetween(
+//                        INTRAREG_VALUE_COLOR_MIN_NEG,
+//                        INTRAREG_VALUE_COLOR_ZERO,
+//                        normalizedValue, 255
+//                ));
+//            }
+//        } else if (FILL_HALF_CIRCLES_WITH_MAX_COLOR) {
+//            if (normalizedValue > 0) {
+//                halfCircle.setPaint(INTRAREG_VALUE_COLOR_MAX_POS);
+//            } else if (normalizedValue == 0) {
+//                halfCircle.setPaint(INTRAREG_VALUE_COLOR_ZERO);
+//            } else {
+//                halfCircle.setPaint(INTRAREG_VALUE_COLOR_MIN_NEG);
+//            }
+//        }
+//        return halfCircle;
+//    }
 
 
     public Node getNode() {

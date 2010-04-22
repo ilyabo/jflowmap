@@ -61,15 +61,17 @@ public class JFlowTimeline extends JComponent {
 //        new Color(47, 89, 134);
     private final PCanvas canvas;
     private final VisualTimeline visualTimeline;
-    private ColorScheme colorScheme;
+    private final ColorScheme colorScheme;
 
 
-    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
-        this(graphs, attrSpec, null);
-    }
+//    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
+//        this(graphs, attrSpec, null);
+//    }
 
     public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec, String columnToGroupNodesBy) {
         setLayout(new BorderLayout());
+
+        this.colorScheme = ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme();
 
         canvas = new PCanvas();
         canvas.setBackground(CANVAS_BACKGROUND_COLOR);

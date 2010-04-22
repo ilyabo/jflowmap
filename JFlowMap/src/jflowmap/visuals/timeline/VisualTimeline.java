@@ -33,7 +33,9 @@ import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
+import jflowmap.data.XmlRegionsReader;
 import jflowmap.util.piccolo.PCollapsableItemsContainer;
+import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.Tooltip;
 
 import org.apache.log4j.Logger;
@@ -132,6 +134,10 @@ public class VisualTimeline extends PNode {
 
     }
 
+    public ColorScheme getColorScheme() {
+        return jFlowTimeline.getColorScheme();
+    }
+
     private MinMax nodeSummaryMinMax(FlowMapStats stats) {
         return stats
             .getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING)
@@ -184,6 +190,11 @@ public class VisualTimeline extends PNode {
             int rowIndex = 0;
             for (String group: groupIds) {
                 String groupLabel = groupIdsToLabels.get(group);
+
+                int sep = groupLabel.lastIndexOf(XmlRegionsReader.REGION_SEPARATOR);
+                if (sep >= 0) {
+                    groupLabel = groupLabel.substring(sep + XmlRegionsReader.REGION_SEPARATOR.length());
+                }
 
                 PNode head = createRow(groupedGraphs, rowIndex, group);
                 PNode body = new PNode();

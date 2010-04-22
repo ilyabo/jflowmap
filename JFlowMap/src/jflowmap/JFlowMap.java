@@ -99,6 +99,7 @@ public class JFlowMap extends JComponent {
         add(canvas, BorderLayout.CENTER);
 
         setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+//        setColorScheme(ColorSchemes.DARK.getScheme());
     }
 
     @Override
