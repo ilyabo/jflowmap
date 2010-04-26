@@ -1,4 +1,4 @@
-<project name="JFlowMap" basedir="." default="build">
+<project name="JFlowMap" basedir="." default="build-prod">
 
 	<taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar" />
 
@@ -10,7 +10,22 @@
 	<property name="path.lib" value="lib"/>
 	<property name="path.build" value="build"/>
 
-	<target name="build" depends="mkdirs, clean, compile, make-jar, proguard, add-manifest, sign" />
+    <target name="build-prod">
+        <antcall target="_build">
+           <param name="mode" value="prod"/>
+        </antcall>
+        <antcall target="sign"/>
+    </target>
+
+   <target name="build-applet">
+        <antcall target="_build">
+           <param name="mode" value="applet"/>
+        </antcall>
+        <antcall target="sign"/>
+    </target>
+
+	<target name="_build" depends="mkdirs, clean, compile, make-jar, proguard, add-manifest" />
+
     
 	<path id="libs-classpath">
         <fileset dir="${path.lib}">
@@ -62,6 +77,9 @@
 	    	<keep name="org.apache.log4j.FileAppender"/>
 	    	<keep name="org.xmlpull.mxp1.MXParserFactory"/>
 	    	<keep name="jflowmap.FlowTimelineApplet"/>
+	    	<keep name="jflowmap.FlowMapApplet"/>
+
+            <!--keep extends="JApplet"/ -->
 
 	      -dontoptimize
             	
@@ -78,7 +96,7 @@
 	</target>
 
    <target name="make-jar">
-        <copy file="log4j-prod.properties" tofile="${path.build}/log4j.properties" overwrite="true"/>
+        <copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true"/>
         <jar basedir="." jarfile="${path.build}/${app.name}-no-libs.jar">
             <exclude name="**/*" />
             <fileset dir="${path.classes}">

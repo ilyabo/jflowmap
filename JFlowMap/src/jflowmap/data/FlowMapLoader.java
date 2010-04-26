@@ -74,9 +74,9 @@ public class FlowMapLoader {
             jFlowMap.setVisualFlowMap(visualFlowMap);
 
         } catch (Exception e) {
-            JFlowMap.logger.error("Couldn't load flow map " + dataset, e);
+            JFlowMap.logger.error("Couldn't load flow map " + dataset.getFilename(), e);
             JOptionPane.showMessageDialog(jFlowMap,
-                    "Couldn't load flow map: [" + e.getClass().getSimpleName()+ "] " + e.getMessage());
+                    "Couldn't load flow map '"  + dataset.getFilename() + "': [" + e.getClass().getSimpleName()+ "] " + e.getMessage());
         }
     }
 
