@@ -9,6 +9,7 @@
 	<property name="path.classes" value="bin"/>
 	<property name="path.lib" value="lib"/>
 	<property name="path.build" value="build"/>
+	<property name="mainclass" value="jflowmap.FlowMapMain"/>
 
     <target name="build-prod">
         <antcall target="_build">
@@ -20,6 +21,14 @@
    <target name="build-applet">
         <antcall target="_build">
            <param name="mode" value="applet"/>
+        </antcall>
+        <antcall target="sign"/>
+    </target>
+
+   <target name="build-preloaded">
+        <antcall target="_build">
+            <param name="mainclass" value="jflowmap.FlowMapPreloadedDataMain"/>
+            <param name="mode" value="prod"/>
         </antcall>
         <antcall target="sign"/>
     </target>
@@ -76,6 +85,7 @@
 	    	
 	    	<keep name="org.apache.log4j.FileAppender"/>
 	    	<keep name="org.xmlpull.mxp1.MXParserFactory"/>
+	    	<keep name="org.xmlpull.v1.builder.xpath.saxpath.com.werken.saxpath.XPathReader"/>
 	    	<keep name="jflowmap.FlowTimelineApplet"/>
 	    	<keep name="jflowmap.FlowMapApplet"/>
 
@@ -127,7 +137,7 @@
 		<move file="${path.build}/${app.name}.jar" tofile="${path.build}/_${app.name}.jar"/>
 		<jar basedir="." jarfile="${path.build}/${app.name}.jar">
             <manifest>
-                <attribute name="Main-Class" value="jflowmap.FlowMapMain" />
+                <attribute name="Main-Class" value="${mainclass}" />
             </manifest>
 			<exclude name="**/*" />
 			<zipgroupfileset file="${path.build}/_${app.name}.jar"/>
