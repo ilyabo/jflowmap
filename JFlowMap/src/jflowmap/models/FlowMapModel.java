@@ -98,8 +98,8 @@ public class FlowMapModel {
         this.edgeWeightFilterMin = weightStats.getMin();
         this.edgeWeightFilterMax = weightStats.getMax();
 
-        if (weightStats.getMax() - weightStats.getMin() > 10.0) {
-            maxEdgeWidth = 10.0;
+        if (weightStats.getMax() - weightStats.getMin() > 7.0) {
+            maxEdgeWidth = 7.0;
         } else {
             maxEdgeWidth = Math.floor(weightStats.getMax() - weightStats.getMin());
         }

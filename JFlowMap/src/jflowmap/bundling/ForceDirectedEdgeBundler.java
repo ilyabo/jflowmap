@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.geom.Vector2D;
@@ -34,6 +35,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import at.fhj.utils.misc.ProgressTracker;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -70,6 +72,10 @@ public class ForceDirectedEdgeBundler {
 
     private ProgressTracker progressTracker;
 
+    private MinMax nodeXStats;
+
+    private MinMax nodeYStats;
+
     public ForceDirectedEdgeBundler(
             FlowMapModel flowMapModel,
             ForceDirectedBundlerParameters params) {
@@ -85,7 +91,10 @@ public class ForceDirectedEdgeBundler {
         if (isSelfLoop(edgeIndex)) {
             return Collections.emptyList();
         }
-        return ImmutableList.copyOf(Arrays.asList(edgePoints[edgeIndex]));
+        return ImmutableList.copyOf(
+//                Lists.transform(Arrays.asList(edgePoints[edgeIndex]), denormalizeFun)
+                Arrays.asList(edgePoints[edgeIndex])
+        );
     }
 
     private void addGraphSubdivisionPoints() {
@@ -123,6 +132,22 @@ public class ForceDirectedEdgeBundler {
         }
     }
 
+
+    private Point normalize(Point p) {
+        return new Point(nodeXStats.normalize(p.x()), nodeYStats.normalize(p.y()));
+    }
+
+    private final Function<Point, Point> denormalizeFun = new Function<Point, Point>() {
+        @Override
+        public Point apply(Point p) {
+            return denormalize(p);
+        }
+    };
+
+    private Point denormalize(Point p) {
+        return new Point(nodeXStats.denormalize(p.x()), nodeYStats.denormalize(p.y()));
+    }
+
     private void init(ProgressTracker progressTracker) {
         this.progressTracker = progressTracker;
         Graph graph = flowMapModel.getGraph();
@@ -134,10 +159,14 @@ public class ForceDirectedEdgeBundler {
         if (params.getEdgeValueAffectsAttraction()) {
             edgeValues = new double[numEdges];
         }
+
+        nodeXStats = flowMapModel.getStats().getNodeXStats();
+        nodeYStats = flowMapModel.getStats().getNodeYStats();
+
         for (int i = 0; i < numEdges; i++) {
             Edge edge = graph.getEdge(i);
-            edgeStarts[i] = flowMapModel.getEdgeSourcePoint(edge);
-            edgeEnds[i] = flowMapModel.getEdgeTargetPoint(edge);
+            edgeStarts[i] = /*normalize*/(flowMapModel.getEdgeSourcePoint(edge));
+            edgeEnds[i] = /*normalize*/(flowMapModel.getEdgeTargetPoint(edge));
             double length = edgeStarts[i].distanceTo(edgeEnds[i]);
             if (Math.abs(length) < EPS) length = 0.0;
             edgeLengths[i] = length;

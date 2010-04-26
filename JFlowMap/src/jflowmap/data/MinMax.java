@@ -120,6 +120,17 @@ public class MinMax {
         return rv;
     }
 
+    public double denormalize(double normalized) {
+        if (Double.isNaN(normalized)) {
+            return Double.NaN;
+        }
+        if (getMax() == getMin()) return getMin();
+
+        double rv = getMin() + (normalized * (getMax() - getMin()));
+//        checkInterval(rv);
+        return rv;
+    }
+
     /**
      * Returns a value between -1.0 and 1.0. Zero stays zero.
      * If both min and max are positive, works in the same way as {@link #normalize(double)}

@@ -27,7 +27,7 @@ import at.fhj.utils.graphics.AxisMarks;
  * @author Ilya Boyandin
  */
 public class ForceDirectedBundlerParameters {
-    private FlowMapModel flowMapModel;
+    private final FlowMapModel flowMapModel;
 
     private int numCycles;
     private int P;        // initial number of subdivision points
@@ -46,12 +46,12 @@ public class ForceDirectedBundlerParameters {
 //    private boolean joinCloseSubdivisionPoints;
     private double repulsionAmount;
     private double subdivisionPointsCycleIncreaseRate;
-    
+
     public ForceDirectedBundlerParameters(FlowMapModel flowMapModel) {
         this.flowMapModel = flowMapModel;
         resetToDefaults();
     }
-    
+
     public void resetToDefaults() {
         numCycles = 10;
         P = 1;
@@ -61,7 +61,8 @@ public class ForceDirectedBundlerParameters {
 //        MinMax lenStats = graphStats.getEdgeLengthStats();
 //        S = 0.4;
 //        S = AxisMarks.ordAlpha(Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 1000) * 4;
-        S = AxisMarks.ordAlpha(Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
+//        S = AxisMarks.ordAlpha(Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
+          S = 1.0;
 //        S = AxisMarks.ordAlpha(lenStats.getAvg()) * 4 * 1e-3;
 //        I = 50;
         I = 100;
@@ -79,7 +80,7 @@ public class ForceDirectedBundlerParameters {
 //        joinCloseSubdivisionPoints = true;
         subdivisionPointsCycleIncreaseRate = 1.3;
     }
-    
+
     public double getSubdivisionPointsCycleIncreaseRate() {
         return subdivisionPointsCycleIncreaseRate;
     }
@@ -94,23 +95,23 @@ public class ForceDirectedBundlerParameters {
             directionAffectsCompatibility = false;
         }
     }
-    
+
 //    public boolean getJoinCloseSubdivisionPoints() {
 //        return joinCloseSubdivisionPoints;
 //    }
-//    
+//
 //    public void setJoinCloseSubdivisionPoints(boolean joinCloseSubdivisionPoints) {
 //        this.joinCloseSubdivisionPoints = joinCloseSubdivisionPoints;
 //    }
-    
+
     public int getNumCycles() {
         return numCycles;
     }
-    
+
     public void setNumCycles(int numCycles) {
         this.numCycles = numCycles;
     }
-    
+
     public int getP() {
         return P;
     }
@@ -222,15 +223,16 @@ public class ForceDirectedBundlerParameters {
      * Constructs a <code>String</code> with all attributes
      * in name = value format.
      *
-     * @return a <code>String</code> representation 
+     * @return a <code>String</code> representation
      * of this object.
      */
+    @Override
     public String toString()
     {
         final String TAB = "    ";
-        
+
         String retValue = "";
-        
+
         retValue = "ForceDirectedBundlerParameters ( "
             + super.toString() + TAB
             + "numCycles = " + this.numCycles + TAB
@@ -250,9 +252,9 @@ public class ForceDirectedBundlerParameters {
             + "repulsionAmount = " + this.repulsionAmount + TAB
             + "subdivisionPointsCycleIncreaseRate = " + this.subdivisionPointsCycleIncreaseRate + TAB
             + " )";
-    
+
         return retValue;
     }
-    
-    
+
+
 }
