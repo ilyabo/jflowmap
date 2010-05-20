@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import jflowmap.models.VisualFlowMapModel;
+import jflowmap.visuals.VisualFlowMapModel;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;

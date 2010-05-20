@@ -27,7 +27,7 @@ import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.geom.Vector2D;
-import jflowmap.models.VisualFlowMapModel;
+import jflowmap.visuals.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 

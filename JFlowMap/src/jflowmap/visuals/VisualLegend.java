@@ -29,7 +29,6 @@ import java.util.List;
 import jflowmap.JFlowMap;
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
-import jflowmap.models.VisualFlowMapModel;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PPaintContext;

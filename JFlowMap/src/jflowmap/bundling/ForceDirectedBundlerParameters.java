@@ -20,7 +20,7 @@ package jflowmap.bundling;
 
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
-import jflowmap.models.VisualFlowMapModel;
+import jflowmap.visuals.VisualFlowMapModel;
 import at.fhj.utils.graphics.AxisMarks;
 
 /**

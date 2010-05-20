@@ -49,7 +49,6 @@ import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geom.FPoint;
-import jflowmap.models.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 

@@ -27,7 +27,6 @@ import java.util.Arrays;
 import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
-import jflowmap.models.VisualFlowMapModel;
 import jflowmap.util.piccolo.PNodes;
 
 import org.apache.log4j.Logger;

@@ -22,7 +22,7 @@ import java.util.List;
 
 import jflowmap.geom.FPoint;
 import jflowmap.geom.Point;
-import jflowmap.models.VisualFlowMapModel;
+import jflowmap.visuals.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 

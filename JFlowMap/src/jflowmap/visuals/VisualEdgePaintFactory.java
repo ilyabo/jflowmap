@@ -24,7 +24,6 @@ import java.awt.Paint;
 
 import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
-import jflowmap.models.VisualFlowMapModel;
 import jflowmap.util.ColorUtils;
 
 /**

@@ -30,7 +30,6 @@ import javax.swing.SwingUtilities;
 
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
-import jflowmap.models.VisualFlowMapModel;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.util.piccolo.PanHandler;
@@ -39,6 +38,7 @@ import jflowmap.visuals.ColorCodes;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualAreaMap;
 import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 

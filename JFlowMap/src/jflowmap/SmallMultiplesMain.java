@@ -39,9 +39,9 @@ import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
-import jflowmap.models.VisualFlowMapModel;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.VisualFlowMapModel;
 import jflowmap.visuals.VisualNode;
 
 import org.apache.log4j.Logger;
