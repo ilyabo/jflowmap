@@ -24,7 +24,7 @@ import java.awt.Paint;
 
 import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import jflowmap.util.ColorUtils;
 
 /**
@@ -59,7 +59,7 @@ public class VisualEdgePaintFactory {
             double srcX, double srcY, double targetX, double targetY,
             double edgeLength, boolean isSelfLoop)
     {
-        FlowMapModel model = visualFlowMap.getModel();
+        VisualFlowMapModel model = visualFlowMap.getModel();
         int alpha = model.getEdgeAlpha();
         if (isSelfLoop) {
             return ColorUtils.colorBetween(

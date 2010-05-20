@@ -27,7 +27,7 @@ import java.util.Arrays;
 import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import jflowmap.util.piccolo.PNodes;
 
 import org.apache.log4j.Logger;
@@ -143,7 +143,7 @@ public abstract class VisualEdge extends PNode {
 //    public abstract void updateEdgeMarkerColors();
 
     public void updateVisibility() {
-        final FlowMapModel model = visualFlowMap.getModel();
+        final VisualFlowMapModel model = visualFlowMap.getModel();
         double weightFilterMin = model.getEdgeWeightFilterMin();
         double weightFilterMax = model.getEdgeWeightFilterMax();
 

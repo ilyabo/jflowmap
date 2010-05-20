@@ -23,8 +23,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import jflowmap.models.FlowMapModel;
-
+import jflowmap.models.VisualFlowMapModel;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -37,12 +36,12 @@ import prefuse.data.io.DataIOException;
 /**
  * @author Ilya Boyandin
  */
-public class CsvFlowMapReader extends AbstractGraphReader {
+public class CsvTrajectoryGraphReader extends AbstractGraphReader {
 
-    private static final String COLUMN_X = FlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
-    private static final String COLUMN_Y = FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
-    private static final String COLUMN_VALUE = FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
-    
+    private static final String COLUMN_X = VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
+    private static final String COLUMN_Y = VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
+    private static final String COLUMN_VALUE = VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
+
     private Map<Point2D, Node> nodes;
     private Graph graph;
 
@@ -56,16 +55,16 @@ public class CsvFlowMapReader extends AbstractGraphReader {
         graph.addColumn(COLUMN_X, double.class);
         graph.addColumn(COLUMN_Y, double.class);
         graph.addColumn(COLUMN_VALUE, double.class);
-        
+
         for (int i = 0, tuples = table.getTupleCount(); i < tuples; i++) {
             Tuple tuple = table.getTuple(i);
             if (tuple.getColumnCount() < 4) {
                 throw new DataIOException("Not enough data columns in line " + (i + 1) + ". Must be at least 4.");
             }
             Point2D from = new Point2D.Double(tuple.getDouble(0), tuple.getDouble(1));
-            Point2D to = new Point2D.Double(tuple.getDouble(2), tuple.getDouble(3)); 
+            Point2D to = new Point2D.Double(tuple.getDouble(2), tuple.getDouble(3));
             Edge edge = graph.addEdge(getNode(from), getNode(to));
-            
+
             if (tuple.getColumnCount() >= 4) {
                 edge.set(COLUMN_VALUE, tuple.getDouble(4));
             }
@@ -84,5 +83,5 @@ public class CsvFlowMapReader extends AbstractGraphReader {
         }
         return node;
     }
-    
+
 }

@@ -22,7 +22,7 @@ import java.util.List;
 
 import jflowmap.geom.FPoint;
 import jflowmap.geom.Point;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 
@@ -55,14 +55,14 @@ public class EdgeSegmentAggregator {
 
     private static Logger logger = Logger.getLogger(EdgeSegmentAggregator.class);
 
-    private final FlowMapModel flowMapModel;
+    private final VisualFlowMapModel flowMapModel;
 
     private List<EdgeSegment> segments;
     private List<SegmentedEdge> segmentedEdges;
 
     private List<EdgeSegment> aggregatedSegments;
 
-    public EdgeSegmentAggregator(FlowMapModel flowMapModel) {
+    public EdgeSegmentAggregator(VisualFlowMapModel flowMapModel) {
         this.flowMapModel = flowMapModel;
     }
 

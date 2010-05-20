@@ -49,7 +49,7 @@ import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geom.FPoint;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 
@@ -98,7 +98,7 @@ public class VisualFlowMap extends PNode {
     private final PNode edgeLayer;
     private final PNode nodeLayer;
 
-    private final FlowMapModel flowMapModel;
+    private final VisualFlowMapModel flowMapModel;
     private List<VisualNode> visualNodes;
     private List<VisualEdge> visualEdges;
     private Map<Node, VisualNode> nodesToVisuals;
@@ -123,7 +123,7 @@ public class VisualFlowMap extends PNode {
     private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
     private final VisualLegend visualLegend;
 
-    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, FlowMapModel model, boolean showLegend) {
+    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, VisualFlowMapModel model, boolean showLegend) {
         this.jFlowMap = jFlowMap;
     	this.flowMapModel = model;
 
@@ -322,7 +322,7 @@ public class VisualFlowMap extends PNode {
 		return flowMapModel.getStats();
 	}
 
-    public FlowMapModel getModel() {
+    public VisualFlowMapModel getModel() {
         return flowMapModel;
     }
 
@@ -430,38 +430,38 @@ public class VisualFlowMap extends PNode {
         addAttribute(Attributes.NODE_SELECTION.name(), visualNode);  // will fire a propertyChange event
     }
 
-    private void initModelChangeListeners(FlowMapModel model) {
+    private void initModelChangeListeners(VisualFlowMapModel model) {
     	model.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent evt) {
 				String prop = evt.getPropertyName();
-				if (prop.equals(FlowMapModel.PROPERTY_AUTO_ADJUST_COLOR_SCALE)  ||
-					prop.equals(FlowMapModel.PROPERTY_EDGE_ALPHA)  ||
-					prop.equals(FlowMapModel.PROPERTY_DIRECTION_MARKER_ALPHA)  ||
-					prop.equals(FlowMapModel.PROPERTY_USE_LOG_COLOR_SCALE)  ||
-					prop.equals(FlowMapModel.PROPERTY_FILL_EDGES_WITH_GRADIENT) ||
-					prop.equals(FlowMapModel.PROPERTY_SHOW_DIRECTION_MARKERS)  ||
-					prop.equals(FlowMapModel.PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS)  ||
-					prop.equals(FlowMapModel.PROPERTY_DIRECTION_MARKER_SIZE)
+				if (prop.equals(VisualFlowMapModel.PROPERTY_AUTO_ADJUST_COLOR_SCALE)  ||
+					prop.equals(VisualFlowMapModel.PROPERTY_EDGE_ALPHA)  ||
+					prop.equals(VisualFlowMapModel.PROPERTY_DIRECTION_MARKER_ALPHA)  ||
+					prop.equals(VisualFlowMapModel.PROPERTY_USE_LOG_COLOR_SCALE)  ||
+					prop.equals(VisualFlowMapModel.PROPERTY_FILL_EDGES_WITH_GRADIENT) ||
+					prop.equals(VisualFlowMapModel.PROPERTY_SHOW_DIRECTION_MARKERS)  ||
+					prop.equals(VisualFlowMapModel.PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS)  ||
+					prop.equals(VisualFlowMapModel.PROPERTY_DIRECTION_MARKER_SIZE)
 				) {
 					updateEdgeColors();
 					visualLegend.update();
-				} else if (prop.equals(FlowMapModel.PROPERTY_MAX_EDGE_WIDTH)  ||
-				           prop.equals(FlowMapModel.PROPERTY_USE_LOG_WIDTH_SCALE)
+				} else if (prop.equals(VisualFlowMapModel.PROPERTY_MAX_EDGE_WIDTH)  ||
+				           prop.equals(VisualFlowMapModel.PROPERTY_USE_LOG_WIDTH_SCALE)
 				        ) {
 					updateEdgeWidths();
                     visualLegend.update();
-				} else if (prop.equals(FlowMapModel.PROPERTY_VALUE_FILTER_MIN) ||
-						prop.equals(FlowMapModel.PROPERTY_VALUE_FILTER_MAX))
+				} else if (prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MIN) ||
+						prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MAX))
 				{
 	                updateEdgeVisibility();
 //	                updateEdgeColors();
-				} else if (prop.equals(FlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MIN) ||
-						prop.equals(FlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MAX))
+				} else if (prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MIN) ||
+						prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MAX))
 				{
 	                updateEdgeVisibility();
-				} else if (prop.equals(FlowMapModel.PROPERTY_SHOW_NODES)) {
+				} else if (prop.equals(VisualFlowMapModel.PROPERTY_SHOW_NODES)) {
 				    updateNodeVisibility();
-				} else if (prop.equals(FlowMapModel.PROPERTY_NODE_SIZE)) {
+				} else if (prop.equals(VisualFlowMapModel.PROPERTY_NODE_SIZE)) {
 				    updateNodeSizes();
 				}
 			}
@@ -895,10 +895,10 @@ public class VisualFlowMap extends PNode {
                 new FlowMapGraphWithAttrSpecs(
                     clusteredGraph,
                     new FlowMapAttrsSpec(
-                        FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
-                        FlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME,
-                        FlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
-                        FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
+                        VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
+                        VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME,
+                        VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
+                        VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
                         0
                     )
                 ),

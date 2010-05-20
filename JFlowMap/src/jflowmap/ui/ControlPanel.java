@@ -57,7 +57,7 @@ import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.MinMax;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import jflowmap.util.Pair;
 import jflowmap.visuals.VisualFlowMap;
 import jflowmap.visuals.VisualNode;
@@ -341,7 +341,7 @@ public class ControlPanel {
         maxLengthFilterSlider.setModel(maxLengthFilterModels.second());
     }
 
-    public void setData(FlowMapModel data) {
+    public void setData(VisualFlowMapModel data) {
         autoAdjustColorScaleCheckBox.setSelected(data.getAutoAdjustColorScale());
         useLogWidthScaleCheckbox.setSelected(data.getUseLogWidthScale());
         useLogColorScaleCheckbox.setSelected(data.getUseLogColorScale());
@@ -660,7 +660,7 @@ public class ControlPanel {
         visualFlowMapListeners.clear();
     }
 
-    public FlowMapModel getFlowMapModel() {
+    public VisualFlowMapModel getFlowMapModel() {
         return getVisualFlowMap().getModel();
     }
 

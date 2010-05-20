@@ -32,10 +32,10 @@ import prefuse.data.Node;
 public class FlowMapGraphBuilder {
 
     private final String nodeIdAttr = FlowMap.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
-    private String nodeXAttr = FlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
-    private String nodeYAttr = FlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
-    private String edgeWeightAttr = FlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
-    private String nodeLabelAttr = FlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME;
+    private String nodeXAttr = VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
+    private String nodeYAttr = VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
+    private String edgeWeightAttr = VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
+    private String nodeLabelAttr = VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME;
 
     private final Graph graph;
     private HashMap<EdgeKey, Edge> cumulatedEdges;

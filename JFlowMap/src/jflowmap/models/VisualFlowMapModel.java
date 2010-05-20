@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 /**
  * @author Ilya Boyandin
  */
-public class FlowMapModel {
+public class VisualFlowMapModel {
 
     public static final String DEFAULT_NODE_X_ATTR_NAME = "x";
     public static final String DEFAULT_NODE_Y_ATTR_NAME = "y";
@@ -79,7 +79,7 @@ public class FlowMapModel {
     private final FlowMapStats stats;
     private final Graph graph;
 
-    public FlowMapModel(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
+    public VisualFlowMapModel(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
         this.graph = graphAndSpecs.getGraph();
         this.edgeWeightAttr = graphAndSpecs.getAttrsSpec().getEdgeWeightAttr();
         this.xNodeAttr = graphAndSpecs.getAttrsSpec().getXNodeAttr();
@@ -398,24 +398,24 @@ public class FlowMapModel {
 
     public boolean hasEdgeSubdivisionPoints(Edge edge) {
         return
-            edge.canGet(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, List.class)  &&
+            edge.canGet(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, List.class)  &&
             // the above will return true after calling removeAllEdgeSubdivisionPoints(),
             // so we need to add the following null check:
-            (edge.get(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME) != null);
+            (edge.get(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME) != null);
     }
 
     @SuppressWarnings("unchecked")
     public List<Point> getEdgeSubdivisionPoints(Edge edge) {
         checkContainsEdge(edge);
-        return (List<Point>) edge.get(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME);
+        return (List<Point>) edge.get(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME);
     }
 
     public void setEdgeSubdivisionPoints(Edge edge, List<Point> points) {
         checkContainsEdge(edge);
-        if (!graph.hasSet(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME)) {
-            graph.addColumn(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, List.class);
+        if (!graph.hasSet(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME)) {
+            graph.addColumn(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, List.class);
         }
-        edge.set(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, points);
+        edge.set(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, points);
     }
 
     public void removeAllEdgeSubdivisionPoints() {
@@ -423,7 +423,7 @@ public class FlowMapModel {
         for (int i = 0; i < numEdges; i++) {
             Edge edge = graph.getEdge(i);
             if (hasEdgeSubdivisionPoints(edge)) {
-                edge.set(FlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, null);
+                edge.set(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, null);
             }
         }
     }

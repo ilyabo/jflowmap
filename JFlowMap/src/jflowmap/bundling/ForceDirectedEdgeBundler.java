@@ -27,7 +27,7 @@ import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.geom.Vector2D;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 
@@ -67,7 +67,7 @@ public class ForceDirectedEdgeBundler {
     private double S;   // step size
     private int I;      // number of iteration steps performed during a cycle
 
-    private final FlowMapModel flowMapModel;
+    private final VisualFlowMapModel flowMapModel;
     private final ForceDirectedBundlerParameters params;
 
     private ProgressTracker progressTracker;
@@ -77,7 +77,7 @@ public class ForceDirectedEdgeBundler {
     private MinMax nodeYStats;
 
     public ForceDirectedEdgeBundler(
-            FlowMapModel flowMapModel,
+            VisualFlowMapModel flowMapModel,
             ForceDirectedBundlerParameters params) {
         this.flowMapModel = flowMapModel;
         this.params = params;

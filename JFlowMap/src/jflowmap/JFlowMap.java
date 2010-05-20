@@ -30,7 +30,7 @@ import javax.swing.SwingUtilities;
 
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.util.piccolo.PanHandler;
@@ -140,7 +140,7 @@ public class JFlowMap extends JComponent {
             stats = FlowMapStats.createFor(graphAndSpecs);
         }
 
-        FlowMapModel params = new FlowMapModel(graphAndSpecs, stats);
+        VisualFlowMapModel params = new VisualFlowMapModel(graphAndSpecs, stats);
 
         logger.info("Edge weight stats: " + params.getStats().getEdgeWeightStats());
         double minWeight = graphAndSpecs.getAttrsSpec().getWeightFilterMin();

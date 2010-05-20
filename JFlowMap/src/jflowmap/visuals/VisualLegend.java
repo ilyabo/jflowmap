@@ -29,7 +29,7 @@ import java.util.List;
 import jflowmap.JFlowMap;
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -117,7 +117,7 @@ public class VisualLegend extends PPath {
     }
 
     private PPath createLine(double weight, double x, double y, double width, double minVSpace) {
-        FlowMapModel fmm = visualFlowMap.getModel();
+        VisualFlowMapModel fmm = visualFlowMap.getModel();
         Paint paint = visualFlowMap.getVisualEdgePaintFactory().createPaint(
                 fmm.normalizeEdgeWeightForColorScale(weight), x, y, x + width, y);
 

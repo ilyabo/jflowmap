@@ -20,14 +20,14 @@ package jflowmap.bundling;
 
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import at.fhj.utils.graphics.AxisMarks;
 
 /**
  * @author Ilya Boyandin
  */
 public class ForceDirectedBundlerParameters {
-    private final FlowMapModel flowMapModel;
+    private final VisualFlowMapModel flowMapModel;
 
     private int numCycles;
     private int P;        // initial number of subdivision points
@@ -47,7 +47,7 @@ public class ForceDirectedBundlerParameters {
     private double repulsionAmount;
     private double subdivisionPointsCycleIncreaseRate;
 
-    public ForceDirectedBundlerParameters(FlowMapModel flowMapModel) {
+    public ForceDirectedBundlerParameters(VisualFlowMapModel flowMapModel) {
         this.flowMapModel = flowMapModel;
         resetToDefaults();
     }

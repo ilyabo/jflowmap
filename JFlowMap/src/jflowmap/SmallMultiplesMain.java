@@ -39,7 +39,7 @@ import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
-import jflowmap.models.FlowMapModel;
+import jflowmap.models.VisualFlowMapModel;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualFlowMap;
 import jflowmap.visuals.VisualNode;
@@ -137,11 +137,11 @@ public class SmallMultiplesMain extends JFrame {
     private Clusterer clusterer;
 
     public interface Clusterer {
-        FlowMapModel cluster(JFlowMap jFlowMap);
+        VisualFlowMapModel cluster(JFlowMap jFlowMap);
     }
 
     public interface FlowMapModelInitializer {
-        void setupFlowMapModel(FlowMapModel model);
+        void setupFlowMapModel(VisualFlowMapModel model);
     }
 
     public interface FDEBInitializer {
@@ -166,7 +166,7 @@ public class SmallMultiplesMain extends JFrame {
         }
     }
 
-    private void setupFlowMapModel(FlowMapModel model) {
+    private void setupFlowMapModel(VisualFlowMapModel model) {
         if (flowMapModelInitializer != null) {
             flowMapModelInitializer.setupFlowMapModel(model);
         }
@@ -275,7 +275,7 @@ public class SmallMultiplesMain extends JFrame {
 
                         VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
                         visualFlowMap.setLegendVisible(showLegend);
-                        FlowMapModel model = visualFlowMap.getModel();
+                        VisualFlowMapModel model = visualFlowMap.getModel();
                         setupFlowMapModel(model);
 
                         if (clusterer != null) {
@@ -440,7 +440,7 @@ public class SmallMultiplesMain extends JFrame {
         sm.setTranslation(30, -50);
         sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
             @Override
-            public void setupFlowMapModel(FlowMapModel model) {
+            public void setupFlowMapModel(VisualFlowMapModel model) {
                 model.setMaxEdgeWidth(10);
 //              model.setMaxEdgeWidth(15);
               model.setNodeSize(3);
@@ -476,7 +476,7 @@ public class SmallMultiplesMain extends JFrame {
 //        });
 //        sm.setClusterer(new Clusterer() {
 //            @Override
-//            public FlowMapModel cluster(JFlowMap jFlowMap) {
+//            public VisualFlowMapModel cluster(JFlowMap jFlowMap) {
 //                VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
 //                visualFlowMap.clusterNodes(
 //                        NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
@@ -505,7 +505,7 @@ public class SmallMultiplesMain extends JFrame {
         sm.setColorScheme(ColorSchemes.DARK.getScheme());
         sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
             @Override
-            public void setupFlowMapModel(FlowMapModel model) {
+            public void setupFlowMapModel(VisualFlowMapModel model) {
                 model.setMaxEdgeWidth(10);
                 model.setNodeSize(3);
                 model.setShowDirectionMarkers(true);
@@ -533,7 +533,7 @@ public class SmallMultiplesMain extends JFrame {
         sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
         sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
             @Override
-            public void setupFlowMapModel(FlowMapModel model) {
+            public void setupFlowMapModel(VisualFlowMapModel model) {
                 model.setMaxEdgeWidth(10);
                 model.setNodeSize(3);
                 model.setShowDirectionMarkers(true);
@@ -562,7 +562,7 @@ public class SmallMultiplesMain extends JFrame {
         sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
         sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
             @Override
-            public void setupFlowMapModel(FlowMapModel model) {
+            public void setupFlowMapModel(VisualFlowMapModel model) {
                 model.setMaxEdgeWidth(10);
                 model.setNodeSize(3);
                 model.setShowDirectionMarkers(true);
@@ -595,7 +595,7 @@ public class SmallMultiplesMain extends JFrame {
         sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
         sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
             @Override
-            public void setupFlowMapModel(FlowMapModel model) {
+            public void setupFlowMapModel(VisualFlowMapModel model) {
                 model.setMaxEdgeWidth(10);
                 model.setNodeSize(3);
                 model.setShowDirectionMarkers(true);
@@ -633,7 +633,7 @@ public class SmallMultiplesMain extends JFrame {
         sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
         sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
             @Override
-            public void setupFlowMapModel(FlowMapModel model) {
+            public void setupFlowMapModel(VisualFlowMapModel model) {
                 model.setMaxEdgeWidth(10);
                 model.setNodeSize(3);
                 model.setShowDirectionMarkers(true);
@@ -645,7 +645,7 @@ public class SmallMultiplesMain extends JFrame {
         });
           sm.setClusterer(new Clusterer() {
           @Override
-          public FlowMapModel cluster(JFlowMap jFlowMap) {
+          public VisualFlowMapModel cluster(JFlowMap jFlowMap) {
               VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
               visualFlowMap.clusterNodes(
                       NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
