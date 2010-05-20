@@ -51,10 +51,7 @@ public class MinMax {
         this.count = count;
     }
 
-    /**
-     * NOTE: the returned MinMax avg value will be NaN, because
-     * it doesn't make sense to
-     */
+
     public MinMax mergeWith(MinMax minMax) {
         return new MinMax(
                 Math.min(min, minMax.min),
