@@ -69,7 +69,7 @@ public class FlowMapAttrsSpec {
 
     private void validateAttr(Graph graph, Table table, String attr, Class<?> type) {
         if (!table.canGet(attr, type)) {
-            throw new IllegalArgumentException("Can't get graph's attr:'" + attr + "', graph id:'" + FlowMap.getGraphId(graph) + "'");
+            throw new IllegalArgumentException("Can't get graph's attr:'" + attr + "', graph id:'" + FlowMapGraph.getGraphId(graph) + "'");
         }
     }
 }

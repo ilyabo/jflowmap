@@ -37,7 +37,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import jflowmap.FlowMap;
+import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.JFlowMap;
@@ -950,7 +950,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public String getName() {
-        return FlowMap.getGraphId(flowMapModel.getGraph());
+        return FlowMapGraph.getGraphId(flowMapModel.getGraph());
     }
 
 }

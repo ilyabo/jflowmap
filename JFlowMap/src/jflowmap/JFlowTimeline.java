@@ -26,9 +26,9 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.geom.Point;
-import jflowmap.models.FlowMapGraphBuilder;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.visuals.ColorScheme;
@@ -96,13 +96,13 @@ public class JFlowTimeline extends JComponent {
 
     private List<Graph> createGraphsWithGroupedNodes(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec,
             String columnToGroupNodesBy) {
-        Set<Object> valuesToGroupBy = FlowMap.getNodeAttrValues(graphs, columnToGroupNodesBy);
+        Set<Object> valuesToGroupBy = FlowMapGraph.getNodeAttrValues(graphs, columnToGroupNodesBy);
 //            Map<Object, Integer> valueToColor = createColorMapForValues(valuesToGroupBy);
 
         List<Graph> groupedGraphs = Lists.newArrayList();
         for (Graph g : graphs) {
 
-            FlowMapGraphBuilder builder = new FlowMapGraphBuilder(FlowMap.getGraphId(g))
+            FlowMapGraphBuilder builder = new FlowMapGraphBuilder(FlowMapGraph.getGraphId(g))
 //                    .withCumulativeEdges()            // TODO: why isn't it working?
                 .withNodeXAttr(attrSpec.getXNodeAttr())
                 .withNodeYAttr(attrSpec.getYNodeAttr())

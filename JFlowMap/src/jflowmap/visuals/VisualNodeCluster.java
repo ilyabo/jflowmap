@@ -27,9 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
-import jflowmap.models.FlowMapGraphBuilder;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
 import prefuse.data.Graph;

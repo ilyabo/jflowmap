@@ -20,7 +20,7 @@ package jflowmap.data;
 
 import java.util.Map;
 
-import jflowmap.FlowMap;
+import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import prefuse.data.Edge;
@@ -171,10 +171,10 @@ public class FlowMapSummaries {
             g.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR, double.class);
             for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
                 Node node = g.getNode(i);
-                String nodeId = FlowMap.getNodeId(node);
+                String nodeId = FlowMapGraph.getNodeId(node);
                 Node prevNode = null;
                 if (prevg != null) {
-                    prevNode = FlowMap.findNodeById(prevg, nodeId);
+                    prevNode = FlowMapGraph.findNodeById(prevg, nodeId);
                 }
 
                 double diffIn, diffOut;

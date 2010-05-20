@@ -21,7 +21,7 @@ package jflowmap.data;
 import javax.swing.JOptionPane;
 
 import jflowmap.DatasetSpec;
-import jflowmap.FlowMap;
+import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.JFlowMap;
 import jflowmap.models.map.AreaMap;
@@ -51,7 +51,7 @@ public class FlowMapLoader {
         JFlowMap.logger.info("Graphs loaded: " + Iterables.size(graphs));
         for (Graph g : graphs) {
             JFlowMap.logger.info(
-                    "Graph '" + g.getClientProperty(FlowMap.GRAPH_CLIENT_PROPERTY__ID) + "': " +
+                    "Graph '" + g.getClientProperty(FlowMapGraph.GRAPH_CLIENT_PROPERTY__ID) + "': " +
                     g.getNodeCount() + " nodes, " + g.getEdgeCount() + " edges");
         }
         Graph graph = graphs.iterator().next();

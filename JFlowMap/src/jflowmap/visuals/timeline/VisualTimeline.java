@@ -26,7 +26,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import jflowmap.FlowMap;
+import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapAttrsSpec;
 import jflowmap.JFlowMap;
 import jflowmap.JFlowTimeline;
@@ -227,7 +227,7 @@ public class VisualTimeline extends PNode {
         // Graph ID labels
         int colIndex = 0;
         for (Graph g : graphs) {
-            addChild(createCaption(colIndex, FlowMap.getGraphId(g)));
+            addChild(createCaption(colIndex, FlowMapGraph.getGraphId(g)));
             colIndex++;
         }
 
@@ -250,7 +250,7 @@ public class VisualTimeline extends PNode {
         final PNode row = new PNode();
         int graphIndex = 0;
         for (Graph g : graphs) {
-            Node node = FlowMap.findNodeById(g, nodeId);
+            Node node = FlowMapGraph.findNodeById(g, nodeId);
             double x = cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
             double y = cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
             row.addChild(new VisualTimelineNodeCell(this, node, x, y, cellWidth, cellHeight));
@@ -265,7 +265,7 @@ public class VisualTimeline extends PNode {
         for (Graph g : graphs) {
             for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
                 Node node = g.getNode(i);
-                nodeIdsToLabels.put(FlowMap.getNodeId(node), node.getString(attr));
+                nodeIdsToLabels.put(FlowMapGraph.getNodeId(node), node.getString(attr));
             }
         }
         return nodeIdsToLabels;
@@ -277,7 +277,7 @@ public class VisualTimeline extends PNode {
         for (Graph g : graphs) {
             for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
                 Node node = g.getNode(i);
-                map.put((T)node.get(columnToGroupNodesBy), FlowMap.getNodeId(node));
+                map.put((T)node.get(columnToGroupNodesBy), FlowMapGraph.getNodeId(node));
             }
         }
         return map;
@@ -289,7 +289,7 @@ public class VisualTimeline extends PNode {
 //            for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
 //                Node node = g.getNode(i);
 //                if (groupToFind.equals(node.getString(groupByAtrr))) {
-//                    nodeIds.add(FlowMap.getNodeId(node));
+//                    nodeIds.add(FlowMapGraph.getNodeId(node));
 //                }
 //            }
 //        }
@@ -319,7 +319,7 @@ public class VisualTimeline extends PNode {
 //        double outDiffValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
 
         tooltipBox.setText(
-                FlowMap.getGraphId(node.getGraph()) + "\n" +
+                FlowMapGraph.getGraphId(node.getGraph()) + "\n" +
                 node.getString(attrSpec.getNodeLabelAttr()),
                 "Incoming: " + JFlowMap.NUMBER_FORMAT.format(inValue) + "\n" +
                 "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue) + "\n" +

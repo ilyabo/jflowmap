@@ -214,7 +214,7 @@ public class FlowMapMain extends JFrame {
 //            graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
 
             for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
-                Node node = FlowMap.findNodeById(graph, e.getKey());
+                Node node = FlowMapGraph.findNodeById(graph, e.getKey());
                 if (node != null) {
                     String region = e.getValue();
                     node.set(regionColumn, region);

@@ -28,7 +28,7 @@ import java.util.List;
 
 public class FlowTimeline {
 
-    private List<FlowMap> flowMaps;
+    private List<FlowMapGraph> flowMaps;
 
     private FlowTimeline() {
     }

@@ -30,19 +30,19 @@ import com.google.common.collect.Sets;
  * @author Ilya Boyandin
  */
 
-// TODO: finish class FlowMap
+// TODO: finish class FlowMapGraph
 
-public class FlowMap {
+public class FlowMapGraph {
 
     public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
     public static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
 
 //    private Graph graph;
 
-    private FlowMap() {
+    private FlowMapGraph() {
     }
 
-    // TODO: create class FlowMap encapsulating Graph and move these methods there
+    // TODO: create class FlowMapGraph encapsulating Graph and move these methods there
     public static String getGraphId(Graph graph) {
         return (String) graph.getClientProperty(GRAPH_CLIENT_PROPERTY__ID);
     }

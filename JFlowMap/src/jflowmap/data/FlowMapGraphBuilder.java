@@ -16,12 +16,13 @@
  * limitations under the License.
  */
 
-package jflowmap.models;
+package jflowmap.data;
 
 import java.util.HashMap;
 
-import jflowmap.FlowMap;
+import jflowmap.FlowMapGraph;
 import jflowmap.geom.Point;
+import jflowmap.models.VisualFlowMapModel;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -31,7 +32,7 @@ import prefuse.data.Node;
  */
 public class FlowMapGraphBuilder {
 
-    private final String nodeIdAttr = FlowMap.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
+    private final String nodeIdAttr = FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
     private String nodeXAttr = VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
     private String nodeYAttr = VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
     private String edgeWeightAttr = VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
@@ -43,7 +44,7 @@ public class FlowMapGraphBuilder {
 
     public FlowMapGraphBuilder(String graphId) {
         graph = new Graph();
-        FlowMap.setGraphId(graph, graphId);
+        FlowMapGraph.setGraphId(graph, graphId);
     }
 
     private void initColumns() {
