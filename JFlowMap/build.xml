@@ -1,4 +1,4 @@
-<project name="JFlowMap" basedir="." default="build-prod">
+<project name="JFlowMap" basedir="." default="build-preloaded">
 
 	<taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar" />
 
@@ -29,8 +29,8 @@
         <antcall target="_build">
             <param name="mainclass" value="jflowmap.FlowMapPreloadedDataMain"/>
             <param name="mode" value="prod"/>
+        	<param name="include.data" value="true"/>
         </antcall>
-        <antcall target="sign"/>
     </target>
 
 	<target name="_build" depends="mkdirs, clean, compile, make-jar, proguard, add-manifest" />
@@ -59,6 +59,11 @@
 			<src path="${path.src}"/>
 			<classpath refid="master-classpath"/>
 		</javac>
+		<copy todir="${path.classes}" verbose="true">
+			<fileset dir="${path.src}">
+		        <include name="**/images/*.*"/>
+			</fileset>
+        </copy>
 	</target>
 
 	<target name="clean">
@@ -121,6 +126,9 @@
             </fileset>
             <fileset dir=".">
                 <include name="license.txt"/>
+            	<selector if="include.data">
+        		    <filename name="data/**/*.*"/>
+            	</selector>
             	<!--
                 <include name="data/**/*.*"/>
                 <exclude name="data/refugees-eu/*.*"/>
