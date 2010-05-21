@@ -37,7 +37,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import jflowmap.FlowMapAttrsSpec;
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.JFlowMap;
 import jflowmap.aggregation.EdgeSegment;
@@ -906,7 +906,7 @@ public class VisualFlowMap extends PNode {
         VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(
                 new FlowMapGraph(
                     clusteredGraph,
-                    new FlowMapAttrsSpec(
+                    new FlowMapAttrSpec(
                         VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
                         VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME,
                         VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME,

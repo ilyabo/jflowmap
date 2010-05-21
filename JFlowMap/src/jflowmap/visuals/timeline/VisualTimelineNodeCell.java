@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
-import jflowmap.FlowMapAttrsSpec;
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.JFlowMap;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
@@ -106,7 +106,7 @@ public class VisualTimelineNodeCell extends PNode {
         this.node = node;
         this.timeline = timeline;
 
-        FlowMapAttrsSpec specs = timeline.getAttrSpecs();
+        FlowMapAttrSpec specs = timeline.getAttrSpecs();
 
         setBounds(x, y, width, height);
 

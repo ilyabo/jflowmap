@@ -64,11 +64,11 @@ public class JFlowTimeline extends JComponent {
     private final ColorScheme colorScheme;
 
 
-//    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
+//    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
 //        this(graphs, attrSpec, null);
 //    }
 
-    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec, String columnToGroupNodesBy) {
+    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec, String columnToGroupNodesBy) {
         setLayout(new BorderLayout());
 
         this.colorScheme = ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme();
@@ -94,7 +94,7 @@ public class JFlowTimeline extends JComponent {
         return colorScheme;
     }
 
-    private List<Graph> createGraphsWithGroupedNodes(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec,
+    private List<Graph> createGraphsWithGroupedNodes(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec,
             String columnToGroupNodesBy) {
         Set<Object> valuesToGroupBy = FlowMapGraph.getNodeAttrValues(graphs, columnToGroupNodesBy);
 //            Map<Object, Integer> valueToColor = createColorMapForValues(valuesToGroupBy);

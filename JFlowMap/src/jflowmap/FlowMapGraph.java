@@ -52,9 +52,9 @@ public class FlowMapGraph {
 
     private final Graph graph;
     private final FlowMapStats stats;
-    private final FlowMapAttrsSpec attrSpec;
+    private final FlowMapAttrSpec attrSpec;
 
-    public FlowMapGraph(Graph graph, FlowMapAttrsSpec attrSpec) {
+    public FlowMapGraph(Graph graph, FlowMapAttrSpec attrSpec) {
         this.graph = graph;
         this.attrSpec = attrSpec;
         this.stats = FlowMapStats.createFor(new FlowMapGraphWithAttrSpecs(graph, attrSpec));
@@ -85,7 +85,7 @@ public class FlowMapGraph {
         return stats;
     }
 
-    public FlowMapAttrsSpec getAttrSpec() {
+    public FlowMapAttrSpec getAttrSpec() {
         return attrSpec;
     }
 

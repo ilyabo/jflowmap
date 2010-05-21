@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.swing.JComponent;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowMapAttrsSpec;
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.JFlowMap;
 import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapStats;
@@ -65,7 +65,7 @@ public class VisualTimeline extends PNode {
     private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 13);
     private static final Color CAPTION_COLOR = Color.black;
     private final List<Graph> graphs;
-    private final FlowMapAttrsSpec attrSpec;
+    private final FlowMapAttrSpec attrSpec;
 
     private final double cellWidth = 35;
     private final double cellHeight = 35;
@@ -87,7 +87,7 @@ public class VisualTimeline extends PNode {
     private final PCollapsableItemsContainer container;
 
 
-    public VisualTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec,
+    public VisualTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrSpec attrSpec,
             Iterable<Graph> groupedGraphs, String columnToGroupNodesBy) {
         this.jFlowTimeline = jFlowTimeline;
         this.graphs = Lists.newArrayList(graphs);
@@ -151,7 +151,7 @@ public class VisualTimeline extends PNode {
     }
 
 
-    public FlowMapAttrsSpec getAttrSpecs() {
+    public FlowMapAttrSpec getAttrSpecs() {
         return attrSpec;
     }
 

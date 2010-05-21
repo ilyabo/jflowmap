@@ -25,9 +25,9 @@ import prefuse.data.Graph;
 public class FlowMapGraphWithAttrSpecs {
 
     private final Graph graph;
-    private final FlowMapAttrsSpec attrsSpec;
+    private final FlowMapAttrSpec attrsSpec;
 
-    public FlowMapGraphWithAttrSpecs(Graph graph, FlowMapAttrsSpec attrsSpec) {
+    public FlowMapGraphWithAttrSpecs(Graph graph, FlowMapAttrSpec attrsSpec) {
         this.graph = graph;
         attrsSpec.validateFor(graph);
         this.attrsSpec = attrsSpec;
@@ -37,7 +37,7 @@ public class FlowMapGraphWithAttrSpecs {
         return graph;
     }
 
-    public FlowMapAttrsSpec getAttrsSpec() {
+    public FlowMapAttrSpec getAttrsSpec() {
         return attrsSpec;
     }
 

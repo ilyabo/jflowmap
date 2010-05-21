@@ -10,7 +10,7 @@ public class DatasetSpec {
     private final String filename;
     private final String name;
     private final String areaMapFilename;
-    private final FlowMapAttrsSpec attrsSpec;
+    private final FlowMapAttrSpec attrsSpec;
 
     public DatasetSpec(String filename, String weightAttrName, String xNodeAttr, String yNodeAttr,
     		String labelAttrName, String areaMapFilename) {
@@ -21,7 +21,7 @@ public class DatasetSpec {
     public DatasetSpec(String filename, String weightAttrName,
     		String xNodeAttr, String yNodeAttr,
     		String labelAttrName, String areaMapFilename, double valueFilterMin) {
-        this(filename, areaMapFilename, new FlowMapAttrsSpec(
+        this(filename, areaMapFilename, new FlowMapAttrSpec(
                 weightAttrName,
                 labelAttrName,
                 xNodeAttr,
@@ -30,7 +30,7 @@ public class DatasetSpec {
         ));
     }
 
-    private DatasetSpec(String filename, String areaMapFilename, FlowMapAttrsSpec attrsSpec) {
+    private DatasetSpec(String filename, String areaMapFilename, FlowMapAttrSpec attrsSpec) {
         this.filename = filename;
         this.name = FileUtils.getFilenameOnly(filename);
         this.areaMapFilename = areaMapFilename;
@@ -41,7 +41,7 @@ public class DatasetSpec {
         return new DatasetSpec(filename, areaMapFilename, attrsSpec);
     }
 
-    public FlowMapAttrsSpec getAttrsSpec() {
+    public FlowMapAttrSpec getAttrsSpec() {
         return attrsSpec;
     }
 

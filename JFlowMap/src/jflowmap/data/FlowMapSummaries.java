@@ -21,7 +21,7 @@ package jflowmap.data;
 import java.util.Map;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowMapAttrsSpec;
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraphWithAttrSpecs;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
@@ -57,7 +57,7 @@ public class FlowMapSummaries {
         return graphAndSpecs;
     }
 
-    public static void supplyNodesWithSummaries(Graph g, FlowMapAttrsSpec as) {
+    public static void supplyNodesWithSummaries(Graph g, FlowMapAttrSpec as) {
         Table nodeTable = g.getNodeTable();
 
         Map<Integer, Double> outsums = Maps.newHashMap();
@@ -112,7 +112,7 @@ public class FlowMapSummaries {
     public static void supplyNodesWithIntraregSummaries(FlowMapGraphWithAttrSpecs graphAndSpecs, String nodeRegionAttr) {
         Graph g = graphAndSpecs.getGraph();
         Table nodeTable = g.getNodeTable();
-        FlowMapAttrsSpec as = graphAndSpecs.getAttrsSpec();
+        FlowMapAttrSpec as = graphAndSpecs.getAttrsSpec();
 
         Map<Integer, Double> outsums = Maps.newHashMap();
         Map<Integer, Double> insums = Maps.newHashMap();
@@ -164,7 +164,7 @@ public class FlowMapSummaries {
     /**
      * This method requires that supplyNodesWithSummaries was already called for the graphs
      */
-    public static void supplyNodesWithDiffs(Iterable<Graph> graphs, FlowMapAttrsSpec attrSpec) {
+    public static void supplyNodesWithDiffs(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
         Graph prevg = null;
         for (Graph g : graphs) {
             g.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR, double.class);

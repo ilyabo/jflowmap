@@ -24,14 +24,14 @@ import prefuse.data.Table;
 /**
  * @author Ilya Boyandin
  */
-public class FlowMapAttrsSpec {
+public class FlowMapAttrSpec {
 
     private final String edgeWeightAttr;
     private final String nodeLabelAttr;
     private final String xNodeAttr, yNodeAttr;
-    private final double weightFilterMin;  // TODO: weightFilterMin shouldn't be in FlowMapAttrsSpec
+    private final double weightFilterMin;  // TODO: weightFilterMin shouldn't be in FlowMapAttrSpec
 
-    public FlowMapAttrsSpec(String edgeWeightAttr, String nodeLabelAttr,
+    public FlowMapAttrSpec(String edgeWeightAttr, String nodeLabelAttr,
             String xNodeAttr, String yNodeAttr, double weightFilterMin) {
         this.edgeWeightAttr = edgeWeightAttr;
         this.nodeLabelAttr = nodeLabelAttr;

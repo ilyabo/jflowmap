@@ -69,7 +69,7 @@ import com.google.common.collect.Lists;
  */
 public class FlowMapMain extends JFrame {
 
-    private final static FlowMapAttrsSpec REFUGEES_ATTR_SPECS = new FlowMapAttrsSpec(
+    private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
             // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
 //          "rity",
           "r",
@@ -236,7 +236,7 @@ public class FlowMapMain extends JFrame {
         List<JInternalFrame> iframes = Lists.newArrayList();
         for (Graph graph : graphs) {
             // TODO: let the user choose the attr specs
-            FlowMapAttrsSpec attrSpecs = REFUGEES_ATTR_SPECS;
+            FlowMapAttrSpec attrSpecs = REFUGEES_ATTR_SPECS;
 
             JFlowMap view = new JFlowMap(new FlowMapGraph(graph, attrSpecs), areaMap);
             view.getVisualFlowMap().setLegendVisible(false);
