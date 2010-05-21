@@ -60,7 +60,7 @@ public class FlowMapAttrSpec {
         return weightFilterMin;
     }
 
-    public void validateFor(Graph graph) {
+    public void checkValidityFor(Graph graph) {
         validateAttr(graph, graph.getNodeTable(), xNodeAttr, double.class);
         validateAttr(graph, graph.getNodeTable(), yNodeAttr, double.class);
         validateAttr(graph, graph.getNodeTable(), nodeLabelAttr, String.class);
@@ -72,4 +72,54 @@ public class FlowMapAttrSpec {
             throw new IllegalArgumentException("Can't get graph's attr:'" + attr + "', graph id:'" + FlowMapGraph.getGraphId(graph) + "'");
         }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((edgeWeightAttr == null) ? 0 : edgeWeightAttr.hashCode());
+        result = prime * result + ((nodeLabelAttr == null) ? 0 : nodeLabelAttr.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(weightFilterMin);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((xNodeAttr == null) ? 0 : xNodeAttr.hashCode());
+        result = prime * result + ((yNodeAttr == null) ? 0 : yNodeAttr.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FlowMapAttrSpec other = (FlowMapAttrSpec) obj;
+        if (edgeWeightAttr == null) {
+            if (other.edgeWeightAttr != null)
+                return false;
+        } else if (!edgeWeightAttr.equals(other.edgeWeightAttr))
+            return false;
+        if (nodeLabelAttr == null) {
+            if (other.nodeLabelAttr != null)
+                return false;
+        } else if (!nodeLabelAttr.equals(other.nodeLabelAttr))
+            return false;
+        if (Double.doubleToLongBits(weightFilterMin) != Double.doubleToLongBits(other.weightFilterMin))
+            return false;
+        if (xNodeAttr == null) {
+            if (other.xNodeAttr != null)
+                return false;
+        } else if (!xNodeAttr.equals(other.xNodeAttr))
+            return false;
+        if (yNodeAttr == null) {
+            if (other.yNodeAttr != null)
+                return false;
+        } else if (!yNodeAttr.equals(other.yNodeAttr))
+            return false;
+        return true;
+    }
+
+
 }

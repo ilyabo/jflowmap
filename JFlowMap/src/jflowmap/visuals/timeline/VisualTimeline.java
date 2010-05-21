@@ -26,8 +26,9 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapAttrSpec;
+import jflowmap.FlowMapGraph;
+import jflowmap.FlowMapGraphSet;
 import jflowmap.JFlowMap;
 import jflowmap.JFlowTimeline;
 import jflowmap.data.FlowMapStats;
@@ -43,9 +44,7 @@ import org.apache.log4j.Logger;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import edu.umd.cs.piccolo.PNode;
@@ -64,8 +63,9 @@ public class VisualTimeline extends PNode {
 
     private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 13);
     private static final Color CAPTION_COLOR = Color.black;
-    private final List<Graph> graphs;
-    private final FlowMapAttrSpec attrSpec;
+
+    private final FlowMapGraphSet flowMapGraphs;
+    private final FlowMapGraphSet groupedFlowMapGraphs;
 
     private final double cellWidth = 35;
     private final double cellHeight = 35;
@@ -78,35 +78,32 @@ public class VisualTimeline extends PNode {
 //    private Graph selectedGraph;
     private final Tooltip tooltipBox;
     private final MinMax valueMinMax;
-    private final List<Graph> groupedGraphs;
     private final String columnToGroupNodesBy;
-
-    private final FlowMapStats globalStats;
-    private FlowMapStats globalGroupedStats;
 
     private final PCollapsableItemsContainer container;
 
 
-    public VisualTimeline(JFlowTimeline jFlowTimeline, Iterable<Graph> graphs, FlowMapAttrSpec attrSpec,
-            Iterable<Graph> groupedGraphs, String columnToGroupNodesBy) {
+    public VisualTimeline(JFlowTimeline jFlowTimeline,
+            FlowMapGraphSet flowMapGraphs,
+            FlowMapGraphSet groupedFlowMapGraphs,
+            String columnToGroupNodesBy) {
+
         this.jFlowTimeline = jFlowTimeline;
-        this.graphs = Lists.newArrayList(graphs);
-        this.attrSpec = attrSpec;
-        this.groupedGraphs = (groupedGraphs != null ? Lists.newArrayList(groupedGraphs) : null);
+        this.flowMapGraphs = flowMapGraphs;
+        this.groupedFlowMapGraphs = groupedFlowMapGraphs;
         this.columnToGroupNodesBy = columnToGroupNodesBy;
-        this.globalStats = FlowMapStats.createFor(graphs, attrSpec);
-        for (Graph graph : graphs) {
-            FlowMapSummaries.supplyNodesWithSummaries(graph, attrSpec);
+
+        for (FlowMapGraph flowMapGraph : flowMapGraphs.asList()) {
+            FlowMapSummaries.supplyNodesWithSummaries(flowMapGraph);
         }
 //        FlowMapSummaries.supplyNodesWithDiffs(graphs, attrSpec);
-        if (groupedGraphs == null) {
-            this.valueMinMax = nodeSummaryMinMax(globalStats);
+        if (groupedFlowMapGraphs == null) {
+            this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats());
         } else {
-            for (Graph graph : groupedGraphs) {
-                FlowMapSummaries.supplyNodesWithSummaries(graph, attrSpec);
+            for (FlowMapGraph flowMapGraph : groupedFlowMapGraphs.asList()) {
+                FlowMapSummaries.supplyNodesWithSummaries(flowMapGraph);
             }
-            this.globalGroupedStats = FlowMapStats.createFor(groupedGraphs, attrSpec);
-            this.valueMinMax = nodeSummaryMinMax(globalStats).mergeWith(nodeSummaryMinMax(globalGroupedStats));
+            this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats()).mergeWith(nodeSummaryMinMax(groupedFlowMapGraphs.getStats()));
         }
 
 //        MinMax diffStats = gs.getNodeAttrStats(
@@ -139,6 +136,7 @@ public class VisualTimeline extends PNode {
     }
 
     private MinMax nodeSummaryMinMax(FlowMapStats stats) {
+        FlowMapStats globalStats = flowMapGraphs.getStats();
         return stats
             .getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING)
             .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING))
@@ -152,19 +150,19 @@ public class VisualTimeline extends PNode {
 
 
     public FlowMapAttrSpec getAttrSpecs() {
-        return attrSpec;
+        return flowMapGraphs.getAttrSpec();
     }
 
 
     private void buildTimeline() {
-        if (graphs.size() == 0) {
+        if (flowMapGraphs.size() == 0) {
             return;
         }
 
 
 //        rows = Lists.newArrayList();
 
-        if (groupedGraphs == null) {
+        if (groupedFlowMapGraphs == null) {
             // Build a joint nodeset (the graphs do not necessarily have exactly the same nodes)
 //            Map<String, String> nodeIdsToLabels = nodeIdsToAttrValues(graphs, attrSpec.getNodeLabelAttr());
 //
@@ -181,8 +179,8 @@ public class VisualTimeline extends PNode {
 //            }
 
         } else {
-            Map<String, String> groupIdsToLabels = nodeIdsToAttrValues(groupedGraphs, attrSpec.getNodeLabelAttr());
-            Multimap<String, String> groupsToNodeIds = groupsToNodeIds(graphs, columnToGroupNodesBy);
+            Map<String, String> groupIdsToLabels = groupedFlowMapGraphs.mapOfNodeIdsToAttrValues(getAttrSpecs().getNodeLabelAttr());
+            Multimap<Object, String> groupsToNodeIds = flowMapGraphs.multimapOfNodeAttrValuesToNodeIds(columnToGroupNodesBy);
 
             List<String> groupIds = Lists.newArrayList(groupIdsToLabels.keySet());
             Collections.sort(groupIds);
@@ -196,12 +194,12 @@ public class VisualTimeline extends PNode {
                     groupLabel = groupLabel.substring(sep + XmlRegionsReader.REGION_SEPARATOR.length());
                 }
 
-                PNode head = createRow(groupedGraphs, rowIndex, group);
+                PNode head = createRow(groupedFlowMapGraphs, rowIndex, group);
                 PNode body = new PNode();
                 int i = 1;
                 for (String nodeId : groupsToNodeIds.get(group)) {
                     // label: nodeId
-                    body.addChild(createRow(graphs, i, nodeId));
+                    body.addChild(createRow(flowMapGraphs, i, nodeId));
                     i++;
                 }
                 container.addNewItem(groupLabel, head, body);
@@ -226,7 +224,7 @@ public class VisualTimeline extends PNode {
 
         // Graph ID labels
         int colIndex = 0;
-        for (Graph g : graphs) {
+        for (Graph g : flowMapGraphs.asListOfGraphs()) {
             addChild(createCaption(colIndex, FlowMapGraph.getGraphId(g)));
             colIndex++;
         }
@@ -246,10 +244,10 @@ public class VisualTimeline extends PNode {
 
     }
 
-    private PNode createRow(Iterable<Graph> graphs, int nodeIndex, String nodeId) {
+    private PNode createRow(FlowMapGraphSet graphs, int nodeIndex, String nodeId) {
         final PNode row = new PNode();
         int graphIndex = 0;
-        for (Graph g : graphs) {
+        for (Graph g : graphs.asListOfGraphs()) {
             Node node = FlowMapGraph.findNodeById(g, nodeId);
             double x = cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
             double y = cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
@@ -260,28 +258,6 @@ public class VisualTimeline extends PNode {
         return row;
     }
 
-    private static Map<String, String> nodeIdsToAttrValues(Iterable<Graph> graphs, String attr) {
-        Map<String, String> nodeIdsToLabels = Maps.newLinkedHashMap();
-        for (Graph g : graphs) {
-            for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
-                Node node = g.getNode(i);
-                nodeIdsToLabels.put(FlowMapGraph.getNodeId(node), node.getString(attr));
-            }
-        }
-        return nodeIdsToLabels;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> Multimap<T, String> groupsToNodeIds(Iterable<Graph> graphs, String columnToGroupNodesBy) {
-        Multimap<T, String> map = LinkedHashMultimap.create();
-        for (Graph g : graphs) {
-            for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
-                Node node = g.getNode(i);
-                map.put((T)node.get(columnToGroupNodesBy), FlowMapGraph.getNodeId(node));
-            }
-        }
-        return map;
-    }
 
 //    private static Set<String> nodeIdsByGroup(Iterable<Graph> graphs, String groupByAtrr, String groupToFind) {
 //        Set<String> nodeIds = Sets.newLinkedHashSet();
@@ -320,7 +296,7 @@ public class VisualTimeline extends PNode {
 
         tooltipBox.setText(
                 FlowMapGraph.getGraphId(node.getGraph()) + "\n" +
-                node.getString(attrSpec.getNodeLabelAttr()),
+                node.getString(getAttrSpecs().getNodeLabelAttr()),
                 "Incoming: " + JFlowMap.NUMBER_FORMAT.format(inValue) + "\n" +
                 "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue) + "\n" +
                 "Incoming intrareg: " + JFlowMap.NUMBER_FORMAT.format(inLocalValue) + "\n" +

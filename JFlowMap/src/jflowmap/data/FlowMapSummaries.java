@@ -20,9 +20,8 @@ package jflowmap.data;
 
 import java.util.Map;
 
-import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapAttrSpec;
-import jflowmap.FlowMapGraphWithAttrSpecs;
+import jflowmap.FlowMapGraph;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -52,12 +51,9 @@ public class FlowMapSummaries {
      * This method adds additional columns to the nodes table providing
      * the nodes with useful stats.
      */
-    public static FlowMapGraphWithAttrSpecs supplyNodesWithSummaries(FlowMapGraphWithAttrSpecs graphAndSpecs) {
-        supplyNodesWithSummaries(graphAndSpecs.getGraph(), graphAndSpecs.getAttrsSpec());
-        return graphAndSpecs;
-    }
+    public static void supplyNodesWithSummaries(FlowMapGraph flowMapGraph) {
+        Graph g = flowMapGraph.getGraph();
 
-    public static void supplyNodesWithSummaries(Graph g, FlowMapAttrSpec as) {
         Table nodeTable = g.getNodeTable();
 
         Map<Integer, Double> outsums = Maps.newHashMap();
@@ -66,7 +62,7 @@ public class FlowMapSummaries {
         for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
             Edge e = g.getEdge(i);
 
-            double v = e.getDouble(as.getEdgeWeightAttr());
+            double v = e.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightAttr());
             if (!Double.isNaN(v)) {
                 Node src = e.getSourceNode();
                 Node trg = e.getTargetNode();
@@ -109,10 +105,10 @@ public class FlowMapSummaries {
         }
     }
 
-    public static void supplyNodesWithIntraregSummaries(FlowMapGraphWithAttrSpecs graphAndSpecs, String nodeRegionAttr) {
-        Graph g = graphAndSpecs.getGraph();
+    public static void supplyNodesWithIntraregSummaries(FlowMapGraph flowMapGraph, String nodeRegionAttr) {
+        Graph g = flowMapGraph.getGraph();
         Table nodeTable = g.getNodeTable();
-        FlowMapAttrSpec as = graphAndSpecs.getAttrsSpec();
+        FlowMapAttrSpec as = flowMapGraph.getAttrSpec();
 
         Map<Integer, Double> outsums = Maps.newHashMap();
         Map<Integer, Double> insums = Maps.newHashMap();

@@ -21,14 +21,10 @@ package jflowmap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.swing.JComponent;
 
-import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapSummaries;
-import jflowmap.geom.Point;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.visuals.ColorScheme;
@@ -36,13 +32,9 @@ import jflowmap.visuals.timeline.VisualTimeline;
 
 import org.apache.log4j.Logger;
 
-import prefuse.data.Edge;
 import prefuse.data.Graph;
-import prefuse.data.Node;
-import prefuse.util.ColorLib;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
@@ -68,7 +60,7 @@ public class JFlowTimeline extends JComponent {
 //        this(graphs, attrSpec, null);
 //    }
 
-    public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec, String columnToGroupNodesBy) {
+    public JFlowTimeline(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
         setLayout(new BorderLayout());
 
         this.colorScheme = ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme();
@@ -81,86 +73,46 @@ public class JFlowTimeline extends JComponent {
         add(canvas, BorderLayout.CENTER);
 
 
-        if (columnToGroupNodesBy != null) {
-            List<Graph> groupedGraphs = createGraphsWithGroupedNodes(graphs, attrSpec, columnToGroupNodesBy);
-            visualTimeline = new VisualTimeline(this, graphs, attrSpec, groupedGraphs, columnToGroupNodesBy);
+        if (nodeAttrToGroupBy != null) {
+            visualTimeline = new VisualTimeline(this, fmset, createGraphsWithGroupedNodes(fmset, nodeAttrToGroupBy), nodeAttrToGroupBy);
         } else {
-            visualTimeline = new VisualTimeline(this, graphs, attrSpec, null, null);
+            visualTimeline = new VisualTimeline(this, fmset, null, null);
         }
         canvas.getLayer().addChild(visualTimeline);
+    }
+
+    private FlowMapGraphSet createGraphsWithGroupedNodes(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
+        FlowMapAttrSpec attrSpec = fmset.getAttrSpec();
+        List<Graph> groupedGraphs = Lists.newArrayList();
+        for (FlowMapGraph fmg : fmset.asList()) {
+
+            FlowMapGraph grouped = fmg.groupNodesBy(nodeAttrToGroupBy);
+
+            // TODO: supplyNodesWithIntraregSummaries shouldn't be here
+            FlowMapSummaries.supplyNodesWithIntraregSummaries(fmg, nodeAttrToGroupBy);
+            FlowMapSummaries.supplyNodesWithIntraregSummaries(grouped, attrSpec.getNodeLabelAttr());
+
+            groupedGraphs.add(grouped.getGraph());
+        }
+        return new FlowMapGraphSet(groupedGraphs, attrSpec);
     }
 
     public ColorScheme getColorScheme() {
         return colorScheme;
     }
 
-    private List<Graph> createGraphsWithGroupedNodes(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec,
-            String columnToGroupNodesBy) {
-        Set<Object> valuesToGroupBy = FlowMapGraph.getNodeAttrValues(graphs, columnToGroupNodesBy);
-//            Map<Object, Integer> valueToColor = createColorMapForValues(valuesToGroupBy);
-
-        List<Graph> groupedGraphs = Lists.newArrayList();
-        for (Graph g : graphs) {
-
-            FlowMapGraphBuilder builder = new FlowMapGraphBuilder(FlowMapGraph.getGraphId(g))
-//                    .withCumulativeEdges()            // TODO: why isn't it working?
-                .withNodeXAttr(attrSpec.getXNodeAttr())
-                .withNodeYAttr(attrSpec.getYNodeAttr())
-                .withEdgeWeightAttr(attrSpec.getEdgeWeightAttr())
-                .withNodeLabelAttr(attrSpec.getNodeLabelAttr())
-                ;
-
-            Map<Object, Node> valueToNode = Maps.newHashMap();
-            for (Object v : valuesToGroupBy) {
-                String strv = v.toString();
-                Node node = builder.addNode(strv, new Point(0, 0), strv);
-                valueToNode.put(v, node);
-            }
-
-            for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
-                Edge e = g.getEdge(i);
-                Node src = e.getSourceNode();
-                Node trg = e.getTargetNode();
-                String srcV = src.getString(columnToGroupNodesBy);
-                String trgV = trg.getString(columnToGroupNodesBy);
-                if (srcV == null) {
-                    throw new IllegalArgumentException("No " + columnToGroupNodesBy + " value for " + src);
-                }
-                if (trgV == null) {
-                    throw new IllegalArgumentException("No " + columnToGroupNodesBy + " value for " + trg);
-                }
-                builder.addEdge(
-                        valueToNode.get(srcV),
-                        valueToNode.get(trgV),
-                        e.getDouble(attrSpec.getEdgeWeightAttr()));
-            }
-
-
-
-            Graph grouped = builder.build();
-
-            FlowMapSummaries.supplyNodesWithIntraregSummaries(
-                    new FlowMapGraphWithAttrSpecs(g, attrSpec), columnToGroupNodesBy);
-            FlowMapSummaries.supplyNodesWithIntraregSummaries(
-                    new FlowMapGraphWithAttrSpecs(grouped, attrSpec), attrSpec.getNodeLabelAttr());
-
-            groupedGraphs.add(grouped);
-        }
-        return groupedGraphs;
-    }
-
-    private <T> Map<T, Integer> createColorMapForValues(Set<T> valuesToGroupBy) {
-        int[] palette = ColorLib.getCategoryPalette(valuesToGroupBy.size(), 1.f, 0.4f, 1.f, .15f);
-
-        int colorIdx = 0;
-        Map<T, Integer> valueToColor = Maps.newHashMap();
-        for (T v : valuesToGroupBy) {
-            valueToColor.put(v, palette[colorIdx]);
-            colorIdx++;
-        }
-
-        return valueToColor;
-    }
+//    private <T> Map<T, Integer> createColorMapForValues(Set<T> valuesToGroupBy) {
+//        int[] palette = ColorLib.getCategoryPalette(valuesToGroupBy.size(), 1.f, 0.4f, 1.f, .15f);
+//
+//        int colorIdx = 0;
+//        Map<T, Integer> valueToColor = Maps.newHashMap();
+//        for (T v : valuesToGroupBy) {
+//            valueToColor.put(v, palette[colorIdx]);
+//            colorIdx++;
+//        }
+//
+//        return valueToColor;
+//    }
 
     public PCanvas getCanvas() {
         return canvas;

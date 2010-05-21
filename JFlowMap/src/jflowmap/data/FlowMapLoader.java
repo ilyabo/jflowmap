@@ -21,6 +21,7 @@ package jflowmap.data;
 import javax.swing.JOptionPane;
 
 import jflowmap.DatasetSpec;
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.JFlowMap;
 import jflowmap.models.map.AreaMap;
@@ -40,7 +41,17 @@ public class FlowMapLoader {
     }
 
 
-    public static Graph loadGraph(String filename) throws DataIOException {
+    public static FlowMapGraph loadGraph(String filename, FlowMapAttrSpec attrSpec) throws DataIOException {
+        return loadGraph(filename, attrSpec, null);
+    }
+
+    /**
+     * This method is intended to be used when the stats have to be
+     * induced and not calculated (for instance, in case when a global mapping over
+     * a number of flow maps for small multiples must be used).
+     * Otherwise, use {@link #loadGraph(String, FlowMapAttrSpec)}.
+     */
+    public static FlowMapGraph loadGraph(String filename, FlowMapAttrSpec attrSpec, FlowMapStats stats) throws DataIOException {
         JFlowMap.logger.info("Loading \"" + filename + "\"");
 //        Graph graph = GraphFileFormats.createReaderFor(filename).readGraph(filename);
 //        logger.info("Graph loaded: " + graph.getNodeCount() + " nodes, " + graph.getEdgeCount() + " edges");
@@ -55,15 +66,15 @@ public class FlowMapLoader {
         }
         Graph graph = graphs.iterator().next();
 
-        return graph;
+        return new FlowMapGraph(graph, attrSpec, stats);
     }
 
     public static void loadFlowMap(JFlowMap jFlowMap, DatasetSpec dataset, FlowMapStats stats) {
         JFlowMap.logger.info("> Loading flow map \"" + dataset + "\"");
         try {
-            Graph graph = loadGraph(dataset.getFilename());
+            FlowMapGraph flowMapGraph = loadGraph(dataset.getFilename(), dataset.getAttrsSpec(), stats);
 
-            VisualFlowMap visualFlowMap = jFlowMap.createVisualFlowMap(new FlowMapGraph(graph, dataset.getAttrsSpec()));
+            VisualFlowMap visualFlowMap = jFlowMap.createVisualFlowMap(flowMapGraph);
             if (dataset.getAreaMapFilename() != null) {
                 AreaMap areaMap = AreaMap.load(dataset.getAreaMapFilename());
                 visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));

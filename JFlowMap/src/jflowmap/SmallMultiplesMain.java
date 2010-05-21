@@ -230,16 +230,15 @@ public class SmallMultiplesMain extends JFrame {
         }
 
         private void renderFlowMap() throws InterruptedException, InvocationTargetException, DataIOException {
-
             final FlowMapStats stats;
             if (useGlobalVisualMappings) {
                 // calc the global stats
-                List<FlowMapGraphWithAttrSpecs> gs = Lists.newArrayList();
+                List<FlowMapGraph> gs = Lists.newArrayList();
                 for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
                     final String name = entry.getKey();
                     final DatasetSpec ds = entry.getValue();
                     progress.setNote("Gathering stats for " + name);
-                    gs.add(new FlowMapGraphWithAttrSpecs(FlowMapLoader.loadGraph(ds.getFilename()), ds.getAttrsSpec()));
+                    gs.add(FlowMapLoader.loadGraph(ds.getFilename(), ds.getAttrsSpec()));
                 }
                 stats = FlowMapStats.createFor(gs);
             } else {
@@ -661,7 +660,7 @@ public class SmallMultiplesMain extends JFrame {
     }
 
     public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
-        SmallMultiplesMain sm = createSM_TLBS_bundled();
+        SmallMultiplesMain sm = createSM_TLBS_3years_OneRegion();
         sm.setVisible(true);
         sm.start();
     }

@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.FlowMapAttrSpec;
-import jflowmap.FlowMapGraphWithAttrSpecs;
+import jflowmap.FlowMapGraph;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -39,7 +39,6 @@ import com.google.common.collect.Lists;
 
 /**
  * @author Ilya Boyandin
- *         Date: 21-Sep-2009
  */
 public class FlowMapStats {
 
@@ -47,44 +46,44 @@ public class FlowMapStats {
     private static final String EDGE_ATTR_KEY_SUFFIX = "_edgeAttr";
 
     private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
-    private final List<FlowMapGraphWithAttrSpecs> graphAndSpecs;
+    private final List<FlowMapGraph> flowMapGraphs;
     private MinMax edgeLengthStats;
 
-    private FlowMapStats(List<FlowMapGraphWithAttrSpecs> graphAndSpecs) {
-        this.graphAndSpecs = graphAndSpecs;
+    private FlowMapStats(List<FlowMapGraph> graphAndSpecs) {
+        this.flowMapGraphs = graphAndSpecs;
         // TODO: add property change listeners
     }
 
-    public static FlowMapStats createFor(FlowMapGraphWithAttrSpecs graphAndSpecs) {
-        return new FlowMapStats(Arrays.asList(graphAndSpecs));
+    public static FlowMapStats createFor(FlowMapGraph flowMapGraph) {
+        return new FlowMapStats(Arrays.asList(flowMapGraph));
     }
 
     public static FlowMapStats createFor(Iterable<Graph> graphs, final FlowMapAttrSpec attrSpecs) {
-        return createFor(Iterables.transform(graphs, new Function<Graph, FlowMapGraphWithAttrSpecs>() {
+        return createFor(Iterables.transform(graphs, new Function<Graph, FlowMapGraph>() {
             @Override
-            public FlowMapGraphWithAttrSpecs apply(Graph from) {
-                return new FlowMapGraphWithAttrSpecs(from, attrSpecs);
+            public FlowMapGraph apply(Graph from) {
+                return new FlowMapGraph(from, attrSpecs);
             }
         }));
     }
 
-    public static FlowMapStats createFor(Iterable<FlowMapGraphWithAttrSpecs> graphAndSpecs) {
-        return new FlowMapStats(ImmutableList.copyOf(graphAndSpecs));
+    public static FlowMapStats createFor(Iterable<FlowMapGraph> flowMapGraphs) {
+        return new FlowMapStats(ImmutableList.copyOf(flowMapGraphs));
     }
 
     public MinMax getEdgeLengthStats() {
         if (edgeLengthStats == null) {
             List<Double> edgeLengths = Lists.newArrayList();
-            for (FlowMapGraphWithAttrSpecs fmm : graphAndSpecs) {
+            for (FlowMapGraph fmm : flowMapGraphs) {
                 Graph graph = fmm.getGraph();
                 for (int i = 0, size = graph.getEdgeCount(); i < size; i++) {
                     Edge edge = graph.getEdge(i);
                     Node src = edge.getSourceNode();
                     Node target = edge.getTargetNode();
-                    double x1 = src.getDouble(fmm.getAttrsSpec().getXNodeAttr());
-                    double y1 = src.getDouble(fmm.getAttrsSpec().getYNodeAttr());
-                    double x2 = target.getDouble(fmm.getAttrsSpec().getXNodeAttr());
-                    double y2 = target.getDouble(fmm.getAttrsSpec().getYNodeAttr());
+                    double x1 = src.getDouble(fmm.getXNodeAttr());
+                    double y1 = src.getDouble(fmm.getYNodeAttr());
+                    double x2 = target.getDouble(fmm.getXNodeAttr());
+                    double y2 = target.getDouble(fmm.getYNodeAttr());
                     edgeLengths.add(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
                 }
             }
@@ -107,7 +106,7 @@ public class FlowMapStats {
     }
 
     /**
-     * NOTE: this method suggests that every graph in this graphAndSpecs
+     * NOTE: this method suggests that every graph in this flowMapGraphs
      * has the attribute with <code>attrName</code>.
      */
     public MinMax getNodeAttrStats(final String attrName) {
@@ -116,9 +115,9 @@ public class FlowMapStats {
         if (stats == null) {
             stats = TupleStats.createFor(
                     attrIterator(Tuples.NODES),
-                    attrIterator(new Function<FlowMapGraphWithAttrSpecs, String>() {
+                    attrIterator(new Function<FlowMapGraph, String>() {
                         @Override
-                        public String apply(FlowMapGraphWithAttrSpecs from) {
+                        public String apply(FlowMapGraph from) {
                             return attrName;
                         }
                     })
@@ -142,18 +141,18 @@ public class FlowMapStats {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Iterator<T> attrIterator(Function<FlowMapGraphWithAttrSpecs, T> function) {
-        return Iterators.concat(Iterators.transform(graphAndSpecs.iterator(), function));
+    private <T> Iterator<T> attrIterator(Function<FlowMapGraph, T> function) {
+        return Iterators.concat(Iterators.transform(flowMapGraphs.iterator(), function));
     }
 
-    enum Tuples implements Function<FlowMapGraphWithAttrSpecs, TupleSet> {
+    enum Tuples implements Function<FlowMapGraph, TupleSet> {
         EDGES {
-            public TupleSet apply(FlowMapGraphWithAttrSpecs from) {
+            public TupleSet apply(FlowMapGraph from) {
                 return from.getGraph().getEdges();
             }
         },
         NODES {
-            public TupleSet apply(FlowMapGraphWithAttrSpecs from) {
+            public TupleSet apply(FlowMapGraph from) {
                 return from.getGraph().getNodes();
             }
         },
@@ -163,54 +162,54 @@ public class FlowMapStats {
     public enum Attrs  {
         EDGE_WEIGHT {
             @Override
-            public Function<FlowMapGraphWithAttrSpecs, String> funToName() {
+            public Function<FlowMapGraph, String> funToName() {
                 return Name.EDGE_WEIGHT;
             }
             @Override
-            public Function<FlowMapGraphWithAttrSpecs, TupleSet> funToTupleSet() {
+            public Function<FlowMapGraph, TupleSet> funToTupleSet() {
                 return Tuples.EDGES;
             }
         },
         NODE_X {
             @Override
-            public Function<FlowMapGraphWithAttrSpecs, String> funToName() {
+            public Function<FlowMapGraph, String> funToName() {
                 return Name.NODE_X;
             }
             @Override
-            public Function<FlowMapGraphWithAttrSpecs, TupleSet> funToTupleSet() {
+            public Function<FlowMapGraph, TupleSet> funToTupleSet() {
                 return Tuples.NODES;
             }
         },
         NODE_Y {
             @Override
-            public Function<FlowMapGraphWithAttrSpecs, String> funToName() {
+            public Function<FlowMapGraph, String> funToName() {
                 return Name.NODE_Y;
             }
             @Override
-            public Function<FlowMapGraphWithAttrSpecs, TupleSet> funToTupleSet() {
+            public Function<FlowMapGraph, TupleSet> funToTupleSet() {
                 return Tuples.NODES;
             }
         },
         ;
 
-        public abstract Function<FlowMapGraphWithAttrSpecs, String> funToName();
+        public abstract Function<FlowMapGraph, String> funToName();
 
-        public abstract Function<FlowMapGraphWithAttrSpecs, TupleSet> funToTupleSet();
+        public abstract Function<FlowMapGraph, TupleSet> funToTupleSet();
 
-        private enum Name implements Function<FlowMapGraphWithAttrSpecs, String> {
+        private enum Name implements Function<FlowMapGraph, String> {
             EDGE_WEIGHT {
-                public String apply(FlowMapGraphWithAttrSpecs from) {
-                    return from.getAttrsSpec().getEdgeWeightAttr();
+                public String apply(FlowMapGraph from) {
+                    return from.getEdgeWeightAttr();
                 }
             },
             NODE_X {
-                public String apply(FlowMapGraphWithAttrSpecs from) {
-                    return from.getAttrsSpec().getXNodeAttr();
+                public String apply(FlowMapGraph from) {
+                    return from.getXNodeAttr();
                 }
             },
             NODE_Y {
-                public String apply(FlowMapGraphWithAttrSpecs from) {
-                    return from.getAttrsSpec().getYNodeAttr();
+                public String apply(FlowMapGraph from) {
+                    return from.getYNodeAttr();
                 }
             },
             ;

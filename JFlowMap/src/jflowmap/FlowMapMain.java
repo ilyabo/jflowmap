@@ -194,7 +194,7 @@ public class FlowMapMain extends JFrame {
         addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
 
         // TODO: let the user choose the attr specs
-        JFlowTimeline ft = new JFlowTimeline(graphs, REFUGEES_ATTR_SPECS, columnToGroupNodesBy);
+        JFlowTimeline ft = new JFlowTimeline(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
         return ft;
     }
 
