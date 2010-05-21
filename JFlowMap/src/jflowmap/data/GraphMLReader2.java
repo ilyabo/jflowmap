@@ -51,6 +51,8 @@ import com.google.common.collect.Maps;
  */
 public class GraphMLReader2 {
 
+    private static final String DEFAULT_CHARSET = "utf-8";
+
     private static final String NAMESPACE = "http://graphml.graphdrawing.org/xmlns";
 
     private static final String SRC = Graph.DEFAULT_SOURCE_KEY;
@@ -76,7 +78,7 @@ public class GraphMLReader2 {
     public Iterable<Graph> readFromStream(InputStream is) throws DataIOException {
         try {
             XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
-            XmlDocument doc = builder.parseReader(new InputStreamReader(is));
+            XmlDocument doc = builder.parseReader(new InputStreamReader(is, DEFAULT_CHARSET));
             namespace = builder.newNamespace(NAMESPACE);
 
             dataParser = ParserFactory.getDefaultFactory();

@@ -69,7 +69,7 @@ public class VisualLegend extends PPath {
         addChild(createArrow(posX, posY));
         posY += spaceForArrow;
 
-        MinMax stats = visualFlowMap.getModel().getStats().getEdgeWeightStats();
+        MinMax stats = visualFlowMap.getFlowMapGraph().getStats().getEdgeWeightStats();
         List<Double> legendValues = LedgendValuesGenerator.generateLegendValues(
                 stats.getMin(), stats.getMax(), NUM_LEGEND_WEIGHT_VALUES);
 

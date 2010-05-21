@@ -20,9 +20,9 @@ package jflowmap.aggregation;
 
 import java.util.List;
 
+import jflowmap.FlowMapGraph;
 import jflowmap.geom.FPoint;
 import jflowmap.geom.Point;
-import jflowmap.visuals.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 
@@ -55,15 +55,15 @@ public class EdgeSegmentAggregator {
 
     private static Logger logger = Logger.getLogger(EdgeSegmentAggregator.class);
 
-    private final VisualFlowMapModel flowMapModel;
-
     private List<EdgeSegment> segments;
     private List<SegmentedEdge> segmentedEdges;
 
     private List<EdgeSegment> aggregatedSegments;
 
-    public EdgeSegmentAggregator(VisualFlowMapModel flowMapModel) {
-        this.flowMapModel = flowMapModel;
+    private final FlowMapGraph flowMapGraph;
+
+    public EdgeSegmentAggregator(FlowMapGraph flowMapGraph) {
+        this.flowMapGraph = flowMapGraph;
     }
 
     public void aggregate(ProgressTracker pt) {
@@ -186,31 +186,31 @@ public class EdgeSegmentAggregator {
 //    }
 
     private void createSegmentedEdges() {
-        int numEdges = flowMapModel.getGraph().getEdgeCount();
+        int numEdges = flowMapGraph.getGraph().getEdgeCount();
 
         segments = Lists.newArrayList();
         segmentedEdges = Lists.newArrayListWithExpectedSize(numEdges);
 
         for (int i = 0; i < numEdges; i++) {
-            Edge edge = flowMapModel.getGraph().getEdge(i);
-            if (flowMapModel.isSelfLoop(edge)) {
+            Edge edge = flowMapGraph.getGraph().getEdge(i);
+            if (flowMapGraph.isSelfLoop(edge)) {
                 continue;
             }
-            List<Point> points = flowMapModel.getEdgeSubdivisionPoints(edge);
+            List<Point> points = flowMapGraph.getEdgeSubdivisionPoints(edge);
             SegmentedEdge segmentedEdge = new SegmentedEdge(edge);
             for (int pi = 0, psize = points.size(); pi <= psize; pi++) {
                 FPoint a, b;
                 if (pi == 0) {
-                    a = new FPoint(flowMapModel.getEdgeSourcePoint(edge), true);
+                    a = new FPoint(flowMapGraph.getEdgeSourcePoint(edge), true);
                 } else {
                     a = new FPoint(points.get(pi - 1), false);
                 }
                 if (pi == psize) {
-                    b = new FPoint(flowMapModel.getEdgeTargetPoint(edge), true);
+                    b = new FPoint(flowMapGraph.getEdgeTargetPoint(edge), true);
                 } else {
                     b = new FPoint(points.get(pi), false);
                 }
-                EdgeSegment seg = new EdgeSegment(a, b, flowMapModel.getEdgeWeight(edge));
+                EdgeSegment seg = new EdgeSegment(a, b, flowMapGraph.getEdgeWeight(edge));
                 segments.add(seg);
                 segmentedEdge.addConsecutiveSegment(seg);
             }

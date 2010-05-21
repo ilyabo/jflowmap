@@ -20,19 +20,10 @@ package jflowmap.visuals;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Collections;
-import java.util.List;
 
-import jflowmap.FlowMapGraphWithAttrSpecs;
+import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
-import jflowmap.geom.GeomUtils;
-import jflowmap.geom.Point;
-import prefuse.data.Edge;
-import prefuse.data.Graph;
-import prefuse.data.Node;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Ilya Boyandin
@@ -44,8 +35,6 @@ public class VisualFlowMapModel {
     public static final String DEFAULT_EDGE_WEIGHT_ATTR_NAME = "value";
     public static final String DEFAULT_NODE_LABEL_ATTR_NAME = "label";
 
-    private static final String SUBDIVISION_POINTS_ATTR_NAME = "_subdivp";
-
     private boolean autoAdjustColorScale;
     private boolean useLogColorScale = true;
     private boolean useLogWidthScale = false;
@@ -54,10 +43,6 @@ public class VisualFlowMapModel {
     private boolean fillEdgesWithGradient = true;
     private boolean useProportionalDirectionMarkers = true;
 
-    private final String edgeWeightAttr;
-    private final String xNodeAttr;
-    private final String yNodeAttr;
-    private String nodeLabelAttr = "tooltip";
 
 //    private int edgeAlpha = 150;
     private int edgeAlpha = 100;  //50;
@@ -76,20 +61,16 @@ public class VisualFlowMapModel {
     private double nodeSize;
 
     private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
-    private final FlowMapStats stats;
-    private final Graph graph;
+    private final FlowMapGraph flowMapGraph;
 
-    public VisualFlowMapModel(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
-        this.graph = graphAndSpecs.getGraph();
-        this.edgeWeightAttr = graphAndSpecs.getAttrsSpec().getEdgeWeightAttr();
-        this.xNodeAttr = graphAndSpecs.getAttrsSpec().getXNodeAttr();
-        this.yNodeAttr = graphAndSpecs.getAttrsSpec().getYNodeAttr();
-        this.nodeLabelAttr = graphAndSpecs.getAttrsSpec().getNodeLabelAttr();
-        this.stats = stats;
+    public VisualFlowMapModel(FlowMapGraph flowMapGraph) {
+        this.flowMapGraph = flowMapGraph;
         initFromStats();
     }
 
     private void initFromStats() {
+        FlowMapStats stats = flowMapGraph.getStats();
+
         MinMax lengthStats = stats.getEdgeLengthStats();
         this.edgeLengthFilterMin = lengthStats.getMin();
         this.edgeLengthFilterMax = lengthStats.getMax();
@@ -114,12 +95,8 @@ public class VisualFlowMapModel {
         nodeSize = lengthStats.getAvg() / 50;
     }
 
-    public Graph getGraph() {
-        return graph;
-    }
-
-    public FlowMapStats getStats() {
-        return stats;
+    public FlowMapGraph getFlowMapGraph() {
+        return flowMapGraph;
     }
 
     public boolean getAutoAdjustColorScale() {
@@ -150,22 +127,6 @@ public class VisualFlowMapModel {
         boolean old = this.useLogWidthScale;
         this.useLogWidthScale = useLogWidthScale;
         changes.firePropertyChange(PROPERTY_USE_LOG_WIDTH_SCALE, old, useLogWidthScale);
-    }
-
-    public String getXNodeAttr() {
-        return xNodeAttr;
-    }
-
-    public String getYNodeAttr() {
-        return yNodeAttr;
-    }
-
-    public String getEdgeWeightAttr() {
-        return edgeWeightAttr;
-    }
-
-    public String getNodeLabelAttr() {
-        return nodeLabelAttr;
     }
 
     public int getEdgeAlpha() {
@@ -362,90 +323,9 @@ public class VisualFlowMapModel {
     public static final String PROPERTY_SHOW_NODES = "showNodes";
     public static final String PROPERTY_NODE_SIZE = "nodeSize";
 
-    public MinMax getEdgeLengthStats() {
-        return stats.getEdgeLengthStats();
-    }
-
-    public double getEdgeWeight(Edge edge) {
-        return edge.getDouble(edgeWeightAttr);
-    }
-
-    public List<Point> getEdgePoints(Edge edge) {
-        List<Point> subdiv;
-        if (hasEdgeSubdivisionPoints(edge)) {
-            subdiv = getEdgeSubdivisionPoints(edge);
-        } else {
-            subdiv = Collections.emptyList();
-        }
-        List<Point> points = Lists.newArrayListWithExpectedSize(subdiv.size() + 2);
-        points.add(getEdgeSourcePoint(edge));
-        points.addAll(subdiv);
-        points.add(getEdgeTargetPoint(edge));
-        return points;
-    }
-
-    public boolean isSelfLoop(Edge edge) {
-        Node src = edge.getSourceNode();
-        Node target = edge.getTargetNode();
-        if (src == target) {
-            return true;
-        }
-        return GeomUtils.isSelfLoopEdge(
-                src.getDouble(xNodeAttr), target.getDouble(xNodeAttr),
-                src.getDouble(yNodeAttr), target.getDouble(yNodeAttr)
-        );
-    }
-
-    public boolean hasEdgeSubdivisionPoints(Edge edge) {
-        return
-            edge.canGet(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, List.class)  &&
-            // the above will return true after calling removeAllEdgeSubdivisionPoints(),
-            // so we need to add the following null check:
-            (edge.get(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME) != null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Point> getEdgeSubdivisionPoints(Edge edge) {
-        checkContainsEdge(edge);
-        return (List<Point>) edge.get(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME);
-    }
-
-    public void setEdgeSubdivisionPoints(Edge edge, List<Point> points) {
-        checkContainsEdge(edge);
-        if (!graph.hasSet(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME)) {
-            graph.addColumn(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, List.class);
-        }
-        edge.set(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, points);
-    }
-
-    public void removeAllEdgeSubdivisionPoints() {
-        int numEdges = graph.getEdgeCount();
-        for (int i = 0; i < numEdges; i++) {
-            Edge edge = graph.getEdge(i);
-            if (hasEdgeSubdivisionPoints(edge)) {
-                edge.set(VisualFlowMapModel.SUBDIVISION_POINTS_ATTR_NAME, null);
-            }
-        }
-    }
-
-    private void checkContainsEdge(Edge edge) {
-        if (!graph.containsTuple(edge)) {
-            throw new IllegalArgumentException("Edge is not in graph");
-        }
-    }
-
-    public Point getEdgeSourcePoint(Edge edge) {
-        Node src = edge.getSourceNode();
-        return new Point(src.getDouble(xNodeAttr), src.getDouble(yNodeAttr));
-    }
-
-    public Point getEdgeTargetPoint(Edge edge) {
-        Node target = edge.getTargetNode();
-        return new Point(target.getDouble(xNodeAttr), target.getDouble(yNodeAttr));
-    }
 
     public double normalize(double edgeWeight, boolean useLogValue) {
-        MinMax ws = getStats().getEdgeWeightStats();
+        MinMax ws = getFlowMapGraph().getStats().getEdgeWeightStats();
         if (useLogValue) {
             return ws.normalizeLog(edgeWeight);
         } else {

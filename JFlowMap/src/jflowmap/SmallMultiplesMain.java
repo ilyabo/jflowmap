@@ -282,7 +282,7 @@ public class SmallMultiplesMain extends JFrame {
                             cluster();
                         }
                         if (fdebInitializer != null) {
-                            ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(model);
+                            ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(visualFlowMap.getFlowMapGraph());
                             setupBundlerParams(bundlerParams);
                             visualFlowMap.bundleEdges(bundlerParams);
                         }

@@ -29,7 +29,6 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import jflowmap.data.FlowMapLoader;
-import jflowmap.data.FlowMapStats;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.util.piccolo.PanHandler;
@@ -38,11 +37,9 @@ import jflowmap.visuals.ColorCodes;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.VisualAreaMap;
 import jflowmap.visuals.VisualFlowMap;
-import jflowmap.visuals.VisualFlowMapModel;
 
 import org.apache.log4j.Logger;
 
-import prefuse.data.Graph;
 import edu.umd.cs.piccolo.PCanvas;
 
 /**
@@ -62,13 +59,12 @@ public class JFlowMap extends JComponent {
 
     public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
-    public JFlowMap(Graph graph, FlowMapAttrsSpec attrSpecs, AreaMap areaMap) {
+    public JFlowMap(FlowMapGraph flowMapGraph, AreaMap areaMap) {
         init();
 
         controlPanel = null;
 
-        FlowMapGraphWithAttrSpecs graphAndSpecs = new FlowMapGraphWithAttrSpecs(graph, attrSpecs);
-        setVisualFlowMap(createVisualFlowMap(graphAndSpecs, null));
+        setVisualFlowMap(createVisualFlowMap(flowMapGraph));
         if (areaMap != null) {
             visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
         }
@@ -135,20 +131,8 @@ public class JFlowMap extends JComponent {
         return null;
     }
 
-    public VisualFlowMap createVisualFlowMap(FlowMapGraphWithAttrSpecs graphAndSpecs, FlowMapStats stats) {
-        if (stats == null) {
-            stats = FlowMapStats.createFor(graphAndSpecs);
-        }
-
-        VisualFlowMapModel params = new VisualFlowMapModel(graphAndSpecs, stats);
-
-        logger.info("Edge weight stats: " + params.getStats().getEdgeWeightStats());
-        double minWeight = graphAndSpecs.getAttrsSpec().getWeightFilterMin();
-        if (!Double.isNaN(minWeight)) {
-            params.setEdgeWeightFilterMin(minWeight);
-        }
-
-        return new VisualFlowMap(this, graphAndSpecs.getGraph(), params.getStats(), params, true);
+    public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph) {
+        return new VisualFlowMap(this, flowMapGraph, true);
     }
 
     public VisualFlowMap getVisualFlowMap() {

@@ -238,7 +238,7 @@ public class FlowMapMain extends JFrame {
             // TODO: let the user choose the attr specs
             FlowMapAttrsSpec attrSpecs = REFUGEES_ATTR_SPECS;
 
-            JFlowMap view = new JFlowMap(graph, attrSpecs, areaMap);
+            JFlowMap view = new JFlowMap(new FlowMapGraph(graph, attrSpecs), areaMap);
             view.getVisualFlowMap().setLegendVisible(false);
             JInternalFrame iframe = showView(view);
 

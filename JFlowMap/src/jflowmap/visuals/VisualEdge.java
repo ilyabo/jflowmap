@@ -62,7 +62,7 @@ public abstract class VisualEdge extends PNode {
         this.sourceNode = sourceNode;
         this.targetNode = targetNode;
         this.visualFlowMap = visualFlowMap;
-        this.isSelfLoop = visualFlowMap.getModel().isSelfLoop(edge);
+        this.isSelfLoop = visualFlowMap.getFlowMapGraph().isSelfLoop(edge);
         if (isSelfLoop) {
             this.edgeLength = 0;
         } else {
@@ -185,7 +185,7 @@ public abstract class VisualEdge extends PNode {
     }
 
     public double getEdgeWeight() {
-        return edge.getDouble(visualFlowMap.getModel().getEdgeWeightAttr());
+        return edge.getDouble(visualFlowMap.getFlowMapGraph().getEdgeWeightAttr());
     }
 
     public double getEdgeLength() {

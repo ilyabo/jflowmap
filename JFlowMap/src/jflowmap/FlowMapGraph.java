@@ -19,27 +19,78 @@
 package jflowmap;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import jflowmap.data.FlowMapStats;
+import jflowmap.data.MinMax;
+import jflowmap.geom.GeomUtils;
+import jflowmap.geom.Point;
+
+import org.apache.log4j.Logger;
+
+import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * @author Ilya Boyandin
  */
 
-// TODO: finish class FlowMapGraph
-
 public class FlowMapGraph {
+
+    private static Logger logger = Logger.getLogger(FlowMapGraph.class);
 
     public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
     public static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
 
-//    private Graph graph;
+    private static final String SUBDIVISION_POINTS_ATTR_NAME = "_subdivp";
 
-    private FlowMapGraph() {
+    private final Graph graph;
+    private final FlowMapStats stats;
+    private final FlowMapAttrsSpec attrSpec;
+
+    public FlowMapGraph(Graph graph, FlowMapAttrsSpec attrSpec) {
+        this.graph = graph;
+        this.attrSpec = attrSpec;
+        this.stats = FlowMapStats.createFor(new FlowMapGraphWithAttrSpecs(graph, attrSpec));
+        logger.info("Edge weight stats: " + stats.getEdgeWeightStats());
+    }
+
+    public String getId() {
+        return getGraphId(graph);
+    }
+
+    public String getXNodeAttr() {
+        return attrSpec.getXNodeAttr();
+    }
+
+    public String getYNodeAttr() {
+        return attrSpec.getYNodeAttr();
+    }
+
+    public String getEdgeWeightAttr() {
+        return attrSpec.getEdgeWeightAttr();
+    }
+
+    public String getNodeLabelAttr() {
+        return attrSpec.getNodeLabelAttr();
+    }
+
+    public FlowMapStats getStats() {
+        return stats;
+    }
+
+    public FlowMapAttrsSpec getAttrSpec() {
+        return attrSpec;
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 
     // TODO: create class FlowMapGraph encapsulating Graph and move these methods there
@@ -92,4 +143,85 @@ public class FlowMapGraph {
         return values;
     }
 
+    public MinMax getEdgeLengthStats() {
+        return stats.getEdgeLengthStats();
+    }
+
+    public double getEdgeWeight(Edge edge) {
+        return edge.getDouble(attrSpec.getEdgeWeightAttr());
+    }
+
+    public List<Point> getEdgePoints(Edge edge) {
+        List<Point> subdiv;
+        if (hasEdgeSubdivisionPoints(edge)) {
+            subdiv = getEdgeSubdivisionPoints(edge);
+        } else {
+            subdiv = Collections.emptyList();
+        }
+        List<Point> points = Lists.newArrayListWithExpectedSize(subdiv.size() + 2);
+        points.add(getEdgeSourcePoint(edge));
+        points.addAll(subdiv);
+        points.add(getEdgeTargetPoint(edge));
+        return points;
+    }
+
+    public boolean isSelfLoop(Edge edge) {
+        Node src = edge.getSourceNode();
+        Node target = edge.getTargetNode();
+        if (src == target) {
+            return true;
+        }
+        return GeomUtils.isSelfLoopEdge(
+                src.getDouble(attrSpec.getXNodeAttr()), target.getDouble(attrSpec.getXNodeAttr()),
+                src.getDouble(attrSpec.getYNodeAttr()), target.getDouble(attrSpec.getYNodeAttr())
+        );
+    }
+
+    public boolean hasEdgeSubdivisionPoints(Edge edge) {
+        return
+            edge.canGet(SUBDIVISION_POINTS_ATTR_NAME, List.class)  &&
+            // the above will return true after calling removeAllEdgeSubdivisionPoints(),
+            // so we need to add the following null check:
+            (edge.get(SUBDIVISION_POINTS_ATTR_NAME) != null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Point> getEdgeSubdivisionPoints(Edge edge) {
+        checkContainsEdge(edge);
+        return (List<Point>) edge.get(SUBDIVISION_POINTS_ATTR_NAME);
+    }
+
+    public void setEdgeSubdivisionPoints(Edge edge, List<Point> points) {
+        checkContainsEdge(edge);
+        if (!graph.hasSet(SUBDIVISION_POINTS_ATTR_NAME)) {
+            graph.addColumn(SUBDIVISION_POINTS_ATTR_NAME, List.class);
+        }
+        edge.set(SUBDIVISION_POINTS_ATTR_NAME, points);
+    }
+
+    public void removeAllEdgeSubdivisionPoints() {
+        int numEdges = graph.getEdgeCount();
+        for (int i = 0; i < numEdges; i++) {
+            Edge edge = graph.getEdge(i);
+            if (hasEdgeSubdivisionPoints(edge)) {
+                edge.set(SUBDIVISION_POINTS_ATTR_NAME, null);
+            }
+        }
+    }
+
+    private void checkContainsEdge(Edge edge) {
+        if (!graph.containsTuple(edge)) {
+            throw new IllegalArgumentException("Edge is not in graph");
+        }
+    }
+
+    public Point getEdgeSourcePoint(Edge edge) {
+        Node src = edge.getSourceNode();
+        return new Point(src.getDouble(attrSpec.getXNodeAttr()), src.getDouble(attrSpec.getYNodeAttr()));
+    }
+
+    public Point getEdgeTargetPoint(Edge edge) {
+        Node target = edge.getTargetNode();
+        return new Point(target.getDouble(attrSpec.getXNodeAttr()), target.getDouble(attrSpec.getYNodeAttr()));
+    }
 }

@@ -54,8 +54,8 @@ import jflowmap.DatasetSpec;
 import jflowmap.JFlowMap;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
-import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapLoader;
+import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.util.Pair;
 import jflowmap.visuals.VisualFlowMap;
@@ -183,7 +183,7 @@ public class ControlPanel {
         attachVisualFlowMapListeners(newVisualFlowMap);
 
         // load data
-        fdBundlingParams = new ForceDirectedBundlerParameters(visualFlowMap.getModel());
+        fdBundlingParams = new ForceDirectedBundlerParameters(visualFlowMap.getFlowMapGraph());
         if (!modelsInitialized) {
             initModelsOnce();
             modelsInitialized = true;

@@ -37,9 +37,8 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapAttrsSpec;
-import jflowmap.FlowMapGraphWithAttrSpecs;
+import jflowmap.FlowMapGraph;
 import jflowmap.JFlowMap;
 import jflowmap.aggregation.EdgeSegment;
 import jflowmap.aggregation.EdgeSegmentAggregator;
@@ -84,9 +83,11 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualFlowMap extends PNode {
 
-    private static final boolean SHOW_SPLINE_POINTS = false;
     private static final long serialVersionUID = 1L;
     private static Logger logger = Logger.getLogger(VisualFlowMap.class);
+
+    private static final boolean SHOW_SPLINE_POINTS = false;
+
     public enum Attributes {
         NODE_SELECTION
     }
@@ -97,7 +98,7 @@ public class VisualFlowMap extends PNode {
     private final PNode edgeLayer;
     private final PNode nodeLayer;
 
-    private final VisualFlowMapModel flowMapModel;
+    private final VisualFlowMapModel visualFlowMapModel;
     private List<VisualNode> visualNodes;
     private List<VisualEdge> visualEdges;
     private Map<Node, VisualNode> nodesToVisuals;
@@ -122,9 +123,14 @@ public class VisualFlowMap extends PNode {
     private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
     private final VisualLegend visualLegend;
 
-    public VisualFlowMap(JFlowMap jFlowMap, Graph graph, FlowMapStats stats, VisualFlowMapModel model, boolean showLegend) {
+    public VisualFlowMap(JFlowMap jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend) {
         this.jFlowMap = jFlowMap;
-    	this.flowMapModel = model;
+
+        visualFlowMapModel = new VisualFlowMapModel(flowMapGraph);
+        double minWeight = flowMapGraph.getAttrSpec().getWeightFilterMin();
+        if (!Double.isNaN(minWeight)) {
+            visualFlowMapModel.setEdgeWeightFilterMin(minWeight);
+        }
 
     	visualEdgePaintFactory = new VisualEdgePaintFactory(this);
     	visualEdgeStrokeFactory = new VisualEdgeStrokeFactory(this);
@@ -145,9 +151,17 @@ public class VisualFlowMap extends PNode {
 	    visualLegend = new VisualLegend(this);
 	    setLegendVisible(showLegend);
 
-        initModelChangeListeners(model);
+        initModelChangeListeners(visualFlowMapModel);
 //        fitInCameraView();
 //        fitInCameraView(false);
+    }
+
+    public String getName() {
+        return getFlowMapGraph().getId();
+    }
+
+    public FlowMapGraph getFlowMapGraph() {
+        return visualFlowMapModel.getFlowMapGraph();
     }
 
     public void setLegendVisible(boolean visible) {
@@ -183,7 +197,7 @@ public class VisualFlowMap extends PNode {
     private void createNodeVisuals() {
         nodeLayer.removeAllChildren();
 
-        Graph graph = flowMapModel.getGraph();
+        Graph graph = getFlowMapGraph().getGraph();
 
         final int numNodes = graph.getNodeCount();
         visualNodes = new ArrayList<VisualNode>();
@@ -192,8 +206,8 @@ public class VisualFlowMap extends PNode {
         for (int i = 0; i < numNodes; i++) {
             Node node = graph.getNode(i);
             VisualNode vnode = new VisualNode(this, node,
-                    node.getDouble(flowMapModel.getXNodeAttr()), // - xStats.min,
-                    node.getDouble(flowMapModel.getYNodeAttr())// - yStats.min,
+                    node.getDouble(getFlowMapGraph().getXNodeAttr()), // - xStats.min,
+                    node.getDouble(getFlowMapGraph().getYNodeAttr())// - yStats.min,
             );
             nodeLayer.addChild(vnode);
             visualNodes.add(vnode);
@@ -216,7 +230,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public String getLabel(Edge edge) {
-        String labelAttr = flowMapModel.getNodeLabelAttr();
+        String labelAttr = getFlowMapGraph().getNodeLabelAttr();
         Node src = edge.getSourceNode();
         Node target = edge.getTargetNode();
         if (labelAttr == null) {
@@ -227,7 +241,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public String getLabel(Node node) {
-        String labelAttr = flowMapModel.getNodeLabelAttr();
+        String labelAttr = getFlowMapGraph().getNodeLabelAttr();
         if (labelAttr == null) {
             return node.toString();
         } else {
@@ -246,11 +260,11 @@ public class VisualFlowMap extends PNode {
         visualEdges = new ArrayList<VisualEdge>();
         edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-        Graph graph = flowMapModel.getGraph();
+        Graph graph = getFlowMapGraph().getGraph();
 
 //        Iterator<Integer> it = graph.getEdgeTable().rows();
         @SuppressWarnings("unchecked")
-        Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(flowMapModel.getEdgeWeightAttr(), true);
+        Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(getFlowMapGraph().getEdgeWeightAttr(), true);
 
         while (it.hasNext()) {
             Edge edge = graph.getEdge(it.next());
@@ -271,12 +285,12 @@ public class VisualFlowMap extends PNode {
                 );
             }
 
-            double value = edge.getDouble(flowMapModel.getEdgeWeightAttr());
+            double value = edge.getDouble(getFlowMapGraph().getEdgeWeightAttr());
             if (Double.isNaN(value)) {
                 logger.warn(
                     "Omitting edge with NaN value: " +
-                    srcNode.getString(flowMapModel.getNodeLabelAttr()) + " -> " +
-                    targetNode.getString(flowMapModel.getNodeLabelAttr()) +
+                    srcNode.getString(getFlowMapGraph().getNodeLabelAttr()) + " -> " +
+                    targetNode.getString(getFlowMapGraph().getNodeLabelAttr()) +
                     " [" + edge + "]"
                 );
             } else {
@@ -284,9 +298,9 @@ public class VisualFlowMap extends PNode {
                 VisualNode toNode = nodesToVisuals.get(targetNode);
 
                 VisualEdge visualEdge;
-                if (flowMapModel.hasEdgeSubdivisionPoints(edge)) {
+                if (getFlowMapGraph().hasEdgeSubdivisionPoints(edge)) {
                     visualEdge = new BSplineVisualEdge(
-                            this, edge, fromNode, toNode, flowMapModel.getEdgePoints(edge), SHOW_SPLINE_POINTS);
+                            this, edge, fromNode, toNode, getFlowMapGraph().getEdgePoints(edge), SHOW_SPLINE_POINTS);
                 } else {
                     visualEdge = new LineVisualEdge(this, edge, fromNode, toNode);
                 }
@@ -318,11 +332,11 @@ public class VisualFlowMap extends PNode {
     }
 
     public FlowMapStats getStats() {
-		return flowMapModel.getStats();
+		return getFlowMapGraph().getStats();
 	}
 
     public VisualFlowMapModel getModel() {
-        return flowMapModel;
+        return visualFlowMapModel;
     }
 
 //    private static final Insets contentInsets = new Insets(10, 10, 10, 10);
@@ -358,7 +372,7 @@ public class VisualFlowMap extends PNode {
     }
 
     public String getLabelAttr() {
-        return flowMapModel.getNodeLabelAttr();
+        return getFlowMapGraph().getNodeLabelAttr();
     }
 
     public void showTooltip(PNode component, Point2D pos) {
@@ -376,7 +390,7 @@ public class VisualFlowMap extends PNode {
             VisualEdge edge = (VisualEdge) component;
             tooltipBox.setText(
                     wordWrapLabel(edge.getLabel(), maxLabelWidth),
-                    flowMapModel.getEdgeWeightAttr() + ": ", Double.toString(edge.getEdgeWeight()));
+                    getFlowMapGraph().getEdgeWeightAttr() + ": ", Double.toString(edge.getEdgeWeight()));
         } else {
             return;
         }
@@ -517,15 +531,14 @@ public class VisualFlowMap extends PNode {
 
     public void resetBundling() {
         bundled = false;
-        flowMapModel.removeAllEdgeSubdivisionPoints();
+        getFlowMapGraph().removeAllEdgeSubdivisionPoints();
         createEdgeVisuals();
         repaint();
     }
 
     public void bundleEdges(ForceDirectedBundlerParameters bundlerParams) {
         final ProgressTracker pt = new ProgressTracker();
-        final ForceDirectedEdgeBundler bundler =
-                new ForceDirectedEdgeBundler(flowMapModel, bundlerParams);
+        final ForceDirectedEdgeBundler bundler = new ForceDirectedEdgeBundler(getFlowMapGraph(), bundlerParams);
         ProgressWorker worker = new ProgressWorker(pt) {
             @Override
             public Object construct() {
@@ -578,7 +591,7 @@ public class VisualFlowMap extends PNode {
         if (!isBundled()) {
             return;
         }
-        final EdgeSegmentAggregator aggregator = new EdgeSegmentAggregator(getModel());
+        final EdgeSegmentAggregator aggregator = new EdgeSegmentAggregator(getFlowMapGraph());
         final ProgressTracker pt = new ProgressTracker();
         ProgressWorker worker = new ProgressWorker(pt) {
             @Override
@@ -891,7 +904,7 @@ public class VisualFlowMap extends PNode {
 
         Graph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(visualNodeClusters);
         VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(
-                new FlowMapGraphWithAttrSpecs(
+                new FlowMapGraph(
                     clusteredGraph,
                     new FlowMapAttrsSpec(
                         VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
@@ -900,8 +913,7 @@ public class VisualFlowMap extends PNode {
                         VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
                         0
                     )
-                ),
-                null
+                )
         );
         if (areaMap != null) {
             clusteredFlowMap.setAreaMap((VisualAreaMap)areaMap.clone());
@@ -946,10 +958,6 @@ public class VisualFlowMap extends PNode {
             }
         }
         return null;
-    }
-
-    public String getName() {
-        return FlowMapGraph.getGraphId(flowMapModel.getGraph());
     }
 
 }

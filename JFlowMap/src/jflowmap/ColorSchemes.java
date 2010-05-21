@@ -28,7 +28,7 @@ import jflowmap.visuals.ColorScheme;
  */
 public enum ColorSchemes {
     DARK(new ColorScheme.Builder("Dark")
-      .put(ColorCodes.BACKGROUND, new Color(0x20, 0x20, 0x20))
+      .put(ColorCodes.BACKGROUND, Color.black/*new Color(0x20, 0x20, 0x20)*/)
       .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
       .put(ColorCodes.AREA_STROKE, new Color(55, 55, 55))
       .put(ColorCodes.NODE_PAINT, new Color(255, 255, 255, 90))

@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
 
 import jflowmap.DatasetSpec;
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowMapGraphWithAttrSpecs;
 import jflowmap.JFlowMap;
 import jflowmap.models.map.AreaMap;
 import jflowmap.visuals.VisualAreaMap;
@@ -64,9 +63,7 @@ public class FlowMapLoader {
         try {
             Graph graph = loadGraph(dataset.getFilename());
 
-            FlowMapGraphWithAttrSpecs graphAndSpecs = new FlowMapGraphWithAttrSpecs(graph, dataset.getAttrsSpec());
-
-            VisualFlowMap visualFlowMap = jFlowMap.createVisualFlowMap(graphAndSpecs, stats);
+            VisualFlowMap visualFlowMap = jFlowMap.createVisualFlowMap(new FlowMapGraph(graph, dataset.getAttrsSpec()));
             if (dataset.getAreaMapFilename() != null) {
                 AreaMap areaMap = AreaMap.load(dataset.getAreaMapFilename());
                 visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
