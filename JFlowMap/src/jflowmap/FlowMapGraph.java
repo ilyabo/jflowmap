@@ -243,7 +243,7 @@ public class FlowMapGraph {
     }
 
     /**
-     * Creates a new FlowMapGraphSet in which nodes of this FlowMapGraphSet
+     * Creates a new FlowMapGraph in which nodes of this FlowMapGraph
      * having the same value of {@nodeAttrToGroupBy} are grouped together.
      */
     public FlowMapGraph groupNodesBy(String nodeAttrToGroupBy) {
