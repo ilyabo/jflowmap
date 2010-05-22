@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ChangeListManager" verified="true">
+  <component name="ChangeListManager">
     <list default="true" readonly="true" id="21704640-0937-475e-9de3-bef57c70d8a9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JFlowMap.iws" afterPath="$PROJECT_DIR$/JFlowMap.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/SmallMultiplesMain.java" afterPath="$PROJECT_DIR$/src/jflowmap/SmallMultiplesMain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/datasets.xml" afterPath="$PROJECT_DIR$/data/datasets.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JFlowMap.iml" afterPath="$PROJECT_DIR$/JFlowMap.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/GraphMLReader3.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/GraphMLReader3.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/data/GraphMLReader2.java" afterPath="$PROJECT_DIR$/src/jflowmap/data/GraphMLReader2.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JFlowMap.ipr" afterPath="$PROJECT_DIR$/JFlowMap.ipr" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/FlowMapMain.java" afterPath="$PROJECT_DIR$/src/jflowmap/FlowMapMain.java" />
     </list>
-    <ignored path="JFlowMap.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="JFlowMap.iws" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +69,20 @@
   <component name="FavoritesManager">
     <favorites_list name="JFlowMap" />
   </component>
+  <component name="FileColors" enabled="true" enabledForTabs="true" />
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="FlowMapMain.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/jflowmap/FlowMapMain.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="83" column="44" selection-start="2599" selection-end="2599" vertical-scroll-proportion="0.6138148">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
   <component name="FindManager">
     <FindUsagesManager>
       <setting name="OPEN_NEW_TAB" value="false" />
@@ -74,6 +90,13 @@
   </component>
   <component name="Git.Settings">
     <option name="GIT_EXECUTABLE" value="git.cmd" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/jflowmap/FlowMapMain.java" />
+      </list>
+    </option>
   </component>
   <component name="MavenRunner">
     <option name="jreName" value="#JAVA_INTERNAL" />
@@ -141,7 +164,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -150,9 +172,52 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JFlowMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JFlowMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JFlowMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JFlowMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tools" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JFlowMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="JFlowMap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jflowmap" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Favorites" />
     </panes>
   </component>
@@ -162,6 +227,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="RunManagerConfig.showSettingsBeforeRunnig" value="false" />
+    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="options.lastSelected" value="copyright" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -169,11 +235,282 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
-  <component name="RunManager">
+  <component name="RestoreUpdateTree">
+    <UpdateInfo date="01.05.10 19:16" ActionInfo="_Update">
+      <UpdatedFiles>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated from server" />
+          <option name="myStatusName" value="Changed on server" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CHANGED_ON_SERVER" />
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Updated" />
+            <option name="myStatusName" value="Changed" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="UPDATED" />
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\clustering\NodeDistanceMeasure.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\models\FlowMapModel.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\models\FlowMapGraphBuilder.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowMap.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\ColorScheme.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\VisualNode.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\VisualNodeCluster.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\timeline\VisualTimelineNodeCell.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\VisualEdge.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\VisualFlowMap.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\Tooltip.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\ColorCodes.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\geom\BSplinePath.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\JFlowTimeline.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowMapApplet.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\SmallMultiplesMain.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\JFlowMap.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\bundling\ForceDirectedBundlerParameters.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\bundling\ForceDirectedEdgeBundler.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\ColorSchemes.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\data\FlowMapStats.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\data\MinMax.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\data\XmlRegionsReader.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\data\FlowMapLoader.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\ui\actions\OpenFileAction.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowMapAttrsSpec.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\build.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\lib\dmlib.jar</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\lib\prefuse.jar</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\lib\xpp3-1.1.4c.jar</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\regions.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\datasets.xml</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Created" />
+            <option name="myStatusName" value="Created" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="CREATED" />
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\test\jflowmap\clustering</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\test\jflowmap\clustering\CosineTest.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\test\jflowmap\aggregation\data</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\test\jflowmap\aggregation\data\MinMaxTest.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\test\jflowmap\util\piccolo</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\test\jflowmap\util\piccolo\PCollapsableItemsContainerTest.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\clustering\Cosine.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowTimelineApplet.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\timeline\VisualTimeline.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\data\FlowMapSummaries.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\piccolo</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\piccolo\ZoomHandler.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\piccolo\PCollapsableItemsContainer.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\piccolo\PNodes.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\piccolo\PiccoloUtils.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\piccolo\PanHandler.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowTimeline.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\log4j-applet.properties</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\tools</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\tools\proguard.jar</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\dist\jflowmap-flowmap.html</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\dist\jflowmap-timeline.html</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\lib\guava-r03.jar</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1980.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1990.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1982.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1992.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1984.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1994.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1976.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1986.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1978.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1996.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1988.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1998.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees_1975-2008.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2000.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2002.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2004.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2006.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2008.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\countries-areas.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1981.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1991.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1983.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1975.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1993.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1985.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1995.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1977.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1987.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1997.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1979.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1989.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1999.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2001.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2003.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2005.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2007.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\airlines\airlines.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\migrations\migrations-10000.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\migrations\migrations-5000.xml.gz</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\migrations\migrations-500.xml.gz</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Deleted" />
+            <option name="myStatusName" value="Deleted" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="true" />
+            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowMapTimeline.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\visuals\timeline\VisualFlowTimeline.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\ZoomHandler.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\PiccoloUtils.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\util\PanHandler.java</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\lib\google-collect-1.0-rc3.jar</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees-one-file</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1980.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1981.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1982.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1983.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1984.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1985.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1986.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1987.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1988.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1989.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2000.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2001.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2002.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2003.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2004.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2005.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2006.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2007.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-2008.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\countries-areas.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1990.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1991.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1992.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1975.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1993.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1976.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1994.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1995.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1977.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1996.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1978.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1979.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1997.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1998.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\refugees\refugees-1999.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\airlines\airlines.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\migrations\migrations-10000.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\migrations\migrations-5000.xml</PATH>
+            <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\data\migrations\migrations-500.xml</PATH>
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Restored" />
+            <option name="myStatusName" value="Will be restored" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="RESTORED" />
+          </FILE-GROUP>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Modified" />
+          <option name="myStatusName" value="Modified" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MODIFIED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Skipped" />
+          <option name="myStatusName" value="Skipped" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SKIPPED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with conflicts" />
+          <option name="myStatusName" value="Will be merged with conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_CONFLICTS" />
+          <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\FlowMapMain.java</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged" />
+          <option name="myStatusName" value="Will be merged" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED" />
+          <PATH vcs="svn" revision="204">D:\Workspace\JFlowMap\src\jflowmap\data\GraphMLReader2.java</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Not in repository" />
+          <option name="myStatusName" value="Not in repository" />
+          <option name="mySupportsDeletion" value="true" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UNKNOWN" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally added" />
+          <option name="myStatusName" value="Locally added" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_ADDED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally removed" />
+          <option name="myStatusName" value="Locally removed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_REMOVED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Switched" />
+          <option name="myStatusName" value="Switched" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SWITCHED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with property conflicts" />
+          <option name="myStatusName" value="Will be merged with property conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with tree conflicts" />
+          <option name="myStatusName" value="Will be merged with tree conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+        </FILE-GROUP>
+      </UpdatedFiles>
+    </UpdateInfo>
+  </component>
+  <component name="RunManager" selected="Application.FlowMapMain">
+    <configuration default="false" name="FlowMapMain" type="Application" factoryName="Application" temporary="true">
+      <extension name="snapshooter" />
+      <option name="MAIN_CLASS_NAME" value="jflowmap.FlowMapMain" />
+      <option name="VM_PARAMETERS" value="-Xmx256M" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" value="" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="JFlowMap" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -282,7 +619,9 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="0" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Application.FlowMapMain" />
+    </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
       <Port>5050</Port>
@@ -294,7 +633,7 @@
     <option name="AUTOSCROLL_FROM_SOURCE" value="false" />
     <option name="ACTIVE_ACTIONS" value="" />
   </component>
-  <component name="SvnConfiguration">
+  <component name="SvnConfiguration" maxAnnotateRevisions="500">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
     <option name="LAST_MERGED_REVISION" />
@@ -314,16 +653,16 @@
     <option name="myMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="C:\Workspace.galileo\JFlowMap" />
-          <option name="myCopyRoot" value="C:\Workspace.galileo\JFlowMap" />
+          <option name="myVcsRoot" value="D:\Workspace\JFlowMap" />
+          <option name="myCopyRoot" value="D:\Workspace\JFlowMap" />
         </SvnCopyRootSimple>
       </list>
     </option>
     <option name="myMoreRealMappingRoots">
       <list>
         <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="C:\Workspace.galileo\JFlowMap" />
-          <option name="myCopyRoot" value="C:\Workspace.galileo\JFlowMap" />
+          <option name="myVcsRoot" value="D:\Workspace\JFlowMap" />
+          <option name="myCopyRoot" value="D:\Workspace\JFlowMap" />
         </SvnCopyRootSimple>
       </list>
     </option>
@@ -349,30 +688,30 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-4" y="-4" width="1288" height="1032" extended-state="0" />
-    <editor active="false" />
+    <frame x="-4" y="-4" width="1032" height="776" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921347" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32892805" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.13979591" sideWeight="0.66824645" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2489796" sideWeight="0.66239816" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28710464" sideWeight="0.66292137" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3993015" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30173776" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32892805" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32011747" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2489796" sideWeight="0.66239816" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28659162" sideWeight="0.6886931" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3010279" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20306122" sideWeight="0.66824645" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Dataflow to this" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Dataflow to this" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3206951" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Web Preview" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -388,6 +727,8 @@
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ROLLBACK_IN_BACKGROUND" value="false" />
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
+    <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
+    <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="LAST_COMMIT_MESSAGE" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
@@ -435,11 +776,6 @@
         <state line="12" column="25" selection-start="209" selection-end="209" vertical-scroll-proportion="0.38273922" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/jflowmap/FlowMapMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="13" selection-start="1132" selection-end="1132" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/jflowmap/bundling/ForceDirectedEdgeBundler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="60" column="13" selection-start="1760" selection-end="1760" vertical-scroll-proportion="0.0" />
@@ -465,13 +801,35 @@
         <state line="2" column="24" selection-start="55" selection-end="55" vertical-scroll-proportion="0.08900524" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/jflowmap/ui/BoundSpinnerSliderModelsTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="22" selection-end="22" vertical-scroll-proportion="0.08">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/jflowmap/FlowMapMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="83" column="44" selection-start="2599" selection-end="2599" vertical-scroll-proportion="0.6138148">
+          <folding />
+        </state>
+      </provider>
+    </entry>
   </component>
   <component name="masterDetails">
     <states>
       <state key="ArtifactsStructureConfigurable.UI">
         <UIState>
           <splitter-proportions>
-            <SplitterProportionsDataImpl />
+            <SplitterProportionsDataImpl>
+              <option name="proportions">
+                <list>
+                  <option value="0.2" />
+                </list>
+              </option>
+            </SplitterProportionsDataImpl>
           </splitter-proportions>
           <settings />
         </UIState>
