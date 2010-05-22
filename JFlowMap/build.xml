@@ -134,10 +134,20 @@
 		<delete file="${path.build}/_${app.name}.jar"/>
 	</target>
 
+    <target name="sign-cert-gen">
+        <exec executable="keytool">
+        	<arg line="-keystore ${sign.keystore.name}"/>
+            <arg line="-storepass ${sign.keystore.pass}"/>
+            <arg line="-genkey -keyalg rsa  -validity 1095"/>
+            <arg line="-alias ${app.name}"/>
+            <arg line="-keypass ${sign.keystore.pass}"/>
+            <arg line="-dname &quot;CN=Ilya Boyandin, OU=, O=University of Fribourg, L=Fribourg, C=CH&quot;"/>
+        </exec>
+    </target>
+    
     <target name="sign">
-    	<!-- To create a certificate: keytool -genkey -alias jflowmap -->
         <exec executable="jarsigner">
-            <!-- <arg line="-keystore ${sign.keystore.name}"/> -->
+            <arg line="-keystore ${sign.keystore.name}"/>
             <arg line="-storepass ${sign.keystore.pass}"/>
             <arg line="${path.build}/${app.name}.jar"/>
             <arg line="${app.name}"/>

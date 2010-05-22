@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="21704640-0937-475e-9de3-bef57c70d8a9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.java" afterPath="$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JFlowMap.iws" afterPath="$PROJECT_DIR$/JFlowMap.iws" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.form" afterPath="$PROJECT_DIR$/src/jflowmap/ui/ControlPanel.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/jflowmap/visuals/timeline/VisualTimeline.java" afterPath="$PROJECT_DIR$/src/jflowmap/visuals/timeline/VisualTimeline.java" />
-    </list>
+    <list default="true" readonly="true" id="21704640-0937-475e-9de3-bef57c70d8a9" name="Default" comment="" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="JFlowMap.iws" />
     <option name="TRACKING_ENABLED" value="true" />
