@@ -76,38 +76,14 @@
 			</fileset>
 		</delete>
 	</target>
-	
-	
 
 	<target name="proguard">		
-	    <proguard verbose="false" obfuscate="false" optimize="false">
-	        <libraryjar path="${java.home}/lib/rt.jar"/>
+		<proguard configuration="proguard.cfg">
+            <libraryjar path="${java.home}/lib/rt.jar"/>
             <injar refid="libs-classpath" filter="!META-INF/MANIFEST.MF,!extras.manifest"/>
             <injar path="${path.build}/${app.name}-no-libs.jar"/>
-	    	<outjar path="${path.build}/${app.name}.jar"/>
-	    	
-	    	<dontwarn filter="javax.annotation.Nullable,javax.annotation.ParametersAreNonnullByDefault"/>
-	    	<dontwarn filter="javax.xml.namespace.QName"/>
-            <dontwarn filter="at.fhjoanneum.cgvis.**,org.eclipse.swt.**,edu.umd.cs.piccolox.swt.**"/>
-            <dontwarn filter="javax.jms.**,javax.mail.**,org.apache.lucene.**,org.apache.log4j.**"/>
-
-            <dontnote filter="com.google.common.base.FinalizableReferenceQueue,com.google.common.base.internal.Finalizer"/>
-            <dontnote filter="org.apache.log4j.spi.LocationInfo"/>
-            <dontnote filter="javax.xml.namespace.QName"/>
-
-	    	<keep name="org.apache.log4j.FileAppender"/>
-	    	<keep name="org.xmlpull.mxp1.MXParserFactory"/>
-	    	<keep name="org.xmlpull.v1.builder.xpath.saxpath.com.werken.saxpath.XPathReader"/>
-	    	<keep name="jflowmap.FlowTimelineApplet"/>
-	    	<keep name="jflowmap.FlowMapApplet"/>
-	    	
-	    	
-	      -keepclasseswithmembers public class * {
-	          public static void main(java.lang.String[]);
-	      }
-	    	
-          -keepclassmembers public class org.apache.log4j.* { *** get*(); boolean is*(); void set*(***); }
-	    </proguard>
+            <outjar path="${path.build}/${app.name}.jar"/>
+		</proguard>
 		<delete file="${path.build}/${app.name}-no-libs.jar"/>
 	</target>
 
@@ -156,20 +132,6 @@
 			<zipgroupfileset file="${path.build}/_${app.name}.jar"/>
 		</jar>
 		<delete file="${path.build}/_${app.name}.jar"/>
-	</target>
-		
-	<target name="make-jar-with-libs" depends="make-jar">
-		<jar basedir="." jarfile="${path.build}/${app.name}.jar">
-			<manifest>
-				<attribute name="Main-Class" value="jflowmap.FlowMapMain" />
-			</manifest>
-            <exclude name="**/*" />
-			<zipgroupfileset dir=".">
-				<include name="${path.lib}/**/*.jar"/>
-				<include name="${path.build}/${app.name}-no-libs.jar"/>
-			</zipgroupfileset>
-		</jar>
-		<delete file="${path.build}/log4j.properties" quiet="true"/>
 	</target>
 
     <target name="sign">
