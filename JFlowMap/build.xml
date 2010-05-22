@@ -33,7 +33,10 @@
         </antcall>
     </target>
 
+	<target name="_build" depends="mkdirs, compile, make-jar, proguard, add-manifest" />
+	<!--
 	<target name="_build" depends="mkdirs, clean, compile, make-jar, proguard, add-manifest" />
+	-->
 
     
 	<path id="libs-classpath">
@@ -77,30 +80,27 @@
 	
 
 	<target name="proguard">		
-	    <proguard>
-	    	<!-- <libraryjar refid="master-classpath"/> -->
+	    <proguard verbose="false" obfuscate="false" optimize="false">
 	        <libraryjar path="${java.home}/lib/rt.jar"/>
-            <injar refid="libs-classpath"/>
+            <injar refid="libs-classpath" filter="!META-INF/MANIFEST.MF,!extras.manifest"/>
             <injar path="${path.build}/${app.name}-no-libs.jar"/>
 	    	<outjar path="${path.build}/${app.name}.jar"/>
 	    	
 	    	<dontwarn filter="javax.annotation.Nullable,javax.annotation.ParametersAreNonnullByDefault"/>
-            <dontwarn filter="at.fhjoanneum.cgvis.*,org.eclipse.swt.*,edu.umd.cs.piccolox.swt.*"/>
-            <dontwarn filter="javax.jms.*,javax.mail.*,org.apache.lucene.*"/>
-	    	
+	    	<dontwarn filter="javax.xml.namespace.QName"/>
+            <dontwarn filter="at.fhjoanneum.cgvis.**,org.eclipse.swt.**,edu.umd.cs.piccolox.swt.**"/>
+            <dontwarn filter="javax.jms.**,javax.mail.**,org.apache.lucene.**,org.apache.log4j.**"/>
+
+            <dontnote filter="com.google.common.base.FinalizableReferenceQueue,com.google.common.base.internal.Finalizer"/>
+            <dontnote filter="org.apache.log4j.spi.LocationInfo"/>
+            <dontnote filter="javax.xml.namespace.QName"/>
+
 	    	<keep name="org.apache.log4j.FileAppender"/>
 	    	<keep name="org.xmlpull.mxp1.MXParserFactory"/>
 	    	<keep name="org.xmlpull.v1.builder.xpath.saxpath.com.werken.saxpath.XPathReader"/>
 	    	<keep name="jflowmap.FlowTimelineApplet"/>
 	    	<keep name="jflowmap.FlowMapApplet"/>
-
-            <!--keep extends="JApplet"/ -->
-
-	      -dontoptimize
-            	
-	      -dontobfuscate
 	    	
-	      -ignorewarnings
 	    	
 	      -keepclasseswithmembers public class * {
 	          public static void main(java.lang.String[]);
@@ -108,6 +108,7 @@
 	    	
           -keepclassmembers public class org.apache.log4j.* { *** get*(); boolean is*(); void set*(***); }
 	    </proguard>
+		<delete file="${path.build}/${app.name}-no-libs.jar"/>
 	</target>
 
    <target name="make-jar">
@@ -126,16 +127,20 @@
             </fileset>
             <fileset dir=".">
                 <include name="license.txt"/>
-            	<selector if="include.data">
-        		    <filename name="data/**/*.*"/>
-            	</selector>
-            	<!--
-                <include name="data/**/*.*"/>
-                <exclude name="data/refugees-eu/*.*"/>
-                <exclude name="data/refugees-one-region/*.*"/>
-            	<include name="data/refugees/refugees_1975-2008.xml.gz"/>
-            	<include name="data/refugees/regions.xml"/>
-                -->
+            </fileset>
+            <fileset dir=".">
+                  <selector if="include.data">
+                  	<or>
+                      <!--
+                      <filename name="data/**/*.*" />
+                      -->
+                      <filename name="data/datasets.xml" />
+                      <filename name="data/airlines/airlines.xml.gz" />
+                      <filename name="data/migrations/migrations-500.xml.gz" />
+                      <filename name="data/refugees/refugees-*.xml.gz" />
+                      <filename name="data/refugees/countries-areas.xml.gz" />
+                    </or>
+                  </selector>
             </fileset>
         </jar>
         <delete file="${path.build}/log4j.properties" quiet="true"/>
@@ -162,11 +167,6 @@
 			<zipgroupfileset dir=".">
 				<include name="${path.lib}/**/*.jar"/>
 				<include name="${path.build}/${app.name}-no-libs.jar"/>
-				<!--
-				<exclude name="CopyLibs/*.jar"/>
-				<exclude name="junit*.jar"/>
-				<exclude name="beans-binding/*.jar"/>
-				-->
 			</zipgroupfileset>
 		</jar>
 		<delete file="${path.build}/log4j.properties" quiet="true"/>
