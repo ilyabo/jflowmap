@@ -285,4 +285,12 @@ GRAY_RED_GREEN(new ColorScheme.Builder("Gray red-green")
         return getScheme().getForValue(code, value);
     }
 
+    public static final ColorSchemes findByScheme(ColorScheme scheme) {
+        for (ColorSchemes cs : values()) {
+            if (cs.getScheme() == scheme) {
+                return cs;
+            }
+        }
+        return null;
+    }
 }

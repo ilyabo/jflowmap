@@ -56,6 +56,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class VisualTimeline extends PNode {
 
+    private static final long serialVersionUID = 1L;
     public static Logger logger = Logger.getLogger(VisualTimeline.class);
 
     enum SortMode { QTY_IN_EACH_YEAR, QTY_IN_SELECTED_YEAR, HIERARCHY }

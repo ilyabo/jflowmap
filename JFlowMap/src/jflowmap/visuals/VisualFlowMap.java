@@ -481,35 +481,37 @@ public class VisualFlowMap extends PNode {
 		});
     }
 
-    @SuppressWarnings("unchecked")
-	protected void updateEdgeColors() {
-        for (PNode node : (List<PNode>) edgeLayer.getChildrenReference()) {
-            if (node instanceof VisualEdge) {
-                ((VisualEdge) node).updateEdgeColors();
-            }
+    public void updateColors() {
+        updateEdgeColors();
+        updateNodeColors();
+        if (areaMap != null) {
+            areaMap.updateColors();
         }
+        visualLegend.update();
     }
 
-//    private void updateEdgeMarkerColors() {
-//        for (PNode node : (List<PNode>) edgeLayer.getChildrenReference()) {
-//            if (node instanceof VisualEdge) {
-//                ((VisualEdge) node).updateEdgeMarkerColors();
-//            }
-//        }
-//    }
+
+	protected void updateEdgeColors() {
+        for (VisualEdge ve : visualEdges) {
+            ve.updateEdgeColors();
+        }
+    }
 
     protected void updateEdgeVisibility() {
         for (VisualEdge ve : visualEdges) {
             ve.updateVisibility();
         }
-//        for (VisualNode vn : visualNodes) {
-//            vn.updatePickability();
-//        }
     }
 
     protected void updateNodeVisibility() {
         for (VisualNode vn : visualNodes) {
             vn.updateVisibility();
+        }
+    }
+
+    protected void updateNodeColors() {
+        for (VisualNode vn : visualNodes) {
+            vn.updateColorsAndStroke();
         }
     }
 

@@ -20,6 +20,7 @@ package jflowmap.visuals;
 
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
+import jflowmap.util.piccolo.PNodes;
 import edu.umd.cs.piccolo.PNode;
 
 /**
@@ -27,11 +28,23 @@ import edu.umd.cs.piccolo.PNode;
  */
 public class VisualAreaMap extends PNode {
 
-    private static final long serialVersionUID = -6938288211394773330L;
+    private static final long serialVersionUID = 1L;
+    private final VisualFlowMap visualFlowMap;
 
     public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
+        this.visualFlowMap = visualFlowMap;
         for (Area area : mapModel.getAreas()) {
-            addChild(new VisualArea(visualFlowMap, area));
+            addChild(new VisualArea(this, area));
+        }
+    }
+
+    public VisualFlowMap getVisualFlowMap() {
+        return visualFlowMap;
+    }
+
+    public void updateColors() {
+        for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+            va.updateColors();
         }
     }
 

@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
+import jflowmap.ColorSchemes;
 import jflowmap.DatasetSpec;
 import jflowmap.JFlowMap;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
@@ -92,7 +95,7 @@ public class ControlPanel {
     private JComboBox comboBox2;
     private JComboBox comboBox3;
     private JComboBox comboBox4;
-    private JComboBox comboBox5;
+    private JComboBox colorSchemeCombo;
     private JComboBox comboBox6;
     private JSlider edgeOpacitySlider;
     private JSpinner edgeOpacitySpinner;
@@ -295,6 +298,9 @@ public class ControlPanel {
                 ).build();
         maxEdgeWidthSpinner.setModel(maxEdgeWidthModels.first());
         maxEdgeWidthSlider.setModel(maxEdgeWidthModels.second());
+
+        colorSchemeCombo.setModel(new DefaultComboBoxModel(ColorSchemes.values()));
+        colorSchemeCombo.setSelectedItem(ColorSchemes.findByScheme(jFlowMap.getColorScheme()));
     }
 
     private void initFilterModels() {
@@ -507,6 +513,13 @@ public class ControlPanel {
             public void stateChanged(ChangeEvent e) {
                 if (initializing) return;
                 getFlowMapModel().setMaxEdgeWidth((Double) maxEdgeWidthSpinner.getValue());
+            }
+        });
+
+        colorSchemeCombo.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                jFlowMap.setColorScheme(((ColorSchemes)e.getItem()).getScheme());
             }
         });
     }
@@ -1014,12 +1027,12 @@ public class ControlPanel {
         tabbedPane1.addTab("Aesthetics", panel6);
         panel6.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
         final JLabel label10 = new JLabel();
-        label10.setEnabled(false);
+        label10.setEnabled(true);
         label10.setText("Color scheme:");
         panel6.add(label10, cc.xy(1, 1));
-        comboBox5 = new JComboBox();
-        comboBox5.setEnabled(false);
-        panel6.add(comboBox5, cc.xy(3, 1));
+        colorSchemeCombo = new JComboBox();
+        colorSchemeCombo.setEnabled(true);
+        panel6.add(colorSchemeCombo, cc.xy(3, 1));
         final JSeparator separator6 = new JSeparator();
         separator6.setOrientation(1);
         panel6.add(separator6, cc.xywh(5, 1, 1, 7, CellConstraints.CENTER, CellConstraints.FILL));

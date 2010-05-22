@@ -339,7 +339,7 @@ public class VisualNode extends PNode {
         updateEdgeColors();
     }
 
-    private void updateColorsAndStroke() {
+    void updateColorsAndStroke() {
         boolean selected = isSelected();
         boolean highlighted = isHighlighted();
         if (selected) {

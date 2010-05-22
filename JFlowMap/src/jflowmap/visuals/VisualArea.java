@@ -18,8 +18,11 @@
 
 package jflowmap.visuals;
 
+import java.awt.Color;
+
 import jflowmap.models.map.Area;
 import jflowmap.models.map.Polygon;
+import jflowmap.util.piccolo.PNodes;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
@@ -28,15 +31,27 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualArea extends PNode {
 
+    private static final long serialVersionUID = 1L;
     private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
+    private final VisualAreaMap visualAreaMap;
 
-    public VisualArea(VisualFlowMap visualFlowMap, Area area) {
+    public VisualArea(VisualAreaMap visualAreaMap, Area area) {
+        this.visualAreaMap = visualAreaMap;
         for (Polygon poly : area.getPolygons()) {
             PPath path = PPath.createPolyline(poly.getPoints());
-            path.setPaint(visualFlowMap.getColor(ColorCodes.AREA_PAINT));
-            path.setStrokePaint(visualFlowMap.getColor(ColorCodes.AREA_STROKE));
-            path.setStroke(mapStroke);
             addChild(path);
+        }
+        updateColors();
+    }
+
+    public void updateColors() {
+        VisualFlowMap vfm = visualAreaMap.getVisualFlowMap();
+        Color paint = vfm.getColor(ColorCodes.AREA_PAINT);
+        Color strokePaint = vfm.getColor(ColorCodes.AREA_STROKE);
+        for (PPath path : PNodes.childrenOfType(this, PPath.class)) {
+            path.setPaint(paint);
+            path.setStrokePaint(strokePaint);
+            path.setStroke(mapStroke);
         }
     }
 }

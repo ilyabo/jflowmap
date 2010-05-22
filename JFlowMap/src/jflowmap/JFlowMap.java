@@ -107,6 +107,9 @@ public class JFlowMap extends JComponent {
     public void setColorScheme(ColorScheme colorScheme) {
         this.colorScheme = colorScheme;
         canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
+        if (visualFlowMap != null) {
+            visualFlowMap.updateColors();
+        }
     }
 
     public ColorScheme getColorScheme() {
