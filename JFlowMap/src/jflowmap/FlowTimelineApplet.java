@@ -30,6 +30,8 @@ import at.fhj.utils.swing.JMsgPane;
 public class FlowTimelineApplet extends JApplet {
 
 
+    private static final long serialVersionUID = 1L;
+
     public FlowTimelineApplet() {
 
     }

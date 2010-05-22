@@ -197,6 +197,7 @@ public class ForceDirectedEdgeBundler {
         cycle = 0;
     }
 
+    @SuppressWarnings("unchecked")
     private void calcEdgeCompatibilityMeasures() {
         progressTracker.startSubtask("Allocating memory", .05);
         progressTracker.subtaskCompleted();

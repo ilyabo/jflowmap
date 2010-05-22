@@ -37,15 +37,18 @@
     <dataset src="data/refugees/refugees-1975.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />
 
 	<dataset src="data/migrations/migrations-500.xml.gz" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
+	<!-- 
 	<dataset src="data/migrations/migrations-5000.xml.gz" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
 	<dataset src="data/migrations/migrations-10000.xml.gz" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
+	 -->
 
     <dataset src="data/airlines/airlines.xml.gz" weightAttr="value" xNodeAttr="x" yNodeAttr="y" labelAttr="tooltip" />
-
+    <!-- 
     <dataset src="data/test/bundling-test1.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
     <dataset src="data/test/bundling-test2.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
     <dataset src="data/test/bundling-test6.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
     <dataset src="data/test/bundling-test7.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
     <dataset src="data/test/bundling-test8.xml" weightAttr="data" xNodeAttr="x" yNodeAttr="y" labelAttr="name" />
+     -->
 
 </datasets>

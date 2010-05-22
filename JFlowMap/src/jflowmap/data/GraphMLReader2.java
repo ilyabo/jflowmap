@@ -163,6 +163,8 @@ public class GraphMLReader2 {
                 nodeTable.set(ri, FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID, nodeId);
 
                 readData(nodeElt, nodeTable, ri);
+
+
             }
 
             // Read the edges

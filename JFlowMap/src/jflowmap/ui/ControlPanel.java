@@ -569,6 +569,7 @@ public class ControlPanel {
     private void initNodeClusterListeners() {
         // Node clustering
         clusterButton.addActionListener(new ActionListener() {
+            @SuppressWarnings("unchecked")
             public void actionPerformed(ActionEvent e) {
                 getVisualFlowMap().clusterNodes(
                         (NodeDistanceMeasure) distanceMeasureCombo.getSelectedItem(),

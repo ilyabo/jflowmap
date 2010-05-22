@@ -96,6 +96,7 @@ public class JFlowMap extends JComponent {
 
         setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
 //        setColorScheme(ColorSchemes.DARK.getScheme());
+//        setColorScheme(ColorSchemes.DARK.getScheme());
     }
 
     @Override

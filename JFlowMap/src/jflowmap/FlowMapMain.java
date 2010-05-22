@@ -150,7 +150,6 @@ public class FlowMapMain extends JFrame {
 
         // TODO: remove hardcoded filename to open
         SwingUtilities.invokeLater(new Runnable() {
-            @Override
             public void run() {
                 try {
 //                    showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");

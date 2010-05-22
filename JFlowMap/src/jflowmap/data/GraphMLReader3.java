@@ -55,6 +55,8 @@ public class GraphMLReader3 {
             while (reader.hasNext()) {
                 int type = reader.nextTag();
 
+
+
             }
 
             return null;

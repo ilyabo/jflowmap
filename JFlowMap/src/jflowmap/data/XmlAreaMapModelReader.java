@@ -20,6 +20,7 @@ package jflowmap.data;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -49,7 +50,11 @@ public class XmlAreaMapModelReader {
     public static AreaMap readMap(String location) throws IOException {
         XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
         try {
-            return loadFrom(location, builder.parseReader(new InputStreamReader(IOLib.streamFromString(location))));
+            InputStream is = IOLib.streamFromString(location);
+            if (is == null) {
+                throw new IOException("Cannot read from location: " + location);
+            }
+            return loadFrom(location, builder.parseReader(new InputStreamReader(is)));
         } catch (XmlPullParserException e) {
             throw new IOException(e);
         }

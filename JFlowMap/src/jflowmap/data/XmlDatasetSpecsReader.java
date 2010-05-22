@@ -1,6 +1,7 @@
 package jflowmap.data;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -31,7 +32,11 @@ public class XmlDatasetSpecsReader {
         logger.info("Loading dataset specs from '" + location + "'");
         XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
         try {
-            return loadFrom(location, builder.parseReader(new InputStreamReader(IOLib.streamFromString(location))));
+            InputStream is = IOLib.streamFromString(location);
+            if (is == null) {
+                throw new IOException("Cannot load dataset specs from location: '" + location + "'");
+            }
+            return loadFrom(location, builder.parseReader(new InputStreamReader(is)));
         } catch (XmlPullParserException e) {
             throw new IOException(e);
         }
