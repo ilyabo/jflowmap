@@ -22,8 +22,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.List;
 
-import javax.swing.JComponent;
-
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.ZoomHandler;
@@ -42,14 +40,13 @@ import edu.umd.cs.piccolo.PCanvas;
 /**
  * @author Ilya Boyandin
  */
-public class JFlowTimeline extends JComponent {
+public class JFlowTimeline extends JView {
 //  public static final String NODE_COLUMN__REGION = "region";
 //  public static final String NODE_COLUMN__REGION_COLOR = "regionColor";
 
   public static Logger logger = Logger.getLogger(JFlowTimeline.class);
 
-  public static final Color CANVAS_BACKGROUND_COLOR =
-    Color.white;
+  public static final Color CANVAS_BACKGROUND_COLOR = Color.white;
 //    new Color(47, 89, 134);
   private final PCanvas canvas;
   private final VisualTimeline visualTimeline;
@@ -121,6 +118,11 @@ public class JFlowTimeline extends JComponent {
 
   public PCamera getCamera() {
     return canvas.getCamera();
+  }
+
+  @Override
+  public void fitInView() {
+    // TODO
   }
 
 

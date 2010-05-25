@@ -57,7 +57,7 @@ public class FlowMapApplet extends JApplet {
   public void start() {
     super.start();
     if (jFlowMap != null) {
-      jFlowMap.fitFlowMapInView();
+      jFlowMap.fitInView();
     }
   }
 

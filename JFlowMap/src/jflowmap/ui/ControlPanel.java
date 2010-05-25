@@ -386,7 +386,7 @@ public class ControlPanel {
       public void actionPerformed(ActionEvent e) {
         if (initializing) return;
         FlowMapLoader.loadFlowMap(jFlowMap, (DatasetSpec) datasetCombo.getSelectedItem(), null);
-        jFlowMap.fitFlowMapInView();
+        jFlowMap.fitInView();
       }
     });
   }

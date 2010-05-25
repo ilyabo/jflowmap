@@ -25,9 +25,6 @@ import java.awt.Frame;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-
 import jflowmap.data.FlowMapLoader;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
@@ -46,7 +43,7 @@ import edu.umd.cs.piccolo.PCanvas;
  * @author Ilya Boyandin
  *     Date: 23-Sep-2009
  */
-public class JFlowMap extends JComponent {
+public class JFlowMap extends JView {
 
   private static final long serialVersionUID = -1898747650184999568L;
 
@@ -140,8 +137,8 @@ public class JFlowMap extends JComponent {
   }
 
   public VisualFlowMap getVisualFlowMap() {
-		return visualFlowMap;
-	}
+    return visualFlowMap;
+  }
 
   public void setVisualFlowMap(VisualFlowMap newFlowMap) {
     if (newFlowMap == visualFlowMap) {
@@ -159,12 +156,9 @@ public class JFlowMap extends JComponent {
     }
   }
 
-	public void fitFlowMapInView() {
-		SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        visualFlowMap.fitInCameraView();
-      }
-    });
-	}
+  @Override
+  public void fitInView() {
+    visualFlowMap.fitInCameraView();
+  }
 
 }

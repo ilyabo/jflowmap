@@ -83,7 +83,7 @@ public class FlowMapPreloadedDataMain extends JFrame {
     addWindowListener(new WindowAdapter() {
       @Override
       public void windowOpened(WindowEvent e) {
-        flowMap.fitFlowMapInView();
+        flowMap.fitInView();
       }
       @Override
       public void windowClosing(WindowEvent e) {

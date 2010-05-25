@@ -313,11 +313,8 @@ public class VisualFlowMap extends PNode {
     }
   }
 
-  private PBounds getNodesBounds() {
+  private PBounds getVisualNodesBounds() {
     if (nodeBounds == null) {
-//      nodeBounds = new PBounds(
-//          0, 0, (xStats.max - xStats.min) / 2, (yStats.max - yStats.min) / 2
-//      );
       PBounds b = null;
       for (VisualNode node : visualNodes) {
         if (b == null) {
@@ -332,8 +329,8 @@ public class VisualFlowMap extends PNode {
   }
 
   public FlowMapStats getStats() {
-		return getFlowMapGraph().getStats();
-	}
+    return getFlowMapGraph().getStats();
+  }
 
   public VisualFlowMapModel getModel() {
     return visualFlowMapModel;
@@ -361,13 +358,8 @@ public class VisualFlowMap extends PNode {
 //  }
 
   public void fitInCameraView() {
-    PBounds boundRect = getNodesBounds();
-//    PPath boundRectPath = new PPath(boundRect);
-//    addChild(boundRectPath);
-//    boundRectPath.setStrokePaint(Color.red);
-    logger.info("Fit in camera view: Bounding box: " + boundRect);
+    PBounds boundRect = getVisualNodesBounds();
     boundRect = (PBounds)getCamera().globalToLocal(boundRect);
-//    PiccoloUtils.setViewPaddedBounds(getCamera(), boundRect, new Insets(10, 10, 10, 10));
     getCamera().animateViewToCenterBounds(boundRect, true, 0);
   }
 

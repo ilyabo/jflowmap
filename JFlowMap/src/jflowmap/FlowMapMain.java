@@ -248,7 +248,7 @@ public class FlowMapMain extends JFrame {
 
     InternalFrameUtils.tile(iframes.toArray(new JInternalFrame[iframes.size()]));
     for (JFlowMap flowMap : flowMaps) {
-      flowMap.fitFlowMapInView();
+      flowMap.fitInView();
     }
   }
 
@@ -469,14 +469,14 @@ public class FlowMapMain extends JFrame {
     for (JInternalFrame iframe : iframes) {
       Container view = iframe.getContentPane();
       if (view instanceof JFlowMap)
-        ((JFlowMap)view).fitFlowMapInView();
+        ((JFlowMap)view).fitInView();
     }
   }
 
   private void fitActiveInView() {
     if (activeView != null) {
       if (activeView instanceof JFlowMap)
-        ((JFlowMap)activeView).fitFlowMapInView();
+        ((JFlowMap)activeView).fitInView();
     }
   }
 
