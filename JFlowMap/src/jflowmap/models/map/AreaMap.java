@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,30 +30,30 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Ilya Boyandin
- *         Date: 25-Sep-2009
+ *     Date: 25-Sep-2009
  */
 public class AreaMap {
 
-    private static Logger logger = Logger.getLogger(AreaMap.class);
+  private static Logger logger = Logger.getLogger(AreaMap.class);
 
-    private final String name;
-    private final List<Area> areas;
+  private final String name;
+  private final List<Area> areas;
 
-    public AreaMap(String name, List<Area> areas) {
-        this.name = name;
-        this.areas = areas;
-    }
+  public AreaMap(String name, List<Area> areas) {
+    this.name = name;
+    this.areas = areas;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Collection<Area> getAreas() {
-        return Collections.unmodifiableCollection(areas);
-    }
+  public Collection<Area> getAreas() {
+    return Collections.unmodifiableCollection(areas);
+  }
 
-    public static final AreaMap load(String filename) throws IOException {
-        logger.info("Loading area map \"" + filename + "\"");
-        return XmlAreaMapModelReader.readMap(filename);
-    }
+  public static final AreaMap load(String filename) throws IOException {
+    logger.info("Loading area map \"" + filename + "\"");
+    return XmlAreaMapModelReader.readMap(filename);
+  }
 }

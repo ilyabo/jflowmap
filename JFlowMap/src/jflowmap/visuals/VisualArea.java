@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,27 +31,27 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualArea extends PNode {
 
-    private static final long serialVersionUID = 1L;
-    private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
-    private final VisualAreaMap visualAreaMap;
+  private static final long serialVersionUID = 1L;
+  private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
+  private final VisualAreaMap visualAreaMap;
 
-    public VisualArea(VisualAreaMap visualAreaMap, Area area) {
-        this.visualAreaMap = visualAreaMap;
-        for (Polygon poly : area.getPolygons()) {
-            PPath path = PPath.createPolyline(poly.getPoints());
-            addChild(path);
-        }
-        updateColors();
+  public VisualArea(VisualAreaMap visualAreaMap, Area area) {
+    this.visualAreaMap = visualAreaMap;
+    for (Polygon poly : area.getPolygons()) {
+      PPath path = PPath.createPolyline(poly.getPoints());
+      addChild(path);
     }
+    updateColors();
+  }
 
-    public void updateColors() {
-        VisualFlowMap vfm = visualAreaMap.getVisualFlowMap();
-        Color paint = vfm.getColor(ColorCodes.AREA_PAINT);
-        Color strokePaint = vfm.getColor(ColorCodes.AREA_STROKE);
-        for (PPath path : PNodes.childrenOfType(this, PPath.class)) {
-            path.setPaint(paint);
-            path.setStrokePaint(strokePaint);
-            path.setStroke(mapStroke);
-        }
+  public void updateColors() {
+    VisualFlowMap vfm = visualAreaMap.getVisualFlowMap();
+    Color paint = vfm.getColor(ColorCodes.AREA_PAINT);
+    Color strokePaint = vfm.getColor(ColorCodes.AREA_STROKE);
+    for (PPath path : PNodes.childrenOfType(this, PPath.class)) {
+      path.setPaint(paint);
+      path.setStrokePaint(strokePaint);
+      path.setStroke(mapStroke);
     }
+  }
 }

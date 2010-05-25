@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,19 +33,19 @@ import prefuse.data.io.GraphReader;
  */
 public class GZipFlowMapReader extends AbstractGraphReader {
 
-    private final GraphReader reader;
+  private final GraphReader reader;
 
-    public GZipFlowMapReader(GraphReader reader) {
-        this.reader = reader;
-    }
+  public GZipFlowMapReader(GraphReader reader) {
+    this.reader = reader;
+  }
 
-    @Override
-    public Graph readGraph(InputStream is) throws DataIOException {
-        try {
-            return reader.readGraph(new GZIPInputStream(is));
-        } catch (IOException e) {
-            throw new DataIOException(e);
-        }
+  @Override
+  public Graph readGraph(InputStream is) throws DataIOException {
+    try {
+      return reader.readGraph(new GZIPInputStream(is));
+    } catch (IOException e) {
+      throw new DataIOException(e);
     }
+  }
 
 }

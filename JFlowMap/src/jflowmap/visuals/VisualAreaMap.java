@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,24 +28,24 @@ import edu.umd.cs.piccolo.PNode;
  */
 public class VisualAreaMap extends PNode {
 
-    private static final long serialVersionUID = 1L;
-    private final VisualFlowMap visualFlowMap;
+  private static final long serialVersionUID = 1L;
+  private final VisualFlowMap visualFlowMap;
 
-    public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
-        this.visualFlowMap = visualFlowMap;
-        for (Area area : mapModel.getAreas()) {
-            addChild(new VisualArea(this, area));
-        }
+  public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
+    this.visualFlowMap = visualFlowMap;
+    for (Area area : mapModel.getAreas()) {
+      addChild(new VisualArea(this, area));
     }
+  }
 
-    public VisualFlowMap getVisualFlowMap() {
-        return visualFlowMap;
-    }
+  public VisualFlowMap getVisualFlowMap() {
+    return visualFlowMap;
+  }
 
-    public void updateColors() {
-        for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
-            va.updateColors();
-        }
+  public void updateColors() {
+    for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+      va.updateColors();
     }
+  }
 
 }

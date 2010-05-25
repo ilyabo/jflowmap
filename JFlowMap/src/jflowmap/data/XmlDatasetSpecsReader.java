@@ -23,49 +23,49 @@ import com.google.common.collect.Lists;
  */
 public class XmlDatasetSpecsReader {
 
-    private static Logger logger = Logger.getLogger(XmlDatasetSpecsReader.class);
+  private static Logger logger = Logger.getLogger(XmlDatasetSpecsReader.class);
 
-    private XmlDatasetSpecsReader() {
+  private XmlDatasetSpecsReader() {
+  }
+
+  public static List<DatasetSpec> readDatasetSpecs(String location) throws IOException {
+    logger.info("Loading dataset specs from '" + location + "'");
+    XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
+    try {
+      InputStream is = IOLib.streamFromString(location);
+      if (is == null) {
+        throw new IOException("Cannot load dataset specs from location: '" + location + "'");
+      }
+      return loadFrom(location, builder.parseReader(new InputStreamReader(is)));
+    } catch (XmlPullParserException e) {
+      throw new IOException(e);
+    }
+  }
+
+  private static List<DatasetSpec> loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
+
+    List<DatasetSpec> listOfDatasetSpecs = Lists.newArrayList();
+
+    @SuppressWarnings("unchecked")
+    List<XmlElement> listOfDatasetXmlNodes = new Xb1XPath("/datasets/dataset").selectNodes(doc);
+
+    for (XmlElement datasetNode : listOfDatasetXmlNodes) {
+      String valueFilterMin = datasetNode.getAttributeValue(null, "valueFilterMin");
+      listOfDatasetSpecs.add(
+          new DatasetSpec(
+              datasetNode.getAttributeValue(null, "src"),
+              datasetNode.getAttributeValue(null, "weightAttr"),
+              datasetNode.getAttributeValue(null, "xNodeAttr"),
+              datasetNode.getAttributeValue(null, "yNodeAttr"),
+              datasetNode.getAttributeValue(null, "labelAttr"),
+              datasetNode.getAttributeValue(null, "areaMapSrc"),
+              valueFilterMin != null ? Double.parseDouble(valueFilterMin) : Double.NaN
+          )
+      );
     }
 
-    public static List<DatasetSpec> readDatasetSpecs(String location) throws IOException {
-        logger.info("Loading dataset specs from '" + location + "'");
-        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
-        try {
-            InputStream is = IOLib.streamFromString(location);
-            if (is == null) {
-                throw new IOException("Cannot load dataset specs from location: '" + location + "'");
-            }
-            return loadFrom(location, builder.parseReader(new InputStreamReader(is)));
-        } catch (XmlPullParserException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private static List<DatasetSpec> loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
-
-        List<DatasetSpec> listOfDatasetSpecs = Lists.newArrayList();
-
-        @SuppressWarnings("unchecked")
-        List<XmlElement> listOfDatasetXmlNodes = new Xb1XPath("/datasets/dataset").selectNodes(doc);
-
-        for (XmlElement datasetNode : listOfDatasetXmlNodes) {
-            String valueFilterMin = datasetNode.getAttributeValue(null, "valueFilterMin");
-            listOfDatasetSpecs.add(
-                    new DatasetSpec(
-                            datasetNode.getAttributeValue(null, "src"),
-                            datasetNode.getAttributeValue(null, "weightAttr"),
-                            datasetNode.getAttributeValue(null, "xNodeAttr"),
-                            datasetNode.getAttributeValue(null, "yNodeAttr"),
-                            datasetNode.getAttributeValue(null, "labelAttr"),
-                            datasetNode.getAttributeValue(null, "areaMapSrc"),
-                            valueFilterMin != null ? Double.parseDouble(valueFilterMin) : Double.NaN
-                    )
-            );
-        }
-
-        return listOfDatasetSpecs;
-    }
+    return listOfDatasetSpecs;
+  }
 
 
 }

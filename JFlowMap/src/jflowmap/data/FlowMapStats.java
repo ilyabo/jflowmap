@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,179 +42,179 @@ import com.google.common.collect.Lists;
  */
 public class FlowMapStats {
 
-    private static final String NODE_ATTR_KEY_SUFFIX = "_nodeAttr";
-    private static final String EDGE_ATTR_KEY_SUFFIX = "_edgeAttr";
+  private static final String NODE_ATTR_KEY_SUFFIX = "_nodeAttr";
+  private static final String EDGE_ATTR_KEY_SUFFIX = "_edgeAttr";
 
-    private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
-    private final List<FlowMapGraph> flowMapGraphs;
-    private MinMax edgeLengthStats;
+  private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
+  private final List<FlowMapGraph> flowMapGraphs;
+  private MinMax edgeLengthStats;
 
-    private FlowMapStats(List<FlowMapGraph> graphAndSpecs) {
-        this.flowMapGraphs = graphAndSpecs;
-        // TODO: add property change listeners
+  private FlowMapStats(List<FlowMapGraph> graphAndSpecs) {
+    this.flowMapGraphs = graphAndSpecs;
+    // TODO: add property change listeners
+  }
+
+  public static FlowMapStats createFor(FlowMapGraph flowMapGraph) {
+    return new FlowMapStats(Arrays.asList(flowMapGraph));
+  }
+
+  public static FlowMapStats createFor(Iterable<Graph> graphs, final FlowMapAttrSpec attrSpecs) {
+    return createFor(Iterables.transform(graphs, new Function<Graph, FlowMapGraph>() {
+      @Override
+      public FlowMapGraph apply(Graph from) {
+        return new FlowMapGraph(from, attrSpecs);
+      }
+    }));
+  }
+
+  public static FlowMapStats createFor(Iterable<FlowMapGraph> flowMapGraphs) {
+    return new FlowMapStats(ImmutableList.copyOf(flowMapGraphs));
+  }
+
+  public MinMax getEdgeLengthStats() {
+    if (edgeLengthStats == null) {
+      List<Double> edgeLengths = Lists.newArrayList();
+      for (FlowMapGraph fmm : flowMapGraphs) {
+        Graph graph = fmm.getGraph();
+        for (int i = 0, size = graph.getEdgeCount(); i < size; i++) {
+          Edge edge = graph.getEdge(i);
+          Node src = edge.getSourceNode();
+          Node target = edge.getTargetNode();
+          double x1 = src.getDouble(fmm.getXNodeAttr());
+          double y1 = src.getDouble(fmm.getYNodeAttr());
+          double x2 = target.getDouble(fmm.getXNodeAttr());
+          double y2 = target.getDouble(fmm.getYNodeAttr());
+          edgeLengths.add(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+        }
+      }
+      edgeLengthStats = MinMax.createFor(edgeLengths.iterator());
     }
+    return edgeLengthStats;
+  }
 
-    public static FlowMapStats createFor(FlowMapGraph flowMapGraph) {
-        return new FlowMapStats(Arrays.asList(flowMapGraph));
-    }
 
-    public static FlowMapStats createFor(Iterable<Graph> graphs, final FlowMapAttrSpec attrSpecs) {
-        return createFor(Iterables.transform(graphs, new Function<Graph, FlowMapGraph>() {
+  public MinMax getEdgeWeightStats() {
+    return getAttrStats(Attrs.EDGE_WEIGHT);
+  }
+
+  public MinMax getNodeXStats() {
+    return getAttrStats(Attrs.NODE_X);
+  }
+
+  public MinMax getNodeYStats() {
+    return getAttrStats(Attrs.NODE_Y);
+  }
+
+  /**
+   * NOTE: this method suggests that every graph in this flowMapGraphs
+   * has the attribute with <code>attrName</code>.
+   */
+  public MinMax getNodeAttrStats(final String attrName) {
+    String key = attrName + NODE_ATTR_KEY_SUFFIX;
+    MinMax stats = statsCache.get(key);
+    if (stats == null) {
+      stats = TupleStats.createFor(
+          attrIterator(Tuples.NODES),
+          attrIterator(new Function<FlowMapGraph, String>() {
             @Override
-            public FlowMapGraph apply(Graph from) {
-                return new FlowMapGraph(from, attrSpecs);
+            public String apply(FlowMapGraph from) {
+              return attrName;
             }
-        }));
+          })
+      );
+      statsCache.put(key, stats);
     }
+    return stats;
+  }
 
-    public static FlowMapStats createFor(Iterable<FlowMapGraph> flowMapGraphs) {
-        return new FlowMapStats(ImmutableList.copyOf(flowMapGraphs));
-    }
+  public MinMax getAttrStats(Attrs attr) {
+  	String key = attr.name();
+    MinMax stats = statsCache.get(key);
+  	if (stats == null) {
+      stats = TupleStats.createFor(
+          attrIterator(attr.funToTupleSet()),
+          attrIterator(attr.funToName())
+      );
+      statsCache.put(key, stats);
+  	}
+  	return stats;
+  }
 
-    public MinMax getEdgeLengthStats() {
-        if (edgeLengthStats == null) {
-            List<Double> edgeLengths = Lists.newArrayList();
-            for (FlowMapGraph fmm : flowMapGraphs) {
-                Graph graph = fmm.getGraph();
-                for (int i = 0, size = graph.getEdgeCount(); i < size; i++) {
-                    Edge edge = graph.getEdge(i);
-                    Node src = edge.getSourceNode();
-                    Node target = edge.getTargetNode();
-                    double x1 = src.getDouble(fmm.getXNodeAttr());
-                    double y1 = src.getDouble(fmm.getYNodeAttr());
-                    double x2 = target.getDouble(fmm.getXNodeAttr());
-                    double y2 = target.getDouble(fmm.getYNodeAttr());
-                    edgeLengths.add(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
-                }
-            }
-            edgeLengthStats = MinMax.createFor(edgeLengths.iterator());
+  @SuppressWarnings("unchecked")
+  private <T> Iterator<T> attrIterator(Function<FlowMapGraph, T> function) {
+    return Iterators.concat(Iterators.transform(flowMapGraphs.iterator(), function));
+  }
+
+  enum Tuples implements Function<FlowMapGraph, TupleSet> {
+    EDGES {
+      public TupleSet apply(FlowMapGraph from) {
+        return from.getGraph().getEdges();
+      }
+    },
+    NODES {
+      public TupleSet apply(FlowMapGraph from) {
+        return from.getGraph().getNodes();
+      }
+    },
+    ;
+  };
+
+  public enum Attrs  {
+    EDGE_WEIGHT {
+      @Override
+      public Function<FlowMapGraph, String> funToName() {
+        return Name.EDGE_WEIGHT;
+      }
+      @Override
+      public Function<FlowMapGraph, TupleSet> funToTupleSet() {
+        return Tuples.EDGES;
+      }
+    },
+    NODE_X {
+      @Override
+      public Function<FlowMapGraph, String> funToName() {
+        return Name.NODE_X;
+      }
+      @Override
+      public Function<FlowMapGraph, TupleSet> funToTupleSet() {
+        return Tuples.NODES;
+      }
+    },
+    NODE_Y {
+      @Override
+      public Function<FlowMapGraph, String> funToName() {
+        return Name.NODE_Y;
+      }
+      @Override
+      public Function<FlowMapGraph, TupleSet> funToTupleSet() {
+        return Tuples.NODES;
+      }
+    },
+    ;
+
+    public abstract Function<FlowMapGraph, String> funToName();
+
+    public abstract Function<FlowMapGraph, TupleSet> funToTupleSet();
+
+    private enum Name implements Function<FlowMapGraph, String> {
+      EDGE_WEIGHT {
+        public String apply(FlowMapGraph from) {
+          return from.getEdgeWeightAttr();
         }
-        return edgeLengthStats;
-    }
-
-
-    public MinMax getEdgeWeightStats() {
-        return getAttrStats(Attrs.EDGE_WEIGHT);
-    }
-
-    public MinMax getNodeXStats() {
-        return getAttrStats(Attrs.NODE_X);
-    }
-
-    public MinMax getNodeYStats() {
-        return getAttrStats(Attrs.NODE_Y);
-    }
-
-    /**
-     * NOTE: this method suggests that every graph in this flowMapGraphs
-     * has the attribute with <code>attrName</code>.
-     */
-    public MinMax getNodeAttrStats(final String attrName) {
-        String key = attrName + NODE_ATTR_KEY_SUFFIX;
-        MinMax stats = statsCache.get(key);
-        if (stats == null) {
-            stats = TupleStats.createFor(
-                    attrIterator(Tuples.NODES),
-                    attrIterator(new Function<FlowMapGraph, String>() {
-                        @Override
-                        public String apply(FlowMapGraph from) {
-                            return attrName;
-                        }
-                    })
-            );
-            statsCache.put(key, stats);
+      },
+      NODE_X {
+        public String apply(FlowMapGraph from) {
+          return from.getXNodeAttr();
         }
-        return stats;
-    }
-
-    public MinMax getAttrStats(Attrs attr) {
-    	String key = attr.name();
-        MinMax stats = statsCache.get(key);
-    	if (stats == null) {
-            stats = TupleStats.createFor(
-                    attrIterator(attr.funToTupleSet()),
-                    attrIterator(attr.funToName())
-            );
-            statsCache.put(key, stats);
-    	}
-    	return stats;
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Iterator<T> attrIterator(Function<FlowMapGraph, T> function) {
-        return Iterators.concat(Iterators.transform(flowMapGraphs.iterator(), function));
-    }
-
-    enum Tuples implements Function<FlowMapGraph, TupleSet> {
-        EDGES {
-            public TupleSet apply(FlowMapGraph from) {
-                return from.getGraph().getEdges();
-            }
-        },
-        NODES {
-            public TupleSet apply(FlowMapGraph from) {
-                return from.getGraph().getNodes();
-            }
-        },
-        ;
+      },
+      NODE_Y {
+        public String apply(FlowMapGraph from) {
+          return from.getYNodeAttr();
+        }
+      },
+      ;
     };
-
-    public enum Attrs  {
-        EDGE_WEIGHT {
-            @Override
-            public Function<FlowMapGraph, String> funToName() {
-                return Name.EDGE_WEIGHT;
-            }
-            @Override
-            public Function<FlowMapGraph, TupleSet> funToTupleSet() {
-                return Tuples.EDGES;
-            }
-        },
-        NODE_X {
-            @Override
-            public Function<FlowMapGraph, String> funToName() {
-                return Name.NODE_X;
-            }
-            @Override
-            public Function<FlowMapGraph, TupleSet> funToTupleSet() {
-                return Tuples.NODES;
-            }
-        },
-        NODE_Y {
-            @Override
-            public Function<FlowMapGraph, String> funToName() {
-                return Name.NODE_Y;
-            }
-            @Override
-            public Function<FlowMapGraph, TupleSet> funToTupleSet() {
-                return Tuples.NODES;
-            }
-        },
-        ;
-
-        public abstract Function<FlowMapGraph, String> funToName();
-
-        public abstract Function<FlowMapGraph, TupleSet> funToTupleSet();
-
-        private enum Name implements Function<FlowMapGraph, String> {
-            EDGE_WEIGHT {
-                public String apply(FlowMapGraph from) {
-                    return from.getEdgeWeightAttr();
-                }
-            },
-            NODE_X {
-                public String apply(FlowMapGraph from) {
-                    return from.getXNodeAttr();
-                }
-            },
-            NODE_Y {
-                public String apply(FlowMapGraph from) {
-                    return from.getYNodeAttr();
-                }
-            },
-            ;
-        };
-    }
+  }
 
 
 

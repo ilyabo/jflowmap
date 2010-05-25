@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,127 +44,127 @@ import edu.umd.cs.piccolo.PCanvas;
 
 /**
  * @author Ilya Boyandin
- *         Date: 23-Sep-2009
+ *     Date: 23-Sep-2009
  */
 public class JFlowMap extends JComponent {
 
-    private static final long serialVersionUID = -1898747650184999568L;
+  private static final long serialVersionUID = -1898747650184999568L;
 
-    public static Logger logger = Logger.getLogger(JFlowMap.class);
+  public static Logger logger = Logger.getLogger(JFlowMap.class);
 
-    private PCanvas canvas;
-    private ControlPanel controlPanel;
-    private VisualFlowMap visualFlowMap;
-    private ColorScheme colorScheme;
+  private PCanvas canvas;
+  private ControlPanel controlPanel;
+  private VisualFlowMap visualFlowMap;
+  private ColorScheme colorScheme;
 
-    public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
+  public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
-    public JFlowMap(FlowMapGraph flowMapGraph, AreaMap areaMap) {
-        init();
+  public JFlowMap(FlowMapGraph flowMapGraph, AreaMap areaMap) {
+    init();
 
-        controlPanel = null;
+    controlPanel = null;
 
-        setVisualFlowMap(createVisualFlowMap(flowMapGraph));
-        if (areaMap != null) {
-            visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
-        }
+    setVisualFlowMap(createVisualFlowMap(flowMapGraph));
+    if (areaMap != null) {
+      visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
+    }
+  }
+
+  public JFlowMap(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
+    init();
+
+    if (datasetSpecs != null) {
+      FlowMapLoader.loadFlowMap(this, datasetSpecs.get(0), null);
+      canvas.getLayer().addChild(visualFlowMap);
     }
 
-    public JFlowMap(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
-        init();
-
-        if (datasetSpecs != null) {
-            FlowMapLoader.loadFlowMap(this, datasetSpecs.get(0), null);
-            canvas.getLayer().addChild(visualFlowMap);
-        }
-
-        if (showControlPanel) {
-            controlPanel = new ControlPanel(this, datasetSpecs);
-            add(controlPanel.getPanel(), BorderLayout.SOUTH);
-        } else {
-            controlPanel = null;
-        }
+    if (showControlPanel) {
+      controlPanel = new ControlPanel(this, datasetSpecs);
+      add(controlPanel.getPanel(), BorderLayout.SOUTH);
+    } else {
+      controlPanel = null;
     }
+  }
 
-    private void init() {
-        setLayout(new BorderLayout());
+  private void init() {
+    setLayout(new BorderLayout());
 
-        canvas = new PCanvas();
-        canvas.addInputEventListener(new ZoomHandler());
-        canvas.setPanEventHandler(new PanHandler());
-        add(canvas, BorderLayout.CENTER);
+    canvas = new PCanvas();
+    canvas.addInputEventListener(new ZoomHandler());
+    canvas.setPanEventHandler(new PanHandler());
+    add(canvas, BorderLayout.CENTER);
 
-        setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
-//        setColorScheme(ColorSchemes.DARK.getScheme());
-//        setColorScheme(ColorSchemes.DARK.getScheme());
+    setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+//    setColorScheme(ColorSchemes.DARK.getScheme());
+//    setColorScheme(ColorSchemes.DARK.getScheme());
+  }
+
+  @Override
+  public String getName() {
+    return visualFlowMap.getName();
+  }
+
+  public void setColorScheme(ColorScheme colorScheme) {
+    this.colorScheme = colorScheme;
+    canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
+    if (visualFlowMap != null) {
+      visualFlowMap.updateColors();
     }
+  }
 
-    @Override
-    public String getName() {
-        return visualFlowMap.getName();
+  public ColorScheme getColorScheme() {
+    return colorScheme;
+  }
+
+  public Color getColor(ColorCodes code) {
+    return colorScheme.get(code);
+  }
+
+  public PCanvas getCanvas() {
+    return canvas;
+  }
+
+  public Frame getParentFrame() {
+    Component parent = this;
+    while (parent != null) {
+      parent = parent.getParent();
+      if (parent instanceof Frame) {
+        return (Frame) parent;
+      }
     }
+    return null;
+  }
 
-    public void setColorScheme(ColorScheme colorScheme) {
-        this.colorScheme = colorScheme;
-        canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
-        if (visualFlowMap != null) {
-            visualFlowMap.updateColors();
-        }
-    }
+  public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph) {
+    return new VisualFlowMap(this, flowMapGraph, true);
+  }
 
-    public ColorScheme getColorScheme() {
-        return colorScheme;
-    }
-
-    public Color getColor(ColorCodes code) {
-        return colorScheme.get(code);
-    }
-
-    public PCanvas getCanvas() {
-        return canvas;
-    }
-
-    public Frame getParentFrame() {
-        Component parent = this;
-        while (parent != null) {
-            parent = parent.getParent();
-            if (parent instanceof Frame) {
-                return (Frame) parent;
-            }
-        }
-        return null;
-    }
-
-    public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph) {
-        return new VisualFlowMap(this, flowMapGraph, true);
-    }
-
-    public VisualFlowMap getVisualFlowMap() {
+  public VisualFlowMap getVisualFlowMap() {
 		return visualFlowMap;
 	}
 
-    public void setVisualFlowMap(VisualFlowMap newFlowMap) {
-        if (newFlowMap == visualFlowMap) {
-            return;
-        }
-        if (visualFlowMap != null) {
-            canvas.getLayer().removeChild(visualFlowMap);
-            visualFlowMap.removeNodesFromCamera();
-        }
-        canvas.getLayer().addChild(newFlowMap);
-        visualFlowMap = newFlowMap;
-        newFlowMap.addNodesToCamera();
-        if (controlPanel != null) {
-            controlPanel.loadVisualFlowMap(newFlowMap);
-        }
+  public void setVisualFlowMap(VisualFlowMap newFlowMap) {
+    if (newFlowMap == visualFlowMap) {
+      return;
     }
+    if (visualFlowMap != null) {
+      canvas.getLayer().removeChild(visualFlowMap);
+      visualFlowMap.removeNodesFromCamera();
+    }
+    canvas.getLayer().addChild(newFlowMap);
+    visualFlowMap = newFlowMap;
+    newFlowMap.addNodesToCamera();
+    if (controlPanel != null) {
+      controlPanel.loadVisualFlowMap(newFlowMap);
+    }
+  }
 
 	public void fitFlowMapInView() {
 		SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                visualFlowMap.fitInCameraView();
-            }
-        });
+      public void run() {
+        visualFlowMap.fitInCameraView();
+      }
+    });
 	}
 
 }

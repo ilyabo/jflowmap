@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,69 +32,69 @@ import jflowmap.visuals.VisualFlowMap;
  */
 class FlowsTableModel extends AbstractTableModel {
 
-    private static final long serialVersionUID = 1L;
-    
-    private List<VisualEdge> visualEdges;
+  private static final long serialVersionUID = 1L;
+  
+  private List<VisualEdge> visualEdges;
 
-    private VisualFlowMap visualFlowMap;
-    
-    public void setVisualEdges(List<VisualEdge> visualEdges) {
-        this.visualEdges = visualEdges;
-        fireTableDataChanged();
-        fireTableStructureChanged();
-    }
+  private VisualFlowMap visualFlowMap;
+  
+  public void setVisualEdges(List<VisualEdge> visualEdges) {
+    this.visualEdges = visualEdges;
+    fireTableDataChanged();
+    fireTableStructureChanged();
+  }
 
-    public void setVisualFlowMap(VisualFlowMap visualFlowMap) {
-        this.visualFlowMap = visualFlowMap;
-        setVisualEdges(visualFlowMap.getVisualEdges());
-    }
+  public void setVisualFlowMap(VisualFlowMap visualFlowMap) {
+    this.visualFlowMap = visualFlowMap;
+    setVisualEdges(visualFlowMap.getVisualEdges());
+  }
 
-    public void showAllVisualEdges() {
-        if (visualFlowMap == null) {
-            setVisualEdges(null);
-        } else {
-            setVisualEdges(visualFlowMap.getVisualEdges());
-        }
+  public void showAllVisualEdges() {
+    if (visualFlowMap == null) {
+      setVisualEdges(null);
+    } else {
+      setVisualEdges(visualFlowMap.getVisualEdges());
     }
+  }
 
-    public int getColumnCount() {
-        return 3;
-    }
+  public int getColumnCount() {
+    return 3;
+  }
 
-    public int getRowCount() {
-        if (visualEdges == null) {
-            return 0;
-        }
-        return visualEdges.size();
+  public int getRowCount() {
+    if (visualEdges == null) {
+      return 0;
     }
-    
-    public String getColumnName(int column) {
-        switch (column) {
-            case 0: return "Source node";
-            case 1: return "Target node";
-            case 2: return "Weight";
-        }
-        return "";
+    return visualEdges.size();
+  }
+  
+  public String getColumnName(int column) {
+    switch (column) {
+      case 0: return "Source node";
+      case 1: return "Target node";
+      case 2: return "Weight";
     }
+    return "";
+  }
 
-    @Override
-    public Class<?> getColumnClass(int column) {
-        switch (column) {
-            case 0: return String.class;
-            case 1: return String.class;
-            case 2: return Double.class;
-        }
-        return Object.class;
+  @Override
+  public Class<?> getColumnClass(int column) {
+    switch (column) {
+      case 0: return String.class;
+      case 1: return String.class;
+      case 2: return Double.class;
     }
-    
-    public Object getValueAt(int row, int column) {
-        VisualEdge visualEdge = visualEdges.get(row);
-        switch (column) {
-            case 0: return visualEdge.getSourceNode().getLabel();
-            case 1: return visualEdge.getTargetNode().getLabel();
-            case 2: return visualEdge.getEdgeWeight();
-        }
-        return "";
+    return Object.class;
+  }
+  
+  public Object getValueAt(int row, int column) {
+    VisualEdge visualEdge = visualEdges.get(row);
+    switch (column) {
+      case 0: return visualEdge.getSourceNode().getLabel();
+      case 1: return visualEdge.getTargetNode().getLabel();
+      case 2: return visualEdge.getEdgeWeight();
     }
+    return "";
+  }
 
 }

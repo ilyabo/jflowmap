@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,40 +37,40 @@ import prefuse.data.parser.ParserFactory;
  */
 public class GraphMLReader3 {
 
-    public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
+  public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
 
-    private ParserFactory dataParser;
-    private LineNumberReader lineNumberReader;
+  private ParserFactory dataParser;
+  private LineNumberReader lineNumberReader;
 
-    private GraphMLReader3() {
+  private GraphMLReader3() {
+  }
+
+  public Iterable<Graph> readGraph(InputStream is) throws DataIOException {
+    XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+    XMLStreamReader reader;
+    try {
+      lineNumberReader = new LineNumberReader(new InputStreamReader(is));
+      reader = inputFactory.createXMLStreamReader(lineNumberReader);
+
+      while (reader.hasNext()) {
+        int type = reader.nextTag();
+
+
+
+      }
+
+      return null;
+    } catch (Exception e) {
+      throw new DataIOException("Parse error in line " + lineNumberReader.getLineNumber() + ": " + e.getMessage(), e);
     }
+  }
 
-    public Iterable<Graph> readGraph(InputStream is) throws DataIOException {
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        XMLStreamReader reader;
-        try {
-            lineNumberReader = new LineNumberReader(new InputStreamReader(is));
-            reader = inputFactory.createXMLStreamReader(lineNumberReader);
-
-            while (reader.hasNext()) {
-                int type = reader.nextTag();
-
-
-
-            }
-
-            return null;
-        } catch (Exception e) {
-            throw new DataIOException("Parse error in line " + lineNumberReader.getLineNumber() + ": " + e.getMessage(), e);
-        }
+  private Object parseData(String defaultValStr, Class<?> klass) throws DataIOException {
+    try {
+      return dataParser.getParser(klass).parse(defaultValStr);
+    } catch (DataParseException e) {
+      throw new DataIOException(e);
     }
-
-    private Object parseData(String defaultValStr, Class<?> klass) throws DataIOException {
-        try {
-            return dataParser.getParser(klass).parse(defaultValStr);
-        } catch (DataParseException e) {
-            throw new DataIOException(e);
-        }
-    }
+  }
 
 }

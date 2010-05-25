@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,69 +40,69 @@ import prefuse.util.io.IOLib;
 
 /**
  * @author Ilya Boyandin
- *         Date: 25-Sep-2009
+ *     Date: 25-Sep-2009
  */
 public class XmlAreaMapModelReader {
 
-    private XmlAreaMapModelReader() {
-    }
+  private XmlAreaMapModelReader() {
+  }
 
-    public static AreaMap readMap(String location) throws IOException {
-        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
-        try {
-            InputStream is = IOLib.streamFromString(location);
-            if (is == null) {
-                throw new IOException("Cannot read from location: " + location);
+  public static AreaMap readMap(String location) throws IOException {
+    XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
+    try {
+      InputStream is = IOLib.streamFromString(location);
+      if (is == null) {
+        throw new IOException("Cannot read from location: " + location);
+      }
+      return loadFrom(location, builder.parseReader(new InputStreamReader(is)));
+    } catch (XmlPullParserException e) {
+      throw new IOException(e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static AreaMap loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
+    Xb1XPath
+        areaPath = new Xb1XPath("/areas/area"),
+        polygonPath = new Xb1XPath("polygons"),
+        polyPath = new Xb1XPath("poly");
+
+
+    List<Area> areas = new ArrayList<Area>();
+    List<XmlElement> areaNodes = areaPath.selectNodes(doc);
+    for (XmlElement areaNode : areaNodes) {
+      String id = areaNode.getAttributeValue(null, "id");
+      for (XmlElement polygonsNode : (List<XmlElement>) polygonPath.selectNodes(areaNode)) {
+        List<XmlElement> polyNodes = polyPath.selectNodes(polygonsNode);
+        Polygon[] polygons = new Polygon[polyNodes.size()];
+        int polyCnt = 0;
+        for (XmlElement polyNode : polyNodes) {
+          Iterator it = polyNode.children();
+          if (it.hasNext()) {
+//            java.awt.geom.Area poly = new java.awt.geom.Area();
+            String coordsStr = it.next().toString().trim();
+            String[] coords = coordsStr.split("\\s*,\\s*");
+            Point2D[] points = new Point2D[coords.length / 2];
+            double x = Double.NaN, y;
+            int coordCnt = 0;
+            for (String point : coords) {
+              if (coordCnt % 2 == 0) {
+                x = Double.parseDouble(point);
+              } else {
+                y = Double.parseDouble(point);
+                points[coordCnt / 2] = new Point2D.Double(x, y);
+              }
+              coordCnt++;
             }
-            return loadFrom(location, builder.parseReader(new InputStreamReader(is)));
-        } catch (XmlPullParserException e) {
-            throw new IOException(e);
+            polygons[polyCnt] = new Polygon(points);
+            polyCnt++;
+          }
+
         }
+        areas.add(new Area(id, "", polygons));
+      }
     }
 
-    @SuppressWarnings("unchecked")
-    private static AreaMap loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
-        Xb1XPath
-                areaPath = new Xb1XPath("/areas/area"),
-                polygonPath = new Xb1XPath("polygons"),
-                polyPath = new Xb1XPath("poly");
-
-
-        List<Area> areas = new ArrayList<Area>();
-        List<XmlElement> areaNodes = areaPath.selectNodes(doc);
-        for (XmlElement areaNode : areaNodes) {
-            String id = areaNode.getAttributeValue(null, "id");
-            for (XmlElement polygonsNode : (List<XmlElement>) polygonPath.selectNodes(areaNode)) {
-                List<XmlElement> polyNodes = polyPath.selectNodes(polygonsNode);
-                Polygon[] polygons = new Polygon[polyNodes.size()];
-                int polyCnt = 0;
-                for (XmlElement polyNode : polyNodes) {
-                    Iterator it = polyNode.children();
-                    if (it.hasNext()) {
-//                        java.awt.geom.Area poly = new java.awt.geom.Area();
-                        String coordsStr = it.next().toString().trim();
-                        String[] coords = coordsStr.split("\\s*,\\s*");
-                        Point2D[] points = new Point2D[coords.length / 2];
-                        double x = Double.NaN, y;
-                        int coordCnt = 0;
-                        for (String point : coords) {
-                            if (coordCnt % 2 == 0) {
-                                x = Double.parseDouble(point);
-                            } else {
-                                y = Double.parseDouble(point);
-                                points[coordCnt / 2] = new Point2D.Double(x, y);
-                            }
-                            coordCnt++;
-                        }
-                        polygons[polyCnt] = new Polygon(points);
-                        polyCnt++;
-                    }
-
-                }
-                areas.add(new Area(id, "", polygons));
-            }
-        }
-
-        return new AreaMap(name, areas);
-    }
+    return new AreaMap(name, areas);
+  }
 }

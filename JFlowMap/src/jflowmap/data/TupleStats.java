@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,46 +33,46 @@ import com.google.common.collect.Lists;
  */
 public class TupleStats {
 
-    private TupleStats() {
-    }
+  private TupleStats() {
+  }
 
-    @SuppressWarnings("unchecked")
-    public static MinMax createFor(Iterator<TupleSet> tupleSetIt, Iterator<String> attrNameIt) {
-        List<Iterator<Double>> iterators = Lists.newArrayList();
-        while (tupleSetIt.hasNext()) {
-            assert(attrNameIt.hasNext());
+  @SuppressWarnings("unchecked")
+  public static MinMax createFor(Iterator<TupleSet> tupleSetIt, Iterator<String> attrNameIt) {
+    List<Iterator<Double>> iterators = Lists.newArrayList();
+    while (tupleSetIt.hasNext()) {
+      assert(attrNameIt.hasNext());
 
-            final TupleSet tuples = tupleSetIt.next();
-            final String attrName = attrNameIt.next();
+      final TupleSet tuples = tupleSetIt.next();
+      final String attrName = attrNameIt.next();
 
-            iterators.add(Iterators.transform(
-                tuples.tuples(),
-                new Function<Tuple, Double>() {
-                    public Double apply(Tuple from) {
-                        return from.getDouble(attrName);
-                    }
-                }
-            ));
+      iterators.add(Iterators.transform(
+        tuples.tuples(),
+        new Function<Tuple, Double>() {
+          public Double apply(Tuple from) {
+            return from.getDouble(attrName);
+          }
         }
-        assert(!attrNameIt.hasNext());
-
-        return MinMax.createFor(Iterators.concat(iterators.iterator()));
+      ));
     }
+    assert(!attrNameIt.hasNext());
 
-//    public static MinMax createFor(TupleSet tupleSet, final String attrName) {
-//        return MinMax.createFor(iteratorFor(tupleSet.tuples(), attrName));
-//    }
+    return MinMax.createFor(Iterators.concat(iterators.iterator()));
+  }
+
+//  public static MinMax createFor(TupleSet tupleSet, final String attrName) {
+//    return MinMax.createFor(iteratorFor(tupleSet.tuples(), attrName));
+//  }
 //
-//    @SuppressWarnings("unchecked")
-//    public static Iterator<Double> iteratorFor(Iterator tupleIt, final String attrName) {
-//        return Iterators.transform(
-//                tupleIt,
-//                new Function<Tuple, Double>() {
-//                    public Double apply(Tuple from) {
-//                        return from.getDouble(attrName);
-//                    }
-//                }
-//        );
-//    };
+//  @SuppressWarnings("unchecked")
+//  public static Iterator<Double> iteratorFor(Iterator tupleIt, final String attrName) {
+//    return Iterators.transform(
+//        tupleIt,
+//        new Function<Tuple, Double>() {
+//          public Double apply(Tuple from) {
+//            return from.getDouble(attrName);
+//          }
+//        }
+//    );
+//  };
 
 }

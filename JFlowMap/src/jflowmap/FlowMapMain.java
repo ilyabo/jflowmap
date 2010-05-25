@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -69,443 +69,443 @@ import com.google.common.collect.Lists;
  */
 public class FlowMapMain extends JFrame {
 
-    private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
-            // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
-//          "rity",
-          "r",
-          "name", "x", "y", 0);
+  private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
+      // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
+//      "rity",
+      "r",
+      "name", "x", "y", 0);
 
 
-    public static final String APP_NAME = "JFlowMap";
-//    private static final String PREFERENCES_FILE_NAME = ".preferences";
+  public static final String APP_NAME = "JFlowMap";
+//  private static final String PREFERENCES_FILE_NAME = ".preferences";
 
-    private static Logger logger = Logger.getLogger(FlowMapMain.class);
+  private static Logger logger = Logger.getLogger(FlowMapMain.class);
 
-    private static final long serialVersionUID = 1L;
-    public static final String OS_NAME = System.getProperty("os.name");
+  private static final long serialVersionUID = 1L;
+  public static final String OS_NAME = System.getProperty("os.name");
 
-    public static boolean IS_OS_MAC = getOSMatches("Mac");
+  public static boolean IS_OS_MAC = getOSMatches("Mac");
 
-    private static boolean getOSMatches(String osNamePrefix) {
-        if (OS_NAME == null) {
-            return false;
-        }
-        return OS_NAME.startsWith(osNamePrefix);
+  private static boolean getOSMatches(String osNamePrefix) {
+    if (OS_NAME == null) {
+      return false;
     }
+    return OS_NAME.startsWith(osNamePrefix);
+  }
 
-    private final JDesktopPane desktopPane;
-//    private String appStartDir;
-    private OpenFileAction openAsMapAction;
-    private JComponent activeView;
-    private AbstractAction tileViewsAction;
+  private final JDesktopPane desktopPane;
+//  private String appStartDir;
+  private OpenFileAction openAsMapAction;
+  private JComponent activeView;
+  private AbstractAction tileViewsAction;
 
-    private OpenFileAction openAsTimelineAction;
+  private OpenFileAction openAsTimelineAction;
 
-
-    public FlowMapMain() {
-        setTitle("JFlowMap");
 
-        initActions();
-
-        setJMenuBar(buildMenuBar());
-
-        desktopPane = new JDesktopPane();
-        desktopPane.setBackground(Color.gray);
-        add(desktopPane, BorderLayout.CENTER);
-
-        JPanel statusPanel = new JPanel(new BorderLayout());
-        add(statusPanel, BorderLayout.SOUTH);
-
-        JMemoryIndicator mi = new JMemoryIndicator(3000);
-        statusPanel.add(mi, BorderLayout.EAST);
-        mi.startUpdater();
-
-        setExtendedState(MAXIMIZED_BOTH);
-        setMinimumSize(new Dimension(800, 600));
-//        setPreferredSize(new Dimension(800, 600));
-//        pack();
-
-//        setAppStartDir(System.getProperty("user.dir"));
-//        loadPreferences();
-
-        final Dimension size = getSize();
-        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        final int locX = (screen.width - size.width) / 2;
-        final int locY = (screen.height - size.height) / 2;
-        setLocation(locX, locY);
-
-
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                exit();
-            }
-            @Override
-            public void windowOpened(WindowEvent e) {
-                InternalFrameUtils.tile(desktopPane);
-            }
-        });
-
-
-        // TODO: remove hardcoded filename to open
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-//                    showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
-
-                    showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"));
-
-//                    desktopPane.getAllFrames()[0].setMaximum(true);
-                } catch (Exception ex) {
-                    JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
-                            + ex.getMessage());
-                    logger.error("Cant open file", ex);
-                }
-            }
-        });
-    }
-
-    private void initActions() {
-        openAsMapAction = new OpenFileAction(this, OpenFileAction.As.MAP);
-        openAsTimelineAction = new OpenFileAction(this, OpenFileAction.As.TIMELINE);
-        tileViewsAction = new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-
-            public void actionPerformed(ActionEvent e) {
-                InternalFrameUtils.tile(desktopPane);
-            }
-        };
-    }
-
-
-    public void showFlowTimeline(String filename) throws DataIOException, XMLStreamException, IOException {
-        showView(loadGraphsWithRegions(filename));
-    }
-
-    public static JFlowTimeline loadGraphsWithRegions(String filename) throws DataIOException, XMLStreamException,
-            IOException {
-        List<Graph> graphs = loadGraphs(filename);
-
-        Collections.reverse(graphs);
-
-        String columnToGroupNodesBy = "region";
-        addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
-
-        // TODO: let the user choose the attr specs
-        JFlowTimeline ft = new JFlowTimeline(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
-        return ft;
-    }
-
-    private static List<Graph> loadGraphs(String filename) throws DataIOException {
-        GraphMLReader2 reader = new GraphMLReader2();
-        List<Graph> graphs = Lists.newArrayList(reader.readFromFile(filename));
-        return graphs;
-    }
-
-    public static void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws XMLStreamException, IOException {
-        // TODO: introduce regions as node attrs in GraphML
-        Map<String, String> nodeIdToRegion =
-//            XmlRegionsReader.readFrom("data/refugees/regions.xml");
-            XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
-        for (Graph graph : graphs) {
-            graph.getNodeTable().addColumn(regionColumn, String.class);
-//            graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
-
-            for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
-                Node node = FlowMapGraph.findNodeById(graph, e.getKey());
-                if (node != null) {
-                    String region = e.getValue();
-                    node.set(regionColumn, region);
-//                    node.setInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
-                }
-            }
-        }
-    }
-
-
-
-    public void showFlowMaps(String filename) throws DataIOException, IOException {
-        Iterable<Graph> graphs = loadFile(filename);
-
-        // TODO: add support for links to external content in GraphML files (use <locator>)
-        AreaMap areaMap = AreaMap.load("data/refugees/countries-areas.xml.gz");
-
-        List<JFlowMap> flowMaps = Lists.newArrayList();
-        List<JInternalFrame> iframes = Lists.newArrayList();
-        for (Graph graph : graphs) {
-            // TODO: let the user choose the attr specs
-            FlowMapAttrSpec attrSpecs = REFUGEES_ATTR_SPECS;
-
-            JFlowMap view = new JFlowMap(new FlowMapGraph(graph, attrSpecs), areaMap);
-            view.getVisualFlowMap().setLegendVisible(false);
-            JInternalFrame iframe = showView(view);
-
-            flowMaps.add(view);
-            iframes.add(iframe);
-            iframe.toFront();
-        }
-
-        InternalFrameUtils.tile(iframes.toArray(new JInternalFrame[iframes.size()]));
-        for (JFlowMap flowMap : flowMaps) {
-            flowMap.fitFlowMapInView();
-        }
-    }
-
-    private Iterable<Graph> loadFile(String filename) throws DataIOException {
-        logger.info("Opening file: " + filename);
-        Iterable<Graph> graphs = new GraphMLReader2().readFromFile(filename);
-        return graphs;
-    }
-
-    private JInternalFrame showView(final JComponent view) {
-        JInternalFrame iframe = new JInternalFrame(view.getName(), true, true, true, true);
-        iframe.setContentPane(view);
-        view.setPreferredSize(new Dimension(800, 600));
-        final int offset = desktopPane.getAllFrames().length * 16;
-        iframe.setLocation(offset, offset);
-        iframe.pack();
-        iframe.setVisible(true);
-        desktopPane.add(iframe);
-
-        iframe.addInternalFrameListener(new InternalFrameAdapter() {
-            @Override
-            public void internalFrameActivated(InternalFrameEvent e) {
-                setActiveView(view);
-//                updateActions();
-            }
-
-            @Override
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-                setActiveView(null);
-//                updateActions();
-            }
-
-            @Override
-            public void internalFrameOpened(InternalFrameEvent e) {
-//                openViews.add(view);
-//                updateActions();
-            }
-
-            @Override
-            public void internalFrameClosed(InternalFrameEvent e) {
-//                openViews.remove(view);
-//                view.setFrame(null);
-//                updateActions();
-            }
-        });
-
-        return iframe;
-    }
-
-    private void setActiveView(JComponent view) {
-//        if (view != null) {
-//            setViewOptionsDialogContent(view.getOptionsComponent());
-//
-//            if (activeView != null) {
-//                removeToolbarActions(activeView.getToolbarActions());
-//                removeToolbarControls(view.getToolbarControls());
-//            }
-//            addToolbarActions(view.getToolbarActions());
-//            addToolbarControls(view.getToolbarControls());
-//            actionsToolBar.repaint();
-//        } else {
-//            setViewOptionsDialogContent(null);
-//            if (activeView != null) {
-//                removeToolbarActions(activeView.getToolbarActions());
-//                removeToolbarControls(activeView.getToolbarControls());
-//                actionsToolBar.repaint();
-//            }
-//        }
-        this.activeView = view;
-    }
-
-    private JMenuBar buildMenuBar() {
-        final JMenuBar mb = new JMenuBar();
-        JMenu menu, subMenu;
-        JMenuItem item;
-
-        menu = new JMenu("File");
-        mb.add(menu);
-
-        menu.add(openAsMapAction);
-        menu.add(openAsTimelineAction);
-
-        // TODO: recent files
-        menu.addSeparator();
-
-        item = new JMenuItem("Exit");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                exit();
-            }
-        });
-        menu.add(item);
-
-
-
-        menu = new JMenu("Window");
-        mb.add(menu);
-
-        item = new JMenuItem("Fit in view");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fitActiveInView();
-            }
-        });
-        menu.add(item);
-
-        item = new JMenuItem("Fit all in views");
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fitAllInViews();
-            }
-        });
-        menu.add(item);
-
-        menu.addSeparator();
-
-        subMenu = new JMenu("Arrange");
-        menu.add(subMenu);
-
-        item = new JMenuItem("Cascade");
-        item.setEnabled(false);
-        subMenu.add(item);
-        item = new JMenuItem("Tile");
-        item.addActionListener(tileViewsAction);
-        subMenu.add(item);
-
-        item = new JMenuItem("Tile horizontally");
-        item.setEnabled(false);
-        subMenu.add(item);
-        item = new JMenuItem("Tile vertically");
-        item.setEnabled(false);
-        subMenu.add(item);
-        item = new JMenuItem("Maximize all");
-        item.setEnabled(false);
-        subMenu.add(item);
-        item = new JMenuItem("Minimize all");
-        item.setEnabled(false);
-        subMenu.add(item);
-
-        menu.addSeparator();
-
-        item = new JMenuItem("Preferences...");
-        item.setEnabled(false);
-        menu.add(item);
-
-        menu = new JMenu("Help");
-        mb.add(menu);
-
-        item = new JMenuItem("About");
-        menu.add(item);
-
-        return mb;
-    }
-
-    public void shutdown() {
-        logger.info(">>> Exiting JFlowMap");
-//        savePreferences();
-        System.exit(0);
-    }
-
-    public boolean confirmExit() {
-        if (desktopPane.getAllFrames().length > 0) {
-//            int confirm = JOptionPane.showConfirmDialog(this,
-//                    "Close all views and exit application?", "Exit",
-//                    JOptionPane.YES_NO_OPTION);
-//            if (confirm == JOptionPane.YES_OPTION) {
-                return true;
-//            } else {
-//                return false;
-//            }
-        }
-        return true;
-    }
-
-//    public String getAppStartDir() {
-//        return appStartDir;
-//    }
-//
-//    public void setAppStartDir(String appStartDir) {
-//        this.appStartDir = appStartDir;
-//    }
-//
-//    protected void loadPreferences() {
-//        final String fileName = getPreferencesFileName();
-//        if (new File(fileName).isFile()) {
-//            logger.info("Loading preferences from " + fileName);
-//            try {
-//                Preferences.importPreferences(new FileInputStream(fileName));
-//            } catch (Throwable th) {
-//                logger.error("Loading preferences failed", th);
-//            }
-//        }
-//    }
-//
-//    protected void savePreferences() {
-//        final String fileName = getPreferencesFileName();
-//        logger.info("Saving preferences to " + fileName);
-//        try {
-//            Preferences.userRoot().exportSubtree(new FileOutputStream(fileName));
-//        } catch (Throwable th) {
-//            logger.error("Loading preferences failed", th);
-//        }
-//    }
-//
-//    protected String getPreferencesFileName() {
-//        return getAppStartDir() + File.separator + PREFERENCES_FILE_NAME;
-//    }
-
-    private void exit() {
-        if (confirmExit()) {
-            dispose();
-            shutdown();
-        }
-    }
-
-    private void fitAllInViews() {
-        JInternalFrame[] iframes = desktopPane.getAllFrames();
-        for (JInternalFrame iframe : iframes) {
-            Container view = iframe.getContentPane();
-            if (view instanceof JFlowMap)
-                ((JFlowMap)view).fitFlowMapInView();
-        }
-    }
-
-    private void fitActiveInView() {
-        if (activeView != null) {
-            if (activeView instanceof JFlowMap)
-                ((JFlowMap)activeView).fitFlowMapInView();
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        logger.info(">>> Starting JFlowMap");
-//        final List<DatasetSpec> datasetSpecs = XmlDatasetSpecsReader.readDatasetSpecs("/data/datasets.xml");
-        initLookAndFeel();
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new FlowMapMain().setVisible(true);
-            }
-        });
-    }
-
-    private static void initLookAndFeel() {
+  public FlowMapMain() {
+    setTitle("JFlowMap");
+
+    initActions();
+
+    setJMenuBar(buildMenuBar());
+
+    desktopPane = new JDesktopPane();
+    desktopPane.setBackground(Color.gray);
+    add(desktopPane, BorderLayout.CENTER);
+
+    JPanel statusPanel = new JPanel(new BorderLayout());
+    add(statusPanel, BorderLayout.SOUTH);
+
+    JMemoryIndicator mi = new JMemoryIndicator(3000);
+    statusPanel.add(mi, BorderLayout.EAST);
+    mi.startUpdater();
+
+    setExtendedState(MAXIMIZED_BOTH);
+    setMinimumSize(new Dimension(800, 600));
+//    setPreferredSize(new Dimension(800, 600));
+//    pack();
+
+//    setAppStartDir(System.getProperty("user.dir"));
+//    loadPreferences();
+
+    final Dimension size = getSize();
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    final int locX = (screen.width - size.width) / 2;
+    final int locY = (screen.height - size.height) / 2;
+    setLocation(locX, locY);
+
+
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosing(WindowEvent e) {
+        exit();
+      }
+      @Override
+      public void windowOpened(WindowEvent e) {
+        InternalFrameUtils.tile(desktopPane);
+      }
+    });
+
+
+    // TODO: remove hardcoded filename to open
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
         try {
-            if (!IS_OS_MAC) {
-                for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                    if ("Nimbus".equals(info.getName())) {
-                        UIManager.setLookAndFeel(info.getClassName());
-                        break;
-                    }
-                }
-            }
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
+//          showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
+
+          showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"));
+
+//          desktopPane.getAllFrames()[0].setMaximum(true);
+        } catch (Exception ex) {
+          JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
+              + ex.getMessage());
+          logger.error("Cant open file", ex);
         }
+      }
+    });
+  }
+
+  private void initActions() {
+    openAsMapAction = new OpenFileAction(this, OpenFileAction.As.MAP);
+    openAsTimelineAction = new OpenFileAction(this, OpenFileAction.As.TIMELINE);
+    tileViewsAction = new AbstractAction() {
+      private static final long serialVersionUID = 1L;
+
+      public void actionPerformed(ActionEvent e) {
+        InternalFrameUtils.tile(desktopPane);
+      }
+    };
+  }
+
+
+  public void showFlowTimeline(String filename) throws DataIOException, XMLStreamException, IOException {
+    showView(loadGraphsWithRegions(filename));
+  }
+
+  public static JFlowTimeline loadGraphsWithRegions(String filename) throws DataIOException, XMLStreamException,
+      IOException {
+    List<Graph> graphs = loadGraphs(filename);
+
+    Collections.reverse(graphs);
+
+    String columnToGroupNodesBy = "region";
+    addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
+
+    // TODO: let the user choose the attr specs
+    JFlowTimeline ft = new JFlowTimeline(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
+    return ft;
+  }
+
+  private static List<Graph> loadGraphs(String filename) throws DataIOException {
+    GraphMLReader2 reader = new GraphMLReader2();
+    List<Graph> graphs = Lists.newArrayList(reader.readFromFile(filename));
+    return graphs;
+  }
+
+  public static void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws XMLStreamException, IOException {
+    // TODO: introduce regions as node attrs in GraphML
+    Map<String, String> nodeIdToRegion =
+//      XmlRegionsReader.readFrom("data/refugees/regions.xml");
+      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
+    for (Graph graph : graphs) {
+      graph.getNodeTable().addColumn(regionColumn, String.class);
+//      graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
+
+      for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
+        Node node = FlowMapGraph.findNodeById(graph, e.getKey());
+        if (node != null) {
+          String region = e.getValue();
+          node.set(regionColumn, region);
+//          node.setInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
+        }
+      }
     }
+  }
+
+
+
+  public void showFlowMaps(String filename) throws DataIOException, IOException {
+    Iterable<Graph> graphs = loadFile(filename);
+
+    // TODO: add support for links to external content in GraphML files (use <locator>)
+    AreaMap areaMap = AreaMap.load("data/refugees/countries-areas.xml.gz");
+
+    List<JFlowMap> flowMaps = Lists.newArrayList();
+    List<JInternalFrame> iframes = Lists.newArrayList();
+    for (Graph graph : graphs) {
+      // TODO: let the user choose the attr specs
+      FlowMapAttrSpec attrSpecs = REFUGEES_ATTR_SPECS;
+
+      JFlowMap view = new JFlowMap(new FlowMapGraph(graph, attrSpecs), areaMap);
+      view.getVisualFlowMap().setLegendVisible(false);
+      JInternalFrame iframe = showView(view);
+
+      flowMaps.add(view);
+      iframes.add(iframe);
+      iframe.toFront();
+    }
+
+    InternalFrameUtils.tile(iframes.toArray(new JInternalFrame[iframes.size()]));
+    for (JFlowMap flowMap : flowMaps) {
+      flowMap.fitFlowMapInView();
+    }
+  }
+
+  private Iterable<Graph> loadFile(String filename) throws DataIOException {
+    logger.info("Opening file: " + filename);
+    Iterable<Graph> graphs = new GraphMLReader2().readFromFile(filename);
+    return graphs;
+  }
+
+  private JInternalFrame showView(final JComponent view) {
+    JInternalFrame iframe = new JInternalFrame(view.getName(), true, true, true, true);
+    iframe.setContentPane(view);
+    view.setPreferredSize(new Dimension(800, 600));
+    final int offset = desktopPane.getAllFrames().length * 16;
+    iframe.setLocation(offset, offset);
+    iframe.pack();
+    iframe.setVisible(true);
+    desktopPane.add(iframe);
+
+    iframe.addInternalFrameListener(new InternalFrameAdapter() {
+      @Override
+      public void internalFrameActivated(InternalFrameEvent e) {
+        setActiveView(view);
+//        updateActions();
+      }
+
+      @Override
+      public void internalFrameDeactivated(InternalFrameEvent e) {
+        setActiveView(null);
+//        updateActions();
+      }
+
+      @Override
+      public void internalFrameOpened(InternalFrameEvent e) {
+//        openViews.add(view);
+//        updateActions();
+      }
+
+      @Override
+      public void internalFrameClosed(InternalFrameEvent e) {
+//        openViews.remove(view);
+//        view.setFrame(null);
+//        updateActions();
+      }
+    });
+
+    return iframe;
+  }
+
+  private void setActiveView(JComponent view) {
+//    if (view != null) {
+//      setViewOptionsDialogContent(view.getOptionsComponent());
+//
+//      if (activeView != null) {
+//        removeToolbarActions(activeView.getToolbarActions());
+//        removeToolbarControls(view.getToolbarControls());
+//      }
+//      addToolbarActions(view.getToolbarActions());
+//      addToolbarControls(view.getToolbarControls());
+//      actionsToolBar.repaint();
+//    } else {
+//      setViewOptionsDialogContent(null);
+//      if (activeView != null) {
+//        removeToolbarActions(activeView.getToolbarActions());
+//        removeToolbarControls(activeView.getToolbarControls());
+//        actionsToolBar.repaint();
+//      }
+//    }
+    this.activeView = view;
+  }
+
+  private JMenuBar buildMenuBar() {
+    final JMenuBar mb = new JMenuBar();
+    JMenu menu, subMenu;
+    JMenuItem item;
+
+    menu = new JMenu("File");
+    mb.add(menu);
+
+    menu.add(openAsMapAction);
+    menu.add(openAsTimelineAction);
+
+    // TODO: recent files
+    menu.addSeparator();
+
+    item = new JMenuItem("Exit");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        exit();
+      }
+    });
+    menu.add(item);
+
+
+
+    menu = new JMenu("Window");
+    mb.add(menu);
+
+    item = new JMenuItem("Fit in view");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        fitActiveInView();
+      }
+    });
+    menu.add(item);
+
+    item = new JMenuItem("Fit all in views");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        fitAllInViews();
+      }
+    });
+    menu.add(item);
+
+    menu.addSeparator();
+
+    subMenu = new JMenu("Arrange");
+    menu.add(subMenu);
+
+    item = new JMenuItem("Cascade");
+    item.setEnabled(false);
+    subMenu.add(item);
+    item = new JMenuItem("Tile");
+    item.addActionListener(tileViewsAction);
+    subMenu.add(item);
+
+    item = new JMenuItem("Tile horizontally");
+    item.setEnabled(false);
+    subMenu.add(item);
+    item = new JMenuItem("Tile vertically");
+    item.setEnabled(false);
+    subMenu.add(item);
+    item = new JMenuItem("Maximize all");
+    item.setEnabled(false);
+    subMenu.add(item);
+    item = new JMenuItem("Minimize all");
+    item.setEnabled(false);
+    subMenu.add(item);
+
+    menu.addSeparator();
+
+    item = new JMenuItem("Preferences...");
+    item.setEnabled(false);
+    menu.add(item);
+
+    menu = new JMenu("Help");
+    mb.add(menu);
+
+    item = new JMenuItem("About");
+    menu.add(item);
+
+    return mb;
+  }
+
+  public void shutdown() {
+    logger.info(">>> Exiting JFlowMap");
+//    savePreferences();
+    System.exit(0);
+  }
+
+  public boolean confirmExit() {
+    if (desktopPane.getAllFrames().length > 0) {
+//      int confirm = JOptionPane.showConfirmDialog(this,
+//          "Close all views and exit application?", "Exit",
+//          JOptionPane.YES_NO_OPTION);
+//      if (confirm == JOptionPane.YES_OPTION) {
+        return true;
+//      } else {
+//        return false;
+//      }
+    }
+    return true;
+  }
+
+//  public String getAppStartDir() {
+//    return appStartDir;
+//  }
+//
+//  public void setAppStartDir(String appStartDir) {
+//    this.appStartDir = appStartDir;
+//  }
+//
+//  protected void loadPreferences() {
+//    final String fileName = getPreferencesFileName();
+//    if (new File(fileName).isFile()) {
+//      logger.info("Loading preferences from " + fileName);
+//      try {
+//        Preferences.importPreferences(new FileInputStream(fileName));
+//      } catch (Throwable th) {
+//        logger.error("Loading preferences failed", th);
+//      }
+//    }
+//  }
+//
+//  protected void savePreferences() {
+//    final String fileName = getPreferencesFileName();
+//    logger.info("Saving preferences to " + fileName);
+//    try {
+//      Preferences.userRoot().exportSubtree(new FileOutputStream(fileName));
+//    } catch (Throwable th) {
+//      logger.error("Loading preferences failed", th);
+//    }
+//  }
+//
+//  protected String getPreferencesFileName() {
+//    return getAppStartDir() + File.separator + PREFERENCES_FILE_NAME;
+//  }
+
+  private void exit() {
+    if (confirmExit()) {
+      dispose();
+      shutdown();
+    }
+  }
+
+  private void fitAllInViews() {
+    JInternalFrame[] iframes = desktopPane.getAllFrames();
+    for (JInternalFrame iframe : iframes) {
+      Container view = iframe.getContentPane();
+      if (view instanceof JFlowMap)
+        ((JFlowMap)view).fitFlowMapInView();
+    }
+  }
+
+  private void fitActiveInView() {
+    if (activeView != null) {
+      if (activeView instanceof JFlowMap)
+        ((JFlowMap)activeView).fitFlowMapInView();
+    }
+  }
+
+  public static void main(String[] args) throws IOException {
+    logger.info(">>> Starting JFlowMap");
+//    final List<DatasetSpec> datasetSpecs = XmlDatasetSpecsReader.readDatasetSpecs("/data/datasets.xml");
+    initLookAndFeel();
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new FlowMapMain().setVisible(true);
+      }
+    });
+  }
+
+  private static void initLookAndFeel() {
+    try {
+      if (!IS_OS_MAC) {
+        for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+          if ("Nimbus".equals(info.getName())) {
+            UIManager.setLookAndFeel(info.getClassName());
+            break;
+          }
+        }
+      }
+//      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
 
 }

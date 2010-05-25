@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,29 +29,29 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 public class LineVisualEdge extends VisualEdge {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public LineVisualEdge(VisualFlowMap visualFlowMap, Edge edge,
-            VisualNode sourceNode, VisualNode targetNode) {
-        super(visualFlowMap, edge, sourceNode, targetNode);
-        targetNode.addIncomingEdge(this);
-        sourceNode.addOutgoingEdge(this);
+  public LineVisualEdge(VisualFlowMap visualFlowMap, Edge edge,
+      VisualNode sourceNode, VisualNode targetNode) {
+    super(visualFlowMap, edge, sourceNode, targetNode);
+    targetNode.addIncomingEdge(this);
+    sourceNode.addOutgoingEdge(this);
 
-        final double x1 = sourceNode.getValueX();
-        final double y1 = sourceNode.getValueY();
-        final double x2 = targetNode.getValueX();
-        final double y2 = targetNode.getValueY();
+    final double x1 = sourceNode.getValueX();
+    final double y1 = sourceNode.getValueY();
+    final double x2 = targetNode.getValueX();
+    final double y2 = targetNode.getValueY();
 
-        Shape shape;
-        if (isSelfLoop()) {
-            shape = createSelfLoopShape();
+    Shape shape;
+    if (isSelfLoop()) {
+      shape = createSelfLoopShape();
 
-        } else {
-            shape = new Line2D.Double(x1, y1, x2, y2);
-        }
-
-        PPath ppath = new PPath(shape);
-        setEdgePPath(ppath);
-        addChild(ppath);
+    } else {
+      shape = new Line2D.Double(x1, y1, x2, y2);
     }
+
+    PPath ppath = new PPath(shape);
+    setEdgePPath(ppath);
+    addChild(ppath);
+  }
 }

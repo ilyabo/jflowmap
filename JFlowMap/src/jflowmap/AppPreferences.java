@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,20 +25,20 @@ import java.util.prefs.Preferences;
  */
 public enum AppPreferences {
 
-    INSTANCE;
+  INSTANCE;
 
-    enum Names {
-        FILE_OPEN_LAST_VISITED_DIR;
-    }
+  enum Names {
+    FILE_OPEN_LAST_VISITED_DIR;
+  }
 
-    private static Preferences prefs = Preferences.userNodeForPackage(FlowMapMain.class);
+  private static Preferences prefs = Preferences.userNodeForPackage(FlowMapMain.class);
 
-    public String getFileOpenLastVisitedDir() {
-        return prefs.get(Names.FILE_OPEN_LAST_VISITED_DIR.name(), "");
-    }
+  public String getFileOpenLastVisitedDir() {
+    return prefs.get(Names.FILE_OPEN_LAST_VISITED_DIR.name(), "");
+  }
 
-    public void setFileOpenLastVisitedDir(String dir) {
-        prefs.put(Names.FILE_OPEN_LAST_VISITED_DIR.name(), dir);
-    }
+  public void setFileOpenLastVisitedDir(String dir) {
+    prefs.put(Names.FILE_OPEN_LAST_VISITED_DIR.name(), dir);
+  }
 
 }

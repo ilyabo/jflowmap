@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,18 +23,18 @@ import java.util.Arrays;
 
 /**
  * @author Ilya Boyandin
- *         Date: 25-Sep-2009
+ *     Date: 25-Sep-2009
  */
 public class Polygon {
 
-    private final Point2D[] points;
+  private final Point2D[] points;
 
-    public Polygon(Point2D[] points) {
-        this.points = points.clone();
-    }
+  public Polygon(Point2D[] points) {
+    this.points = points.clone();
+  }
 
-    public Point2D[] getPoints() {
-        return points.clone();
-    }
-    
+  public Point2D[] getPoints() {
+    return points.clone();
+  }
+  
 }

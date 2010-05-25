@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,29 +20,29 @@ package jflowmap.models.map;
 
 /**
  * @author Ilya Boyandin
- *         Date: 25-Sep-2009
+ *     Date: 25-Sep-2009
  */
 public class Area {
 
-    private final String id;
-    private final String name;
-    private final Polygon[] polygons;
+  private final String id;
+  private final String name;
+  private final Polygon[] polygons;
 
-    public Area(String id, String name, Polygon[] polygons) {
-        this.id = id;
-        this.name = name;
-        this.polygons = polygons.clone();
-    }
+  public Area(String id, String name, Polygon[] polygons) {
+    this.id = id;
+    this.name = name;
+    this.polygons = polygons.clone();
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public Polygon[] getPolygons() {
-        return polygons.clone();
-    }
+  public Polygon[] getPolygons() {
+    return polygons.clone();
+  }
 }
