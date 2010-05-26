@@ -16,13 +16,14 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.awt.Color;
 
 import jflowmap.models.map.Area;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.piccolo.PNodes;
+import jflowmap.visuals.ColorCodes;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;

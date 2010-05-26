@@ -16,27 +16,36 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
-import java.awt.Stroke;
-
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
+import jflowmap.models.map.Area;
+import jflowmap.models.map.AreaMap;
+import jflowmap.util.piccolo.PNodes;
+import edu.umd.cs.piccolo.PNode;
 
 /**
  * @author Ilya Boyandin
  */
-public class VisualEdgeStrokeFactory {
+public class VisualAreaMap extends PNode {
 
+  private static final long serialVersionUID = 1L;
   private final VisualFlowMap visualFlowMap;
 
-  public VisualEdgeStrokeFactory(VisualFlowMap visualFlowMap) {
+  public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
     this.visualFlowMap = visualFlowMap;
+    for (Area area : mapModel.getAreas()) {
+      addChild(new VisualArea(this, area));
+    }
   }
 
-  public Stroke createStroke(double normalizedValue) {
-    float width = (float)(1 + normalizedValue * visualFlowMap.getModel().getMaxEdgeWidth());
-    return new PFixedWidthStroke(width);
-//    return new BasicStroke(width);
+  public VisualFlowMap getVisualFlowMap() {
+    return visualFlowMap;
+  }
+
+  public void updateColors() {
+    for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+      va.updateColors();
+    }
   }
 
 }

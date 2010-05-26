@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.Point;
-import jflowmap.visuals.VisualFlowMapModel;
+import jflowmap.visuals.flowmap.VisualFlowMapModel;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;

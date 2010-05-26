@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -24,8 +24,8 @@ import javax.swing.table.AbstractTableModel;
 
 import at.fhj.utils.swing.TableSorter;
 
-import jflowmap.visuals.VisualEdge;
-import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.flowmap.VisualEdge;
+import jflowmap.visuals.flowmap.VisualFlowMap;
 
 /**
  * @author Ilya Boyandin

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

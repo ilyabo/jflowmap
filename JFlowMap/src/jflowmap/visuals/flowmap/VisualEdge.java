@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.awt.Color;
 import java.awt.Paint;
@@ -28,6 +28,7 @@ import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.util.piccolo.PNodes;
+import jflowmap.visuals.ColorCodes;
 
 import org.apache.log4j.Logger;
 

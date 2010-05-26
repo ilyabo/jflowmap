@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.awt.BasicStroke;
 import java.awt.Font;
@@ -29,6 +29,7 @@ import java.util.List;
 import jflowmap.JFlowMap;
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
+import jflowmap.visuals.ColorCodes;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PPaintContext;

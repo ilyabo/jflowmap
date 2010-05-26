@@ -25,8 +25,8 @@ import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.JFlowMap;
 import jflowmap.models.map.AreaMap;
-import jflowmap.visuals.VisualAreaMap;
-import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.flowmap.VisualAreaMap;
+import jflowmap.visuals.flowmap.VisualFlowMap;
 import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 

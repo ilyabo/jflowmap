@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.awt.Color;
 import java.awt.LinearGradientPaint;
@@ -25,6 +25,7 @@ import java.awt.Paint;
 import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.ColorUtils;
+import jflowmap.visuals.ColorCodes;
 
 /**
  * @author Ilya Boyandin

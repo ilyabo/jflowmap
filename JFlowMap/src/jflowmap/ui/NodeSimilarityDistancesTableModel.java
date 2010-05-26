@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import jflowmap.visuals.VisualNodeDistance;
+import jflowmap.visuals.flowmap.VisualNodeDistance;
 
 class NodeSimilarityDistancesTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;

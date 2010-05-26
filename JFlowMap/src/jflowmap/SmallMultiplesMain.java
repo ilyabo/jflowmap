@@ -40,9 +40,9 @@ import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.visuals.ColorScheme;
-import jflowmap.visuals.VisualFlowMap;
-import jflowmap.visuals.VisualFlowMapModel;
-import jflowmap.visuals.VisualNode;
+import jflowmap.visuals.flowmap.VisualFlowMap;
+import jflowmap.visuals.flowmap.VisualFlowMapModel;
+import jflowmap.visuals.flowmap.VisualNode;
 
 import org.apache.log4j.Logger;
 

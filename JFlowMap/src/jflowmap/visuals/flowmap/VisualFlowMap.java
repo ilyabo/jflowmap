@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.visuals;
+package jflowmap.visuals.flowmap;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -48,6 +48,8 @@ import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geom.FPoint;
+import jflowmap.visuals.ColorCodes;
+import jflowmap.visuals.Tooltip;
 
 import org.apache.log4j.Logger;
 

@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 import jflowmap.geom.GeomUtils;
-import jflowmap.visuals.VisualEdge;
-import jflowmap.visuals.VisualNode;
+import jflowmap.visuals.flowmap.VisualEdge;
+import jflowmap.visuals.flowmap.VisualNode;
 import ch.unifr.dmlib.cluster.DistanceMeasure;
 
 import com.google.common.collect.Sets;

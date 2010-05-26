@@ -32,8 +32,8 @@ import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.visuals.ColorCodes;
 import jflowmap.visuals.ColorScheme;
-import jflowmap.visuals.VisualAreaMap;
-import jflowmap.visuals.VisualFlowMap;
+import jflowmap.visuals.flowmap.VisualAreaMap;
+import jflowmap.visuals.flowmap.VisualFlowMap;
 
 import org.apache.log4j.Logger;
 
