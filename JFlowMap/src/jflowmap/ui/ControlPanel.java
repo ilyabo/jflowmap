@@ -52,7 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
-import jflowmap.ColorSchemes;
+import jflowmap.FlowMapColorSchemes;
 import jflowmap.DatasetSpec;
 import jflowmap.JFlowMap;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
@@ -298,8 +298,8 @@ public class ControlPanel {
     maxEdgeWidthSpinner.setModel(maxEdgeWidthModels.first());
     maxEdgeWidthSlider.setModel(maxEdgeWidthModels.second());
 
-    colorSchemeCombo.setModel(new DefaultComboBoxModel(ColorSchemes.values()));
-    colorSchemeCombo.setSelectedItem(ColorSchemes.findByScheme(jFlowMap.getColorScheme()));
+    colorSchemeCombo.setModel(new DefaultComboBoxModel(FlowMapColorSchemes.values()));
+    colorSchemeCombo.setSelectedItem(FlowMapColorSchemes.findByScheme(jFlowMap.getColorScheme()));
   }
 
   private void initFilterModels() {
@@ -518,7 +518,7 @@ public class ControlPanel {
     colorSchemeCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        jFlowMap.setColorScheme(((ColorSchemes)e.getItem()).getScheme());
+        jFlowMap.setColorScheme(((FlowMapColorSchemes)e.getItem()).getScheme());
       }
     });
   }

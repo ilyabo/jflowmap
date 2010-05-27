@@ -499,7 +499,7 @@ public class SmallMultiplesMain extends JFrame {
     sm.setTranslation(30, -50);
     sm.setUseGlobalVisualMappings(true);
     sm.setShowLegend(false);
-    sm.setColorScheme(ColorSchemes.DARK.getScheme());
+    sm.setColorScheme(FlowMapColorSchemes.DARK.getScheme());
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {
@@ -527,7 +527,7 @@ public class SmallMultiplesMain extends JFrame {
     sm.setTranslation(30, -50);
     sm.setUseGlobalVisualMappings(true);
     sm.setShowLegend(true);
-    sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+    sm.setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {
@@ -556,7 +556,7 @@ public class SmallMultiplesMain extends JFrame {
     sm.setTranslation(30, -50);
     sm.setUseGlobalVisualMappings(true);
     sm.setShowLegend(true);
-    sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+    sm.setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {
@@ -589,7 +589,7 @@ public class SmallMultiplesMain extends JFrame {
     sm.setTranslation(30, -50);
     sm.setUseGlobalVisualMappings(true);
     sm.setShowLegend(true);
-    sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+    sm.setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {
@@ -627,7 +627,7 @@ public class SmallMultiplesMain extends JFrame {
     sm.setTranslation(30, -20);
     sm.setUseGlobalVisualMappings(true);
     sm.setShowLegend(true);
-    sm.setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+    sm.setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {

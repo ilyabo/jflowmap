@@ -22,12 +22,13 @@ import java.awt.Color;
 
 import jflowmap.visuals.ColorCodes;
 import jflowmap.visuals.ColorScheme;
+import jflowmap.visuals.EnumColorScheme;
 
 /**
  * @author Ilya Boyandin
  */
-public enum ColorSchemes {
-  DARK(new ColorScheme.Builder("Dark")
+public enum FlowMapColorSchemes {
+  DARK(new EnumColorScheme.Builder("Dark")
     .put(ColorCodes.BACKGROUND, Color.black/*new Color(0x20, 0x20, 0x20)*/)
     .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
     .put(ColorCodes.AREA_STROKE, new Color(55, 55, 55))
@@ -61,7 +62,7 @@ public enum ColorSchemes {
     .build()),
 
 
-  LIGHT_BLUE(new ColorScheme.Builder("Light Blue")
+  LIGHT_BLUE(new EnumColorScheme.Builder("Light Blue")
       .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
 //    .put(ColorCodes.BACKGROUND, new Color(216, 234, 255))
     .put(ColorCodes.AREA_PAINT, new Color(255, 255, 255))
@@ -106,7 +107,7 @@ public enum ColorSchemes {
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
     .build()),
 
-    LIGHT_BLUE__COLOR_BREWER(new ColorScheme.Builder("Light Blue / Color Brewer")
+    LIGHT_BLUE__COLOR_BREWER(new EnumColorScheme.Builder("Light Blue / Color Brewer")
       .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
       .put(ColorCodes.AREA_PAINT, new Color(255, 255, 255))
       .put(ColorCodes.AREA_STROKE, new Color(225, 225, 225))
@@ -147,7 +148,7 @@ public enum ColorSchemes {
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
       .build()),
 
-    LIGHT_BLUE__COLOR_BREWER__PHOTOCOPYABLE(new ColorScheme.Builder("Light Blue / Color Brewer")
+    LIGHT_BLUE__COLOR_BREWER__PHOTOCOPYABLE(new EnumColorScheme.Builder("Light Blue / Color Brewer")
       .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
       .put(ColorCodes.AREA_PAINT, new Color(255, 255, 255))
       .put(ColorCodes.AREA_STROKE, new Color(225, 225, 225))
@@ -189,7 +190,7 @@ public enum ColorSchemes {
       .build()),
 
 
-  INVERTED(new ColorScheme.Builder("Inverted")
+  INVERTED(new EnumColorScheme.Builder("Inverted")
   .put(ColorCodes.BACKGROUND, new Color(223, 223, 223))
   .put(ColorCodes.AREA_PAINT, new Color(210, 210, 210))
   .put(ColorCodes.AREA_STROKE, new Color(200, 200, 200))
@@ -228,7 +229,7 @@ public enum ColorSchemes {
 
   .build()),
 
-GRAY_RED_GREEN(new ColorScheme.Builder("Gray red-green")
+GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
   .put(ColorCodes.BACKGROUND, new Color(255, 255, 255))
   .put(ColorCodes.AREA_PAINT, new Color(210, 210, 210))
   .put(ColorCodes.AREA_STROKE, new Color(200, 200, 200))
@@ -269,7 +270,7 @@ GRAY_RED_GREEN(new ColorScheme.Builder("Gray red-green")
 
   private ColorScheme scheme;
 
-  private ColorSchemes(ColorScheme scheme) {
+  private FlowMapColorSchemes(ColorScheme scheme) {
     this.scheme = scheme;
   }
 
@@ -285,12 +286,26 @@ GRAY_RED_GREEN(new ColorScheme.Builder("Gray red-green")
     return getScheme().getForValue(code, value);
   }
 
-  public static final ColorSchemes findByScheme(ColorScheme scheme) {
-    for (ColorSchemes cs : values()) {
+  public static final FlowMapColorSchemes findByScheme(ColorScheme scheme) {
+    for (FlowMapColorSchemes cs : values()) {
       if (cs.getScheme() == scheme) {
         return cs;
       }
     }
     return null;
+  }
+
+  public static ColorScheme findByName(String colorSchemeName) {
+    for (FlowMapColorSchemes cs : values()) {
+      if (colorSchemeName.equals(cs.getScheme().getName())) {
+        return cs.getScheme();
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public String toString() {
+    return getScheme().getName();
   }
 }

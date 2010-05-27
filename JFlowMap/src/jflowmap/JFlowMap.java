@@ -92,9 +92,9 @@ public class JFlowMap extends JView {
     canvas.setPanEventHandler(new PanHandler());
     add(canvas, BorderLayout.CENTER);
 
-    setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
-//    setColorScheme(ColorSchemes.DARK.getScheme());
-//    setColorScheme(ColorSchemes.DARK.getScheme());
+    setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+//    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
+//    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
   }
 
   public void load(DatasetSpec dataset) {

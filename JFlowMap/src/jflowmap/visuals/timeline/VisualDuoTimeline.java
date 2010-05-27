@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,20 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.visuals.timeline;
 
-import java.util.Arrays;
+import jflowmap.FlowMapGraphSet;
+import edu.umd.cs.piccolo.PNode;
 
 /**
- * TODO: finish FlowMapApplet
- *
  * @author Ilya Boyandin
  */
-public class FlowMapApplet extends BaseApplet {
+public class VisualDuoTimeline extends PNode {
 
-  @Override
-  protected JView createView() {
-    JFlowMap jFlowMap = new JFlowMap(Arrays.asList(getDatasetSpec()), true);
+  private final FlowMapGraphSet flowMapGraphs;
 
-    String colorScheme = getParameter("colorScheme");
-    if (colorScheme != null  &&  !colorScheme.isEmpty()) {
-      jFlowMap.setColorScheme(FlowMapColorSchemes.findByName(colorScheme));
-    }
-    return jFlowMap;
+  public VisualDuoTimeline(FlowMapGraphSet flowMapGraphs) {
+    this.flowMapGraphs = flowMapGraphs;
   }
 
 }

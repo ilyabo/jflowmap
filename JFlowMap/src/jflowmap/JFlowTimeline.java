@@ -60,7 +60,7 @@ public class JFlowTimeline extends JView {
   public JFlowTimeline(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
     setLayout(new BorderLayout());
 
-    this.colorScheme = ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme();
+    this.colorScheme = FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme();
 
     canvas = new PCanvas();
     canvas.setBackground(CANVAS_BACKGROUND_COLOR);

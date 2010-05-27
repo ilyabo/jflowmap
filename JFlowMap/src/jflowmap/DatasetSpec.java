@@ -30,7 +30,7 @@ public class DatasetSpec {
     ));
   }
 
-  private DatasetSpec(String filename, String areaMapFilename, FlowMapAttrSpec attrsSpec) {
+  public DatasetSpec(String filename, String areaMapFilename, FlowMapAttrSpec attrsSpec) {
     this.filename = filename;
     this.name = FileUtils.getFilenameOnly(filename);
     this.areaMapFilename = areaMapFilename;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.javaApplet">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/JFlowMap/src/jflowmap/FlowTimelineApplet.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
+<stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value="JFlowMap"/>
+<mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="flowmaps" value="http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"/>
+</mapAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowTimelineApplet"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx256M"/>
+</launchConfiguration>
