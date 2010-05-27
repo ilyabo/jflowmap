@@ -18,16 +18,35 @@
 
 package jflowmap;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.JApplet;
+import javax.xml.stream.XMLStreamException;
+
+import jflowmap.data.GraphMLReader2;
+import jflowmap.data.XmlRegionsReader;
 
 import org.apache.log4j.Logger;
 
+import prefuse.data.Graph;
+import prefuse.data.Node;
 import at.fhj.utils.swing.JMsgPane;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Ilya Boyandin
  */
 public class FlowTimelineApplet extends JApplet {
+
+  private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
+      // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
+//      "rity",
+      "r",
+      "name", "x", "y", 0);
 
 
   private static final long serialVersionUID = 1L;
@@ -39,11 +58,52 @@ public class FlowTimelineApplet extends JApplet {
   @Override
   public void init() {
     try {
-      add(FlowMapMain.loadGraphsWithRegions(getParameter("flowmaps")));
-    } catch (Exception th) {
-      JMsgPane.showProblemDialog(this, "File couldn't be loaded: " + th.getMessage());
-      Logger.getLogger(getClass().getName()).error("Exception: ", th);
+      add(loadGraphsWithRegions(getParameter("flowmaps")));
+    } catch (Exception ex) {
+      JMsgPane.showProblemDialog(this, "File couldn't be loaded: " + ex.getMessage());
+      Logger.getLogger(getClass().getName()).error("Exception: ", ex);
     }
   }
 
+
+
+  public static JFlowTimeline loadGraphsWithRegions(String filename) throws IOException {
+
+    List<Graph> graphs = Lists.newArrayList(new GraphMLReader2().readFromFile(filename));
+
+    Collections.reverse(graphs);
+
+    String columnToGroupNodesBy = "region";
+    addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
+
+    // TODO: let the user choose the attr specs
+    JFlowTimeline ft = new JFlowTimeline(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
+    return ft;
+  }
+
+
+
+  public static void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws IOException {
+    // TODO: introduce regions as node attrs in GraphML
+    Map<String, String> nodeIdToRegion;
+    try {
+      nodeIdToRegion = //      XmlRegionsReader.readFrom("data/refugees/regions.xml");
+      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
+    } catch (XMLStreamException ex) {
+      throw new IOException(ex);
+    }
+    for (Graph graph : graphs) {
+      graph.getNodeTable().addColumn(regionColumn, String.class);
+//      graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
+
+      for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
+        Node node = FlowMapGraph.findNodeById(graph, e.getKey());
+        if (node != null) {
+          String region = e.getValue();
+          node.set(regionColumn, region);
+//          node.setInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
+        }
+      }
+    }
+  }
 }

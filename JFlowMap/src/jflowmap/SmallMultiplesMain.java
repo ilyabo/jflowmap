@@ -37,7 +37,6 @@ import javax.swing.SwingWorker;
 
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
-import jflowmap.data.FlowMapLoader;
 import jflowmap.data.FlowMapStats;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.flowmap.VisualFlowMap;
@@ -46,7 +45,6 @@ import jflowmap.visuals.flowmap.VisualNode;
 
 import org.apache.log4j.Logger;
 
-import prefuse.data.io.DataIOException;
 import at.fhj.utils.misc.FileUtils;
 import ch.unifr.dmlib.cluster.Linkages;
 
@@ -229,7 +227,7 @@ public class SmallMultiplesMain extends JFrame {
       return null;
     }
 
-    private void renderFlowMap() throws InterruptedException, InvocationTargetException, DataIOException {
+    private void renderFlowMap() throws InterruptedException, InvocationTargetException, IOException {
       final FlowMapStats stats;
       if (useGlobalVisualMappings) {
         // calc the global stats
@@ -238,7 +236,7 @@ public class SmallMultiplesMain extends JFrame {
           final String name = entry.getKey();
           final DatasetSpec ds = entry.getValue();
           progress.setNote("Gathering stats for " + name);
-          gs.add(FlowMapLoader.loadGraph(ds.getFilename(), ds.getAttrsSpec()));
+          gs.add(FlowMapGraph.loadGraphML(ds.getFilename(), ds.getAttrsSpec()));
         }
         stats = FlowMapStats.createFor(gs);
       } else {
@@ -270,7 +268,7 @@ public class SmallMultiplesMain extends JFrame {
           @Override
           public void run() {
             parentFrame.setTitle(name);
-            FlowMapLoader.loadFlowMap(jFlowMap, ds, stats);
+            jFlowMap.load(ds, stats);
 
             VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
             visualFlowMap.setLegendVisible(showLegend);

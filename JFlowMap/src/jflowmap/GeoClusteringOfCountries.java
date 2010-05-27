@@ -18,6 +18,7 @@
 
 package jflowmap;
 
+import java.io.IOException;
 import java.util.List;
 
 import jflowmap.data.GraphMLReader2;
@@ -26,7 +27,6 @@ import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
 import prefuse.data.Node;
-import prefuse.data.io.DataIOException;
 import at.fhj.utils.misc.ProgressTracker;
 import ch.unifr.dmlib.cluster.ClusterNode;
 import ch.unifr.dmlib.cluster.DistanceMeasure;
@@ -41,9 +41,9 @@ import com.google.common.collect.Lists;
 public class GeoClusteringOfCountries {
   private static Logger logger = Logger.getLogger(GeoClusteringOfCountries.class);
 
-  public static void main(String[] args) throws DataIOException {
+  public static void main(String[] args) throws IOException {
     GraphMLReader2 reader = new GraphMLReader2();
-    Graph g = reader.readFromFile("data/refugees/refugees-2008.xml").iterator().next();
+    Graph g = reader.readFromFile("data/refugees/refugees-2008.xml.gz").iterator().next();
 
     List<Country> countries = Lists.newArrayList();
 

@@ -18,7 +18,6 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -27,14 +26,11 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import jflowmap.data.XmlDatasetSpecsReader;
 
 import org.apache.log4j.Logger;
-
-import at.fhj.utils.swing.JMemoryIndicator;
 
 /**
  * @author Ilya Boyandin
@@ -61,17 +57,15 @@ public class FlowMapPreloadedDataMain extends JFrame {
     flowMap = new JFlowMap(datasetSpecs, true);
     add(flowMap);
 
-    JPanel statusPanel = new JPanel(new BorderLayout());
-    add(statusPanel, BorderLayout.SOUTH);
+//    JPanel statusPanel = new JPanel(new BorderLayout());
+//    add(statusPanel, BorderLayout.SOUTH);
 
-    JMemoryIndicator mi = new JMemoryIndicator(3000);
-    statusPanel.add(mi, BorderLayout.EAST);
-    mi.startUpdater();
+//    JMemoryIndicator mi = new JMemoryIndicator(3000);
+//    statusPanel.add(mi, BorderLayout.EAST);
+//    mi.startUpdater();
 
     setExtendedState(MAXIMIZED_BOTH);
     setMinimumSize(new Dimension(800, 600));
-//    setPreferredSize(new Dimension(800, 600));
-//    pack();
 
     final Dimension size = getSize();
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();

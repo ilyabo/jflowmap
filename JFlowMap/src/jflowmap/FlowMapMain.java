@@ -28,9 +28,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -46,35 +43,20 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
-import javax.xml.stream.XMLStreamException;
 
 import jflowmap.data.GraphMLReader2;
-import jflowmap.data.XmlRegionsReader;
-import jflowmap.models.map.AreaMap;
 import jflowmap.ui.actions.OpenFileAction;
 
 import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
-import prefuse.data.Node;
-import prefuse.data.io.DataIOException;
 import at.fhj.utils.swing.InternalFrameUtils;
 import at.fhj.utils.swing.JMemoryIndicator;
-import at.fhj.utils.swing.JMsgPane;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Ilya Boyandin
  */
 public class FlowMapMain extends JFrame {
-
-  private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
-      // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
-//      "rity",
-      "r",
-      "name", "x", "y", 0);
-
 
   public static final String APP_NAME = "JFlowMap";
 //  private static final String PREFERENCES_FILE_NAME = ".preferences";
@@ -149,26 +131,26 @@ public class FlowMapMain extends JFrame {
 
 
     // TODO: remove hardcoded filename to open
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        try {
-//          showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
-
-          showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"));
-
-//          desktopPane.getAllFrames()[0].setMaximum(true);
-        } catch (Exception ex) {
-          JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
-              + ex.getMessage());
-          logger.error("Cant open file", ex);
-        }
-      }
-    });
+//    SwingUtilities.invokeLater(new Runnable() {
+//      public void run() {
+//        try {
+////          showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
+//
+//          showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"));
+//
+////          desktopPane.getAllFrames()[0].setMaximum(true);
+//        } catch (Exception ex) {
+//          JMsgPane.showProblemDialog(FlowMapMain.this, "File couldn't be loaded: "
+//              + ex.getMessage());
+//          logger.error("Cant open file", ex);
+//        }
+//      }
+//    });
   }
 
   private void initActions() {
     openAsMapAction = new OpenFileAction(this, OpenFileAction.As.MAP);
-    openAsTimelineAction = new OpenFileAction(this, OpenFileAction.As.TIMELINE);
+//    openAsTimelineAction = new OpenFileAction(this, OpenFileAction.As.TIMELINE);
     tileViewsAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
@@ -178,53 +160,15 @@ public class FlowMapMain extends JFrame {
     };
   }
 
-
-  public void showFlowTimeline(String filename) throws DataIOException, XMLStreamException, IOException {
-    showView(loadGraphsWithRegions(filename));
-  }
-
-  public static JFlowTimeline loadGraphsWithRegions(String filename) throws DataIOException, XMLStreamException,
-      IOException {
-    List<Graph> graphs = loadGraphs(filename);
-
-    Collections.reverse(graphs);
-
-    String columnToGroupNodesBy = "region";
-    addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
-
-    // TODO: let the user choose the attr specs
-    JFlowTimeline ft = new JFlowTimeline(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
-    return ft;
-  }
-
-  private static List<Graph> loadGraphs(String filename) throws DataIOException {
-    GraphMLReader2 reader = new GraphMLReader2();
-    List<Graph> graphs = Lists.newArrayList(reader.readFromFile(filename));
-    return graphs;
-  }
-
-  public static void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws XMLStreamException, IOException {
-    // TODO: introduce regions as node attrs in GraphML
-    Map<String, String> nodeIdToRegion =
-//      XmlRegionsReader.readFrom("data/refugees/regions.xml");
-      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
-    for (Graph graph : graphs) {
-      graph.getNodeTable().addColumn(regionColumn, String.class);
-//      graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
-
-      for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
-        Node node = FlowMapGraph.findNodeById(graph, e.getKey());
-        if (node != null) {
-          String region = e.getValue();
-          node.set(regionColumn, region);
-//          node.setInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
-        }
-      }
-    }
-  }
+//
+//  public void showFlowTimeline(String filename) throws DataIOException, XMLStreamException, IOException {
+//    showView(loadGraphsWithRegions(filename));
+//  }
 
 
 
+
+  /*
   public void showFlowMaps(String filename) throws DataIOException, IOException {
     Iterable<Graph> graphs = loadFile(filename);
 
@@ -251,8 +195,10 @@ public class FlowMapMain extends JFrame {
       flowMap.fitInView();
     }
   }
+  */
 
-  private Iterable<Graph> loadFile(String filename) throws DataIOException {
+
+  private Iterable<Graph> loadFile(String filename) throws IOException {
     logger.info("Opening file: " + filename);
     Iterable<Graph> graphs = new GraphMLReader2().readFromFile(filename);
     return graphs;
@@ -329,7 +275,7 @@ public class FlowMapMain extends JFrame {
     mb.add(menu);
 
     menu.add(openAsMapAction);
-    menu.add(openAsTimelineAction);
+//    menu.add(openAsTimelineAction);
 
     // TODO: recent files
     menu.addSeparator();

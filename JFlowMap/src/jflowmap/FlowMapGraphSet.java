@@ -18,14 +18,19 @@
 
 package jflowmap;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.GraphMLReader2;
+
+import org.apache.log4j.Logger;
+
 import prefuse.data.Graph;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,6 +42,8 @@ import com.google.common.collect.Multimap;
  * @author Ilya Boyandin
  */
 public class FlowMapGraphSet {
+
+  public static Logger logger = Logger.getLogger(FlowMapGraphSet.class);
 
   private final List<Graph> graphs;
   private final FlowMapAttrSpec attrSpec;
@@ -57,12 +64,7 @@ public class FlowMapGraphSet {
   }
 
   public List<FlowMapGraph> asList() {
-    return Lists.transform(graphs, new Function<Graph, FlowMapGraph>() {
-       @Override
-      public FlowMapGraph apply(Graph from) {
-        return new FlowMapGraph(from, attrSpec, stats);
-      }
-    });
+    return Lists.transform(graphs, FlowMapGraph.funcGraphToFlowMapGraph(attrSpec, stats));
   }
 
   public List<Graph> asListOfGraphs() {
@@ -108,4 +110,28 @@ public class FlowMapGraphSet {
     return nodeAttrValuesToNodeIds;
   }
 
+  public static FlowMapGraphSet loadGraphML(String filename, FlowMapAttrSpec attrSpec)
+      throws IOException {
+    return new FlowMapGraphSet(loadGraphs(filename), attrSpec);
+  }
+
+  /**
+   * @param stats Should normally be null, except in case if the stats have to be induced
+   * and not calculated (e.g. when a global mapping over a number of flow maps for small
+   * multiples must be used).
+   */
+  public static List<FlowMapGraph> loadGraphMLAsList(String filename, FlowMapAttrSpec attrSpec,
+      FlowMapStats stats)
+      throws IOException {
+    return ImmutableList.copyOf(
+        Iterables.transform(
+            loadGraphs(filename), FlowMapGraph.funcGraphToFlowMapGraph(attrSpec, stats)));
+  }
+
+  private static Iterable<Graph> loadGraphs(String filename) throws IOException {
+    logger.info("Loading '" + filename + "'");
+    Iterable<Graph> graphs = new GraphMLReader2().readFromFile(filename);
+    logger.info("Number of graphs loaded: " + Iterables.size(graphs));
+    return graphs;
+  }
 }

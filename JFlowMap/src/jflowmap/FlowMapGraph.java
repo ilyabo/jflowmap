@@ -18,6 +18,7 @@
 
 package jflowmap;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
+import com.google.common.base.Function;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -303,5 +305,39 @@ public class FlowMapGraph {
       multimap.put(node.get(nodeAttr), getNodeId(node));
     }
     return multimap;
+  }
+
+  public static Function<Graph, FlowMapGraph> funcGraphToFlowMapGraph(
+      final FlowMapAttrSpec attrSpec, final FlowMapStats stats) {
+    return new Function<Graph, FlowMapGraph>() {
+       @Override
+      public FlowMapGraph apply(Graph from) {
+        return new FlowMapGraph(from, attrSpec, stats);
+      }
+    };
+  }
+
+  /**
+   * Loads a flow map graph from the given file and with the given attrSpecs.
+   * If there are more than one graphs in the file only the first one will be used.
+   */
+  public static FlowMapGraph loadGraphML(String filename, FlowMapAttrSpec attrSpec)
+    throws IOException
+  {
+    return loadGraphML(filename, attrSpec, null);
+  }
+
+  /**
+   * Use when the stats have to be induced and not calculated (e.g. when a global mapping over
+   * a number of flow maps for small multiples must be used).
+   * Otherwise, use {@link #loadGraphML(String, FlowMapAttrSpec)}.
+   */
+  public static FlowMapGraph loadGraphML(String filename, FlowMapAttrSpec attrSpec,
+      FlowMapStats stats) throws IOException {
+    List<FlowMapGraph> list = FlowMapGraphSet.loadGraphMLAsList(filename, attrSpec, stats);
+    if (list.isEmpty()) {
+      throw new IOException("No graphs found in '" + filename + "'");
+    }
+    return list.iterator().next();
   }
 }

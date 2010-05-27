@@ -25,7 +25,9 @@ import java.awt.Frame;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import jflowmap.data.FlowMapLoader;
+import javax.swing.JOptionPane;
+
+import jflowmap.data.FlowMapStats;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.util.piccolo.PanHandler;
@@ -41,7 +43,6 @@ import edu.umd.cs.piccolo.PCanvas;
 
 /**
  * @author Ilya Boyandin
- *     Date: 23-Sep-2009
  */
 public class JFlowMap extends JView {
 
@@ -71,7 +72,7 @@ public class JFlowMap extends JView {
     init();
 
     if (datasetSpecs != null) {
-      FlowMapLoader.loadFlowMap(this, datasetSpecs.get(0), null);
+      load(datasetSpecs.get(0));
       canvas.getLayer().addChild(visualFlowMap);
     }
 
@@ -94,6 +95,34 @@ public class JFlowMap extends JView {
     setColorScheme(ColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
 //    setColorScheme(ColorSchemes.DARK.getScheme());
 //    setColorScheme(ColorSchemes.DARK.getScheme());
+  }
+
+  public void load(DatasetSpec dataset) {
+    load(dataset, null);
+  }
+
+  /**
+   * Use when the stats have to be induced and not calculated (e.g. when a global mapping over
+   * a number of flow maps for small multiples must be used).
+   * Otherwise, use {@link #load(DatasetSpec)}.
+   */
+  public void load(DatasetSpec dataset, FlowMapStats stats) {
+    logger.info("> Loading flow map '" + dataset + "'");
+    try {
+      FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset.getFilename(), dataset.getAttrsSpec(), stats);
+
+      VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph);
+      if (dataset.getAreaMapFilename() != null) {
+        AreaMap areaMap = AreaMap.load(dataset.getAreaMapFilename());
+        visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
+      }
+      setVisualFlowMap(visualFlowMap);
+
+    } catch (Throwable th) {
+      logger.error("Couldn't load flow map " + dataset.getFilename(), th);
+      JOptionPane.showMessageDialog(this,
+          "Couldn't load flow map '"  + dataset.getFilename() + "': [" + th.getClass().getSimpleName()+ "] " + th.getMessage());
+    }
   }
 
   @Override

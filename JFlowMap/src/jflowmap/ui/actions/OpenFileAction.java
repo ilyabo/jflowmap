@@ -64,13 +64,14 @@ public class OpenFileAction extends AbstractAction {
     MAP("map") {
       @Override
       public void open(FlowMapMain app, String filename) throws Exception {
-        app.showFlowMaps(filename);
+//        app.showFlowMaps(filename);
       }
-    },
+    }
+    ,
     TIMELINE("timeline") {
       @Override
       public void open(FlowMapMain app, String filename) throws Exception {
-        app.showFlowTimeline(filename);
+//        app.showFlowTimeline(filename);
       }
     };
 

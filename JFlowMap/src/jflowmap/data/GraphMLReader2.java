@@ -36,7 +36,6 @@ import org.xmlpull.v1.builder.XmlNamespace;
 import prefuse.data.Graph;
 import prefuse.data.Schema;
 import prefuse.data.Table;
-import prefuse.data.io.DataIOException;
 import prefuse.data.parser.DataParseException;
 import prefuse.data.parser.ParserFactory;
 import prefuse.util.collections.IntIterator;
@@ -65,17 +64,11 @@ public class GraphMLReader2 {
   private XmlNamespace namespace;
   private Map<String, String> attrIdToName;
 
-  public Iterable<Graph> readFromFile(String filename) throws DataIOException {
-    try {
-      return readFromStream(IOLib.streamFromString(filename));
-    } catch (DataIOException e) {
-      throw e;
-    } catch (IOException e) {
-      throw new DataIOException(e);
-    }
+  public Iterable<Graph> readFromFile(String filename) throws IOException {
+    return readFromStream(IOLib.streamFromString(filename));
   }
 
-  public Iterable<Graph> readFromStream(InputStream is) throws DataIOException {
+  public Iterable<Graph> readFromStream(InputStream is) throws IOException {
     try {
       XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
       XmlDocument doc = builder.parseReader(new InputStreamReader(is, DEFAULT_CHARSET));
@@ -88,16 +81,18 @@ public class GraphMLReader2 {
       Iterable<Graph> graphs = readGraphs(doc.getDocumentElement());
 
       if (Iterables.size(graphs) == 0) {
-        throw new DataIOException("No graphs found");
+        throw new IOException("No graphs found");
       }
 
       return graphs;
-    } catch (Exception e) {
-      throw new DataIOException(e);
+    } catch (IOException e) {
+      throw e;
+    } catch (Exception ex) {
+      throw new IOException(ex);
     }
   }
 
-  private void readKeys(XmlElement root) throws DataIOException {
+  private void readKeys(XmlElement root) throws IOException {
     // Read the attr definitions
     nodeSchema = new Schema();
     nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
@@ -133,14 +128,14 @@ public class GraphMLReader2 {
       } else if (forWhat.equals("edge")) {
         edgeSchema.addColumn(name, type.klass, defaultVal);
       } else {
-        throw new DataIOException("Unrecognized 'for' value: " + forWhat);
+        throw new IOException("Unrecognized 'for' value: " + forWhat);
       }
     }
     nodeSchema.lockSchema();
     edgeSchema.lockSchema();
   }
 
-  private Iterable<Graph> readGraphs(XmlElement root) throws DataIOException {
+  private Iterable<Graph> readGraphs(XmlElement root) throws IOException {
     // Read the graphs
     List<Graph> graphs = Lists.newArrayList();
 
@@ -186,7 +181,7 @@ public class GraphMLReader2 {
 
         String src = edgeTable.getString(ri, SRCID);
         if (!nodeIdToIndex.containsKey(src)) {
-          throw new DataIOException(
+          throw new IOException(
             "Tried to create edge with source node id=" + src
             + " which does not exist.");
         }
@@ -194,7 +189,7 @@ public class GraphMLReader2 {
 
         String trg = edgeTable.getString(ri, TRGID);
         if (!nodeIdToIndex.containsKey(trg)) {
-          throw new DataIOException(
+          throw new IOException(
             "Tried to create edge with target node id=" + trg
             + " which does not exist.");
         }
@@ -213,7 +208,7 @@ public class GraphMLReader2 {
   }
 
   private void readData(XmlElement parentElt, Table table, int tableRowIdx)
-      throws DataIOException {
+      throws IOException {
     for (Iterator<?> dit = parentElt.elements(namespace, "data").iterator(); dit.hasNext(); ) {
       XmlElement dataNode = (XmlElement) dit.next();
       String key = attrIdToName.get(dataNode.getAttributeValue(null, "key"));
@@ -224,7 +219,7 @@ public class GraphMLReader2 {
       } else {
         Class<?> columnType = table.getColumnType(key);
         if (columnType == null) {
-          throw new DataIOException("Column type for " + key + " not found");
+          throw new IOException("Column type for " + key + " not found");
         }
         value = parseData(valueStr, columnType);
         table.set(tableRowIdx, key, value);
@@ -232,11 +227,11 @@ public class GraphMLReader2 {
     }
   }
 
-  private Object parseData(String defaultValStr, Class<?> klass) throws DataIOException {
+  private Object parseData(String defaultValStr, Class<?> klass) throws IOException {
     try {
       return dataParser.getParser(klass).parse(defaultValStr);
     } catch (DataParseException e) {
-      throw new DataIOException(e);
+      throw new IOException(e);
     }
   }
 
