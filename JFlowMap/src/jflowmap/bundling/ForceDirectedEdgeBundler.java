@@ -35,7 +35,6 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import at.fhj.utils.misc.ProgressTracker;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -133,20 +132,20 @@ public class ForceDirectedEdgeBundler {
   }
 
 
-  private Point normalize(Point p) {
-    return new Point(nodeXStats.normalize(p.x()), nodeYStats.normalize(p.y()));
-  }
-
-  private final Function<Point, Point> denormalizeFun = new Function<Point, Point>() {
-    @Override
-    public Point apply(Point p) {
-      return denormalize(p);
-    }
-  };
-
-  private Point denormalize(Point p) {
-    return new Point(nodeXStats.denormalize(p.x()), nodeYStats.denormalize(p.y()));
-  }
+//  private Point normalize(Point p) {
+//    return new Point(nodeXStats.normalize(p.x()), nodeYStats.normalize(p.y()));
+//  }
+//
+//  private final Function<Point, Point> denormalizeFun = new Function<Point, Point>() {
+//    @Override
+//    public Point apply(Point p) {
+//      return denormalize(p);
+//    }
+//  };
+//
+//  private Point denormalize(Point p) {
+//    return new Point(nodeXStats.denormalize(p.x()), nodeYStats.denormalize(p.y()));
+//  }
 
   private void init(ProgressTracker progressTracker) {
     this.progressTracker = progressTracker;
