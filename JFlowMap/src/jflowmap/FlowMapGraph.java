@@ -222,12 +222,14 @@ public class FlowMapGraph {
 
   public Point getEdgeSourcePoint(Edge edge) {
     Node src = edge.getSourceNode();
-    return new Point(src.getDouble(attrSpec.getXNodeAttr()), src.getDouble(attrSpec.getYNodeAttr()));
+    return new Point(src.getDouble(attrSpec.getXNodeAttr()),
+        src.getDouble(attrSpec.getYNodeAttr()));
   }
 
   public Point getEdgeTargetPoint(Edge edge) {
     Node target = edge.getTargetNode();
-    return new Point(target.getDouble(attrSpec.getXNodeAttr()), target.getDouble(attrSpec.getYNodeAttr()));
+    return new Point(target.getDouble(attrSpec.getXNodeAttr()),
+        target.getDouble(attrSpec.getYNodeAttr()));
   }
 
 

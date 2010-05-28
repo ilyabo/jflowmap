@@ -18,24 +18,15 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.List;
 
 import jflowmap.data.FlowMapSummaries;
-import jflowmap.util.piccolo.PanHandler;
-import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.timeline.VisualTimeline;
 
 import org.apache.log4j.Logger;
 
-import prefuse.data.Graph;
-
-import com.google.common.collect.Lists;
-
 import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PCanvas;
 
 /**
  * @author Ilya Boyandin
@@ -48,7 +39,6 @@ public class JFlowTimeline extends JView {
 
   public static final Color CANVAS_BACKGROUND_COLOR = Color.white;
 //    new Color(47, 89, 134);
-  private final PCanvas canvas;
   private final VisualTimeline visualTimeline;
   private final ColorScheme colorScheme;
 
@@ -58,42 +48,27 @@ public class JFlowTimeline extends JView {
 //  }
 
   public JFlowTimeline(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
-    setLayout(new BorderLayout());
-
     this.colorScheme = FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme();
 
-    canvas = new PCanvas();
-    canvas.setBackground(CANVAS_BACKGROUND_COLOR);
+    getVisualCanvas().setBackground(CANVAS_BACKGROUND_COLOR);
 //    canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
-    canvas.addInputEventListener(new ZoomHandler());
-    canvas.setPanEventHandler(new PanHandler());
-    add(canvas, BorderLayout.CENTER);
 
 
     if (nodeAttrToGroupBy != null) {
-      visualTimeline = new VisualTimeline(this, fmset, createGraphsWithGroupedNodes(fmset, nodeAttrToGroupBy), nodeAttrToGroupBy);
+      FlowMapGraphSet groupedFmset = fmset.groupNodesBy(nodeAttrToGroupBy);
+
+      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmset, nodeAttrToGroupBy);
+      FlowMapSummaries.supplyNodesWithIntraregSummaries(groupedFmset, fmset.getAttrSpec().getNodeLabelAttr());
+
+      visualTimeline = new VisualTimeline(this, fmset, groupedFmset, nodeAttrToGroupBy);
     } else {
       visualTimeline = new VisualTimeline(this, fmset, null, null);
     }
 
-    canvas.getLayer().addChild(visualTimeline);
+    getVisualCanvas().getLayer().addChild(visualTimeline);
+
   }
 
-  private FlowMapGraphSet createGraphsWithGroupedNodes(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
-    FlowMapAttrSpec attrSpec = fmset.getAttrSpec();
-    List<Graph> groupedGraphs = Lists.newArrayList();
-    for (FlowMapGraph fmg : fmset.asList()) {
-
-      FlowMapGraph grouped = fmg.groupNodesBy(nodeAttrToGroupBy);
-
-      // TODO: supplyNodesWithIntraregSummaries shouldn't be here
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmg, nodeAttrToGroupBy);
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(grouped, attrSpec.getNodeLabelAttr());
-
-      groupedGraphs.add(grouped.getGraph());
-    }
-    return new FlowMapGraphSet(groupedGraphs, attrSpec);
-  }
 
   public ColorScheme getColorScheme() {
     return colorScheme;
@@ -112,18 +87,10 @@ public class JFlowTimeline extends JView {
 //    return valueToColor;
 //  }
 
-  public PCanvas getCanvas() {
-    return canvas;
-  }
-
   public PCamera getCamera() {
-    return canvas.getCamera();
+    return getVisualCanvas().getCamera();
   }
 
-  @Override
-  public void fitInView() {
-    // TODO
-  }
 
 
 }

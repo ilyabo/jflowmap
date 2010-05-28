@@ -18,13 +18,40 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JComponent;
+
+import jflowmap.util.piccolo.PanHandler;
+import jflowmap.util.piccolo.ZoomHandler;
+import jflowmap.visuals.VisualCanvas;
 
 /**
  * @author Ilya Boyandin
  */
 public abstract class JView extends JComponent {
 
-  public abstract void fitInView();
+  private final VisualCanvas visualCanvas;
+
+  public JView() {
+    this.visualCanvas = createVisualCanvas();
+  }
+
+  protected VisualCanvas createVisualCanvas() {
+    VisualCanvas visualCanvas = new VisualCanvas();
+    visualCanvas.addInputEventListener(new ZoomHandler());
+    visualCanvas.setPanEventHandler(new PanHandler());
+    setLayout(new BorderLayout());
+    add(visualCanvas, BorderLayout.CENTER);
+    return visualCanvas;
+  }
+
+  public VisualCanvas getVisualCanvas() {
+    return visualCanvas;
+  }
+
+  public void fitInView() {
+    visualCanvas.fitChildrenInCameraView();
+  }
 
 }

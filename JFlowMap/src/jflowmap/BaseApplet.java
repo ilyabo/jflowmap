@@ -22,6 +22,10 @@ import java.io.IOException;
 
 import javax.swing.JApplet;
 
+import org.apache.log4j.Logger;
+
+import at.fhj.utils.swing.JMsgPane;
+
 /**
  * @author Ilya Boyandin
  */
@@ -37,8 +41,9 @@ public abstract class BaseApplet extends JApplet {
     try {
       view = createView();
       add(view);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException ex) {
+      JMsgPane.showProblemDialog(this, "Error: " + ex.getMessage());
+      Logger.getLogger(getClass().getName()).error("Exception: ", ex);
     }
   }
 

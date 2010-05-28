@@ -23,24 +23,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JApplet;
 import javax.xml.stream.XMLStreamException;
 
 import jflowmap.data.GraphMLReader2;
 import jflowmap.data.XmlRegionsReader;
-
-import org.apache.log4j.Logger;
-
 import prefuse.data.Graph;
 import prefuse.data.Node;
-import at.fhj.utils.swing.JMsgPane;
 
 import com.google.common.collect.Lists;
 
 /**
  * @author Ilya Boyandin
  */
-public class FlowTimelineApplet extends JApplet {
+public class FlowTimelineApplet extends BaseApplet {
 
   private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
       // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
@@ -56,13 +51,8 @@ public class FlowTimelineApplet extends JApplet {
   }
 
   @Override
-  public void init() {
-    try {
-      add(loadGraphsWithRegions(getParameter("flowmaps")));
-    } catch (Exception ex) {
-      JMsgPane.showProblemDialog(this, "File couldn't be loaded: " + ex.getMessage());
-      Logger.getLogger(getClass().getName()).error("Exception: ", ex);
-    }
+  protected JView createView() throws IOException {
+      return loadGraphsWithRegions(getParameter("flowmaps"));
   }
 
 
@@ -87,8 +77,9 @@ public class FlowTimelineApplet extends JApplet {
     // TODO: introduce regions as node attrs in GraphML
     Map<String, String> nodeIdToRegion;
     try {
-      nodeIdToRegion = //      XmlRegionsReader.readFrom("data/refugees/regions.xml");
-      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
+      nodeIdToRegion =
+              XmlRegionsReader.readFrom("data/refugees/regions.xml");
+//      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }

@@ -522,7 +522,7 @@ public class VisualFlowMap extends PNode {
   }
 
   public PCamera getCamera() {
-    return jFlowMap.getCanvas().getCamera();
+    return jFlowMap.getVisualCanvas().getCamera();
   }
 
   public void resetBundling() {

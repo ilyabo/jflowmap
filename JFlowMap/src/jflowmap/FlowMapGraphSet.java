@@ -134,4 +134,22 @@ public class FlowMapGraphSet {
     logger.info("Number of graphs loaded: " + Iterables.size(graphs));
     return graphs;
   }
+
+  /**
+   * Nodes having the same value of nodeAttrToGroupBy are grouped into one. Flows are
+   * also updated, so that they connect the grouped nodes.
+   * <p>
+   * NOTE: If nodes of different graphs in this set have different values of nodeAttrToGroupBy,
+   * the grouped nodes of these graphs will not be the same.
+   */
+  public FlowMapGraphSet groupNodesBy(String nodeAttrToGroupBy) {
+    List<Graph> groupedGraphs = Lists.newArrayList();
+
+    for (FlowMapGraph fmg : asList()) {
+      FlowMapGraph grouped = fmg.groupNodesBy(nodeAttrToGroupBy);
+      groupedGraphs.add(grouped.getGraph());
+    }
+
+    return new FlowMapGraphSet(groupedGraphs, attrSpec);
+  }
 }

@@ -16,24 +16,22 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.visuals;
 
-import jflowmap.visuals.timeline.DefaultDuoTimelineStyle;
-import jflowmap.visuals.timeline.DuoTimelineStyle;
-import jflowmap.visuals.timeline.VisualDuoTimeline;
-
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PCanvas;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
-public class JDuoTimeline extends JView {
+public class VisualCanvas extends PCanvas {
 
-  private final VisualDuoTimeline visualCombTimeline;
-  private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
-
-  public JDuoTimeline(FlowMapGraphSet flowMapGraphs) {
-    visualCombTimeline = new VisualDuoTimeline(flowMapGraphs);
-    getVisualCanvas().setBackground(style.getBackgroundColor());
+  public void fitChildrenInCameraView() {
+    PCamera camera = getCamera();
+    PBounds boundRect = getLayer().getFullBounds();
+    camera.globalToLocal(boundRect);
+    camera.animateViewToCenterBounds(boundRect, true, 0);
   }
 
 }

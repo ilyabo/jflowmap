@@ -104,7 +104,8 @@ public class VisualTimeline extends PNode {
       for (FlowMapGraph flowMapGraph : groupedFlowMapGraphs.asList()) {
         FlowMapSummaries.supplyNodesWithSummaries(flowMapGraph);
       }
-      this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats()).mergeWith(nodeSummaryMinMax(groupedFlowMapGraphs.getStats()));
+      this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats())
+                         .mergeWith(nodeSummaryMinMax(groupedFlowMapGraphs.getStats()));
     }
 
 //    MinMax diffStats = gs.getNodeAttrStats(
@@ -180,8 +181,10 @@ public class VisualTimeline extends PNode {
 //      }
 
     } else {
-      Map<String, String> groupIdsToLabels = groupedFlowMapGraphs.mapOfNodeIdsToAttrValues(getAttrSpecs().getNodeLabelAttr());
-      Multimap<Object, String> groupsToNodeIds = flowMapGraphs.multimapOfNodeAttrValuesToNodeIds(columnToGroupNodesBy);
+      Map<String, String> groupIdsToLabels =
+        groupedFlowMapGraphs.mapOfNodeIdsToAttrValues(getAttrSpecs().getNodeLabelAttr());
+      Multimap<Object, String> groupsToNodeIds =
+        flowMapGraphs.multimapOfNodeAttrValuesToNodeIds(columnToGroupNodesBy);
 
       List<String> groupIds = Lists.newArrayList(groupIdsToLabels.keySet());
       Collections.sort(groupIds);

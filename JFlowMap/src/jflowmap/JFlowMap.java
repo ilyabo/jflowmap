@@ -30,16 +30,12 @@ import javax.swing.JOptionPane;
 import jflowmap.data.FlowMapStats;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
-import jflowmap.util.piccolo.PanHandler;
-import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.visuals.ColorCodes;
 import jflowmap.visuals.ColorScheme;
 import jflowmap.visuals.flowmap.VisualAreaMap;
 import jflowmap.visuals.flowmap.VisualFlowMap;
 
 import org.apache.log4j.Logger;
-
-import edu.umd.cs.piccolo.PCanvas;
 
 /**
  * @author Ilya Boyandin
@@ -50,7 +46,6 @@ public class JFlowMap extends JView {
 
   public static Logger logger = Logger.getLogger(JFlowMap.class);
 
-  private PCanvas canvas;
   private ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
   private ColorScheme colorScheme;
@@ -73,7 +68,7 @@ public class JFlowMap extends JView {
 
     if (datasetSpecs != null) {
       load(datasetSpecs.get(0));
-      canvas.getLayer().addChild(visualFlowMap);
+      getVisualCanvas().getLayer().addChild(visualFlowMap);
     }
 
     if (showControlPanel) {
@@ -85,13 +80,6 @@ public class JFlowMap extends JView {
   }
 
   private void init() {
-    setLayout(new BorderLayout());
-
-    canvas = new PCanvas();
-    canvas.addInputEventListener(new ZoomHandler());
-    canvas.setPanEventHandler(new PanHandler());
-    add(canvas, BorderLayout.CENTER);
-
     setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
 //    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
 //    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
@@ -132,7 +120,7 @@ public class JFlowMap extends JView {
 
   public void setColorScheme(ColorScheme colorScheme) {
     this.colorScheme = colorScheme;
-    canvas.setBackground(colorScheme.get(ColorCodes.BACKGROUND));
+    getVisualCanvas().setBackground(colorScheme.get(ColorCodes.BACKGROUND));
     if (visualFlowMap != null) {
       visualFlowMap.updateColors();
     }
@@ -144,10 +132,6 @@ public class JFlowMap extends JView {
 
   public Color getColor(ColorCodes code) {
     return colorScheme.get(code);
-  }
-
-  public PCanvas getCanvas() {
-    return canvas;
   }
 
   public Frame getParentFrame() {
@@ -174,10 +158,10 @@ public class JFlowMap extends JView {
       return;
     }
     if (visualFlowMap != null) {
-      canvas.getLayer().removeChild(visualFlowMap);
+      getVisualCanvas().getLayer().removeChild(visualFlowMap);
       visualFlowMap.removeNodesFromCamera();
     }
-    canvas.getLayer().addChild(newFlowMap);
+    getVisualCanvas().getLayer().addChild(newFlowMap);
     visualFlowMap = newFlowMap;
     newFlowMap.addNodesToCamera();
     if (controlPanel != null) {

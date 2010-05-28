@@ -22,6 +22,7 @@ import java.util.Map;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
+import jflowmap.FlowMapGraphSet;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -34,6 +35,7 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapSummaries {
 
+  // TODO: generalize FlowMapSummaries (shouldn't be only for regions)
   public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
   public static final String NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
 
@@ -82,12 +84,6 @@ public class FlowMapSummaries {
         } else {
           insums.put(trgRow, inval + v);
         }
-//        if (FlowMapLoader.getGraphId(g).equals("1992")) {
-//          if (trg.getString("name").equals("Asia | Southern Asia")) {
-//            System.out.println(src.getString("name") + " -> " + trg.getString("name")  + " (" + v
-//                + "), Sum: " + insums.get(trgRow));
-//          }
-//        }
       }
     }
 
@@ -102,6 +98,12 @@ public class FlowMapSummaries {
       if (insums.containsKey(i)) {
         node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING, insums.get(i));
       }
+    }
+  }
+
+  public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr) {
+    for (FlowMapGraph fmg : fmset.asList()) {
+      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr);
     }
   }
 
