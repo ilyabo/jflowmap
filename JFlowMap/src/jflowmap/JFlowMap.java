@@ -80,7 +80,8 @@ public class JFlowMap extends JView {
   }
 
   private void init() {
-    setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+    setColorScheme(FlowMapColorSchemes.LIGHT.getScheme());
+//    setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
 //    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
 //    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
   }
@@ -123,6 +124,9 @@ public class JFlowMap extends JView {
     getVisualCanvas().setBackground(colorScheme.get(ColorCodes.BACKGROUND));
     if (visualFlowMap != null) {
       visualFlowMap.updateColors();
+    }
+    if (controlPanel != null) {
+      controlPanel.updateColorScheme();
     }
   }
 
