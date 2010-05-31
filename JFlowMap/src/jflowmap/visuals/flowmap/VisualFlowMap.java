@@ -370,7 +370,8 @@ public class VisualFlowMap extends PNode {
   }
 
   public void showTooltip(PNode component, Point2D pos) {
-    double maxLabelWidth = getCamera().getBoundsReference().getWidth() - pos.getX();
+    Point2D localPos = getCamera().viewToLocal(new Point2D.Double(pos.getX(), pos.getY()));
+    double maxLabelWidth = Math.abs(getCamera().getBoundsReference().getWidth() - localPos.getX());
     if (component instanceof VisualNode) {
       VisualNode vnode = (VisualNode) component;
       tooltipBox.setText(
