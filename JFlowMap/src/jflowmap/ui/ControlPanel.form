@@ -1185,7 +1185,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <selected value="true"/>
+                  <selected value="false"/>
                   <text value="Combine with Euclidean clusters"/>
                 </properties>
               </component>
