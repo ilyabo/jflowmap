@@ -18,6 +18,7 @@
 
 package jflowmap.visuals;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 
@@ -33,6 +34,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class VisualCanvas extends PCanvas {
 
+  private static final Dimension MIN_SIZE = new Dimension(150, 100);
+
   public VisualCanvas() {
     setZoomEventHandler(null);
     addInputEventListener(new ZoomHandler());
@@ -46,6 +49,10 @@ public class VisualCanvas extends PCanvas {
     camera.animateViewToCenterBounds(boundRect, true, 0);
   }
 
+  @Override
+  public Dimension getMinimumSize() {
+    return MIN_SIZE;
+  }
 
   @Override
   public void setBounds(int x, int y, int w, int h) {

@@ -18,8 +18,6 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JComponent;
 
 import jflowmap.visuals.VisualCanvas;
@@ -36,12 +34,7 @@ public abstract class JView extends JComponent {
   }
 
   protected VisualCanvas createVisualCanvas() {
-    VisualCanvas visualCanvas = new VisualCanvas();
-
-    setLayout(new BorderLayout());
-    add(visualCanvas, BorderLayout.CENTER);
-
-    return visualCanvas;
+    return new VisualCanvas();
   }
 
   public VisualCanvas getVisualCanvas() {

@@ -25,7 +25,12 @@ import java.awt.Frame;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import jflowmap.data.FlowMapStats;
 import jflowmap.models.map.AreaMap;
@@ -48,23 +53,19 @@ public class JFlowMap extends JView {
 
   private ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
-  private ColorScheme colorScheme;
+  private ColorScheme colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
   public JFlowMap(FlowMapGraph flowMapGraph, AreaMap areaMap) {
-    init();
-
-    controlPanel = null;
-
     setVisualFlowMap(createVisualFlowMap(flowMapGraph));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
     }
+    init();
   }
 
   public JFlowMap(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
-    init();
 
     if (datasetSpecs != null) {
       load(datasetSpecs.get(0));
@@ -73,17 +74,40 @@ public class JFlowMap extends JView {
 
     if (showControlPanel) {
       controlPanel = new ControlPanel(this, datasetSpecs);
-      add(controlPanel.getPanel(), BorderLayout.SOUTH);
-    } else {
-      controlPanel = null;
     }
+    init();
   }
 
   private void init() {
-    setColorScheme(FlowMapColorSchemes.LIGHT.getScheme());
-//    setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
-//    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
-//    setColorScheme(FlowMapColorSchemes.DARK.getScheme());
+    setLayout(new BorderLayout());
+    if (controlPanel == null) {
+      add(getVisualCanvas(), BorderLayout.CENTER);
+      controlPanel = null;
+    } else {
+      add(createHorizontalSplitPane(getVisualCanvas(), controlPanel.getPanel()));
+    }
+  }
+
+  private JSplitPane createHorizontalSplitPane(JComponent top, JComponent bottom) {
+    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom);
+    BasicSplitPaneUI ui = new BasicSplitPaneUI() {
+      @Override
+      public BasicSplitPaneDivider createDefaultDivider() {
+        return new BasicSplitPaneDivider(this) {
+          @Override
+          protected JButton createLeftOneTouchButton() {
+            JButton but = super.createLeftOneTouchButton();
+            but.setEnabled(false);
+            but.setVisible(false);
+            return but;
+          }
+        };
+      }
+    };
+    splitPane.setUI(ui);
+    splitPane.setOneTouchExpandable(true);
+    splitPane.setResizeWeight(1.0);
+    return splitPane;
   }
 
   public void load(DatasetSpec dataset) {

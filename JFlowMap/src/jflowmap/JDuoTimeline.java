@@ -18,6 +18,8 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
+
 import jflowmap.visuals.timeline.DefaultDuoTimelineStyle;
 import jflowmap.visuals.timeline.DuoTimelineStyle;
 import jflowmap.visuals.timeline.VisualDuoTimeline;
@@ -34,6 +36,9 @@ public class JDuoTimeline extends JView {
   public JDuoTimeline(FlowMapGraphSet flowMapGraphs) {
     visualCombTimeline = new VisualDuoTimeline(flowMapGraphs);
     getVisualCanvas().setBackground(style.getBackgroundColor());
+
+    setLayout(new BorderLayout());
+    add(getVisualCanvas(), BorderLayout.CENTER);
   }
 
 }

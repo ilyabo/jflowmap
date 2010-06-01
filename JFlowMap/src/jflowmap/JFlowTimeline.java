@@ -18,6 +18,7 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 
 import jflowmap.data.FlowMapSummaries;
@@ -66,6 +67,8 @@ public class JFlowTimeline extends JView {
     }
 
     getVisualCanvas().getLayer().addChild(visualTimeline);
+    setLayout(new BorderLayout());
+    add(getVisualCanvas(), BorderLayout.CENTER);
 
   }
 
