@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.javaApplet">
+<stringAttribute key="bad_container_name" value="\JFlowMap\launch"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/JFlowMap/src/jflowmap/FlowMapApplet.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
+<stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
+<mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="labelAttr" value="label"/>
+<mapEntry key="yNodeAttr" value="-y"/>
+<mapEntry key="weightAttr" value="value"/>
+<mapEntry key="weightFilterMin" value="10"/>
+<mapEntry key="xNodeAttr" value="x"/>
+<mapEntry key="src" value="data/commuters/slo/slo-commuters.xml.gz"/>
+<mapEntry key="colorScheme" value="Dark"/>
+</mapAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
+<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowMapApplet"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024M"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:JFlowMap}"/>
+</launchConfiguration>
