@@ -80,6 +80,7 @@ public class SmallMultiplesMain extends JFrame {
 //  private static final double MOVE_DY = -60;
 
   private boolean useGlobalVisualMappings = true;
+  private int numColumns = 5;
 
   private final Map<String, DatasetSpec> datasets;
 
@@ -103,6 +104,14 @@ public class SmallMultiplesMain extends JFrame {
     setBackground(new Color(0x60, 0x60, 0x60));
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+
+  public void setNumColumns(int numColumns) {
+    this.numColumns = numColumns;
+  }
+
+  public int getNumColumns() {
+    return numColumns;
   }
 
   public void setShowLegend(boolean showLegend) {
@@ -187,7 +196,6 @@ public class SmallMultiplesMain extends JFrame {
 
   private class RenderTask extends SwingWorker<Void, Void> {
 
-    final int numColumns = 5;
     final int paddingX = 5;
     final int paddingY = 5;
 
@@ -657,8 +665,39 @@ public class SmallMultiplesMain extends JFrame {
     return sm;
   }
 
+
+
+  public static final SmallMultiplesMain createSM_eurovisPoster_6years_global() {
+    SmallMultiplesMain sm = new SmallMultiplesMain(
+        "refugees-small-multiples_eurovisPoster_6years_global.png",
+        new DatasetSpec(
+          "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
+          "data/refugees/countries-areas.xml.gz"),
+        "1996", "1998", "2003", "2004", "2005", "2008");
+    sm.setSize(1150, 900);
+    sm.setZoom(1.3);
+    sm.setNumColumns(3);
+    sm.setTranslation(30,  0);
+    sm.setUseGlobalVisualMappings(true);
+    sm.setShowLegend(true);
+    sm.setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
+    sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
+      @Override
+      public void setupFlowMapModel(VisualFlowMapModel model) {
+        model.setMaxEdgeWidth(15);
+        model.setNodeSize(3);
+        model.setShowDirectionMarkers(true);
+        model.setDirectionMarkerSize(.17);
+        model.setDirectionMarkerAlpha(255);
+        model.setEdgeAlpha(120);
+        model.setShowNodes(true);
+      }
+    });
+    return sm;
+  }
+
   public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
-    SmallMultiplesMain sm = createSM_TLBS_3years_OneRegion();
+    SmallMultiplesMain sm = createSM_eurovisPoster_6years_global();
     sm.setVisible(true);
     sm.start();
   }
