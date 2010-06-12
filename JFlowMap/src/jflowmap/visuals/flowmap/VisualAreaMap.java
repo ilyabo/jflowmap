@@ -30,8 +30,14 @@ public class VisualAreaMap extends PNode {
 
   private static final long serialVersionUID = 1L;
   private final VisualFlowMap visualFlowMap;
+  private final AreaMap mapModel;
+
+  public VisualAreaMap(VisualAreaMap toCopy) {
+    this(toCopy.getVisualFlowMap(), toCopy.mapModel);
+  }
 
   public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
+    this.mapModel = mapModel;
     this.visualFlowMap = visualFlowMap;
     for (Area area : mapModel.getAreas()) {
       addChild(new VisualArea(this, area));

@@ -218,9 +218,14 @@ public class VisualFlowMap extends PNode {
   }
 
   public void setAreaMap(VisualAreaMap areaMap) {
+    if (this.areaMap != null) {
+      removeChild(this.areaMap);
+    }
     this.areaMap = areaMap;
-    addChild(areaMap);
-    areaMap.moveToBack();
+    if (areaMap != null) {
+      addChild(areaMap);
+      areaMap.moveToBack();
+    }
   }
 
   public List<VisualNode> getVisualNodes() {
@@ -252,6 +257,7 @@ public class VisualFlowMap extends PNode {
   }
 
   private void createEdgeVisuals() {
+    System.out.println("VisualFlowMap.createEdgeVisuals()");
     edgeLayer.removeAllChildren();
     clearAggregatedEdgesLayer();
 
@@ -289,12 +295,13 @@ public class VisualFlowMap extends PNode {
 
       double value = edge.getDouble(getFlowMapGraph().getEdgeWeightAttr());
       if (Double.isNaN(value)) {
-        logger.warn(
-          "Omitting edge with NaN value: " +
-          srcNode.getString(getFlowMapGraph().getNodeLabelAttr()) + " -> " +
-          targetNode.getString(getFlowMapGraph().getNodeLabelAttr()) +
-          " [" + edge + "]"
-        );
+        // Warning "Omitting edge with NaN value" Commented out: because it was slowing bundling down too much
+//        logger.warn(
+//          "Omitting edge with NaN value: " +
+//          srcNode.getString(getFlowMapGraph().getNodeLabelAttr()) + " -> " +
+//          targetNode.getString(getFlowMapGraph().getNodeLabelAttr()) +
+//          " [" + edge + "]"
+//        );
       } else {
         VisualNode fromNode = nodesToVisuals.get(srcNode);
         VisualNode toNode = nodesToVisuals.get(targetNode);
@@ -913,7 +920,7 @@ public class VisualFlowMap extends PNode {
         )
     );
     if (areaMap != null) {
-      clusteredFlowMap.setAreaMap((VisualAreaMap)areaMap.clone());
+      clusteredFlowMap.setAreaMap(new VisualAreaMap(areaMap));
     }
     clusteredFlowMap.setOriginalVisualFlowMap(this);
     jFlowMap.setVisualFlowMap(clusteredFlowMap);

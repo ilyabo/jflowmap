@@ -76,9 +76,9 @@ public class FlowMapGraph {
     this.attrSpec = attrSpec;
     if (stats == null) {
       stats = FlowMapStats.createFor(this);
+      logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
     }
     this.stats = stats;
-    logger.info("Edge weight stats: " + stats.getEdgeWeightStats());
   }
 
   public String getId() {
