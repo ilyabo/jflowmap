@@ -20,7 +20,6 @@ package jflowmap;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -58,7 +57,7 @@ import at.fhj.utils.swing.JMemoryIndicator;
  */
 public class FlowMapMain extends JFrame {
 
-  public static final String APP_NAME = "JFlowMap";
+  public static final String APP_NAME = "FlowMapView";
 //  private static final String PREFERENCES_FILE_NAME = ".preferences";
 
   private static Logger logger = Logger.getLogger(FlowMapMain.class);
@@ -85,7 +84,7 @@ public class FlowMapMain extends JFrame {
 
 
   public FlowMapMain() {
-    setTitle("JFlowMap");
+    setTitle("FlowMapView");
 
     initActions();
 
@@ -136,7 +135,7 @@ public class FlowMapMain extends JFrame {
 //        try {
 ////          showFlowTimeline("data/refugees/refugees_1975-2008.xml.gz");
 //
-//          showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/refugees_1975-2008.xml.gz"));
+//          showView(loadGraphsWithRegions("http://jflowmap.googlecode.com/svn/trunk/FlowMapView/data/refugees/refugees_1975-2008.xml.gz"));
 //
 ////          desktopPane.getAllFrames()[0].setMaximum(true);
 //        } catch (Exception ex) {
@@ -175,13 +174,13 @@ public class FlowMapMain extends JFrame {
     // TODO: add support for links to external content in GraphML files (use <locator>)
     AreaMap areaMap = AreaMap.load("data/refugees/countries-areas.xml.gz");
 
-    List<JFlowMap> flowMaps = Lists.newArrayList();
+    List<FlowMapView> flowMaps = Lists.newArrayList();
     List<JInternalFrame> iframes = Lists.newArrayList();
     for (Graph graph : graphs) {
       // TODO: let the user choose the attr specs
       FlowMapAttrSpec attrSpecs = REFUGEES_ATTR_SPECS;
 
-      JFlowMap view = new JFlowMap(new FlowMapGraph(graph, attrSpecs), areaMap);
+      FlowMapView view = new FlowMapView(new FlowMapGraph(graph, attrSpecs), areaMap);
       view.getVisualFlowMap().setLegendVisible(false);
       JInternalFrame iframe = showView(view);
 
@@ -191,7 +190,7 @@ public class FlowMapMain extends JFrame {
     }
 
     InternalFrameUtils.tile(iframes.toArray(new JInternalFrame[iframes.size()]));
-    for (JFlowMap flowMap : flowMaps) {
+    for (FlowMapView flowMap : flowMaps) {
       flowMap.fitInView();
     }
   }
@@ -350,7 +349,7 @@ public class FlowMapMain extends JFrame {
   }
 
   public void shutdown() {
-    logger.info(">>> Exiting JFlowMap");
+    logger.info(">>> Exiting FlowMapView");
 //    savePreferences();
     System.exit(0);
   }
@@ -412,22 +411,22 @@ public class FlowMapMain extends JFrame {
 
   private void fitAllInViews() {
     JInternalFrame[] iframes = desktopPane.getAllFrames();
-    for (JInternalFrame iframe : iframes) {
-      Container view = iframe.getContentPane();
-      if (view instanceof JFlowMap)
-        ((JFlowMap)view).fitInView();
-    }
+//    for (JInternalFrame iframe : iframes) {
+//      Container view = iframe.getContentPane();
+//      if (view instanceof FlowMapView)
+//        ((FlowMapView)view).fitInView();
+//    }
   }
 
   private void fitActiveInView() {
     if (activeView != null) {
-      if (activeView instanceof JFlowMap)
-        ((JFlowMap)activeView).fitInView();
+//      if (activeView instanceof FlowMapView)
+//        ((FlowMapView)activeView).fitInView();
     }
   }
 
   public static void main(String[] args) throws IOException {
-    logger.info(">>> Starting JFlowMap");
+    logger.info(">>> Starting FlowMapView");
 //    final List<DatasetSpec> datasetSpecs = XmlDatasetSpecsReader.readDatasetSpecs("/data/datasets.xml");
     initLookAndFeel();
     SwingUtilities.invokeLater(new Runnable() {

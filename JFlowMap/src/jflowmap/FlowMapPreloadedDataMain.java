@@ -18,6 +18,7 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -25,10 +26,16 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import jflowmap.data.XmlDatasetSpecsReader;
+import jflowmap.visuals.VisualCanvas;
 
 import org.apache.log4j.Logger;
 
@@ -50,12 +57,21 @@ public class FlowMapPreloadedDataMain extends JFrame {
     return OS_NAME.startsWith(osNamePrefix);
   }
 
-  private final JFlowMap flowMap;
+  private final FlowMapView flowMap;
 
   public FlowMapPreloadedDataMain(List<DatasetSpec> datasetSpecs) {
-    setTitle("JFlowMap");
-    flowMap = new JFlowMap(datasetSpecs, true);
-    add(flowMap);
+    setTitle("FlowMapView");
+    flowMap = new FlowMapView(datasetSpecs, true);
+
+    setLayout(new BorderLayout());
+    VisualCanvas canvas = flowMap.getViewComponent();
+    JComponent controls = flowMap.getControls();
+    if (controls == null) {
+      add(canvas, BorderLayout.CENTER);
+      controls = null;
+    } else {
+      add(createHorizontalSplitPane(canvas, controls));
+    }
 
 //    JPanel statusPanel = new JPanel(new BorderLayout());
 //    add(statusPanel, BorderLayout.SOUTH);
@@ -87,14 +103,40 @@ public class FlowMapPreloadedDataMain extends JFrame {
     });
   }
 
+
+
+  private JSplitPane createHorizontalSplitPane(JComponent top, JComponent bottom) {
+    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom);
+    BasicSplitPaneUI ui = new BasicSplitPaneUI() {
+      @Override
+      public BasicSplitPaneDivider createDefaultDivider() {
+        return new BasicSplitPaneDivider(this) {
+          @Override
+          protected JButton createLeftOneTouchButton() {
+            JButton but = super.createLeftOneTouchButton();
+            but.setEnabled(false);
+            but.setVisible(false);
+            return but;
+          }
+        };
+      }
+    };
+    splitPane.setUI(ui);
+    splitPane.setOneTouchExpandable(true);
+    splitPane.setResizeWeight(1.0);
+    return splitPane;
+  }
+
+
   public void shutdown() {
     logger.info("Exiting application");
     System.exit(0);
   }
 
   public static void main(String[] args) throws IOException {
-    logger.info(">>> Starting JFlowMap");
-    final List<DatasetSpec> datasetSpecs = XmlDatasetSpecsReader.readDatasetSpecs("/data/datasets.xml");
+    logger.info(">>> Starting FlowMapView");
+    final List<DatasetSpec> datasetSpecs =
+      XmlDatasetSpecsReader.readDatasetSpecs("/data/datasets.xml");
     initLookAndFeel();
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {

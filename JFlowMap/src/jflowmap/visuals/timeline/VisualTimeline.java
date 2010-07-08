@@ -29,8 +29,8 @@ import javax.swing.JComponent;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
-import jflowmap.JFlowMap;
-import jflowmap.JFlowTimeline;
+import jflowmap.FlowMapView;
+import jflowmap.FlowTimelineView;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
@@ -72,7 +72,7 @@ public class VisualTimeline extends PNode {
   private final double cellHeight = 35;
   private final double cellSpacingX = 0; // 4
   private final double cellSpacingY = 0;
-  private final JFlowTimeline jFlowTimeline;
+  private final FlowTimelineView jFlowTimeline;
 
 //  private final ColorMap sumOutgoingDiffColorMap;
 
@@ -84,7 +84,7 @@ public class VisualTimeline extends PNode {
   private final PCollapsableItemsContainer container;
 
 
-  public VisualTimeline(JFlowTimeline jFlowTimeline,
+  public VisualTimeline(FlowTimelineView jFlowTimeline,
       FlowMapGraphSet flowMapGraphs,
       FlowMapGraphSet groupedFlowMapGraphs,
       String columnToGroupNodesBy) {
@@ -301,12 +301,12 @@ public class VisualTimeline extends PNode {
     tooltipBox.setText(
         FlowMapGraph.getGraphId(node.getGraph()) + "\n" +
         node.getString(getAttrSpecs().getNodeLabelAttr()),
-        "Incoming: " + JFlowMap.NUMBER_FORMAT.format(inValue) + "\n" +
-        "Outgoing: " + JFlowMap.NUMBER_FORMAT.format(outValue) + "\n" +
-        "Incoming intrareg: " + JFlowMap.NUMBER_FORMAT.format(inLocalValue) + "\n" +
-        "Outgoing intrareg: " + JFlowMap.NUMBER_FORMAT.format(outLocalValue)
-//         + "\n" + "Incoming diff to next: " + JFlowMap.NUMBER_FORMAT.format(inDiffValue) + "\n" +
-//        "Outgoing diff to next: " + JFlowMap.NUMBER_FORMAT.format(outDiffValue)
+        "Incoming: " + FlowMapView.NUMBER_FORMAT.format(inValue) + "\n" +
+        "Outgoing: " + FlowMapView.NUMBER_FORMAT.format(outValue) + "\n" +
+        "Incoming intrareg: " + FlowMapView.NUMBER_FORMAT.format(inLocalValue) + "\n" +
+        "Outgoing intrareg: " + FlowMapView.NUMBER_FORMAT.format(outLocalValue)
+//         + "\n" + "Incoming diff to next: " + FlowMapView.NUMBER_FORMAT.format(inDiffValue) + "\n" +
+//        "Outgoing diff to next: " + FlowMapView.NUMBER_FORMAT.format(outDiffValue)
         , null
     );
 

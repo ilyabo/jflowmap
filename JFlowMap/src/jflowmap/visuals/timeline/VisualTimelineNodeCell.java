@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 
 import jflowmap.FlowMapAttrSpec;
-import jflowmap.JFlowMap;
+import jflowmap.FlowMapView;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.ArrayUtils;
@@ -68,7 +68,7 @@ public class VisualTimelineNodeCell extends PNode {
 
   private static final boolean FILL_HALF_CIRCLES_WITH_QTY_GRADIENT_COLOR = false;
 
-//  private static final Color VALUE_COLOR_NAN = JFlowTimeline.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
+//  private static final Color VALUE_COLOR_NAN = FlowTimelineView.CANVAS_BACKGROUND_COLOR; // new Color(200, 200, 200);
   private static final boolean SHOW_NODE_LABEL = false;
   private static final boolean SHOW_VALUE_TEXT = false;
   private static final boolean SHOW_DIFF = false;
@@ -85,7 +85,7 @@ public class VisualTimelineNodeCell extends PNode {
 //  private static final Color DIFF_COLOR_MIN = new Color(26, 152, 80);
 //  private static final Color DIFF_COLOR_ZERO = new Color(255, 255, 191);
 //  private static final Color DIFF_COLOR_MAX = new Color(215, 48, 39);
-//  private static final Color DIFF_COLOR_NAN = new Color(100, 100, 100); //JFlowTimeline.CANVAS_BACKGROUND_COLOR;
+//  private static final Color DIFF_COLOR_NAN = new Color(100, 100, 100); //FlowTimelineView.CANVAS_BACKGROUND_COLOR;
 
   private static final double DIFF_BOX_WIDTH = 10;
   private static final double DIFF_BOX_GAP = 0;
@@ -146,7 +146,7 @@ public class VisualTimelineNodeCell extends PNode {
 //    }
 
 //    if (FILL_RECT_WITH_REGION_COLOR) {
-//      rectColor = ColorLib.getColor(node.getInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR));
+//      rectColor = ColorLib.getColor(node.getInt(FlowTimelineView.NODE_COLUMN__REGION_COLOR));
 //    }
 
     if (rectColor == null) {
@@ -174,7 +174,7 @@ public class VisualTimelineNodeCell extends PNode {
     }
 
     if (SHOW_VALUE_TEXT) {
-      PText valueText = new PText(JFlowMap.NUMBER_FORMAT.format(outValue));
+      PText valueText = new PText(FlowMapView.NUMBER_FORMAT.format(outValue));
       valueText.setFont(CELL_VALUE_FONT);
       valueText.setJustification(JComponent.RIGHT_ALIGNMENT);
       valueText.setTextPaint(Color.gray);

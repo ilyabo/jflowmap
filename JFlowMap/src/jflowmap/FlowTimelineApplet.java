@@ -51,13 +51,13 @@ public class FlowTimelineApplet extends BaseApplet {
   }
 
   @Override
-  protected JView createView() throws IOException {
+  protected IView createView() throws IOException {
       return loadGraphsWithRegions(getParameter("flowmaps"));
   }
 
 
 
-  public static JFlowTimeline loadGraphsWithRegions(String filename) throws IOException {
+  public static FlowTimelineView loadGraphsWithRegions(String filename) throws IOException {
 
     List<Graph> graphs = Lists.newArrayList(new GraphMLReader2().readFromFile(filename));
 
@@ -67,7 +67,7 @@ public class FlowTimelineApplet extends BaseApplet {
     addRegionsAsNodeColumn(columnToGroupNodesBy, graphs);
 
     // TODO: let the user choose the attr specs
-    JFlowTimeline ft = new JFlowTimeline(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
+    FlowTimelineView ft = new FlowTimelineView(new FlowMapGraphSet(graphs, REFUGEES_ATTR_SPECS), columnToGroupNodesBy);
     return ft;
   }
 
@@ -79,20 +79,20 @@ public class FlowTimelineApplet extends BaseApplet {
     try {
       nodeIdToRegion =
               XmlRegionsReader.readFrom("data/refugees/regions.xml");
-//      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/JFlowMap/data/refugees/regions.xml");
+//      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/FlowMapView/data/refugees/regions.xml");
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
     }
     for (Graph graph : graphs) {
       graph.getNodeTable().addColumn(regionColumn, String.class);
-//      graph.getNodeTable().addColumn(JFlowTimeline.NODE_COLUMN__REGION_COLOR, int.class);
+//      graph.getNodeTable().addColumn(FlowTimelineView.NODE_COLUMN__REGION_COLOR, int.class);
 
       for (Map.Entry<String, String> e : nodeIdToRegion.entrySet()) {
         Node node = FlowMapGraph.findNodeById(graph, e.getKey());
         if (node != null) {
           String region = e.getValue();
           node.set(regionColumn, region);
-//          node.setInt(JFlowTimeline.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
+//          node.setInt(FlowTimelineView.NODE_COLUMN__REGION_COLOR, regionToColor.get(region));
         }
       }
     }

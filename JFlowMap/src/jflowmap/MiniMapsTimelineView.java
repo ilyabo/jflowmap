@@ -18,27 +18,21 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
-
-import jflowmap.visuals.timeline.DefaultDuoTimelineStyle;
-import jflowmap.visuals.timeline.DuoTimelineStyle;
-import jflowmap.visuals.timeline.VisualDuoTimeline;
-
+import javax.swing.JComponent;
 
 /**
  * @author Ilya Boyandin
  */
-public class JDuoTimeline extends JView {
+public class MiniMapsTimelineView extends AbstractCanvasView {
 
-  private final VisualDuoTimeline visualCombTimeline;
-  private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
+  @Override
+  public JComponent getControls() {
+    return null;
+  }
 
-  public JDuoTimeline(FlowMapGraphSet flowMapGraphs) {
-    visualCombTimeline = new VisualDuoTimeline(flowMapGraphs);
-    getVisualCanvas().setBackground(style.getBackgroundColor());
-
-    setLayout(new BorderLayout());
-    add(getVisualCanvas(), BorderLayout.CENTER);
+  @Override
+  public String getName() {
+    return null;
   }
 
 }

@@ -18,8 +18,9 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+
+import javax.swing.JComponent;
 
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.visuals.ColorScheme;
@@ -32,11 +33,11 @@ import edu.umd.cs.piccolo.PCamera;
 /**
  * @author Ilya Boyandin
  */
-public class JFlowTimeline extends JView {
+public class FlowTimelineView extends AbstractCanvasView {
 //  public static final String NODE_COLUMN__REGION = "region";
 //  public static final String NODE_COLUMN__REGION_COLOR = "regionColor";
 
-  public static Logger logger = Logger.getLogger(JFlowTimeline.class);
+  public static Logger logger = Logger.getLogger(FlowTimelineView.class);
 
   public static final Color CANVAS_BACKGROUND_COLOR = Color.white;
 //    new Color(47, 89, 134);
@@ -44,11 +45,11 @@ public class JFlowTimeline extends JView {
   private final ColorScheme colorScheme;
 
 
-//  public JFlowTimeline(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
+//  public FlowTimelineView(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
 //    this(graphs, attrSpec, null);
 //  }
 
-  public JFlowTimeline(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
+  public FlowTimelineView(FlowMapGraphSet fmset, String nodeAttrToGroupBy) {
     this.colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
 
     getVisualCanvas().setBackground(CANVAS_BACKGROUND_COLOR);
@@ -67,11 +68,13 @@ public class JFlowTimeline extends JView {
     }
 
     getVisualCanvas().getLayer().addChild(visualTimeline);
-    setLayout(new BorderLayout());
-    add(getVisualCanvas(), BorderLayout.CENTER);
-
   }
 
+
+  @Override
+  public String getName() {
+    return "FlowTimeline";
+  }
 
   public ColorScheme getColorScheme() {
     return colorScheme;
@@ -93,6 +96,13 @@ public class JFlowTimeline extends JView {
   public PCamera getCamera() {
     return getVisualCanvas().getCamera();
   }
+
+
+  @Override
+  public JComponent getControls() {
+    return null;
+  }
+
 
 
 

@@ -54,7 +54,7 @@ import javax.swing.table.TableColumnModel;
 
 import jflowmap.DatasetSpec;
 import jflowmap.FlowMapColorSchemes;
-import jflowmap.JFlowMap;
+import jflowmap.FlowMapView;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
@@ -147,7 +147,7 @@ public class ControlPanel {
     private JButton resetJoinedEdgesButton;
     private JTable clustersTable;
     private JButton aggregateEdgesButton;
-    private final JFlowMap jFlowMap;
+    private final FlowMapView jFlowMap;
     private boolean initializing;
     private ForceDirectedBundlerParameters fdBundlingParams;
     private NodeSimilarityDistancesTableModel clusterDistancesTableModel;
@@ -162,7 +162,7 @@ public class ControlPanel {
     private final List<DatasetSpec> datasetSpecs;
 
 
-    public ControlPanel(JFlowMap flowMap, List<DatasetSpec> datasetSpecs) {
+    public ControlPanel(FlowMapView flowMap, List<DatasetSpec> datasetSpecs) {
         this.jFlowMap = flowMap;
         this.datasetSpecs = datasetSpecs;
         $$$setupUI$$$();

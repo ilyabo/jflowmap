@@ -28,8 +28,8 @@ import java.util.Arrays;
 public class FlowMapApplet extends BaseApplet {
 
   @Override
-  protected JView createView() {
-    JFlowMap jFlowMap = new JFlowMap(Arrays.asList(getDatasetSpec()), true);
+  protected IView createView() {
+    FlowMapView jFlowMap = new FlowMapView(Arrays.asList(getDatasetSpec()), true);
 
     String colorScheme = getParameter("colorScheme");
     if (colorScheme != null  &&  !colorScheme.isEmpty()) {

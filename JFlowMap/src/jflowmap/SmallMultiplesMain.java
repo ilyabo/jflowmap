@@ -86,7 +86,7 @@ public class SmallMultiplesMain extends JFrame {
 
   private final String outputFileName;
   private boolean showLegend = true;
-  private final JFlowMap jFlowMap;
+  private final FlowMapView jFlowMap;
 
   public SmallMultiplesMain(String outputFileName, DatasetSpec datasetSpec, String ... datasetNames) {
     this(outputFileName, datasetsMap(datasetSpec, datasetNames));
@@ -96,8 +96,8 @@ public class SmallMultiplesMain extends JFrame {
     this.outputFileName = outputFileName;
     this.datasets = datasets;
 
-    jFlowMap = new JFlowMap(null, false);
-    add(jFlowMap);
+    jFlowMap = new FlowMapView(null, false);
+    add(jFlowMap.getViewComponent());
 
     setSize(1024, 768);
 
@@ -144,7 +144,7 @@ public class SmallMultiplesMain extends JFrame {
   private Clusterer clusterer;
 
   public interface Clusterer {
-    VisualFlowMapModel cluster(JFlowMap jFlowMap);
+    VisualFlowMapModel cluster(FlowMapView jFlowMap);
   }
 
   public interface FlowMapModelInitializer {
@@ -200,7 +200,7 @@ public class SmallMultiplesMain extends JFrame {
     final int paddingY = 5;
 
     private final ProgressMonitor progress;
-    private final JFlowMap jFlowMap;
+    private final FlowMapView jFlowMap;
     private final int width;
     private final int height;
     private final int totalWidth;
@@ -208,15 +208,15 @@ public class SmallMultiplesMain extends JFrame {
     private final BufferedImage image;
     private final JFrame parentFrame;
 
-    public RenderTask(JFrame parent, JFlowMap jFlowMap) {
+    public RenderTask(JFrame parent, FlowMapView jFlowMap) {
       this.jFlowMap = jFlowMap;
       this.parentFrame = parent;
 
       final int n = datasets.size();
       progress = new ProgressMonitor(parent, "Rendering small multiples", "", 0, n);
 
-      width = jFlowMap.getWidth();
-      height = jFlowMap.getHeight();
+      width = jFlowMap.getViewComponent().getWidth();
+      height = jFlowMap.getViewComponent().getHeight();
       totalWidth = Math.min(n, numColumns) * (width + paddingX) + paddingX;
       totalHeight = ((int)Math.ceil((double)n / numColumns)) * (height + paddingY) + paddingY;
 
@@ -343,7 +343,7 @@ public class SmallMultiplesMain extends JFrame {
 
             g.translate(x, y);
 
-            jFlowMap.paint(g);
+            jFlowMap.getViewComponent().paint(g);
 
             g.setColor(datasetNameLabelColor);
             g.setFont(LABEL_FONT);
@@ -481,7 +481,7 @@ public class SmallMultiplesMain extends JFrame {
 //    });
 //    sm.setClusterer(new Clusterer() {
 //      @Override
-//      public VisualFlowMapModel cluster(JFlowMap jFlowMap) {
+//      public VisualFlowMapModel cluster(FlowMapView jFlowMap) {
 //        VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
 //        visualFlowMap.clusterNodes(
 //            NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);
@@ -650,7 +650,7 @@ public class SmallMultiplesMain extends JFrame {
     });
       sm.setClusterer(new Clusterer() {
       @Override
-      public VisualFlowMapModel cluster(JFlowMap jFlowMap) {
+      public VisualFlowMapModel cluster(FlowMapView jFlowMap) {
         VisualFlowMap visualFlowMap = jFlowMap.getVisualFlowMap();
         visualFlowMap.clusterNodes(
             NodeDistanceMeasure.COMMON_EDGES_IN_OUT_COMB, Linkages.<VisualNode>complete(), true);

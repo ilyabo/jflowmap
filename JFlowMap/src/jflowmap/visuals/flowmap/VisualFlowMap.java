@@ -39,7 +39,7 @@ import javax.swing.SwingUtilities;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
-import jflowmap.JFlowMap;
+import jflowmap.FlowMapView;
 import jflowmap.aggregation.EdgeSegment;
 import jflowmap.aggregation.EdgeSegmentAggregator;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
@@ -105,7 +105,7 @@ public class VisualFlowMap extends PNode {
   private List<VisualEdge> visualEdges;
   private Map<Node, VisualNode> nodesToVisuals;
   private Map<Edge, VisualEdge> edgesToVisuals;
-  private final JFlowMap jFlowMap;
+  private final FlowMapView jFlowMap;
 
   // clustering fields
   private ClusterNode<VisualNode> rootCluster = null;
@@ -125,7 +125,7 @@ public class VisualFlowMap extends PNode {
   private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
   private final VisualLegend visualLegend;
 
-  public VisualFlowMap(JFlowMap jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend) {
+  public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend) {
     this.jFlowMap = jFlowMap;
 
     visualFlowMapModel = new VisualFlowMapModel(flowMapGraph);
@@ -400,7 +400,7 @@ public class VisualFlowMap extends PNode {
   }
 
   private String wordWrapLabel(String label, double maxWidth) {
-    FontMetrics fm = jFlowMap.getGraphics().getFontMetrics();
+    FontMetrics fm = jFlowMap.getViewComponent().getGraphics().getFontMetrics();
     int width = SwingUtilities.computeStringWidth(fm, label);
     if (width > maxWidth) {
       StringBuilder sb = new StringBuilder();
@@ -550,7 +550,7 @@ public class VisualFlowMap extends PNode {
           bundler.bundle(getProgressTracker());
         } catch (Throwable th) {
           logger.error("Bundling error", th);
-          JOptionPane.showMessageDialog(jFlowMap,
+          JOptionPane.showMessageDialog(jFlowMap.getViewComponent(),
               "Bundling error: [" + th.getClass().getSimpleName()+ "] " + th.getMessage()
           );
         }
@@ -617,7 +617,7 @@ public class VisualFlowMap extends PNode {
           repaint();
         } catch (Throwable th) {
           logger.error("Aggregation error", th);
-          JOptionPane.showMessageDialog(jFlowMap,
+          JOptionPane.showMessageDialog(jFlowMap.getViewComponent(),
               "Aggregation error: [" + th.getClass().getSimpleName()+ "] " + th.getMessage()
           );
         }

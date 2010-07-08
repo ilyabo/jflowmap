@@ -26,7 +26,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
-import jflowmap.JFlowMap;
+import jflowmap.FlowMapView;
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
 import jflowmap.visuals.ColorCodes;
@@ -138,7 +138,7 @@ public class VisualLegend extends PPath {
   }
 
   private PText createText(double weight, double leftX, double middleY) {
-    PText ptext = new PText(JFlowMap.NUMBER_FORMAT.format(weight));
+    PText ptext = new PText(FlowMapView.NUMBER_FORMAT.format(weight));
     ptext.setX(leftX);
     ptext.setY(middleY - LABEL_FONT.getSize2D()/2 - 1);
     ptext.setFont(LABEL_FONT);

@@ -31,16 +31,16 @@ import at.fhj.utils.swing.JMsgPane;
  */
 public abstract class BaseApplet extends JApplet {
 
-  protected JView view;
+  protected IView view;
 
-  protected abstract JView createView() throws IOException;
+  protected abstract IView createView() throws IOException;
 
 
   @Override
   public void init() {
     try {
       view = createView();
-      add(view);
+      add(view.getViewComponent());
     } catch (IOException ex) {
       JMsgPane.showProblemDialog(this, "Error: " + ex.getMessage());
       Logger.getLogger(getClass().getName()).error("Exception: ", ex);

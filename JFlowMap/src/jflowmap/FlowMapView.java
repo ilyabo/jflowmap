@@ -18,19 +18,12 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Frame;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JSplitPane;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import jflowmap.data.FlowMapStats;
 import jflowmap.models.map.AreaMap;
@@ -45,11 +38,11 @@ import org.apache.log4j.Logger;
 /**
  * @author Ilya Boyandin
  */
-public class JFlowMap extends JView {
+public class FlowMapView extends AbstractCanvasView {
 
   private static final long serialVersionUID = -1898747650184999568L;
 
-  public static Logger logger = Logger.getLogger(JFlowMap.class);
+  public static Logger logger = Logger.getLogger(FlowMapView.class);
 
   private ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
@@ -57,16 +50,14 @@ public class JFlowMap extends JView {
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
-  public JFlowMap(FlowMapGraph flowMapGraph, AreaMap areaMap) {
+  public FlowMapView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     setVisualFlowMap(createVisualFlowMap(flowMapGraph));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
     }
-    init();
   }
 
-  public JFlowMap(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
-
+  public FlowMapView(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
     if (datasetSpecs != null) {
       load(datasetSpecs.get(0));
       getVisualCanvas().getLayer().addChild(visualFlowMap);
@@ -75,39 +66,11 @@ public class JFlowMap extends JView {
     if (showControlPanel) {
       controlPanel = new ControlPanel(this, datasetSpecs);
     }
-    init();
   }
 
-  private void init() {
-    setLayout(new BorderLayout());
-    if (controlPanel == null) {
-      add(getVisualCanvas(), BorderLayout.CENTER);
-      controlPanel = null;
-    } else {
-      add(createHorizontalSplitPane(getVisualCanvas(), controlPanel.getPanel()));
-    }
-  }
-
-  private JSplitPane createHorizontalSplitPane(JComponent top, JComponent bottom) {
-    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, top, bottom);
-    BasicSplitPaneUI ui = new BasicSplitPaneUI() {
-      @Override
-      public BasicSplitPaneDivider createDefaultDivider() {
-        return new BasicSplitPaneDivider(this) {
-          @Override
-          protected JButton createLeftOneTouchButton() {
-            JButton but = super.createLeftOneTouchButton();
-            but.setEnabled(false);
-            but.setVisible(false);
-            return but;
-          }
-        };
-      }
-    };
-    splitPane.setUI(ui);
-    splitPane.setOneTouchExpandable(true);
-    splitPane.setResizeWeight(1.0);
-    return splitPane;
+  @Override
+  public JComponent getControls() {
+    return controlPanel.getPanel();
   }
 
   public void load(DatasetSpec dataset) {
@@ -122,7 +85,8 @@ public class JFlowMap extends JView {
   public void load(DatasetSpec dataset, FlowMapStats stats) {
     logger.info("> Loading flow map '" + dataset + "'");
     try {
-      FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset.getFilename(), dataset.getAttrsSpec(), stats);
+      FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset.getFilename(),
+          dataset.getAttrsSpec(), stats);
 
       VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph);
       if (dataset.getAreaMapFilename() != null) {
@@ -133,8 +97,9 @@ public class JFlowMap extends JView {
 
     } catch (Throwable th) {
       logger.error("Couldn't load flow map " + dataset.getFilename(), th);
-      JOptionPane.showMessageDialog(this,
-          "Couldn't load flow map '"  + dataset.getFilename() + "': [" + th.getClass().getSimpleName()+ "] " + th.getMessage());
+      JOptionPane.showMessageDialog(this.getViewComponent(),
+          "Couldn't load flow map '"  + dataset.getFilename() + "': [" +
+          th.getClass().getSimpleName()+ "] " + th.getMessage());
     }
   }
 
@@ -160,17 +125,6 @@ public class JFlowMap extends JView {
 
   public Color getColor(ColorCodes code) {
     return colorScheme.get(code);
-  }
-
-  public Frame getParentFrame() {
-    Component parent = this;
-    while (parent != null) {
-      parent = parent.getParent();
-      if (parent instanceof Frame) {
-        return (Frame) parent;
-      }
-    }
-    return null;
   }
 
   public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph) {

@@ -20,29 +20,17 @@ package jflowmap;
 
 import javax.swing.JComponent;
 
-import jflowmap.visuals.VisualCanvas;
-
 /**
  * @author Ilya Boyandin
  */
-public abstract class JView extends JComponent {
+public interface IView {
 
-  private final VisualCanvas visualCanvas;
+  JComponent getViewComponent();
 
-  public JView() {
-    this.visualCanvas = createVisualCanvas();
-  }
+  JComponent getControls();
 
-  protected VisualCanvas createVisualCanvas() {
-    return new VisualCanvas();
-  }
+  void fitInView();
 
-  public VisualCanvas getVisualCanvas() {
-    return visualCanvas;
-  }
-
-  public void fitInView() {
-    visualCanvas.fitChildrenInCameraView();
-  }
+  String getName();
 
 }
