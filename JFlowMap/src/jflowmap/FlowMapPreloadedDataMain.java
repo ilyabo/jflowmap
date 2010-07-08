@@ -35,7 +35,8 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import jflowmap.data.XmlDatasetSpecsReader;
-import jflowmap.visuals.VisualCanvas;
+import jflowmap.views.VisualCanvas;
+import jflowmap.views.flowmap.FlowMapView;
 
 import org.apache.log4j.Logger;
 

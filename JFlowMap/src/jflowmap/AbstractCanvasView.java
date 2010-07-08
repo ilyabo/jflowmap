@@ -21,7 +21,7 @@ package jflowmap;
 import java.awt.Component;
 import java.awt.Frame;
 
-import jflowmap.visuals.VisualCanvas;
+import jflowmap.views.VisualCanvas;
 
 /**
  * @author Ilya Boyandin

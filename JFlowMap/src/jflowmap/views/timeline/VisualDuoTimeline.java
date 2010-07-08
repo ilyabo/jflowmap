@@ -16,28 +16,20 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.views.timeline;
 
-import java.io.IOException;
-
-import jflowmap.views.timeline.DuoTimelineView;
+import jflowmap.FlowMapGraphSet;
+import edu.umd.cs.piccolo.PNode;
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineApplet extends BaseApplet {
+public class VisualDuoTimeline extends PNode {
 
-  private DuoTimelineView jCombTimeline;
+  private final FlowMapGraphSet flowMapGraphs;
 
-  public DuoTimelineApplet() {
+  public VisualDuoTimeline(FlowMapGraphSet flowMapGraphs) {
+    this.flowMapGraphs = flowMapGraphs;
   }
-
-
-  @Override
-  protected IView createView() throws IOException {
-    DatasetSpec ds = getDatasetSpec();
-    return new DuoTimelineView(FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()));
-  }
-
 
 }

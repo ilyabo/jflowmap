@@ -20,9 +20,9 @@ package jflowmap;
 
 import java.awt.Color;
 
-import jflowmap.visuals.ColorCodes;
-import jflowmap.visuals.ColorScheme;
-import jflowmap.visuals.EnumColorScheme;
+import jflowmap.views.ColorCodes;
+import jflowmap.views.ColorScheme;
+import jflowmap.views.EnumColorScheme;
 
 /**
  * @author Ilya Boyandin

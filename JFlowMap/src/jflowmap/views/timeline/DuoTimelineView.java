@@ -16,28 +16,35 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.views.timeline;
 
-import java.io.IOException;
+import javax.swing.JComponent;
 
-import jflowmap.views.timeline.DuoTimelineView;
+import jflowmap.AbstractCanvasView;
+import jflowmap.FlowMapGraphSet;
+
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineApplet extends BaseApplet {
+public class DuoTimelineView extends AbstractCanvasView {
 
-  private DuoTimelineView jCombTimeline;
+  private final VisualDuoTimeline visualCombTimeline;
+  private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
 
-  public DuoTimelineApplet() {
+  public DuoTimelineView(FlowMapGraphSet flowMapGraphs) {
+    visualCombTimeline = new VisualDuoTimeline(flowMapGraphs);
+    getVisualCanvas().setBackground(style.getBackgroundColor());
   }
-
 
   @Override
-  protected IView createView() throws IOException {
-    DatasetSpec ds = getDatasetSpec();
-    return new DuoTimelineView(FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()));
+  public JComponent getControls() {
+    return null;
   }
 
+  @Override
+  public String getName() {
+    return null;
+  }
 
 }

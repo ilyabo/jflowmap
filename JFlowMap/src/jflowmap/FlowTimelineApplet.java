@@ -27,6 +27,7 @@ import javax.xml.stream.XMLStreamException;
 
 import jflowmap.data.GraphMLReader2;
 import jflowmap.data.XmlRegionsReader;
+import jflowmap.views.timeline.FlowTimelineView;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 

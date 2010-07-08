@@ -20,6 +20,8 @@ package jflowmap;
 
 import java.util.Arrays;
 
+import jflowmap.views.flowmap.FlowMapView;
+
 /**
  * TODO: finish FlowMapApplet
  *

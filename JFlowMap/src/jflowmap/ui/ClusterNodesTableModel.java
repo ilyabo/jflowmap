@@ -25,8 +25,8 @@ import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
-import jflowmap.visuals.flowmap.ClusterTag;
-import jflowmap.visuals.flowmap.VisualNode;
+import jflowmap.views.flowmap.ClusterTag;
+import jflowmap.views.flowmap.VisualNode;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;

@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,28 +16,27 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.views.flowmap;
 
-import java.io.IOException;
+import java.awt.Stroke;
 
-import jflowmap.views.timeline.DuoTimelineView;
+import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineApplet extends BaseApplet {
+public class VisualEdgeStrokeFactory {
 
-  private DuoTimelineView jCombTimeline;
+  private final VisualFlowMap visualFlowMap;
 
-  public DuoTimelineApplet() {
+  public VisualEdgeStrokeFactory(VisualFlowMap visualFlowMap) {
+    this.visualFlowMap = visualFlowMap;
   }
 
-
-  @Override
-  protected IView createView() throws IOException {
-    DatasetSpec ds = getDatasetSpec();
-    return new DuoTimelineView(FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()));
+  public Stroke createStroke(double normalizedValue) {
+    float width = (float)(1 + normalizedValue * visualFlowMap.getModel().getMaxEdgeWidth());
+    return new PFixedWidthStroke(width);
+//    return new BasicStroke(width);
   }
-
 
 }

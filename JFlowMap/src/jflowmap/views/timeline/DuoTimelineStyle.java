@@ -16,28 +16,15 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.views.timeline;
 
-import java.io.IOException;
-
-import jflowmap.views.timeline.DuoTimelineView;
+import java.awt.Color;
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineApplet extends BaseApplet {
+public interface DuoTimelineStyle {
 
-  private DuoTimelineView jCombTimeline;
-
-  public DuoTimelineApplet() {
-  }
-
-
-  @Override
-  protected IView createView() throws IOException {
-    DatasetSpec ds = getDatasetSpec();
-    return new DuoTimelineView(FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()));
-  }
-
+  Color getBackgroundColor();
 
 }

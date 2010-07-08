@@ -38,10 +38,11 @@ import javax.swing.SwingWorker;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
-import jflowmap.visuals.ColorScheme;
-import jflowmap.visuals.flowmap.VisualFlowMap;
-import jflowmap.visuals.flowmap.VisualFlowMapModel;
-import jflowmap.visuals.flowmap.VisualNode;
+import jflowmap.views.ColorScheme;
+import jflowmap.views.flowmap.FlowMapView;
+import jflowmap.views.flowmap.VisualFlowMap;
+import jflowmap.views.flowmap.VisualFlowMapModel;
+import jflowmap.views.flowmap.VisualNode;
 
 import org.apache.log4j.Logger;
 

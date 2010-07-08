@@ -22,8 +22,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import jflowmap.visuals.flowmap.ClusterTag;
-import jflowmap.visuals.flowmap.VisualNodeCluster;
+import jflowmap.views.flowmap.ClusterTag;
+import jflowmap.views.flowmap.VisualNodeCluster;
 
 /**
  * @author ilya
