@@ -67,10 +67,10 @@ public class VisualTimeline extends PNode {
   private final FlowMapGraphSet flowMapGraphs;
   private final FlowMapGraphSet groupedFlowMapGraphs;
 
-  private final double cellWidth = 35;
-  private final double cellHeight = 35;
-  private final double cellSpacingX = 0; // 4
-  private final double cellSpacingY = 0;
+  private static final double cellWidth = 35;
+  private static final double cellHeight = 35;
+  private static final double cellSpacingX = 0; // 4
+  private static final double cellSpacingY = 0;
   private final FlowTimelineView jFlowTimeline;
 
 //  private final ColorMap sumOutgoingDiffColorMap;
@@ -282,7 +282,7 @@ public class VisualTimeline extends PNode {
     t.setTextPaint(CAPTION_COLOR);
     double x = 0, y = 0;
     x = cellSpacingX + i * (cellWidth + cellSpacingX);
-    y = 0 ;
+    y = 0;
     t.setJustification(JComponent.LEFT_ALIGNMENT);
     t.setBounds(x + container.getItemsOffsetX() + (cellWidth - t.getWidth())/2, y - t.getHeight()*1.5, t.getWidth(), t.getHeight());
     return t;

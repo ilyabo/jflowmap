@@ -18,10 +18,13 @@
 
 package jflowmap.views.timeline;
 
-import javax.swing.JComponent;
+import java.util.List;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraphSet;
+import jflowmap.FlowTuple;
+import jflowmap.util.piccolo.PCollapsableItemsContainer;
+import jflowmap.views.VisualCanvas;
 
 
 /**
@@ -29,22 +32,63 @@ import jflowmap.FlowMapGraphSet;
  */
 public class DuoTimelineView extends AbstractCanvasView {
 
-  private final VisualDuoTimeline visualCombTimeline;
+  private static final double cellWidth = 35;
+  private static final double cellHeight = 35;
+  private static final double cellSpacingX = 0;
+  private static final double cellSpacingY = 0;
+
   private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
+  private final FlowMapGraphSet flowMapGraphs;
 
   public DuoTimelineView(FlowMapGraphSet flowMapGraphs) {
-    visualCombTimeline = new VisualDuoTimeline(flowMapGraphs);
-    getVisualCanvas().setBackground(style.getBackgroundColor());
-  }
+    this.flowMapGraphs = flowMapGraphs;
 
-  @Override
-  public JComponent getControls() {
-    return null;
+    VisualCanvas canvas = getVisualCanvas();
+    canvas.setBackground(style.getBackgroundColor());
+
+    List<FlowTuple> tuples =
+      flowMapGraphs.listFlowTuples(null, FlowTuple.nodeIdIsOneOf("AUT", "CHE"));
+
+
+    PCollapsableItemsContainer container = new PCollapsableItemsContainer();
+
+    for (FlowTuple tuple : tuples) {
+//      container.addNewItem(tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId(), head, null);
+
+    }
   }
 
   @Override
   public String getName() {
-    return null;
+    return "DuoTimeline";
   }
+
+//  class VisualDuoTimeline extends PNode {
+//
+//    @Override
+//    protected void layoutChildren() {
+//      super.layoutChildren();
+//    }
+//  }
+//
+
+//  private PNode createRow(FlowTuple tuple) {
+//    final PNode row = new PNode();
+//
+//    int graphIndex = 0;
+//    for (Graph g : flowMapGraphs.asListOfGraphs()) {
+//      Node node = FlowMapGraph.findNodeById(g, nodeId);
+//      double x = cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
+//      double y = cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
+//
+////      row.addChild(new VisualTimelineNodeCell(this, node, x, y, cellWidth, cellHeight));
+//
+//
+//
+//      row.setBounds(row.getFullBoundsReference());
+//      graphIndex++;
+//    }
+//    return row;
+//  }
 
 }

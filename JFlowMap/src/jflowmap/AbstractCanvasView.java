@@ -21,6 +21,8 @@ package jflowmap;
 import java.awt.Component;
 import java.awt.Frame;
 
+import javax.swing.JComponent;
+
 import jflowmap.views.VisualCanvas;
 
 /**
@@ -39,7 +41,12 @@ public abstract class AbstractCanvasView implements IView {
   }
 
   public VisualCanvas getViewComponent() {
-    return visualCanvas;
+    return getVisualCanvas();
+  }
+
+  @Override
+  public JComponent getControls() {
+    return null;
   }
 
   public VisualCanvas getVisualCanvas() {

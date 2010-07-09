@@ -24,11 +24,12 @@ public class PCollapsableItemsContainer extends PNode {
   private static final Color NON_SEL_LABEL_FG = Color.black;
   private static final Color SEL_LABEL_FG = Color.white;
 
+  private static final double itemLabelSpacing = 5;
+  private static final double itemItemSpacing = 5;
+  private static final double itemBodySpacing = 5;
+  private static final int collapseAnimationDuration = 200;
+
   private final boolean collapsedByDefault;
-  private final double itemLabelSpacing = 5;
-  private final double itemItemSpacing = 5;
-  private final double itemBodySpacing = 5;
-  private final int collapseAnimationDuration = 200;
   private final CollapseHandler collapseHandler;
   private double labelsWidth;
 
