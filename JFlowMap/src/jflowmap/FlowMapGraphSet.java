@@ -27,8 +27,8 @@ import jflowmap.data.GraphMLReader2;
 
 import org.apache.log4j.Logger;
 
+import prefuse.data.Edge;
 import prefuse.data.Graph;
-import prefuse.data.Node;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -161,8 +161,8 @@ public class FlowMapGraphSet {
    * The method will only include edges whoose src and dest nodes satisfy the given predicates.
    * No empty tuples will be returned.
    */
-  public List<FlowTuple> listFlowTuples(Predicate<Node> srcNodeP, Predicate<Node> targetNodeP) {
-    return FlowTuple.listFlowTuples(this, srcNodeP, targetNodeP);
+  public List<FlowTuple> listFlowTuples(Predicate<Edge> edgeP) {
+    return FlowTuple.listFlowTuples(this, edgeP);
   }
 
 }

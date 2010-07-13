@@ -35,7 +35,6 @@ import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import jflowmap.data.XmlDatasetSpecsReader;
-import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.FlowMapView;
 
 import org.apache.log4j.Logger;
@@ -65,13 +64,13 @@ public class FlowMapPreloadedDataMain extends JFrame {
     flowMap = new FlowMapView(datasetSpecs, true);
 
     setLayout(new BorderLayout());
-    VisualCanvas canvas = flowMap.getViewComponent();
+    JComponent viewComp = flowMap.getViewComponent();
     JComponent controls = flowMap.getControls();
     if (controls == null) {
-      add(canvas, BorderLayout.CENTER);
+      add(viewComp, BorderLayout.CENTER);
       controls = null;
     } else {
-      add(createHorizontalSplitPane(canvas, controls));
+      add(createHorizontalSplitPane(viewComp, controls));
     }
 
 //    JPanel statusPanel = new JPanel(new BorderLayout());

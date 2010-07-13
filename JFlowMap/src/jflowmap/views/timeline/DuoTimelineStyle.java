@@ -27,4 +27,6 @@ public interface DuoTimelineStyle {
 
   Color getBackgroundColor();
 
+  Color getFlowCircleColor();
+
 }

@@ -40,7 +40,7 @@ public abstract class AbstractCanvasView implements IView {
     return new VisualCanvas();
   }
 
-  public VisualCanvas getViewComponent() {
+  public JComponent getViewComponent() {
     return getVisualCanvas();
   }
 

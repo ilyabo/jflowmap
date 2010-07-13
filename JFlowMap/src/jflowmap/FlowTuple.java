@@ -18,14 +18,11 @@
 
 package jflowmap;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import prefuse.data.Edge;
 import prefuse.data.Graph;
-import prefuse.data.Node;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
@@ -72,12 +69,12 @@ public class FlowTuple {
    * The method will only include edges whoose src and dest nodes satisfy the given predicates.
    * No empty tuples will be returned.
    */
-  public static List<FlowTuple> listFlowTuples(FlowMapGraphSet fmgs, Predicate<Node> srcNodeP, Predicate<Node> targetNodeP) {
+  public static List<FlowTuple> listFlowTuples(FlowMapGraphSet fmgs, Predicate<Edge> edgeP) {
     Map<FlowTuple.FlowKey, List<Edge>> edgesByFromTo = Maps.newLinkedHashMap();
     for (Graph g : fmgs.asListOfGraphs()) {
       for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
         Edge e = g.getEdge(i);
-        if (doesSatisfy(e, srcNodeP, targetNodeP)) {
+        if (edgeP == null  ||  edgeP.apply(e)) {
           FlowKey key = FlowKey.keyFor(e);
           if (edgesByFromTo.containsKey(key)) {
             edgesByFromTo.get(key).add(e);
@@ -90,22 +87,10 @@ public class FlowTuple {
     return asFlowTuple(edgesByFromTo);
   }
 
-  public static Predicate<Node> nodeIdIsOneOf(String...nodeIds) {
-    return nodeIdIsOneOf(Arrays.asList(nodeIds));
-  }
-
-  public static Predicate<Node> nodeIdIsOneOf(final Collection<String> nodeIds) {
-    return new Predicate<Node>() {
-      @Override
-      public boolean apply(Node node) {
-        return nodeIds.contains(FlowMapGraph.getNodeId(node));
-      }
-    };
-  }
-
-  private static boolean doesSatisfy(Edge e, Predicate<Node> srcNodeP, Predicate<Node> targetNodeP) {
-    return (srcNodeP == null  ||  srcNodeP.apply(e.getSourceNode()))  &&
-        (targetNodeP == null  ||  targetNodeP.apply(e.getTargetNode()));
+  @Override
+  public String toString() {
+    return "FlowTuple [srcNodeId=" + srcNodeId + ", targetNodeId=" + targetNodeId + ", tuple="
+        + tuple + "]";
   }
 
   private static List<FlowTuple> asFlowTuple(Map<FlowTuple.FlowKey, List<Edge>> edgesByFromTo) {
@@ -159,5 +144,6 @@ public class FlowTuple {
       return true;
     }
   }
+
 
 }

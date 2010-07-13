@@ -25,9 +25,16 @@ import java.awt.Color;
  */
 public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
 
+  private static final Color FLOW_CIRCLE_COLOR = new Color(215, 25, 28);
+
   @Override
   public Color getBackgroundColor() {
     return Color.white;
+  }
+
+  @Override
+  public Color getFlowCircleColor() {
+    return FLOW_CIRCLE_COLOR;
   }
 
 }
