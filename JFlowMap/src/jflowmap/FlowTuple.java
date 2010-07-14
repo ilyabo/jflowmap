@@ -18,6 +18,7 @@
 
 package jflowmap;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,11 +37,17 @@ public class FlowTuple {
   private final String srcNodeId;
   private final String targetNodeId;
   private final List<Edge> tuple;
+  private final FlowMapGraphSet fmgs;
+  private final double scalarOfWeightVector;
+  private final double weightTotal;
 
-  public FlowTuple(String srcNodeId, String targetNodeId, Iterable<Edge> edges) {
+  public FlowTuple(String srcNodeId, String targetNodeId, Iterable<Edge> edges, FlowMapGraphSet fmgs) {
     this.tuple = ImmutableList.copyOf(edges);  // note this list doesn't permit null elements
     this.srcNodeId = srcNodeId;
     this.targetNodeId = targetNodeId;
+    this.fmgs = fmgs;
+    this.scalarOfWeightVector = calcScalarOfWeightVector();
+    this.weightTotal = calcWeightTotal();
   }
 
   public String getSrcNodeId() {
@@ -55,6 +62,18 @@ public class FlowTuple {
     return tuple;
   }
 
+  public double getScalarOfWeightVector() {
+    return scalarOfWeightVector;
+  }
+
+  public double getWeightTotal() {
+    return weightTotal;
+  }
+
+  public FlowMapGraphSet getFlowMapGraphSet() {
+    return fmgs;
+  }
+
   public Edge getElementFor(Graph graph) {
     for (Edge e : tuple) {
       if (e.getGraph() == graph) {
@@ -63,6 +82,7 @@ public class FlowTuple {
     }
     return null;
   }
+
 
   /**
    * Return a list of flow tuples composed of edges having the same src and dest nodes.
@@ -84,7 +104,7 @@ public class FlowTuple {
         }
       }
     }
-    return asFlowTuple(edgesByFromTo);
+    return asFlowTuple(edgesByFromTo, fmgs);
   }
 
   @Override
@@ -93,10 +113,11 @@ public class FlowTuple {
         + tuple + "]";
   }
 
-  private static List<FlowTuple> asFlowTuple(Map<FlowTuple.FlowKey, List<Edge>> edgesByFromTo) {
+  private static List<FlowTuple> asFlowTuple(Map<FlowTuple.FlowKey, List<Edge>> edgesByFromTo,
+      FlowMapGraphSet fmgs) {
     List<FlowTuple> tuples = Lists.newArrayList();
     for (Map.Entry<FlowTuple.FlowKey, List<Edge>> e : edgesByFromTo.entrySet()) {
-      tuples.add(new FlowTuple(e.getKey().srcId, e.getKey().targetId, e.getValue()));
+      tuples.add(new FlowTuple(e.getKey().srcId, e.getKey().targetId, e.getValue(), fmgs));
     }
     return tuples;
   }
@@ -145,5 +166,46 @@ public class FlowTuple {
     }
   }
 
+  public static final Comparator<FlowTuple> COMPARE_WEIGHT_VECTORS = new Comparator<FlowTuple>() {
+    @Override
+    public int compare(FlowTuple t1, FlowTuple t2) {
+      return - (int)Math.signum(t1.getScalarOfWeightVector() - t2.getScalarOfWeightVector());
+    }
+  };
+
+  public static final Comparator<FlowTuple> COMPARE_WEIGHT_TOTALS = new Comparator<FlowTuple>() {
+    @Override
+    public int compare(FlowTuple t1, FlowTuple t2) {
+      return - (int)Math.signum(t1.getWeightTotal() - t2.getWeightTotal());
+    }
+  };
+
+  private double calcScalarOfWeightVector() {
+    double sum = 0;
+    for (FlowMapGraph fmg : fmgs.asList()) {
+      Edge e = getElementFor(fmg.getGraph());
+      if (e != null) {
+        double w = fmg.getEdgeWeight(e);
+        if (!Double.isNaN(w)) {
+          sum += w * w;
+        }
+      }
+    }
+    return Math.sqrt(sum);
+  }
+
+  private double calcWeightTotal() {
+    double sum = 0;
+    for (FlowMapGraph fmg : fmgs.asList()) {
+      Edge e = getElementFor(fmg.getGraph());
+      if (e != null) {
+        double w = fmg.getEdgeWeight(e);
+        if (!Double.isNaN(w)) {
+          sum += w;
+        }
+      }
+    }
+    return sum;
+  }
 
 }

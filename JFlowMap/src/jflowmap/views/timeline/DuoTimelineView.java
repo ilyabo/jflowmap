@@ -18,7 +18,9 @@
 
 package jflowmap.views.timeline;
 
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -37,9 +39,11 @@ import prefuse.util.ColorLib;
 import prefuse.util.ColorMap;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolox.swing.PScrollPane;
@@ -66,7 +70,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     VisualCanvas canvas = getVisualCanvas();
     canvas.setBackground(style.getBackgroundColor());
 
-    canvas.setPanEventHandler(null);
+//    canvas.setPanEventHandler(null);
 
     scrollPane = new PScrollPane(canvas);
     addTupleRows();
@@ -95,6 +99,7 @@ public class DuoTimelineView extends AbstractCanvasView {
         return true;
       }
     });
+    Collections.sort(tuples, FlowTuple.COMPARE_WEIGHT_TOTALS);
 
     if (logger.isDebugEnabled()) {
       logger.debug("Found tuples: " + tuples.size());
@@ -104,15 +109,31 @@ public class DuoTimelineView extends AbstractCanvasView {
 //    }
 
     ColorMap cm = new ColorMap(new int[] {
-        // ColorBrewer OrRd
-//        0xFFF7EC, 0xFEE8C8, 0xFDD49E, 0xFDBB84, 0xFC8D59, 0xEF6548, 0xD7301F, 0xB30000, 0x7F0000
+        // ColorBrewer  OrRd (sequential)
         ColorLib.rgb(255, 247, 236), ColorLib.rgb(254, 232, 200),
         ColorLib.rgb(253, 212, 158), ColorLib.rgb(253, 187, 132),
         ColorLib.rgb(252, 141, 89), ColorLib.rgb(239, 101, 72),
         ColorLib.rgb(215, 48, 31), ColorLib.rgb(179, 0, 0),
         ColorLib.rgb(127, 0, 0)
-     }, 0, 1);
-    List<FlowMapGraph> fmgs = flowMapGraphs.asList();
+
+        // ColorBrewer RdYlGn (diverging)
+//        ColorLib.rgb(0, 104, 55),
+//        ColorLib.rgb(26, 152, 80),
+//        ColorLib.rgb(102, 189, 99),
+//        ColorLib.rgb(166, 217, 106),
+//        ColorLib.rgb(217, 239, 139),
+//        ColorLib.rgb(255, 255, 191),
+//        ColorLib.rgb(254, 224, 139),
+//        ColorLib.rgb(253, 174, 97),
+//        ColorLib.rgb(244, 109, 67),
+//        ColorLib.rgb(215, 48, 39),
+//        ColorLib.rgb(165, 0, 38)
+
+ }, /*-1*/0, 1);
+
+    PInputEventListener tooltipListener = createTooltipListener(DTNode.class);
+
+    Iterable<FlowMapGraph> reversedFmgList = Iterables.reverse(flowMapGraphs.asList());
     PLayer layer = getVisualCanvas().getLayer();
     int row = 0, maxCol = 0;
     for (FlowTuple tuple : tuples) {
@@ -126,30 +147,35 @@ public class DuoTimelineView extends AbstractCanvasView {
       srcLabel.setY(y + (cellHeight - srcLabel.getFullBoundsReference().getHeight())/ 2);
       layer.addChild(srcLabel);
 
-      for (FlowMapGraph fmg : fmgs) {
+      for (FlowMapGraph fmg : reversedFmgList) {
         Edge edge = tuple.getElementFor(fmg.getGraph());
 
         double x = col * cellWidth;
 
-        if (edge == null) {
-          layer.addChild(createEmptyCellNode(x, y));
-        } else {
-          double nw = wstats.normalize(fmg.getEdgeWeight(edge));
+        PNode rect = null;
+        if (edge != null) {
+          double weight = fmg.getEdgeWeight(edge);
+          if (!Double.isNaN(weight)) {
+            double nw = wstats.normalizeLog(weight);
 
-//          row.addChild(new HalfMoonsNode(cellWidth, cellHeight, wstats.normalize(weight), rightNormalizedValue));
-//          PPath circle = new PPath(new Ellipse2D.Double(x, y, cellWidth * nw, cellHeight * nw), null);
+  //          row.addChild(new HalfMoonsNode(cellWidth, cellHeight, wstats.normalize(weight), rightNormalizedValue));
+  //          PPath circle = new PPath(new Ellipse2D.Double(x, y, cellWidth * nw, cellHeight * nw), null);
 
 
-//          double wh = Math.min(cellWidth, cellHeight);
-//          double r = Math.sqrt(Math.abs(nw)) * wh;
-//          PPath circle = new PPath(new Ellipse2D.Double(x + (cellWidth - r)/2, y + (cellHeight - r)/2, r, r), null);
-//          circle.setPaint(style.getFlowCircleColor());
+  //          double wh = Math.min(cellWidth, cellHeight);
+  //          double r = Math.sqrt(Math.abs(nw)) * wh;
+  //          PPath circle = new PPath(new Ellipse2D.Double(x + (cellWidth - r)/2, y + (cellHeight - r)/2, r, r), null);
+  //          circle.setPaint(style.getFlowCircleColor());
 
-          PPath rect = new PPath(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
-          rect.setPaint(ColorLib.getColor(cm.getColor(nw)));
-
-          layer.addChild(rect);
+            rect = new DTNode(x, y, weight, tuple, edge);
+            rect.setPaint(ColorLib.getColor(cm.getColor(nw)));
+            rect.addInputEventListener(tooltipListener);
+          }
         }
+        if (rect == null) {
+          rect = createEmptyCellNode(x, y);
+        }
+        layer.addChild(rect);
         col++;
         if (col > maxCol) maxCol = col;
       }
@@ -162,13 +188,68 @@ public class DuoTimelineView extends AbstractCanvasView {
       row++;
     }
 
+    // Year marks
+    int col = 0;
+    for (FlowMapGraph fmg : reversedFmgList) {
+      PText graphIdMark = new PText(fmg.getId());
+      graphIdMark.setX(col * cellWidth + (cellWidth - 20)/2);
+      graphIdMark.setY(-graphIdMark.getFont().getSize2D() - 2);
+      layer.addChild(graphIdMark);
+      col++;
+    }
+
     layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight * row)));
   }
+
+  private static class DTNode extends PPath {
+    private final double weight;
+    private final FlowTuple tuple;
+    private final Edge edge;
+
+    public DTNode(double x, double y, double weight, FlowTuple tuple, Edge edge) {
+      super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
+      this.weight = weight;
+      this.tuple = tuple;
+      this.edge = edge;
+    }
+
+    public String getTooltipHeader() {
+      return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
+             " " + FlowMapGraph.getGraphId(edge.getGraph());
+    }
+
+    public String getTooltipLabels() {
+      return tuple.getFlowMapGraphSet().getAttrSpec().getEdgeWeightAttr() + ":";
+    }
+
+    public String getTooltipValues() {
+      return Double.toString(
+          tuple.getFlowMapGraphSet().findFlowMapGraphFor(edge.getGraph()).getEdgeWeight(edge));
+    }
+
+  }
+
 
   private PNode createEmptyCellNode(double x, double y) {
     PNode emptyNode = new PNode();
     emptyNode.setBounds(x, y, cellWidth, cellHeight);
+    emptyNode.setPaint(Color.lightGray);
     return emptyNode;
+  }
+
+  @Override
+  protected String getTooltipHeaderFor(PNode node) {
+    return ((DTNode)node).getTooltipHeader();
+  }
+
+  @Override
+  protected String getTooltipLabelsFor(PNode node) {
+    return ((DTNode)node).getTooltipLabels();
+  }
+
+  @Override
+  protected String getTooltipValuesFor(PNode node) {
+    return ((DTNode)node).getTooltipValues();
   }
 
   @Override

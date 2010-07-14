@@ -12,7 +12,7 @@
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
 <mapEntry key="yNodeAttr" value="y"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="weightAttr" value="ritypnv"/>
+<mapEntry key="weightAttr" value="r"/>
 <mapEntry key="weightFilterMin" value="50"/>
 <mapEntry key="xNodeAttr" value="x"/>
 <mapEntry key="src" value="data/refugees/refugees_1975-2008.xml.gz"/>

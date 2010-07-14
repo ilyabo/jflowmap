@@ -91,6 +91,13 @@ public class FlowMapGraphSet {
     return null;
   }
 
+  /**
+   * If the given graph is in this set, returns the corresponding FlowMapGraph
+   */
+  public FlowMapGraph findFlowMapGraphFor(Graph graph) {
+    return findFlowMapGraphById(FlowMapGraph.getGraphId(graph));
+  }
+
   public Map<String, String> mapOfNodeIdsToAttrValues(String nodeAttr) {
     Map<String, String> nodeIdsToLabels = Maps.newLinkedHashMap();
     for (FlowMapGraph fmg : asList()) {

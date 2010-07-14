@@ -23,7 +23,14 @@ import java.awt.Frame;
 
 import javax.swing.JComponent;
 
+import jflowmap.util.piccolo.PNodes;
+import jflowmap.views.Tooltip;
 import jflowmap.views.VisualCanvas;
+import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.event.PInputEventListener;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -31,9 +38,16 @@ import jflowmap.views.VisualCanvas;
 public abstract class AbstractCanvasView implements IView {
 
   private final VisualCanvas visualCanvas;
+  private final Tooltip tooltipBox;
 
   public AbstractCanvasView() {
     this.visualCanvas = createVisualCanvas();
+
+    tooltipBox = new Tooltip();
+    tooltipBox.setVisible(false);
+    tooltipBox.setPickable(false);
+
+    this.visualCanvas.getCamera().addChild(tooltipBox);
   }
 
   protected VisualCanvas createVisualCanvas() {
@@ -66,6 +80,49 @@ public abstract class AbstractCanvasView implements IView {
       }
     }
     return null;
+  }
+
+  private void showTooltip(PNode node, String header, String labels, String values) {
+    PBounds bounds = node.getGlobalBounds();
+    tooltipBox.setText(header, labels, values);
+    tooltipBox.showTooltipAt(bounds.getMaxX(), bounds.getMaxY(), 0, 0);
+  }
+
+  private void hideTooltip() {
+    tooltipBox.setVisible(false);
+  }
+
+  protected String getTooltipHeaderFor(PNode node) {
+    return null;
+  }
+
+  protected String getTooltipLabelsFor(PNode node) {
+    return null;
+  }
+
+  protected String getTooltipValuesFor(PNode node) {
+    return null;
+  }
+
+  public PInputEventListener createTooltipListener(final Class<? extends PNode> nodeClass) {
+    return new PBasicInputEventHandler() {
+      @Override
+      public void mouseEntered(PInputEvent event) {
+        PNode node = PNodes.getAncestorOfType(event.getPickedNode(), nodeClass);
+        if (node != null) {
+          showTooltip(node, getTooltipHeaderFor(node),
+              getTooltipLabelsFor(node), getTooltipValuesFor(node));
+        }
+      }
+
+      @Override
+      public void mouseExited(PInputEvent event) {
+        PNode node = PNodes.getAncestorOfType(event.getPickedNode(), nodeClass);
+        if (node != null) {
+          hideTooltip();
+        }
+      }
+    };
   }
 
 }

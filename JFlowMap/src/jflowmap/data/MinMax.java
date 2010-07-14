@@ -136,10 +136,10 @@ public class MinMax {
     if (getMin() >= 0.0) {
       return normalize(value);
     }
-    checkInterval(value);
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
+    checkInterval(value);
     if (getMax() == getMin()) return 0.0;
     double r = Math.max(Math.abs(getMin()), Math.abs(getMax()));
     double rv = value / r;
@@ -171,6 +171,9 @@ public class MinMax {
    * In case if max == min the method always returns 1.
    */
   public double normalizeLog(double value) {
+    if (Double.isNaN(value)) {
+      return Double.NaN;
+    }
     checkInterval(value);
     if (getMax() == getMin()) return 1.0;
 //    double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
