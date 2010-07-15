@@ -30,13 +30,14 @@ import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
 import jflowmap.FlowTuple;
 import jflowmap.data.MinMax;
+import jflowmap.util.ColorUtils;
 import jflowmap.views.VisualCanvas;
 
 import org.apache.log4j.Logger;
 
 import prefuse.data.Edge;
+import prefuse.data.Node;
 import prefuse.util.ColorLib;
-import prefuse.util.ColorMap;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -108,7 +109,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //      System.out.println(tuple);
 //    }
 
-    ColorMap cm = new ColorMap(new int[] {
+    int[] colors = new int[] {
         // ColorBrewer  OrRd (sequential)
         ColorLib.rgb(255, 247, 236), ColorLib.rgb(254, 232, 200),
         ColorLib.rgb(253, 212, 158), ColorLib.rgb(253, 187, 132),
@@ -129,7 +130,8 @@ public class DuoTimelineView extends AbstractCanvasView {
 //        ColorLib.rgb(215, 48, 39),
 //        ColorLib.rgb(165, 0, 38)
 
- }, /*-1*/0, 1);
+    };
+//    ColorMap cm = new ColorMap(colors, /*-1*/0, 1);
 
     PInputEventListener tooltipListener = createTooltipListener(DTNode.class);
 
@@ -168,7 +170,8 @@ public class DuoTimelineView extends AbstractCanvasView {
   //          circle.setPaint(style.getFlowCircleColor());
 
             rect = new DTNode(x, y, weight, tuple, edge);
-            rect.setPaint(ColorLib.getColor(cm.getColor(nw)));
+//            rect.setPaint(ColorLib.getColor(cm.getColor(nw)));
+            rect.setPaint(ColorLib.getColor(ColorUtils.colorFromMap(colors, nw, 255)));
             rect.addInputEventListener(tooltipListener);
           }
         }
@@ -214,8 +217,14 @@ public class DuoTimelineView extends AbstractCanvasView {
     }
 
     public String getTooltipHeader() {
-      return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
-             " " + FlowMapGraph.getGraphId(edge.getGraph());
+//      return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
+//             " " + FlowMapGraph.getGraphId(edge.getGraph());
+      FlowMapGraph fmg = tuple.getFlowMapGraphSet().findFlowMapGraphFor(edge.getGraph());
+      Node src = edge.getSourceNode();
+      Node target = edge.getTargetNode();
+      String nodeLabelAttr = fmg.getNodeLabelAttr();
+      return src.getString(nodeLabelAttr) + " -> " + target.getString(nodeLabelAttr) +
+            " " + FlowMapGraph.getGraphId(edge.getGraph());
     }
 
     public String getTooltipLabels() {

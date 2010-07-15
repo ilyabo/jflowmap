@@ -57,6 +57,36 @@ public class ColorUtils {
     );
   }
 
+  public static int intColorBetween(int color1, int color2, double weight, int alpha) {
+    if (weight < 0.0  ||  weight > 1.0) {
+      throw new IllegalArgumentException("Weight must be between 0.0 and 1.0. Actual: " + weight);
+    }
+    int r1 = ColorLib.red(color1), r2 = ColorLib.red(color2);
+    int g1 = ColorLib.green(color1), g2 = ColorLib.green(color2);
+    int b1 = ColorLib.blue(color1), b2 = ColorLib.blue(color2);
+    return ColorLib.rgba(
+        (int)Math.round(r1 + (r2 - r1) * weight),
+        (int)Math.round(g1 + (g2 - g1) * weight),
+        (int)Math.round(b1 + (b2 - b1) * weight),
+        alpha);
+  }
+
+  public static int colorFromMap(int[] colors, double weight, int alpha) {
+    if (weight < 0.0  ||  weight > 1.0) {
+      throw new IllegalArgumentException("Weight must be between 0.0 and 1.0. Actual: " + weight);
+    }
+    int max = colors.length - 1;
+    int low = (int)Math.floor(max * weight);
+    int high = (int)Math.ceil(max * weight);
+    if (low == high) {
+      return colors[low];
+    } else {
+      double seg = 1.0 / max;
+      double segw = (weight - seg * low) / seg;
+      return intColorBetween(colors[low], colors[high], segw, alpha);
+    }
+  }
+
   public static Color farthestColor(Color from1, Color from2, Color to) {
     if (dist(from1, to) > dist(from2, to)) {
       return from1;
