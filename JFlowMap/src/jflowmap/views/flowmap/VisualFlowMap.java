@@ -82,7 +82,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 /**
  * @author Ilya Boyandin
  */
-public class VisualFlowMap extends PNode {
+public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(VisualFlowMap.class);

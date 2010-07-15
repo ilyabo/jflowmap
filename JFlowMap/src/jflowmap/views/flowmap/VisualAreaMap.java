@@ -29,23 +29,23 @@ import edu.umd.cs.piccolo.PNode;
 public class VisualAreaMap extends PNode {
 
   private static final long serialVersionUID = 1L;
-  private final VisualFlowMap visualFlowMap;
+  private final ColorSchemeAware colorSchemaAware;
   private final AreaMap mapModel;
 
   public VisualAreaMap(VisualAreaMap toCopy) {
-    this(toCopy.getVisualFlowMap(), toCopy.mapModel);
+    this(toCopy.getColorSchemaAware(), toCopy.mapModel);
   }
 
-  public VisualAreaMap(VisualFlowMap visualFlowMap, AreaMap mapModel) {
+  public VisualAreaMap(ColorSchemeAware cs, AreaMap mapModel) {
     this.mapModel = mapModel;
-    this.visualFlowMap = visualFlowMap;
+    this.colorSchemaAware = cs;
     for (Area area : mapModel.getAreas()) {
       addChild(new VisualArea(this, area));
     }
   }
 
-  public VisualFlowMap getVisualFlowMap() {
-    return visualFlowMap;
+  public ColorSchemeAware getColorSchemaAware() {
+    return colorSchemaAware;
   }
 
   public void updateColors() {

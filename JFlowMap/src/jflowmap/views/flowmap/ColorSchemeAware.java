@@ -16,32 +16,17 @@
  * limitations under the License.
  */
 
-package jflowmap;
+package jflowmap.views.flowmap;
 
-import java.io.IOException;
+import java.awt.Color;
 
-import jflowmap.models.map.AreaMap;
-import jflowmap.views.timeline.DuoTimelineView;
+import jflowmap.views.ColorCodes;
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineApplet extends BaseApplet {
+public interface ColorSchemeAware {
 
-  private DuoTimelineView jCombTimeline;
-
-  public DuoTimelineApplet() {
-  }
-
-
-  @Override
-  protected IView createView() throws IOException {
-    DatasetSpec ds = getDatasetSpec();
-    return new DuoTimelineView(
-        FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
-        AreaMap.load(getParameter("areaMapSrc"))
-        );
-  }
-
+  Color getColor(ColorCodes code);
 
 }

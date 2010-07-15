@@ -18,6 +18,10 @@
 
 package jflowmap.models.map;
 
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+
 /**
  * @author Ilya Boyandin
  *     Date: 25-Sep-2009
@@ -44,5 +48,17 @@ public class Area {
 
   public Polygon[] getPolygons() {
     return polygons.clone();
+  }
+
+  public Path2D asPath() {
+    GeneralPath path = new GeneralPath();
+    for (Polygon poly : polygons) {
+      Point2D[] points = poly.getPoints();
+      path.moveTo((float)points[0].getX(), (float)points[0].getY());
+      for (int i = 1; i < points.length; i++) {
+        path.lineTo((float)points[i].getX(), (float)points[i].getY());
+      }
+    }
+    return path;
   }
 }
