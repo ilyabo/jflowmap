@@ -86,6 +86,7 @@ public abstract class AbstractCanvasView implements IView {
     PBounds bounds = node.getGlobalBounds();
     tooltipBox.setText(header, labels, values);
     tooltipBox.showTooltipAt(bounds.getMaxX(), bounds.getMaxY(), 0, 0);
+    tooltipBox.moveToFront();
   }
 
   private void hideTooltip() {

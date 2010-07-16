@@ -93,15 +93,14 @@ public class VisualTimeline extends PNode {
     this.groupedFlowMapGraphs = groupedFlowMapGraphs;
     this.columnToGroupNodesBy = columnToGroupNodesBy;
 
-    for (FlowMapGraph flowMapGraph : flowMapGraphs.asList()) {
-      FlowMapSummaries.supplyNodesWithSummaries(flowMapGraph);
-    }
+    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraphs);
+
 //    FlowMapSummaries.supplyNodesWithDiffs(graphs, attrSpec);
     if (groupedFlowMapGraphs == null) {
       this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats());
     } else {
       for (FlowMapGraph flowMapGraph : groupedFlowMapGraphs.asList()) {
-        FlowMapSummaries.supplyNodesWithSummaries(flowMapGraph);
+        FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
       }
       this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats())
                          .mergeWith(nodeSummaryMinMax(groupedFlowMapGraphs.getStats()));

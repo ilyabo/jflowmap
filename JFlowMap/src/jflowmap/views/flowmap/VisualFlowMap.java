@@ -133,10 +133,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       visualFlowMapModel.setEdgeWeightFilterMin(minWeight);
     }
 
-  	visualEdgePaintFactory = new VisualEdgePaintFactory(this);
-  	visualEdgeStrokeFactory = new VisualEdgeStrokeFactory(this);
+    visualEdgePaintFactory = new VisualEdgePaintFactory(this);
+    visualEdgeStrokeFactory = new VisualEdgeStrokeFactory(this);
 
-  	nodeLayer = new PNode();
+    nodeLayer = new PNode();
     createNodeVisuals();
 
     edgeLayer = new PNode();
@@ -149,8 +149,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     tooltipBox.setVisible(false);
     tooltipBox.setPickable(false);
 
-	  visualLegend = new VisualLegend(this);
-	  setLegendVisible(showLegend);
+    visualLegend = new VisualLegend(this);
+    setLegendVisible(showLegend);
 
     initModelChangeListeners(visualFlowMapModel);
 //    fitInCameraView();
@@ -445,41 +445,37 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void initModelChangeListeners(VisualFlowMapModel model) {
-  	model.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent evt) {
-				String prop = evt.getPropertyName();
-				if (prop.equals(VisualFlowMapModel.PROPERTY_AUTO_ADJUST_COLOR_SCALE)  ||
-					prop.equals(VisualFlowMapModel.PROPERTY_EDGE_ALPHA)  ||
-					prop.equals(VisualFlowMapModel.PROPERTY_DIRECTION_MARKER_ALPHA)  ||
-					prop.equals(VisualFlowMapModel.PROPERTY_USE_LOG_COLOR_SCALE)  ||
-					prop.equals(VisualFlowMapModel.PROPERTY_FILL_EDGES_WITH_GRADIENT) ||
-					prop.equals(VisualFlowMapModel.PROPERTY_SHOW_DIRECTION_MARKERS)  ||
-					prop.equals(VisualFlowMapModel.PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS)  ||
-					prop.equals(VisualFlowMapModel.PROPERTY_DIRECTION_MARKER_SIZE)
-				) {
-					updateEdgeColors();
-					visualLegend.update();
-				} else if (prop.equals(VisualFlowMapModel.PROPERTY_MAX_EDGE_WIDTH)  ||
-				       prop.equals(VisualFlowMapModel.PROPERTY_USE_LOG_WIDTH_SCALE)
-				    ) {
-					updateEdgeWidths();
+    model.addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        String prop = evt.getPropertyName();
+        if (prop.equals(VisualFlowMapModel.PROPERTY_AUTO_ADJUST_COLOR_SCALE)
+            || prop.equals(VisualFlowMapModel.PROPERTY_EDGE_ALPHA)
+            || prop.equals(VisualFlowMapModel.PROPERTY_DIRECTION_MARKER_ALPHA)
+            || prop.equals(VisualFlowMapModel.PROPERTY_USE_LOG_COLOR_SCALE)
+            || prop.equals(VisualFlowMapModel.PROPERTY_FILL_EDGES_WITH_GRADIENT)
+            || prop.equals(VisualFlowMapModel.PROPERTY_SHOW_DIRECTION_MARKERS)
+            || prop.equals(VisualFlowMapModel.PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS)
+            || prop.equals(VisualFlowMapModel.PROPERTY_DIRECTION_MARKER_SIZE)) {
+          updateEdgeColors();
           visualLegend.update();
-				} else if (prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MIN) ||
-						prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MAX))
-				{
-	        updateEdgeVisibility();
-//	        updateEdgeColors();
-				} else if (prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MIN) ||
-						prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MAX))
-				{
-	        updateEdgeVisibility();
-				} else if (prop.equals(VisualFlowMapModel.PROPERTY_SHOW_NODES)) {
-				  updateNodeVisibility();
-				} else if (prop.equals(VisualFlowMapModel.PROPERTY_NODE_SIZE)) {
-				  updateNodeSizes();
-				}
-			}
-		});
+        } else if (prop.equals(VisualFlowMapModel.PROPERTY_MAX_EDGE_WIDTH)
+            || prop.equals(VisualFlowMapModel.PROPERTY_USE_LOG_WIDTH_SCALE)) {
+          updateEdgeWidths();
+          visualLegend.update();
+        } else if (prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MIN)
+            || prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MAX)) {
+          updateEdgeVisibility();
+          // updateEdgeColors();
+        } else if (prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MIN)
+            || prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MAX)) {
+          updateEdgeVisibility();
+        } else if (prop.equals(VisualFlowMapModel.PROPERTY_SHOW_NODES)) {
+          updateNodeVisibility();
+        } else if (prop.equals(VisualFlowMapModel.PROPERTY_NODE_SIZE)) {
+          updateNodeSizes();
+        }
+      }
+    });
   }
 
   public void updateColors() {
@@ -492,7 +488,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
 
-	protected void updateEdgeColors() {
+  protected void updateEdgeColors() {
     for (VisualEdge ve : visualEdges) {
       ve.updateEdgeColors();
     }

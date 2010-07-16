@@ -81,6 +81,10 @@ public class MinMax {
 //    return minLog;
 //  }
 
+  public static MinMax createFor(Iterable<Double> values) {
+    return createFor(values.iterator());
+  }
+
   public static MinMax createFor(Iterator<Double> it) {
     double max = Double.MIN_VALUE;
     double min = Double.MAX_VALUE;

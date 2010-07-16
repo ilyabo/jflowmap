@@ -38,16 +38,15 @@ public class FlowTuple {
   private final String targetNodeId;
   private final List<Edge> tuple;
   private final FlowMapGraphSet fmgs;
-  private final double scalarOfWeightVector;
-  private final double weightTotal;
+  private double scalarOfWeightVector = Double.NaN;
+  private double weightTotal = Double.NaN;
+  private double maxWeight = Double.NaN;
 
   public FlowTuple(String srcNodeId, String targetNodeId, Iterable<Edge> edges, FlowMapGraphSet fmgs) {
     this.tuple = ImmutableList.copyOf(edges);  // note this list doesn't permit null elements
     this.srcNodeId = srcNodeId;
     this.targetNodeId = targetNodeId;
     this.fmgs = fmgs;
-    this.scalarOfWeightVector = calcScalarOfWeightVector();
-    this.weightTotal = calcWeightTotal();
   }
 
   public String getSrcNodeId() {
@@ -63,11 +62,24 @@ public class FlowTuple {
   }
 
   public double getScalarOfWeightVector() {
+    if (Double.isNaN(scalarOfWeightVector)) {
+      scalarOfWeightVector = calcScalarOfWeightVector();
+    }
     return scalarOfWeightVector;
   }
 
   public double getWeightTotal() {
+    if (Double.isNaN(weightTotal)) {
+      weightTotal = calcWeightTotal();
+    }
     return weightTotal;
+  }
+
+  public double getMaxWeight() {
+    if (Double.isNaN(maxWeight)) {
+      maxWeight = calcMaxWeight();
+    }
+    return maxWeight;
   }
 
   public FlowMapGraphSet getFlowMapGraphSet() {
@@ -180,6 +192,13 @@ public class FlowTuple {
     }
   };
 
+  public static final Comparator<FlowTuple> COMPARE_MAX_WEIGHT = new Comparator<FlowTuple>() {
+    @Override
+    public int compare(FlowTuple t1, FlowTuple t2) {
+      return - (int)Math.signum(t1.getMaxWeight() - t2.getMaxWeight());
+    }
+  };
+
   private double calcScalarOfWeightVector() {
     double sum = 0;
     for (FlowMapGraph fmg : fmgs.asList()) {
@@ -206,6 +225,22 @@ public class FlowTuple {
       }
     }
     return sum;
+  }
+
+  private double calcMaxWeight() {
+    double max = Double.NaN;
+    for (FlowMapGraph fmg : fmgs.asList()) {
+      Edge e = getElementFor(fmg.getGraph());
+      if (e != null) {
+        double w = fmg.getEdgeWeight(e);
+        if (!Double.isNaN(w)) {
+          if (Double.isNaN(max) || w > max) {
+            max = w;
+          }
+        }
+      }
+    }
+    return max;
   }
 
 }

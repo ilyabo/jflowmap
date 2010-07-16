@@ -49,11 +49,17 @@ public class FlowMapSummaries {
   private FlowMapSummaries() {
   }
 
+  public static void supplyNodesWithWeightSummaries(FlowMapGraphSet flowMapGraphSet) {
+    for (FlowMapGraph flowMapGraph : flowMapGraphSet.asList()) {
+      FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
+    }
+  }
+
   /**
    * This method adds additional columns to the nodes table providing
    * the nodes with useful stats.
    */
-  public static void supplyNodesWithSummaries(FlowMapGraph flowMapGraph) {
+  public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph) {
     Graph g = flowMapGraph.getGraph();
 
     Table nodeTable = g.getNodeTable();
@@ -86,7 +92,6 @@ public class FlowMapSummaries {
         }
       }
     }
-
 
     nodeTable.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, double.class);
     nodeTable.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING, double.class);
@@ -194,14 +199,38 @@ public class FlowMapSummaries {
     }
   }
 
-
-
   private static double diff(double current, double prev) {
     return (current - prev);
   }
 
   private static double diffPercentage(double current, double prev) {
     return (current - prev)/prev;  // TODO: diffPercentage (ensure it works properly; check for division by zero)
+  }
+
+  /**
+   * Find max outgoing or incoming summary weight for every node over the set.
+   * @param flowMapGraphSet Must be supplied with summaries
+   * (invoke {@link#supplyNodesWithWeightSummaries(FlowMapGraphSet)} first)
+   * @return Map: (nodeId -> maxWeight)
+   */
+  public static Map<String, Double> findMaxWeightForEachNode(FlowMapGraphSet flowMapGraphSet,
+      boolean incomingNotOutgoing) {
+    Map<String, Double> map = Maps.newHashMap();
+    for (FlowMapGraph fmg : flowMapGraphSet.asList()) {
+      for (Node node : fmg.nodes()) {
+        double sumW = node.getDouble(incomingNotOutgoing ?
+            FlowMapSummaries.NODE_COLUMN__SUM_INCOMING :
+              FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
+        if (!Double.isNaN(sumW)) {
+          String nodeId = FlowMapGraph.getNodeId(node);
+          Double max = map.get(nodeId);
+          if (max == null || max.isNaN() || sumW > max.doubleValue()) {
+            map.put(nodeId, sumW);
+          }
+        }
+      }
+    }
+    return map;
   }
 
 }

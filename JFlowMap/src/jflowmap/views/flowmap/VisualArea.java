@@ -32,11 +32,17 @@ public class VisualArea extends PPath {
   private static final long serialVersionUID = 1L;
   private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
   private final VisualAreaMap visualAreaMap;
+  private final Area area;
 
   public VisualArea(VisualAreaMap visualAreaMap, Area area) {
     super(area.asPath());
     this.visualAreaMap = visualAreaMap;
+    this.area = area;
     updateColors();
+  }
+
+  public Area getArea() {
+    return area;
   }
 
   public void updateColors() {

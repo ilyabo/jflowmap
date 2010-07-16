@@ -20,6 +20,7 @@ package jflowmap;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,6 +80,34 @@ public class FlowMapGraph {
       logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
     }
     this.stats = stats;
+  }
+
+  public Iterable<Node> nodes() {
+    return new Iterable<Node>() {
+      @Override
+      public Iterator<Node> iterator() {
+        return new Iterator<Node>() {
+          final Graph g = getGraph();
+          final int count = g.getNodeCount();
+          int pos = 0;
+          @Override
+          public boolean hasNext() {
+            return pos < count - 1;
+          }
+
+          @Override
+          public Node next() {
+            return g.getNode(pos++);
+          }
+
+          @Override
+          public void remove() {
+            throw new UnsupportedOperationException();
+          }
+
+        };
+      }
+    };
   }
 
   public String getId() {
