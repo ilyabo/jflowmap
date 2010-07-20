@@ -42,6 +42,16 @@
         </antcall>
     </target>
 
+   <target name="build-duotimeline-applet">
+        <antcall target="_build">
+            <param name="app.name" value="duotimeline-applet"/>
+            <param name="mainclass" value="jflowmap.DuoTimelineApplet"/>
+            <param name="mode" value="applet"/>
+            <param name="include.data.explicit" value="data/refugees/refugees_1975-2008.xml.gz,data/refugees/countries-areas.xml.gz"/>
+        </antcall>
+        <antcall target="sign"/>
+    </target>
+
 	<target name="_build" depends="mkdirs, compile, make-jar, proguard, add-manifest" />
 	<!--
 	<target name="_build" depends="mkdirs, clean, compile, make-jar, proguard, add-manifest" />
