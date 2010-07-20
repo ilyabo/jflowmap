@@ -81,7 +81,7 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
 public class DuoTimelineView extends AbstractCanvasView {
 
   private static final int MAX_VISIBLE_TUPLES = 1000;
-  private static final double SCALE = .5;
+  private static final double MAP_SCALE = .65;
   private static final Font NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
   private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 15);
 
@@ -206,8 +206,8 @@ public class DuoTimelineView extends AbstractCanvasView {
       lineIn.setVisible(inVis);
       lineIn.setPickable(inVis);
       lineIn.setPoint(0,
-          srcMapPoint.getX() * SCALE + sourceVisualAreaMap.getXOffset(),
-          srcMapPoint.getY() * SCALE + sourceVisualAreaMap.getYOffset());
+          srcMapPoint.getX() * MAP_SCALE + sourceVisualAreaMap.getXOffset(),
+          srcMapPoint.getY() * MAP_SCALE + sourceVisualAreaMap.getYOffset());
       lineIn.setPoint(1, matrixIn.x - 10, matrixIn.y);
       lineIn.setPoint(2, matrixIn.x, matrixIn.y);
 
@@ -219,8 +219,8 @@ public class DuoTimelineView extends AbstractCanvasView {
       lineOut.setVisible(outVis);
       lineOut.setPickable(outVis);
       lineOut.setPoint(0,
-          targetMapPoint.getX() * SCALE + targetVisualAreaMap.getXOffset(),
-          targetMapPoint.getY() * SCALE + targetVisualAreaMap.getYOffset());
+          targetMapPoint.getX() * MAP_SCALE + targetVisualAreaMap.getXOffset(),
+          targetMapPoint.getY() * MAP_SCALE + targetVisualAreaMap.getYOffset());
       lineOut.setPoint(1, matrixOut.x + 10, matrixOut.y);
       lineOut.setPoint(2, matrixOut.x, matrixOut.y);
 
@@ -253,8 +253,8 @@ public class DuoTimelineView extends AbstractCanvasView {
     sourceVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap);
     targetVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap);
 
-    sourceVisualAreaMap.setScale(SCALE);
-    targetVisualAreaMap.setScale(SCALE);
+    sourceVisualAreaMap.setScale(MAP_SCALE);
+    targetVisualAreaMap.setScale(MAP_SCALE);
 
 //    sourcesVisualAreaMap.translate(800, 0);
 

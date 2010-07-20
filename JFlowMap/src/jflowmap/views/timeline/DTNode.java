@@ -53,8 +53,8 @@ class DTNode extends PPath {
       Node src = edge.getSourceNode();
       Node target = edge.getTargetNode();
       String nodeLabelAttr = fmg.getNodeLabelAttr();
-      return src.getString(nodeLabelAttr) + " -> " + target.getString(nodeLabelAttr) +
-            " " + FlowMapGraph.getGraphId(edge.getGraph());
+      return FlowMapGraph.getGraphId(edge.getGraph()) + ": " +
+             src.getString(nodeLabelAttr) + " -> " + target.getString(nodeLabelAttr);
     }
 
     public String getTooltipLabels() {
