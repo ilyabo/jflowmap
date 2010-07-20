@@ -451,17 +451,13 @@ public class DuoTimelineView extends AbstractCanvasView {
     tuples = flowMapGraphs.listFlowTuples(new Predicate<Edge>() {
       @Override
       public boolean apply(Edge e) {
-//        String nodeId = FlowMapGraph.getNodeId(e.getTargetNode());
-//        return (nodeId.equals("CHE") || nodeId.equals("AUT"));
-
-//        String nodeId = FlowMapGraph.getNodeId(e.getSourceNode());
-//        return (nodeId.equals("IRQ") || nodeId.equals("AFG"));
-
         return true;
       }
     });
     Collections.sort(tuples, FlowTuple.COMPARE_MAX_WEIGHT);
-    tuples = tuples.subList(0, MAX_VISIBLE_TUPLES);
+    if (tuples.size() > MAX_VISIBLE_TUPLES) {
+      tuples = tuples.subList(0, MAX_VISIBLE_TUPLES);
+    }
   }
 
   @Override

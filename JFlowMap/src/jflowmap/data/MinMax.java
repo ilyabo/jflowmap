@@ -86,6 +86,9 @@ public class MinMax {
   }
 
   public static MinMax createFor(Iterator<Double> it) {
+    if (!it.hasNext()) {
+      return new MinMax(Double.NaN, Double.NaN, Double.NaN, 0);
+    }
     double max = Double.MIN_VALUE;
     double min = Double.MAX_VALUE;
     double sum = 0;

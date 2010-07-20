@@ -21,7 +21,7 @@ package jflowmap;
 import java.io.IOException;
 import java.util.List;
 
-import jflowmap.data.GraphMLReader2;
+import jflowmap.data.GraphMLReader3;
 
 import org.apache.log4j.Logger;
 
@@ -42,7 +42,7 @@ public class GeoClusteringOfCountries {
   private static Logger logger = Logger.getLogger(GeoClusteringOfCountries.class);
 
   public static void main(String[] args) throws IOException {
-    GraphMLReader2 reader = new GraphMLReader2();
+    GraphMLReader3 reader = new GraphMLReader3();
     Graph g = reader.readFromFile("data/refugees/refugees-2008.xml.gz").iterator().next();
 
     List<Country> countries = Lists.newArrayList();

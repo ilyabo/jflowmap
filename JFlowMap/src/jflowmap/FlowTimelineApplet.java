@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import jflowmap.data.GraphMLReader2;
+import jflowmap.data.GraphMLReader3;
 import jflowmap.data.XmlRegionsReader;
 import jflowmap.views.timeline.FlowTimelineView;
 import prefuse.data.Graph;
@@ -60,7 +60,7 @@ public class FlowTimelineApplet extends BaseApplet {
 
   public static FlowTimelineView loadGraphsWithRegions(String filename) throws IOException {
 
-    List<Graph> graphs = Lists.newArrayList(new GraphMLReader2().readFromFile(filename));
+    List<Graph> graphs = Lists.newArrayList(new GraphMLReader3().readFromFile(filename));
 
     Collections.reverse(graphs);
 

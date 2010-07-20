@@ -43,7 +43,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import jflowmap.data.GraphMLReader2;
+import jflowmap.data.GraphMLReader3;
 import jflowmap.ui.actions.OpenFileAction;
 
 import org.apache.log4j.Logger;
@@ -199,7 +199,7 @@ public class FlowMapMain extends JFrame {
 
   private Iterable<Graph> loadFile(String filename) throws IOException {
     logger.info("Opening file: " + filename);
-    Iterable<Graph> graphs = new GraphMLReader2().readFromFile(filename);
+    Iterable<Graph> graphs = new GraphMLReader3().readFromFile(filename);
     return graphs;
   }
 

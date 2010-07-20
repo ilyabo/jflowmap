@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.GraphMLReader2;
+import jflowmap.data.GraphMLReader3;
 
 import org.apache.log4j.Logger;
 
@@ -139,7 +139,7 @@ public class FlowMapGraphSet {
 
   private static Iterable<Graph> loadGraphs(String filename) throws IOException {
     logger.info("Loading '" + filename + "'");
-    Iterable<Graph> graphs = new GraphMLReader2().readFromFile(filename);
+    Iterable<Graph> graphs = new GraphMLReader3().readFromFile(filename);
     logger.info("Number of graphs loaded: " + Iterables.size(graphs));
     return graphs;
   }

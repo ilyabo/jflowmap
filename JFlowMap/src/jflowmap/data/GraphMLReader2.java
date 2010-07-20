@@ -21,7 +21,6 @@ package jflowmap.data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ import com.google.common.collect.Maps;
 /**
  * @author Ilya Boyandin
  */
-public class GraphMLReader2 {
+class GraphMLReader2 {
 
   private static final String DEFAULT_CHARSET = "utf-8";
 
@@ -108,7 +107,7 @@ public class GraphMLReader2 {
       String id = keyNode.getAttributeValue(null, "id");
       String forWhat = keyNode.getAttributeValue(null, "for");
       String name = keyNode.getAttributeValue(null, "attr.name");
-      Types type = Types.parse(keyNode.getAttributeValue(null, "attr.type"));
+      GraphMLDataTypes type = GraphMLDataTypes.parse(keyNode.getAttributeValue(null, "attr.type"));
 
       attrIdToName.put(id, name);
 
@@ -232,35 +231,6 @@ public class GraphMLReader2 {
       return dataParser.getParser(klass).parse(defaultValStr);
     } catch (DataParseException e) {
       throw new IOException(e);
-    }
-  }
-
-  enum Types {
-    INT(int.class, "int", "integer"),
-    LONG(long.class, "long"),
-    FLOAT(float.class, "float"),
-    DOUBLE(double.class, "double", "real"),
-    BOOLEAN(boolean.class, "boolean"),
-    STRING(String.class, "string"),
-    DATE(Date.class, "date");
-
-    private final Class<?> klass;
-    private final String[] names;
-
-    private Types(Class<?> klass, String ... names) {
-      this.klass = klass;
-      this.names = names;
-    }
-
-    public static Types parse(String typeName) {
-      for (Types type : values()) {
-        for (String name : type.names) {
-          if (typeName.equals(name)) {
-            return type;
-          }
-        }
-      }
-      throw new IllegalArgumentException("Type " + typeName + " is not supported");
     }
   }
 
