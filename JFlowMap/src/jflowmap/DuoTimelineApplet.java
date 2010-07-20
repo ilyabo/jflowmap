@@ -28,8 +28,6 @@ import jflowmap.views.timeline.DuoTimelineView;
  */
 public class DuoTimelineApplet extends BaseApplet {
 
-  private DuoTimelineView jCombTimeline;
-
   public DuoTimelineApplet() {
   }
 

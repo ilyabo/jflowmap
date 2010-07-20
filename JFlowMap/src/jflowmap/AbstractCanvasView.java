@@ -23,13 +23,11 @@ import java.awt.Frame;
 
 import javax.swing.JComponent;
 
-import jflowmap.util.piccolo.PNodes;
+import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.Tooltip;
 import jflowmap.views.VisualCanvas;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -82,14 +80,14 @@ public abstract class AbstractCanvasView implements IView {
     return null;
   }
 
-  private void showTooltip(PNode node, String header, String labels, String values) {
+  protected void showTooltip(PNode node, String header, String labels, String values) {
     PBounds bounds = node.getGlobalBounds();
     tooltipBox.setText(header, labels, values);
     tooltipBox.showTooltipAt(bounds.getMaxX(), bounds.getMaxY(), 0, 0);
     tooltipBox.moveToFront();
   }
 
-  private void hideTooltip() {
+  protected void hideTooltip() {
     tooltipBox.setVisible(false);
   }
 
@@ -105,23 +103,19 @@ public abstract class AbstractCanvasView implements IView {
     return null;
   }
 
-  public PInputEventListener createTooltipListener(final Class<? extends PNode> nodeClass) {
-    return new PBasicInputEventHandler() {
+  public <T extends PNode> PTypedBasicInputEventHandler<T> createTooltipListener(
+      final Class<T> nodeClass) {
+    return new PTypedBasicInputEventHandler<T>(nodeClass) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        PNode node = PNodes.getAncestorOfType(event.getPickedNode(), nodeClass);
-        if (node != null) {
-          showTooltip(node, getTooltipHeaderFor(node),
-              getTooltipLabelsFor(node), getTooltipValuesFor(node));
-        }
+        T node = node(event);
+        showTooltip(node, getTooltipHeaderFor(node),
+            getTooltipLabelsFor(node), getTooltipValuesFor(node));
       }
 
       @Override
       public void mouseExited(PInputEvent event) {
-        PNode node = PNodes.getAncestorOfType(event.getPickedNode(), nodeClass);
-        if (node != null) {
-          hideTooltip();
-        }
+        hideTooltip();
       }
     };
   }

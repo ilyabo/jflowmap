@@ -16,26 +16,29 @@
  * limitations under the License.
  */
 
-package jflowmap.views.timeline;
+package jflowmap.util.piccolo;
 
-import java.awt.Color;
-import java.awt.Paint;
+import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
 
 /**
  * @author Ilya Boyandin
  */
-public interface DuoTimelineStyle {
+public abstract class PTypedBasicInputEventHandler<T extends PNode> extends PBasicInputEventHandler {
+  private final Class<T> nodeClass;
 
-  Color getBackgroundColor();
+  public PTypedBasicInputEventHandler(Class<T> nodeClass) {
+    this.nodeClass = nodeClass;
+  }
 
-  Color getFlowCircleColor();
+  protected T node(PInputEvent event) {
+    return PPickPaths.topmostNodeOfType(event.getPath(), nodeClass);
+  }
 
-  Paint getMapToMatrixLineHighlightedColor();
-
-  Color getMapToMatrixLineLinesColor();
-
-  Color getMissingValueColor();
-
-  int[] getValueColors();
+  @Override
+  public boolean acceptsEvent(PInputEvent event, int type) {
+    return super.acceptsEvent(event, type)  &&  node(event) != null;
+  }
 
 }

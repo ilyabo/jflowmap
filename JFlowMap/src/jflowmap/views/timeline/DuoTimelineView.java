@@ -45,6 +45,7 @@ import jflowmap.models.map.AreaMap;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
+import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.ColorSchemeAware;
@@ -86,8 +87,8 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   public static Logger logger = Logger.getLogger(DuoTimelineView.class);
 
-  private static final double cellWidth = 35;
-  private static final double cellHeight = 35;
+  static final double cellWidth = 35;
+  static final double cellHeight = 35;
 
   private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
   private final FlowMapGraphSet flowMapGraphs;
@@ -170,18 +171,18 @@ public class DuoTimelineView extends AbstractCanvasView {
   private void createMapToMatrixLines() {
     tupleLines = Maps.newHashMap();
     BasicStroke lineStroke = new BasicStroke(2);
-    Color lineColor = new Color(0f, 0f, 0f, .05f);
     for (FlowTuple tuple : tuples) {
-      tupleLines.put(tuple, Pair.of(createMapToMatrixLine(lineStroke, lineColor), createMapToMatrixLine(lineStroke, lineColor)));
+      tupleLines.put(tuple, Pair.of(createMapToMatrixLine(lineStroke),
+          createMapToMatrixLine(lineStroke)));
     }
   }
 
-  private PLine createMapToMatrixLine(BasicStroke lineStroke, Color lineColor) {
+  private PLine createMapToMatrixLine(BasicStroke lineStroke) {
     PLine lineIn = new PLine();
     for (int i = 0; i < 3; i++) {
       lineIn.addPoint(i, 0, 0);
     }
-    lineIn.setStrokePaint(lineColor);
+    lineIn.setStrokePaint(style.getMapToMatrixLineLinesColor());
     lineIn.setStroke(lineStroke);
     getCamera().addChild(lineIn);
     return lineIn;
@@ -261,8 +262,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     addMouseOverListenersToMaps(targetVisualAreaMap);
 
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraphs);
-    colorizeMap(sourceVisualAreaMap, false);
-    colorizeMap(targetVisualAreaMap, true);
+    updateMapColors(null);
 
     getCamera().addChild(sourceVisualAreaMap);
     getCamera().addChild(targetVisualAreaMap);
@@ -274,6 +274,11 @@ public class DuoTimelineView extends AbstractCanvasView {
 //    PNodes.moveTo(sourcesVisualAreaMap, getCamera().getViewBounds().getMaxX() -
 //        sourcesVisualAreaMap.getFullBoundsReference().getWidth(), 0);
 //  }
+
+  private void updateMapColors(FlowMapGraph fmg) {
+    colorizeMap(sourceVisualAreaMap, fmg, false);
+    colorizeMap(targetVisualAreaMap, fmg, true);
+  }
 
   private void addMouseOverListenersToMaps(VisualAreaMap visualAreaMap) {
     PBasicInputEventHandler listener = new PBasicInputEventHandler() {
@@ -300,15 +305,25 @@ public class DuoTimelineView extends AbstractCanvasView {
     }
   }
 
-  private void colorizeMap(VisualAreaMap visualAreaMap, boolean incomingNotOutgoing) {
-    Map<String, Double> maxWeightMap = FlowMapSummaries.findMaxWeightForEachNode(
-        flowMapGraphs, incomingNotOutgoing);
-    MinMax mm = MinMax.createFor(maxWeightMap.values());
-
-    for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
-      Double maxW = maxWeightMap.get(va.getArea().getId());
-      if (maxW == null) maxW = Double.NaN;
-      va.setPaint(getColorForWeight(maxW, mm));
+  private void colorizeMap(VisualAreaMap visualAreaMap, FlowMapGraph fmg,
+      boolean incomingNotOutgoing) {
+    if (fmg == null) {
+      for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+        va.setPaint(style.getMissingValueColor());
+      }
+    } else {
+      String summaryNodeAttr = (incomingNotOutgoing ?
+              FlowMapSummaries.NODE_COLUMN__SUM_INCOMING :
+                FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
+      MinMax mm = fmg.getStats().getNodeAttrStats(summaryNodeAttr);
+      for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+        Node node = FlowMapGraph.findNodeById(fmg.getGraph(), va.getArea().getId());
+        if (node != null) {
+          Double w = node.getDouble(summaryNodeAttr);
+          if (w == null) w = Double.NaN;
+          va.setPaint(getColorForWeight(w, mm));
+        }
+      }
     }
   }
 
@@ -327,27 +342,6 @@ public class DuoTimelineView extends AbstractCanvasView {
     return "DuoTimeline";
   }
 
-  private static final int[] colors = new int[] {
-      // ColorBrewer  OrRd (sequential)
-      ColorLib.rgb(255, 247, 236), ColorLib.rgb(254, 232, 200),
-      ColorLib.rgb(253, 212, 158), ColorLib.rgb(253, 187, 132),
-      ColorLib.rgb(252, 141, 89), ColorLib.rgb(239, 101, 72),
-      ColorLib.rgb(215, 48, 31), ColorLib.rgb(179, 0, 0),
-      ColorLib.rgb(127, 0, 0)
-
-      // ColorBrewer RdYlGn (diverging)
-//      ColorLib.rgb(0, 104, 55),
-//      ColorLib.rgb(26, 152, 80),
-//      ColorLib.rgb(102, 189, 99),
-//      ColorLib.rgb(166, 217, 106),
-//      ColorLib.rgb(217, 239, 139),
-//      ColorLib.rgb(255, 255, 191),
-//      ColorLib.rgb(254, 224, 139),
-//      ColorLib.rgb(253, 174, 97),
-//      ColorLib.rgb(244, 109, 67),
-//      ColorLib.rgb(215, 48, 39),
-//      ColorLib.rgb(165, 0, 38)
-  };
 
   private void createTupleRows() {
     updateTuples();
@@ -355,6 +349,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //    ColorMap cm = new ColorMap(colors, /*-1*/0, 1);
 
     PInputEventListener tooltipListener = createTooltipListener(DTNode.class);
+    PInputEventListener highlightListener = createMapToMatrixLineHighlightListener();
 
     Iterable<FlowMapGraph> reversedFmgList = Iterables.reverse(flowMapGraphs.asList());
     PLayer layer = getVisualCanvas().getLayer();
@@ -376,30 +371,20 @@ public class DuoTimelineView extends AbstractCanvasView {
 
         double x = col * cellWidth;
 
-        PNode rect = null;
-        if (edge != null) {
-          double weight = fmg.getEdgeWeight(edge);
-          if (!Double.isNaN(weight)) {
-
-  //          row.addChild(new HalfMoonsNode(cellWidth, cellHeight, wstats.normalize(weight), rightNormalizedValue));
-  //          PPath circle = new PPath(new Ellipse2D.Double(x, y, cellWidth * nw, cellHeight * nw), null);
-
-
-  //          double wh = Math.min(cellWidth, cellHeight);
-  //          double r = Math.sqrt(Math.abs(nw)) * wh;
-  //          PPath circle = new PPath(new Ellipse2D.Double(x + (cellWidth - r)/2, y + (cellHeight - r)/2, r, r), null);
-  //          circle.setPaint(style.getFlowCircleColor());
-
-            rect = new DTNode(x, y, weight, tuple, edge);
-//            rect.setPaint(ColorLib.getColor(cm.getColor(nw)));
-            rect.setPaint(getColorForWeight(weight, wstats));
-            rect.addInputEventListener(tooltipListener);
-          }
+        DTNode rect = new DTNode(x, y, tuple, fmg, edge);
+        double weight;
+        if (edge == null) {
+          weight = Double.NaN;
+        } else {
+          weight = fmg.getEdgeWeight(edge);
         }
-        if (rect == null) {
-          rect = createEmptyCellNode(x, y);
+        rect.setPaint(getColorForWeight(weight, wstats));
+        rect.addInputEventListener(highlightListener);
+        if (!Double.isNaN(weight)) {
+          rect.addInputEventListener(tooltipListener);
         }
         layer.addChild(rect);
+
         col++;
         if (col > maxCol) maxCol = col;
       }
@@ -428,11 +413,34 @@ public class DuoTimelineView extends AbstractCanvasView {
     layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight * row)));
   }
 
+  private PTypedBasicInputEventHandler<DTNode> createMapToMatrixLineHighlightListener() {
+    return new PTypedBasicInputEventHandler<DTNode>(DTNode.class) {
+      @Override
+      public void mouseEntered(PInputEvent event) {
+        updateMapColors(node(event).getFlowMapGraph());
+        lines(event).first().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+        lines(event).second().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+      }
+
+      @Override
+      public void mouseExited(PInputEvent event) {
+        updateMapColors(null);
+        lines(event).first().setStrokePaint(style.getMapToMatrixLineLinesColor());
+        lines(event).second().setStrokePaint(style.getMapToMatrixLineLinesColor());
+      }
+
+      private Pair<PLine, PLine> lines(PInputEvent event) {
+        return tupleLines.get(node(event).getTuple());
+      }
+    };
+  }
+
   private Color getColorForWeight(double weight, MinMax wstats) {
     if (Double.isNaN(weight)) {
-      return Color.lightGray;
+      return style.getMissingValueColor();
     }
-    return ColorLib.getColor(ColorUtils.colorFromMap(colors, wstats.normalizeLog(weight), 255));
+    return ColorLib.getColor(ColorUtils.colorFromMap(style.getValueColors(),
+        wstats.normalizeLog(weight), 255));
   }
 
   private double getTupleY(int row) {
@@ -454,48 +462,6 @@ public class DuoTimelineView extends AbstractCanvasView {
     });
     Collections.sort(tuples, FlowTuple.COMPARE_MAX_WEIGHT);
     tuples = tuples.subList(0, MAX_VISIBLE_TUPLES);
-  }
-
-  private static class DTNode extends PPath {
-    private final double weight;
-    private final FlowTuple tuple;
-    private final Edge edge;
-
-    public DTNode(double x, double y, double weight, FlowTuple tuple, Edge edge) {
-      super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
-      this.weight = weight;
-      this.tuple = tuple;
-      this.edge = edge;
-    }
-
-    public String getTooltipHeader() {
-//      return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
-//             " " + FlowMapGraph.getGraphId(edge.getGraph());
-      FlowMapGraph fmg = tuple.getFlowMapGraphSet().findFlowMapGraphFor(edge.getGraph());
-      Node src = edge.getSourceNode();
-      Node target = edge.getTargetNode();
-      String nodeLabelAttr = fmg.getNodeLabelAttr();
-      return src.getString(nodeLabelAttr) + " -> " + target.getString(nodeLabelAttr) +
-            " " + FlowMapGraph.getGraphId(edge.getGraph());
-    }
-
-    public String getTooltipLabels() {
-      return tuple.getFlowMapGraphSet().getAttrSpec().getEdgeWeightAttr() + ":";
-    }
-
-    public String getTooltipValues() {
-      return Double.toString(
-          tuple.getFlowMapGraphSet().findFlowMapGraphFor(edge.getGraph()).getEdgeWeight(edge));
-    }
-
-  }
-
-
-  private PNode createEmptyCellNode(double x, double y) {
-    PNode emptyNode = new PNode();
-    emptyNode.setBounds(x, y, cellWidth, cellHeight);
-    emptyNode.setPaint(Color.lightGray);
-    return emptyNode;
   }
 
   @Override
@@ -520,19 +486,21 @@ public class DuoTimelineView extends AbstractCanvasView {
 
     PCamera camera = getCamera();
     PBounds viewBounds = camera.getViewBounds();
+//    PBounds viewBounds = new PBounds(0, 0, getViewComponent().getWidth(), getViewComponent().getHeight());
 
     sourceVisualAreaMap.setOffset(
         0, (viewBounds.getHeight() - srcBounds.getHeight())/2
     );
     targetVisualAreaMap.setOffset(
-        getCamera().getViewBounds().getMaxX() - srcBounds.getWidth()
+        viewBounds.getMaxX() - srcBounds.getWidth()
+        - scrollPane.getVerticalScrollBar().getWidth()
         ,  (viewBounds.getHeight() - trgBounds.getHeight())/2
         );
 
     srcBounds = sourceVisualAreaMap.getFullBoundsReference();
     trgBounds = targetVisualAreaMap.getFullBoundsReference();
 
-    double middleGap = trgBounds.getMinX() - srcBounds.getMaxX();
+    double middleGap = (trgBounds.getMinX() - srcBounds.getMaxX()) * .75;
 
     updateMapToMatrixLines();
     PBounds boundRect = getVisualCanvas().getLayer().getFullBounds();
