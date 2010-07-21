@@ -5,6 +5,7 @@
 	<property file="build.properties"/>
 
     <property name="app.name" value="JFlowMap"/>
+    <property name="cert.name" value="JFlowMap"/>
 	<property name="path.src" value="src"/>
 	<property name="path.classes" value="bin"/>
 	<property name="path.lib" value="lib"/>
@@ -47,9 +48,13 @@
             <param name="app.name" value="duotimeline-applet"/>
             <param name="mainclass" value="jflowmap.DuoTimelineApplet"/>
             <param name="mode" value="applet"/>
-            <param name="include.data.explicit" value="data/refugees/refugees_1975-2008.xml.gz,data/refugees/countries-areas.xml.gz"/>
+            <param name="include.applet.meta-inf" value="true"/>
         </antcall>
-        <antcall target="sign"/>
+   	<!--
+        <antcall target="sign">
+            <param name="app.name" value="duotimeline-applet"/>
+        </antcall>
+        -->
     </target>
 
 	<target name="_build" depends="mkdirs, compile, make-jar, proguard, add-manifest" />
@@ -77,7 +82,7 @@
 	</target>
 
 	<target name="compile">
-		<javac destdir="${path.classes}" failonerror="true" debug="true" target="1.5">
+		<javac destdir="${path.classes}" failonerror="true" debug="true" target="1.6">
 			<src path="${path.src}"/>
 			<classpath refid="master-classpath"/>
 		</javac>
@@ -107,7 +112,8 @@
 	</target>
 
    <target name="make-jar">
-        <copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true"/>
+        <copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true" failonerror="false"/>
+        <copy file="log4j-${mode}.xml" tofile="${path.build}/log4j.xml" overwrite="true" failonerror="false" />
         <jar basedir="." jarfile="${path.build}/${app.name}-no-libs.jar">
             <exclude name="**/*" />
             <fileset dir="${path.classes}">
@@ -119,6 +125,7 @@
             </fileset>
             <fileset dir="${path.build}">
                 <include name="log4j.properties"/>
+                <include name="log4j.xml"/>
             </fileset>
             <fileset dir=".">
                 <include name="license.txt"/>
@@ -138,8 +145,16 @@
                     </or>
                   </selector>
             </fileset>
+            <fileset dir="applets">
+                  <selector if="include.applet.meta-inf">
+                  	<or>
+                      <filename name="META-INF/**/*.*" />
+                    </or>
+                  </selector>
+            </fileset>
         </jar>
         <delete file="${path.build}/log4j.properties" quiet="true"/>
+        <delete file="${path.build}/log4j.xml" quiet="true"/>
     </target>
 
 	<target name="add-manifest">
@@ -166,11 +181,12 @@
     </target>
     
     <target name="sign">
+    	<echo>Signing ${path.build}/${app.name}.jar</echo>
         <exec executable="jarsigner">
             <arg line="-keystore ${sign.keystore.name}"/>
             <arg line="-storepass ${sign.keystore.pass}"/>
             <arg line="${path.build}/${app.name}.jar"/>
-            <arg line="${app.name}"/>
+            <arg line="${cert.name}"/>
         </exec>
     </target>
 

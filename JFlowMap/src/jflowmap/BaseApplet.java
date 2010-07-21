@@ -43,7 +43,7 @@ public abstract class BaseApplet extends JApplet {
       add(view.getViewComponent());
     } catch (IOException ex) {
       JMsgPane.showProblemDialog(this, "Error: " + ex.getMessage());
-      Logger.getLogger(getClass().getName()).error("Exception: ", ex);
+      Logger.getLogger(getClass()).error("Exception: ", ex);
     }
   }
 

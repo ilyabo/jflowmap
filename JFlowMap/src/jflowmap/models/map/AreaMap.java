@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import jflowmap.data.XmlAreaMapModelReader;
+import jflowmap.data.XmlAreaMapModelReader2;
 
 import org.apache.log4j.Logger;
 
@@ -54,6 +54,6 @@ public class AreaMap {
 
   public static final AreaMap load(String filename) throws IOException {
     logger.info("Loading area map \"" + filename + "\"");
-    return XmlAreaMapModelReader.readMap(filename);
+    return XmlAreaMapModelReader2.readMap(filename);
   }
 }

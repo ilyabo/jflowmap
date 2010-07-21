@@ -28,6 +28,16 @@ import jflowmap.views.timeline.DuoTimelineView;
  */
 public class DuoTimelineApplet extends BaseApplet {
 
+//  static {
+//    // The statements below cause the objects to go straight for the default implementations
+//    System.setProperty("javax.xml.parsers.SAXParserFactory",
+//                                       "com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+//    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+//                                       "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+//    System.setProperty("javax.xml.transform.TransformerFactory",
+//                                       "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+//  }
+
   public DuoTimelineApplet() {
   }
 
