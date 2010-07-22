@@ -179,6 +179,9 @@ public class GraphMLReader3 {
               FlowMapGraph.setGraphId(graph, graphId);
               graphs.add(graph);
 
+              logger.info("Loaded graph '" + graphId + "'," +
+              		" nodes: " + nodeTable.getRowCount() +  ", edges: " + edgeTable.getRowCount());
+
             } else if (tag.equals("graphml")) {
               break OUTER;
             }
