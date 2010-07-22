@@ -157,6 +157,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //    fitInCameraView(false);
   }
 
+  @Override
   public String getName() {
     return getFlowMapGraph().getId();
   }
@@ -256,7 +257,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void createEdgeVisuals() {
-    System.out.println("VisualFlowMap.createEdgeVisuals()");
     edgeLayer.removeAllChildren();
     clearAggregatedEdgesLayer();
 
