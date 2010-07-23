@@ -421,17 +421,20 @@ public class DuoTimelineView extends AbstractCanvasView {
         node.moveToFront();
         node.setStroke(style.getSelectedTimelineCellStroke());
         node.setStrokePaint(style.getSelectedTimelineCellStrokeColor());
-        lines(event).first().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
-        lines(event).second().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+        Pair<PLine, PLine> lines = lines(event);
+        lines.first().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+        lines.second().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
       }
 
       @Override
       public void mouseExited(PInputEvent event) {
         updateMapColors(null);
-        node(event).setStroke(style.getTimelineCellStroke());
-        node(event).setStrokePaint(style.getTimelineCellStrokeColor());
-        lines(event).first().setStrokePaint(style.getMapToMatrixLineLinesColor());
-        lines(event).second().setStrokePaint(style.getMapToMatrixLineLinesColor());
+        DTNode node = node(event);
+        node.setStroke(style.getTimelineCellStroke());
+        node.setStrokePaint(style.getTimelineCellStrokeColor());
+        Pair<PLine, PLine> lines = lines(event);
+        lines.first().setStrokePaint(style.getMapToMatrixLineLinesColor());
+        lines.second().setStrokePaint(style.getMapToMatrixLineLinesColor());
       }
 
       private Pair<PLine, PLine> lines(PInputEvent event) {

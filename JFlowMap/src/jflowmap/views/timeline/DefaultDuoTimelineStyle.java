@@ -18,10 +18,13 @@
 
 package jflowmap.views.timeline;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Paint;
+import java.awt.Stroke;
 
 import prefuse.util.ColorLib;
+import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  * @author Ilya Boyandin
@@ -82,6 +85,30 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   @Override
   public int[] getValueColors() {
     return valueColors;
+  }
+
+  private static final BasicStroke TIMELINE_CELL_STROKE = null;
+  @Override
+  public Stroke getTimelineCellStroke() {
+    return null;
+  }
+
+  private static final Stroke SELECTED_TIMELINE_CELL_STROKE = new PFixedWidthStroke(3);
+  @Override
+  public Stroke getSelectedTimelineCellStroke() {
+    return SELECTED_TIMELINE_CELL_STROKE;
+  }
+
+  private static final Color TIMELINE_CELL_STROKE_COLOR = null;
+  @Override
+  public Paint getTimelineCellStrokeColor() {
+    return TIMELINE_CELL_STROKE_COLOR;
+  }
+
+  private static final Color SELECTED_TIMELINE_CELL_STROKE_COLOR = new Color(255, 128, 64);
+  @Override
+  public Paint getSelectedTimelineCellStrokeColor() {
+    return SELECTED_TIMELINE_CELL_STROKE_COLOR;
   }
 
 }

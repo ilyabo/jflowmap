@@ -20,6 +20,7 @@ package jflowmap.views.timeline;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.awt.Stroke;
 
 /**
  * @author Ilya Boyandin
@@ -37,5 +38,13 @@ public interface DuoTimelineStyle {
   Color getMissingValueColor();
 
   int[] getValueColors();
+
+  Stroke getSelectedTimelineCellStroke();
+
+  Paint getSelectedTimelineCellStrokeColor();
+
+  Stroke getTimelineCellStroke();
+
+  Paint getTimelineCellStrokeColor();
 
 }
