@@ -195,9 +195,8 @@ public class DuoTimelineView extends AbstractCanvasView {
     for (FlowTuple tuple : tuples) {
       Pair<PLine, PLine> lines = tupleLines.get(tuple);
 
-      Pair<PPath, PPath> pair = countryCentroids.get(tuple.getSrcNodeId());
-      PNode srcMapPoint = pair.first();
-      PNode targetMapPoint = pair.second();
+      PNode srcMapPoint = countryCentroids.get(tuple.getSrcNodeId()).first();
+      PNode targetMapPoint = countryCentroids.get(tuple.getTargetNodeId()).second();
 
       Point2D.Double matrixIn = getMatrixInPoint(row);
       boolean inVis = viewBounds.contains(matrixIn);
@@ -417,7 +416,11 @@ public class DuoTimelineView extends AbstractCanvasView {
     return new PTypedBasicInputEventHandler<DTNode>(DTNode.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        updateMapColors(node(event).getFlowMapGraph());
+        DTNode node = node(event);
+        updateMapColors(node.getFlowMapGraph());
+        node.moveToFront();
+        node.setStroke(style.getSelectedTimelineCellStroke());
+        node.setStrokePaint(style.getSelectedTimelineCellStrokeColor());
         lines(event).first().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
         lines(event).second().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
       }
@@ -425,6 +428,8 @@ public class DuoTimelineView extends AbstractCanvasView {
       @Override
       public void mouseExited(PInputEvent event) {
         updateMapColors(null);
+        node(event).setStroke(style.getTimelineCellStroke());
+        node(event).setStrokePaint(style.getTimelineCellStrokeColor());
         lines(event).first().setStrokePaint(style.getMapToMatrixLineLinesColor());
         lines(event).second().setStrokePaint(style.getMapToMatrixLineLinesColor());
       }
