@@ -19,7 +19,9 @@
 package jflowmap;
 
 import java.io.IOException;
+import java.util.Collections;
 
+import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.timeline.DuoTimelineView;
 
@@ -45,10 +47,19 @@ public class DuoTimelineApplet extends BaseApplet {
   @Override
   protected IView createView() throws IOException {
     DatasetSpec ds = getDatasetSpec();
+    String areaMapSrc = getParameter("areaMapSrc");
+    AreaMap areaMap;
+    if (areaMapSrc == null) {
+      areaMap = new AreaMap(null, Collections.<Area>emptyList());
+    } else {
+      areaMap = AreaMap.load(areaMapSrc);
+    }
+    String maxVisibleTuples = getParameter("maxVisibleTuples");
     return new DuoTimelineView(
         FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
-        AreaMap.load(getParameter("areaMapSrc"))
-        );
+        areaMap,
+        maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)
+    );
   }
 
 

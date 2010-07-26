@@ -10,16 +10,15 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
-<mapEntry key="yNodeAttr" value="y"/>
+<mapEntry key="yNodeAttr" value="lat"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="weightAttr" value="r"/>
-<mapEntry key="xNodeAttr" value="x"/>
-<mapEntry key="maxVisibleTuples" value="500"/>
-<mapEntry key="src" value="data/refugees/refugees_1975-2008.xml.gz"/>
-<mapEntry key="areaMapSrc" value="data/refugees/countries-areas.xml.gz"/>
+<mapEntry key="weightAttr" value="total"/>
+<mapEntry key="xNodeAttr" value="lon"/>
+<mapEntry key="maxVisibleTuples" value="1000"/>
+<mapEntry key="src" value="data\commuters\slo\slo-commuters-2000_2008.xml.gz"/>
 <mapEntry key="colorScheme" value="Dark"/>
 </mapAttribute>
-<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1900"/>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.DuoTimelineApplet"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>

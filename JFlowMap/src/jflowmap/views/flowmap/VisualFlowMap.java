@@ -285,12 +285,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //        }
 //      }
 
-      if (srcNode.equals(targetNode)) {
-        logger.warn(
-            "Self-loop edge: " +
-            " [" + edge + "]"
-        );
-      }
+//      if (srcNode.equals(targetNode)) {
+//        logger.warn(
+//            "Self-loop edge: " +
+//            " [" + edge + "]"
+//        );
+//      }
 
       double value = edge.getDouble(getFlowMapGraph().getEdgeWeightAttr());
       if (Double.isNaN(value)) {

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datasets>
-
-<!-- 
-    <dataset src="data/commuters-slo/slo-commuters.xml.gz" weightAttr="value" xNodeAttr="x" yNodeAttr="-y" labelAttr="label" valueFilterMin="2"/>
- -->
+    <!-- 
+    <dataset src="data/commuters/slo/slo-commuters-2000_2008.xml.gz" weightAttr="total" xNodeAttr="lon" yNodeAttr="lat" labelAttr="name"/>
+     -->
 
     <dataset src="data/refugees/refugees-2008.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />
     <dataset src="data/refugees/refugees-2007.xml.gz" weightAttr="ritypnv" xNodeAttr="x" yNodeAttr="y" labelAttr="name" areaMapSrc="data/refugees/countries-areas.xml.gz"  valueFilterMin="100" />

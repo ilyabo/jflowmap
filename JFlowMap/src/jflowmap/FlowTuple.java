@@ -57,6 +57,14 @@ public class FlowTuple {
     return targetNodeId;
   }
 
+  public String getSrcNodeLabel() {
+    return tuple.get(0).getSourceNode().getString(fmgs.getAttrSpec().getNodeLabelAttr());
+  }
+
+  public String getTargetNodeLabel() {
+    return tuple.get(0).getTargetNode().getString(fmgs.getAttrSpec().getNodeLabelAttr());
+  }
+
   public List<Edge> getTuple() {
     return tuple;
   }

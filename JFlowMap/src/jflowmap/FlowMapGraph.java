@@ -20,6 +20,7 @@ package jflowmap;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -371,4 +372,12 @@ public class FlowMapGraph {
     }
     return list.iterator().next();
   }
+
+  public static final Comparator<? super FlowMapGraph> COMPARE_BY_GRAPH_IDS =
+    new Comparator<FlowMapGraph>() {
+      @Override
+      public int compare(FlowMapGraph o1, FlowMapGraph o2) {
+        return o1.getId().compareTo(o2.getId());
+      }
+    };
 }
