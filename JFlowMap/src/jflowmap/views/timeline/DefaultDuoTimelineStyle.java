@@ -60,31 +60,38 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   }
 
 
-  private static final int[] valueColors = new int[] {
+  private static final int[] sequentialValueColors = new int[] {
       // ColorBrewer  OrRd (sequential)
       ColorLib.rgb(255, 247, 236), ColorLib.rgb(254, 232, 200),
       ColorLib.rgb(253, 212, 158), ColorLib.rgb(253, 187, 132),
       ColorLib.rgb(252, 141, 89), ColorLib.rgb(239, 101, 72),
       ColorLib.rgb(215, 48, 31), ColorLib.rgb(179, 0, 0),
       ColorLib.rgb(127, 0, 0)
+  };
 
+  private static final int[] divergingValueColors = new int[] {
       // ColorBrewer RdYlGn (diverging)
-//      ColorLib.rgb(0, 104, 55),
-//      ColorLib.rgb(26, 152, 80),
-//      ColorLib.rgb(102, 189, 99),
-//      ColorLib.rgb(166, 217, 106),
-//      ColorLib.rgb(217, 239, 139),
-//      ColorLib.rgb(255, 255, 191),
-//      ColorLib.rgb(254, 224, 139),
-//      ColorLib.rgb(253, 174, 97),
-//      ColorLib.rgb(244, 109, 67),
-//      ColorLib.rgb(215, 48, 39),
-//      ColorLib.rgb(165, 0, 38)
+      ColorLib.rgb(0, 104, 55),
+      ColorLib.rgb(26, 152, 80),
+      ColorLib.rgb(102, 189, 99),
+      ColorLib.rgb(166, 217, 106),
+      ColorLib.rgb(217, 239, 139),
+      ColorLib.rgb(255, 255, 191),
+      ColorLib.rgb(254, 224, 139),
+      ColorLib.rgb(253, 174, 97),
+      ColorLib.rgb(244, 109, 67),
+      ColorLib.rgb(215, 48, 39),
+      ColorLib.rgb(165, 0, 38)
   };
 
   @Override
-  public int[] getValueColors() {
-    return valueColors;
+  public int[] getSequentialValueColors() {
+    return sequentialValueColors;
+  }
+
+  @Override
+  public int[] getDivergingValueColors() {
+    return divergingValueColors;
   }
 
   private static final BasicStroke TIMELINE_CELL_STROKE = null;

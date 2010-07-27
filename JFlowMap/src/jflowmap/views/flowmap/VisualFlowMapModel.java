@@ -49,11 +49,11 @@ public class VisualFlowMapModel {
 //  private int directionMarkerAlpha = 200;
   private int directionMarkerAlpha = 245; //210;
 
-  private double edgeWeightFilterMin = Double.MIN_VALUE;
-  private double edgeWeightFilterMax = Double.MAX_VALUE;
+  private double edgeWeightFilterMin;
+  private double edgeWeightFilterMax;
 
-  private double edgeLengthFilterMin = Double.MIN_VALUE;
-  private double edgeLengthFilterMax = Double.MAX_VALUE;
+  private double edgeLengthFilterMin;
+  private double edgeLengthFilterMax;
 
   private boolean autoAdjustEdgeColorScale;
   private double maxEdgeWidth = 1.0;

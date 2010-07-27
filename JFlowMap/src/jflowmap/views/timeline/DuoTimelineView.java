@@ -466,8 +466,15 @@ public class DuoTimelineView extends AbstractCanvasView {
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();
     }
-    return ColorLib.getColor(ColorUtils.colorFromMap(style.getValueColors(),
-        wstats.normalizeLog(weight), 255));
+    if (wstats.getMin() < 0  &&  wstats.getMax() > 0) {
+      // use diverging color scheme
+      return ColorLib.getColor(ColorUtils.colorFromMap(style.getDivergingValueColors(),
+      wstats.normalizeLogAroundZero(weight), -1.0, 1.0, 255));
+    } else {
+      // use sequential color scheme
+      return ColorLib.getColor(ColorUtils.colorFromMap(style.getSequentialValueColors(),
+          wstats.normalizeLog(weight), 0.0, 1.0, 255));
+    }
   }
 
   private double getTupleY(int row) {

@@ -29,7 +29,6 @@ public class MinMax {
 	private final double avg;
 //  private final double minLog;
 //  private final double maxLog;
-  private final double distLog;
   private final int count;
 
   private MinMax(double minValue, double avg, double maxValue, int count) {
@@ -47,7 +46,6 @@ public class MinMax {
     this.max = maxValue;
 //    this.minLog = Math.log(min);
 //    this.maxLog = Math.log(max);
-    this.distLog = Math.log(1.0 + (max - min));
     this.count = count;
   }
 
@@ -89,17 +87,17 @@ public class MinMax {
     if (!it.hasNext()) {
       return new MinMax(Double.NaN, Double.NaN, Double.NaN, 0);
     }
-    double max = Double.MIN_VALUE;
-    double min = Double.MAX_VALUE;
+    double max = Double.NaN;
+    double min = Double.NaN;
     double sum = 0;
     int count = 0;
 
     while (it.hasNext()) {
       double v = it.next();
-      if (v > max) {
+      if (Double.isNaN(max)  ||  v > max) {
         max = v;
       }
-      if (v < min) {
+      if (Double.isNaN(min)  ||  v < min) {
         min = v;
       }
       sum += v;
@@ -114,7 +112,7 @@ public class MinMax {
    * In case if max == min the method always returns 1.
    */
   public double normalize(double value) {
-    checkInterval(value);
+    checkInterval(value, min, max);
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
@@ -137,16 +135,12 @@ public class MinMax {
 
   /**
    * Returns a value between -1.0 and 1.0. Zero stays zero.
-   * If both min and max are positive, works in the same way as {@link #normalize(double)}
    */
   public double normalizeAroundZero(double value) {
-    if (getMin() >= 0.0) {
-      return normalize(value);
-    }
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
-    checkInterval(value);
+    checkInterval(value, min, max);
     if (getMax() == getMin()) return 0.0;
     double r = Math.max(Math.abs(getMin()), Math.abs(getMax()));
     double rv = value / r;
@@ -166,7 +160,7 @@ public class MinMax {
     }
   }
 
-  private void checkInterval(double value) {
+  private void checkInterval(double value, double min, double max) {
     if (value < min || value > max) {
       throw new IllegalArgumentException(
           "Value must be between " + min + " and " + max + ". Actual value = " + value);
@@ -174,19 +168,35 @@ public class MinMax {
   }
 
   /**
-   * Returns a normalized log(value) between 0 and 1.
+   * Returns a normalized log10(value) between 0 and 1.
    * In case if max == min the method always returns 1.
    */
   public double normalizeLog(double value) {
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
-    checkInterval(value);
-    if (getMax() == getMin()) return 1.0;
-//    double rv = (Math.log(value) - getMinLog()) / (getMaxLog() - getMinLog());
-//    double rv = Math.log(logarithmize(value)) / LOG_SCALE_MAX_LOG;
-    double rv = Math.log(1.0 + value - min) / distLog;
+    checkInterval(value, min, max);
+    if (max == min) return 1.0;
+    double logOfRadius = Math.log10(1.0 + (max - min));
+    double rv = Math.log10(1.0 + value - min) / logOfRadius;
     checkNormalized(value, rv);
+    return rv;
+  }
+
+  /**
+   * Returns signum(value)*log10(abs(value)) normalized between -1 and 1.
+   * In case if max == min the method always returns signum(max).
+   */
+  public double normalizeLogAroundZero(double value) {
+    if (Double.isNaN(value)) {
+      return Double.NaN;
+    }
+    checkInterval(value, min, max);
+    if (max == min) return Math.signum(max);
+    double radius = Math.max(Math.abs(max), Math.abs(min));
+    double logOfRadius = Math.log10(1.0 + radius);
+    double rv = Math.signum(value) * Math.log10(1.0 + Math.abs(value)) / logOfRadius;
+    checkNormalized(value, rv, -1.0, 1.0);
     return rv;
   }
 
@@ -221,6 +231,8 @@ public class MinMax {
 
     return retValue;
   }
+
+
 
 
 }
