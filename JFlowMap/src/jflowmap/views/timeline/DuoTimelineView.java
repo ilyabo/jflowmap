@@ -91,6 +91,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   static final double cellWidth = 35;
   static final double cellHeight = 35;
+  private static final boolean INTERPOLATE_COLORS = true;
 
   private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
   private final FlowMapGraphSet flowMapGraphs;
@@ -469,11 +470,11 @@ public class DuoTimelineView extends AbstractCanvasView {
     if (wstats.getMin() < 0  &&  wstats.getMax() > 0) {
       // use diverging color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(style.getDivergingValueColors(),
-      wstats.normalizeLogAroundZero(weight), -1.0, 1.0, 255));
+          wstats.normalizeLogAroundZero(weight), -1.0, 1.0, 255, INTERPOLATE_COLORS));
     } else {
       // use sequential color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(style.getSequentialValueColors(),
-          wstats.normalizeLog(weight), 0.0, 1.0, 255));
+          wstats.normalizeLog(weight), 0.0, 1.0, 255, INTERPOLATE_COLORS));
     }
   }
 

@@ -70,18 +70,51 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   };
 
   private static final int[] divergingValueColors = new int[] {
-      // ColorBrewer RdYlGn (diverging)
-      ColorLib.rgb(0, 104, 55),
-      ColorLib.rgb(26, 152, 80),
-      ColorLib.rgb(102, 189, 99),
-      ColorLib.rgb(166, 217, 106),
-      ColorLib.rgb(217, 239, 139),
-      ColorLib.rgb(255, 255, 191),
-      ColorLib.rgb(254, 224, 139),
-      ColorLib.rgb(253, 174, 97),
-      ColorLib.rgb(244, 109, 67),
-      ColorLib.rgb(215, 48, 39),
-      ColorLib.rgb(165, 0, 38)
+      // ColorBrewer RdYlGn 9 (diverging)
+//      ColorLib.rgb(0, 104, 55),
+//      ColorLib.rgb(26, 152, 80),
+//      ColorLib.rgb(102, 189, 99),
+//      ColorLib.rgb(166, 217, 106),
+//      ColorLib.rgb(217, 239, 139),
+//      ColorLib.rgb(255, 255, 191),
+//      ColorLib.rgb(254, 224, 139),
+//      ColorLib.rgb(253, 174, 97),
+//      ColorLib.rgb(244, 109, 67),
+//      ColorLib.rgb(215, 48, 39),
+//      ColorLib.rgb(165, 0, 38)
+
+      // ColorBrewer Spectral 3
+//      ColorLib.rgb(252, 141, 89),
+//      ColorLib.rgb(255, 255, 191),
+//      ColorLib.rgb(153, 213, 148)
+
+
+      // ColorBrewer RdYlBu 6
+//      ColorLib.rgb(215, 48, 39),
+//      ColorLib.rgb(252, 141, 89),
+//      ColorLib.rgb(254, 224, 144),
+//      ColorLib.rgb(224, 243, 248),
+//      ColorLib.rgb(145, 191, 219),
+//      ColorLib.rgb(69, 117, 180)
+
+      // ColorBrewer RdBu 5
+      ColorLib.rgb(5, 113, 176),
+      ColorLib.rgb(146, 197, 222),
+      ColorLib.rgb(247, 247, 247),
+      ColorLib.rgb(244, 165, 130),
+      ColorLib.rgb(202, 0, 32)
+
+      // ColorBrewer BrBg 9
+//      ColorLib.rgb(140, 81, 10), ColorLib.rgb(191, 129, 45), ColorLib.rgb(223, 129, 125),
+//      ColorLib.rgb(246, 232, 195), ColorLib.rgb(245, 245, 245), ColorLib.rgb(199, 234, 229),
+//      ColorLib.rgb(128, 205, 193), ColorLib.rgb(53, 151, 143), ColorLib.rgb(1, 102, 94)
+
+      // ColorBrewer BrBg 5
+//      ColorLib.rgb(166, 97, 26), ColorLib.rgb(223, 194, 125), ColorLib.rgb(245, 245, 245),
+//      ColorLib.rgb(128, 205, 193), ColorLib.rgb(1, 133, 113)
+
+      // ColorBrewer RdBu 3
+//      ColorLib.rgb(239, 138, 98), ColorLib.rgb(247, 247, 247), ColorLib.rgb(103, 169, 207)
   };
 
   @Override

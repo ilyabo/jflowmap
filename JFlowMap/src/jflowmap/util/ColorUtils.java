@@ -71,20 +71,24 @@ public class ColorUtils {
         alpha);
   }
 
-  public static int colorFromMap(int[] colors, double weight, double minW, double maxW, int alpha) {
+  public static int colorFromMap(int[] colors, double weight, double minW, double maxW, int alpha, boolean interpolate) {
     if (weight < minW  ||  weight > maxW) {
       throw new IllegalArgumentException("Weight must be between " + minW + " and " + maxW + ". Actual: " + weight);
     }
     double nw = (weight - minW) / (maxW - minW);
     int max = colors.length - 1;
-    int low = (int)Math.floor(max * nw);
-    int high = (int)Math.ceil(max * nw);
-    if (low == high) {
-      return colors[low];
+    if (interpolate) {
+      int low = (int)Math.floor(max * nw);
+      int high = (int)Math.ceil(max * nw);
+      if (low == high) {
+        return colors[low];
+      } else {
+        double seg = 1.0 / max;
+        double segw = (nw - seg * low) / seg;
+        return intColorBetween(colors[low], colors[high], segw, alpha);
+      }
     } else {
-      double seg = 1.0 / max;
-      double segw = (nw - seg * low) / seg;
-      return intColorBetween(colors[low], colors[high], segw, alpha);
+      return colors[(int)Math.round(max * nw)];
     }
   }
 
