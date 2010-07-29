@@ -32,7 +32,6 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapColorSchemes;
@@ -113,8 +112,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
 //    canvas.setPanEventHandler(null);
 
-    controlPanel = new JPanel();
-    controlPanel.add(new JTextField());  // FROM filter
+    controlPanel = new DuoTimelineControlPanel(this);
     scrollPane = new PScrollPane(canvas);
     scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
