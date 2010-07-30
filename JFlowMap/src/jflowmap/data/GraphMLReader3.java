@@ -80,9 +80,9 @@ public class GraphMLReader3 {
     this.charset = charset;
   }
 
-  public Iterable<Graph> readFromFile(String filename) throws IOException {
-    logger.info("Loading file \"" + filename + "\"");
-    Iterable<Graph> graphs = readFromStream(IOLib.streamFromString(filename));
+  public Iterable<Graph> readFromLocation(String location) throws IOException {
+    logger.info("Loading file \"" + location + "\"");
+    Iterable<Graph> graphs = readFromStream(IOLib.streamFromString(location));
     logger.info("Finished loading file");
     return graphs;
   }

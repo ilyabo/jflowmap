@@ -70,7 +70,7 @@ public class FlowMapSummaries {
     for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
       Edge e = g.getEdge(i);
 
-      double v = e.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightAttr());
+      double v = e.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightAttrWildcard());
       if (!Double.isNaN(v)) {
         Node src = e.getSourceNode();
         Node trg = e.getTargetNode();
@@ -123,7 +123,7 @@ public class FlowMapSummaries {
     for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
       Edge e = g.getEdge(i);
 
-      double w = e.getDouble(as.getEdgeWeightAttr());
+      double w = e.getDouble(as.getEdgeWeightAttrWildcard());
       if (!Double.isNaN(w)) {
         Node src = e.getSourceNode();
         Node trg = e.getTargetNode();

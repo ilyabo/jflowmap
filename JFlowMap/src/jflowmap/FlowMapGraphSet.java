@@ -139,7 +139,7 @@ public class FlowMapGraphSet {
 
   private static Iterable<Graph> loadGraphs(String filename) throws IOException {
     logger.info("Loading '" + filename + "'");
-    Iterable<Graph> graphs = new GraphMLReader3().readFromFile(filename);
+    Iterable<Graph> graphs = new GraphMLReader3().readFromLocation(filename);
     logger.info("Number of graphs loaded: " + Iterables.size(graphs));
     return graphs;
   }

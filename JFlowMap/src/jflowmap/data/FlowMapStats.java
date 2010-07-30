@@ -199,7 +199,7 @@ public class FlowMapStats {
     private enum Name implements Function<FlowMapGraph, String> {
       EDGE_WEIGHT {
         public String apply(FlowMapGraph from) {
-          return from.getEdgeWeightAttr();
+          return from.getEdgeWeightAttrWildcard();
         }
       },
       NODE_X {

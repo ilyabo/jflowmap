@@ -271,7 +271,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
 //    Iterator<Integer> it = graph.getEdgeTable().rows();
     @SuppressWarnings("unchecked")
-    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(getFlowMapGraph().getEdgeWeightAttr(), true);
+    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(getFlowMapGraph().getEdgeWeightAttrWildcard(), true);
 
     while (it.hasNext()) {
       Edge edge = graph.getEdge(it.next());
@@ -292,7 +292,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //        );
 //      }
 
-      double value = edge.getDouble(getFlowMapGraph().getEdgeWeightAttr());
+      double value = edge.getDouble(getFlowMapGraph().getEdgeWeightAttrWildcard());
       if (Double.isNaN(value)) {
         // Warning "Omitting edge with NaN value" Commented out: because it was slowing bundling down too much
 //        logger.warn(
@@ -391,7 +391,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       VisualEdge edge = (VisualEdge) component;
       tooltipBox.setText(
           wordWrapLabel(edge.getLabel(), maxLabelWidth),
-          getFlowMapGraph().getEdgeWeightAttr() + ": ", Double.toString(edge.getEdgeWeight()));
+          getFlowMapGraph().getEdgeWeightAttrWildcard() + ": ", Double.toString(edge.getEdgeWeight()));
     } else {
       return;
     }

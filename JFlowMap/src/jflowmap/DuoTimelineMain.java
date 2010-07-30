@@ -35,7 +35,7 @@ public class DuoTimelineMain extends JFrame {
   public DuoTimelineMain(DatasetSpec ds) throws IOException {
     super("DuoTimeline");
     final DuoTimelineView view = new DuoTimelineView(
-        FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
+        FlowMapGraph.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
         AreaMap.load(ds.getAreaMapFilename())
     );
     add(view.getViewComponent());
@@ -53,11 +53,11 @@ public class DuoTimelineMain extends JFrame {
 
   public static void main(String[] args) throws IOException {
     new DuoTimelineMain(new DatasetSpec(
-        "data/refugees/refugees_1975-2008.xml.gz",
-        "r",
-        "x", "y",
+        "data/refugees/refugees.xml.gz",
+        "r.*",
+        "lon", "lat",
         "name",
-        "data/refugees/countries-areas.xml.gz",
+        "data/refugees/countries-areas-ll.xml.gz",
         Double.NaN));
   }
 

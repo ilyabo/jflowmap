@@ -21,20 +21,19 @@ package jflowmap.views.timeline;
 import java.awt.geom.Rectangle2D;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowTuple;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import edu.umd.cs.piccolo.nodes.PPath;
 
 class DTNode extends PPath {
-    private final FlowTuple tuple;
+    private final String weightAttr;
     private final FlowMapGraph flowMapGraph;
     private final Edge edge; // can be null
 
-    public DTNode(double x, double y, FlowTuple tuple, FlowMapGraph fmg, Edge edge) {
+    public DTNode(double x, double y, String weightAttr, FlowMapGraph fmg, Edge edge) {
       super(new Rectangle2D.Double(x, y, DuoTimelineView.cellWidth, DuoTimelineView.cellHeight), null);
       this.flowMapGraph = fmg;
-      this.tuple = tuple;
+      this.weightAttr = weightAttr;
       this.edge = edge;
     }
 
@@ -42,28 +41,26 @@ class DTNode extends PPath {
       return flowMapGraph;
     }
 
-    public FlowTuple getTuple() {
-      return tuple;
+    public String getWeightAttr() {
+      return weightAttr;
     }
 
     public String getTooltipHeader() {
 //      return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
 //             " " + FlowMapGraph.getGraphId(edge.getGraph());
-      FlowMapGraph fmg = tuple.getFlowMapGraphSet().findFlowMapGraphFor(edge.getGraph());
       Node src = edge.getSourceNode();
       Node target = edge.getTargetNode();
-      String nodeLabelAttr = fmg.getNodeLabelAttr();
+      String nodeLabelAttr = flowMapGraph.getNodeLabelAttr();
       return FlowMapGraph.getGraphId(edge.getGraph()) + ": " +
              src.getString(nodeLabelAttr) + " -> " + target.getString(nodeLabelAttr);
     }
 
     public String getTooltipLabels() {
-      return tuple.getFlowMapGraphSet().getAttrSpec().getEdgeWeightAttr() + ":";
+      return weightAttr + ":";
     }
 
     public String getTooltipValues() {
-      return Double.toString(
-          tuple.getFlowMapGraphSet().findFlowMapGraphFor(edge.getGraph()).getEdgeWeight(edge));
+      return Double.toString(edge.getDouble(weightAttr));
     }
 
   }

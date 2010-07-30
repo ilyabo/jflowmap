@@ -199,7 +199,7 @@ public class FlowMapMain extends JFrame {
 
   private Iterable<Graph> loadFile(String filename) throws IOException {
     logger.info("Opening file: " + filename);
-    Iterable<Graph> graphs = new GraphMLReader3().readFromFile(filename);
+    Iterable<Graph> graphs = new GraphMLReader3().readFromLocation(filename);
     return graphs;
   }
 

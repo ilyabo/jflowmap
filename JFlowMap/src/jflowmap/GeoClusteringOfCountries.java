@@ -43,7 +43,7 @@ public class GeoClusteringOfCountries {
 
   public static void main(String[] args) throws IOException {
     GraphMLReader3 reader = new GraphMLReader3();
-    Graph g = reader.readFromFile("data/refugees/refugees-2008.xml.gz").iterator().next();
+    Graph g = reader.readFromLocation("data/refugees/refugees-2008.xml.gz").iterator().next();
 
     List<Country> countries = Lists.newArrayList();
 

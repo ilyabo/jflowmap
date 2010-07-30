@@ -18,6 +18,8 @@
 
 package jflowmap;
 
+import java.util.List;
+
 import prefuse.data.Graph;
 import prefuse.data.Table;
 
@@ -26,22 +28,26 @@ import prefuse.data.Table;
  */
 public class FlowMapAttrSpec {
 
-  private final String edgeWeightAttr;
+  private final String edgeWeightAttrWildcard;
   private final String nodeLabelAttr;
   private final String xNodeAttr, yNodeAttr;
+
   private final double weightFilterMin;  // TODO: weightFilterMin shouldn't be in FlowMapAttrSpec
 
-  public FlowMapAttrSpec(String edgeWeightAttr, String nodeLabelAttr,
+  /**
+   * edgeWeightAttrWildcard can be a wildcard (if it contains *) specifying a series of attributes
+   */
+  public FlowMapAttrSpec(String edgeWeightAttrWildcard, String nodeLabelAttr,
       String xNodeAttr, String yNodeAttr, double weightFilterMin) {
-    this.edgeWeightAttr = edgeWeightAttr;
+    this.edgeWeightAttrWildcard = edgeWeightAttrWildcard;
     this.nodeLabelAttr = nodeLabelAttr;
     this.xNodeAttr = xNodeAttr;
     this.yNodeAttr = yNodeAttr;
     this.weightFilterMin = weightFilterMin;
   }
 
-  public String getEdgeWeightAttr() {
-    return edgeWeightAttr;
+  public String getEdgeWeightAttrWildcard() {
+    return edgeWeightAttrWildcard;
   }
 
   public String getNodeLabelAttr() {
@@ -60,16 +66,37 @@ public class FlowMapAttrSpec {
     return weightFilterMin;
   }
 
+  private boolean hasWildcardEdgeWeightAttr() {
+    return edgeWeightAttrWildcard.indexOf('*') >= 0;
+  }
+
   public void checkValidityFor(Graph graph) {
     validateAttr(graph, graph.getNodeTable(), xNodeAttr, double.class);
     validateAttr(graph, graph.getNodeTable(), yNodeAttr, double.class);
     validateAttr(graph, graph.getNodeTable(), nodeLabelAttr, String.class);
-    validateAttr(graph, graph.getEdgeTable(), edgeWeightAttr, double.class);
+    if (hasWildcardEdgeWeightAttr()) {
+      validateWildcardAttrs(graph, edgeWeightAttrWildcard);
+    } else {
+      validateAttr(graph, graph.getEdgeTable(), edgeWeightAttrWildcard, double.class);
+    }
+  }
+
+  private void validateWildcardAttrs(Graph graph, String wildcard) {
+    List<String> matches = FlowMapGraph.findEdgeAttrsByWildcard(graph, wildcard);
+    if (matches.size() == 0) {
+      throw new IllegalArgumentException("No edge attrs matching pattern:'" + wildcard +
+          "' in graph id:'" + FlowMapGraph.getGraphId(graph) + "'");
+    } else {
+      for (String attr : matches) {
+        validateAttr(graph, graph.getEdgeTable(), attr, double.class);
+      }
+    }
   }
 
   private void validateAttr(Graph graph, Table table, String attr, Class<?> type) {
     if (!table.canGet(attr, type)) {
-      throw new IllegalArgumentException("Can't get graph's attr:'" + attr + "', graph id:'" + FlowMapGraph.getGraphId(graph) + "'");
+      throw new IllegalArgumentException("Can't get graph's attr:'" + attr + "', graph id:'" +
+          FlowMapGraph.getGraphId(graph) + "'");
     }
   }
 
@@ -77,7 +104,7 @@ public class FlowMapAttrSpec {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((edgeWeightAttr == null) ? 0 : edgeWeightAttr.hashCode());
+    result = prime * result + ((edgeWeightAttrWildcard == null) ? 0 : edgeWeightAttrWildcard.hashCode());
     result = prime * result + ((nodeLabelAttr == null) ? 0 : nodeLabelAttr.hashCode());
     long temp;
     temp = Double.doubleToLongBits(weightFilterMin);
@@ -96,10 +123,10 @@ public class FlowMapAttrSpec {
     if (getClass() != obj.getClass())
       return false;
     FlowMapAttrSpec other = (FlowMapAttrSpec) obj;
-    if (edgeWeightAttr == null) {
-      if (other.edgeWeightAttr != null)
+    if (edgeWeightAttrWildcard == null) {
+      if (other.edgeWeightAttrWildcard != null)
         return false;
-    } else if (!edgeWeightAttr.equals(other.edgeWeightAttr))
+    } else if (!edgeWeightAttrWildcard.equals(other.edgeWeightAttrWildcard))
       return false;
     if (nodeLabelAttr == null) {
       if (other.nodeLabelAttr != null)

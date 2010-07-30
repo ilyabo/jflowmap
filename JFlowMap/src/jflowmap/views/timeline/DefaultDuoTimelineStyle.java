@@ -89,7 +89,7 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
 //      ColorLib.rgb(153, 213, 148)
 
 
-      // ColorBrewer RdYlBu 6
+      // ColorBrewer RdYlBu 6                              // good for the heatmap
 //      ColorLib.rgb(215, 48, 39),
 //      ColorLib.rgb(252, 141, 89),
 //      ColorLib.rgb(254, 224, 144),
@@ -113,7 +113,7 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
 //      ColorLib.rgb(166, 97, 26), ColorLib.rgb(223, 194, 125), ColorLib.rgb(245, 245, 245),
 //      ColorLib.rgb(128, 205, 193), ColorLib.rgb(1, 133, 113)
 
-      // ColorBrewer RdBu 3
+      // ColorBrewer RdBu 3                                // for the geomaps
 //      ColorLib.rgb(239, 138, 98), ColorLib.rgb(247, 247, 247), ColorLib.rgb(103, 169, 207)
   };
 
@@ -130,7 +130,7 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   private static final BasicStroke TIMELINE_CELL_STROKE = null;
   @Override
   public Stroke getTimelineCellStroke() {
-    return null;
+    return TIMELINE_CELL_STROKE;
   }
 
   private static final Stroke SELECTED_TIMELINE_CELL_STROKE = new PFixedWidthStroke(3);

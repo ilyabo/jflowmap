@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
@@ -37,8 +38,10 @@ import org.apache.log4j.Logger;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Table;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -62,6 +65,8 @@ public class FlowMapGraph {
   private final FlowMapAttrSpec attrSpec;
   private final FlowMapStats stats;
 
+  private final List<String> matchingEdgeWeightAttrNames;
+
   public FlowMapGraph(Graph graph, FlowMapAttrSpec attrSpec) {
     this(graph, attrSpec, null);
   }
@@ -81,6 +86,8 @@ public class FlowMapGraph {
       logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
     }
     this.stats = stats;
+    this.matchingEdgeWeightAttrNames = ImmutableList.copyOf(
+      findEdgeAttrsByWildcard(attrSpec.getEdgeWeightAttrWildcard()));
   }
 
   public Iterable<Node> nodes() {
@@ -123,8 +130,16 @@ public class FlowMapGraph {
     return attrSpec.getYNodeAttr();
   }
 
-  public String getEdgeWeightAttr() {
-    return attrSpec.getEdgeWeightAttr();
+  public String getEdgeWeightAttrWildcard() {
+    return attrSpec.getEdgeWeightAttrWildcard();
+  }
+
+  public int getEdgeWeightAttrsCount() {
+    return matchingEdgeWeightAttrNames.size();
+  }
+
+  public List<String> getMatchingEdgeWeightAttrNames() {
+    return matchingEdgeWeightAttrNames;
   }
 
   public String getNodeLabelAttr() {
@@ -164,6 +179,23 @@ public class FlowMapGraph {
     return null;
   }
 
+  public List<String> findEdgeAttrsByWildcard(String wildcard) {
+    return findEdgeAttrsByWildcard(graph, wildcard);
+  }
+
+  public static List<String> findEdgeAttrsByWildcard(Graph graph, String wildcard) {
+    Pattern re = Pattern.compile(wildcard.replace(".", "\\.").replace("*", ".*"));
+    Table et = graph.getEdgeTable();
+    List<String> attrs = Lists.newArrayList();
+    for (int i = 0; i < et.getColumnCount(); i++) {
+      String cname = et.getColumnName(i);
+      if (re.matcher(cname).matches()) {
+        attrs.add(cname);
+      }
+    }
+    return attrs;
+  }
+
   public static int findNodeIndexById(Graph graph, String nodeId) {
     for (int i = 0, len = graph.getNodeCount(); i < len; i++) {
       Node node = graph.getNode(i);
@@ -183,7 +215,7 @@ public class FlowMapGraph {
   }
 
   public double getEdgeWeight(Edge edge) {
-    return edge.getDouble(attrSpec.getEdgeWeightAttr());
+    return edge.getDouble(attrSpec.getEdgeWeightAttrWildcard());
   }
 
   public List<Point> getEdgePoints(Edge edge) {
@@ -285,7 +317,7 @@ public class FlowMapGraph {
 //          .withCumulativeEdges()      // TODO: why isn't it working?
       .withNodeXAttr(attrSpec.getXNodeAttr())
       .withNodeYAttr(attrSpec.getYNodeAttr())
-      .withEdgeWeightAttr(attrSpec.getEdgeWeightAttr())
+      .withEdgeWeightAttr(attrSpec.getEdgeWeightAttrWildcard())
       .withNodeLabelAttr(attrSpec.getNodeLabelAttr())
       ;
 
@@ -311,7 +343,7 @@ public class FlowMapGraph {
       builder.addEdge(
           valueToNode.get(srcV),
           valueToNode.get(trgV),
-          e.getDouble(attrSpec.getEdgeWeightAttr()));
+          e.getDouble(attrSpec.getEdgeWeightAttrWildcard()));
     }
 
     return new FlowMapGraph(builder.build(), attrSpec);
@@ -380,4 +412,22 @@ public class FlowMapGraph {
         return o1.getId().compareTo(o2.getId());
       }
     };
+
+//  public List<FlowTuple> listFlowTuples(Predicate<Edge> edgeP) {
+//    List<FlowTuple> list = Lists.newArrayList();
+//    for (int i = 0, numEdges = graph.getEdgeCount(); i < numEdges; i++) {
+//      Edge e = graph.getEdge(i);
+//      if (edgeP == null  ||  edgeP.apply(e)) {
+//        for (String attr : matchingEdgeWeightAttrNames) {
+//          list.add(new FlowTuple(srcNodeId, targetNodeId, edges, fmgs));
+//        }
+//      }
+//    }
+//  }
+
+    public String getNodeLabel(Node node) {
+      return node.getString(attrSpec.getNodeLabelAttr());
+    }
+
+
 }

@@ -60,7 +60,7 @@ public class FlowTimelineApplet extends BaseApplet {
 
   public static FlowTimelineView loadGraphsWithRegions(String filename) throws IOException {
 
-    List<Graph> graphs = Lists.newArrayList(new GraphMLReader3().readFromFile(filename));
+    List<Graph> graphs = Lists.newArrayList(new GraphMLReader3().readFromLocation(filename));
 
     Collections.reverse(graphs);
 
