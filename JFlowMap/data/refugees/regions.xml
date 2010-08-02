@@ -75,8 +75,9 @@
 		</region>
 	</region>
 	<region name="Americas">
-
+		<!--
 		<region name="Latin America and the Caribbean">
+                -->
 
 			<region name="Caribbean">
 				<country name="Anguilla" iso-code="AIA"/>
@@ -143,7 +144,7 @@
 				<country name="United States of America" iso-code="USA"/>
 
 			</region>
-		</region>
+		<!-- </region>-->
 	</region>
 	<region name="Asia">
 
