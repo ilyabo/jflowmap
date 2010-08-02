@@ -35,7 +35,7 @@ public class VisualArea extends PPath {
   private final Area area;
 
   public VisualArea(VisualAreaMap visualAreaMap, Area area) {
-    super(area.asPath());
+    super(area.asPath(visualAreaMap.getMapProjection()));
     this.visualAreaMap = visualAreaMap;
     this.area = area;
     updateColors();

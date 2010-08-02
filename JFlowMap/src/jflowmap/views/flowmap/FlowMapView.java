@@ -30,6 +30,7 @@ import jflowmap.DatasetSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
+import jflowmap.geo.MapProjections;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.views.ColorCodes;
@@ -55,7 +56,8 @@ public class FlowMapView extends AbstractCanvasView {
   public FlowMapView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     setVisualFlowMap(createVisualFlowMap(flowMapGraph));
     if (areaMap != null) {
-      visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
+      visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap,
+          MapProjections.NONE));
     }
   }
 
@@ -93,7 +95,8 @@ public class FlowMapView extends AbstractCanvasView {
       VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph);
       if (dataset.getAreaMapFilename() != null) {
         AreaMap areaMap = AreaMap.load(dataset.getAreaMapFilename());
-        visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap));
+        visualFlowMap.setAreaMap(
+            new VisualAreaMap(visualFlowMap, areaMap, MapProjections.NONE));
       }
       setVisualFlowMap(visualFlowMap);
 

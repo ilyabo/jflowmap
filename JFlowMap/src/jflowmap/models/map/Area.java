@@ -22,6 +22,8 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
+import jflowmap.geo.MapProjection;
+
 import com.google.common.collect.Iterables;
 
 /**
@@ -58,13 +60,15 @@ public class Area {
     return polygons.clone();
   }
 
-  public Path2D asPath() {
+  public Path2D asPath(MapProjection proj) {
     GeneralPath path = new GeneralPath();
     for (Polygon poly : polygons) {
       Point2D[] points = poly.getPoints();
-      path.moveTo((float)points[0].getX(), (float)points[0].getY());
+      Point2D startP = proj.project(points[0].getX(), points[0].getY());
+      path.moveTo(startP.getX(), startP.getY());
       for (int i = 1; i < points.length; i++) {
-        path.lineTo((float)points[i].getX(), (float)points[i].getY());
+        Point2D p = proj.project(points[i].getX(), points[i].getY());
+        path.lineTo(p.getX(), p.getY());
       }
     }
     return path;

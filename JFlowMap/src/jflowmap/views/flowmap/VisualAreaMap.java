@@ -18,6 +18,7 @@
 
 package jflowmap.views.flowmap;
 
+import jflowmap.geo.MapProjection;
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.util.piccolo.PNodes;
@@ -31,17 +32,23 @@ public class VisualAreaMap extends PNode {
   private static final long serialVersionUID = 1L;
   private final ColorSchemeAware colorSchemaAware;
   private final AreaMap mapModel;
+  private final MapProjection mapProjection;
 
   public VisualAreaMap(VisualAreaMap toCopy) {
-    this(toCopy.getColorSchemaAware(), toCopy.mapModel);
+    this(toCopy.getColorSchemaAware(), toCopy.mapModel, toCopy.mapProjection);
   }
 
-  public VisualAreaMap(ColorSchemeAware cs, AreaMap mapModel) {
+  public VisualAreaMap(ColorSchemeAware cs, AreaMap mapModel, MapProjection proj) {
     this.mapModel = mapModel;
     this.colorSchemaAware = cs;
+    this.mapProjection = proj;
     for (Area area : mapModel.getAreas()) {
       addChild(new VisualArea(this, area));
     }
+  }
+
+  public MapProjection getMapProjection() {
+    return mapProjection;
   }
 
   public ColorSchemeAware getColorSchemaAware() {

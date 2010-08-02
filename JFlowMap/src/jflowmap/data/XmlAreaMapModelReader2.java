@@ -79,14 +79,14 @@ public class XmlAreaMapModelReader2 {
               String coordsStr = in.getElementText();
               String[] coords = coordsStr.split("\\s*,\\s*");
               Point2D[] points = new Point2D[coords.length / 2];
-              double x = Double.NaN, y;
+              double x = Double.NaN, y;  // lat, lon
               int coordCnt = 0;
               for (String point : coords) {
                 if (coordCnt % 2 == 0) {
                   x = Double.parseDouble(point);
                 } else {
                   y = Double.parseDouble(point);
-                  points[coordCnt / 2] = new Point2D.Double(x, y);
+                  points[coordCnt / 2] = new Point2D.Double(y, x);
                 }
                 coordCnt++;
               }

@@ -36,43 +36,46 @@ public class TupleStats {
   private TupleStats() {
   }
 
-  @SuppressWarnings("unchecked")
+  public static MinMax createFor(TupleSet tupleSet, Iterable<String> attrNames) {
+    return MinMax.createFor(attrValuesIterator(tupleSet, attrNames));
+  }
+
+  public static MinMax createFor(TupleSet tupleSet, String attrName) {
+    return MinMax.createFor(attrValuesIterator(tupleSet, attrName));
+  }
+
+
   public static MinMax createFor(Iterator<TupleSet> tupleSetIt, Iterator<String> attrNameIt) {
     List<Iterator<Double>> iterators = Lists.newArrayList();
     while (tupleSetIt.hasNext()) {
-      assert(attrNameIt.hasNext());
+      assert attrNameIt.hasNext();
+      iterators.add(attrValuesIterator(tupleSetIt.next(), attrNameIt.next()));
+    }
+    assert !attrNameIt.hasNext();
+    return MinMax.createFor(Iterators.concat(iterators.iterator()));
+  }
 
-      final TupleSet tuples = tupleSetIt.next();
-      final String attrName = attrNameIt.next();
-
-      iterators.add(Iterators.transform(
-        tuples.tuples(),
+  @SuppressWarnings("unchecked")
+  private static Iterator<Double> attrValuesIterator(TupleSet tupleSet, final String attrName) {
+    return Iterators.transform(
+        tupleSet.tuples(),
         new Function<Tuple, Double>() {
           public Double apply(Tuple from) {
             return from.getDouble(attrName);
           }
         }
-      ));
+    );
+  };
+
+  /**
+   * Returns a concatenated iterator over tuple entries' values of the given set of attrNames
+   */
+  private static Iterator<Double> attrValuesIterator(TupleSet tupleSet, Iterable<String> attrNames) {
+    List<Iterator<Double>> attrValueIterators = Lists.newArrayList();
+    for (String attrName : attrNames) {
+      attrValueIterators.add(attrValuesIterator(tupleSet, attrName));
     }
-    assert(!attrNameIt.hasNext());
-
-    return MinMax.createFor(Iterators.concat(iterators.iterator()));
-  }
-
-//  public static MinMax createFor(TupleSet tupleSet, final String attrName) {
-//    return MinMax.createFor(iteratorFor(tupleSet.tuples(), attrName));
-//  }
-//
-//  @SuppressWarnings("unchecked")
-//  public static Iterator<Double> iteratorFor(Iterator tupleIt, final String attrName) {
-//    return Iterators.transform(
-//        tupleIt,
-//        new Function<Tuple, Double>() {
-//          public Double apply(Tuple from) {
-//            return from.getDouble(attrName);
-//          }
-//        }
-//    );
-//  };
+    return Iterators.concat(attrValueIterators.iterator());
+  };
 
 }

@@ -81,13 +81,13 @@ public class FlowMapGraph {
     attrSpec.checkValidityFor(graph);
     this.graph = graph;
     this.attrSpec = attrSpec;
+    this.matchingEdgeWeightAttrNames = ImmutableList.copyOf(
+        findEdgeAttrsByWildcard(attrSpec.getEdgeWeightAttrWildcard()));
     if (stats == null) {
       stats = FlowMapStats.createFor(this);
       logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
     }
     this.stats = stats;
-    this.matchingEdgeWeightAttrNames = ImmutableList.copyOf(
-      findEdgeAttrsByWildcard(attrSpec.getEdgeWeightAttrWildcard()));
   }
 
   public Iterable<Node> nodes() {
@@ -106,6 +106,34 @@ public class FlowMapGraph {
           @Override
           public Node next() {
             return g.getNode(pos++);
+          }
+
+          @Override
+          public void remove() {
+            throw new UnsupportedOperationException();
+          }
+
+        };
+      }
+    };
+  }
+
+  public Iterable<Edge> edges() {
+    return new Iterable<Edge>() {
+      @Override
+      public Iterator<Edge> iterator() {
+        return new Iterator<Edge>() {
+          final Graph g = getGraph();
+          final int count = g.getEdgeCount();
+          int pos = 0;
+          @Override
+          public boolean hasNext() {
+            return pos < count - 1;
+          }
+
+          @Override
+          public Edge next() {
+            return g.getEdge(pos++);
           }
 
           @Override
@@ -171,6 +199,10 @@ public class FlowMapGraph {
     return node.getString(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
   }
 
+  public String getNodeLabel(Node node) {
+    return node.getString(attrSpec.getNodeLabelAttr());
+  }
+
   public static Node findNodeById(Graph graph, String nodeId) {
     int index = findNodeIndexById(graph, nodeId);
     if (index >= 0) {
@@ -184,7 +216,7 @@ public class FlowMapGraph {
   }
 
   public static List<String> findEdgeAttrsByWildcard(Graph graph, String wildcard) {
-    Pattern re = Pattern.compile(wildcard.replace(".", "\\.").replace("*", ".*"));
+    Pattern re = Pattern.compile(wildcard);
     Table et = graph.getEdgeTable();
     List<String> attrs = Lists.newArrayList();
     for (int i = 0; i < et.getColumnCount(); i++) {
@@ -425,9 +457,28 @@ public class FlowMapGraph {
 //    }
 //  }
 
-    public String getNodeLabel(Node node) {
-      return node.getString(attrSpec.getNodeLabelAttr());
+  /**
+   * Returns max edge weight (for wildcarded weight attrs)
+   */
+  public double getMaxEdgeWeight(Edge e) {
+    double max = Double.NaN;
+    for (String attr : getMatchingEdgeWeightAttrNames()) {
+      double v = e.getDouble(attr);
+      if (Double.isNaN(max)  ||  v > max) {
+        max = v;
+      }
     }
+    return max;
+  }
+
+  public Comparator<Edge> createMaxWeightComparator() {
+    return new Comparator<Edge>() {
+      @Override
+      public int compare(Edge e1, Edge e2) {
+        return (int)Math.signum(getMaxEdgeWeight(e1) - getMaxEdgeWeight(e2));
+      }
+    };
+  }
 
 
 }

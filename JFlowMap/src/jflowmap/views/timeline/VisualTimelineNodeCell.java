@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
+import jflowmap.EdgeDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
@@ -101,17 +102,19 @@ public class VisualTimelineNodeCell extends PNode {
   private final VisualTimeline timeline;
   private final PPath rect;
   private PPath diffRect;
+  private final String weightAttrName;
 
-  public VisualTimelineNodeCell(VisualTimeline timeline, Node node, double x, double y, double width, double height) {
+  public VisualTimelineNodeCell(VisualTimeline timeline, Node node, String weightAttrName, double x, double y, double width, double height) {
     this.node = node;
+    this.weightAttrName = weightAttrName;
     this.timeline = timeline;
 
     FlowMapAttrSpec specs = timeline.getAttrSpecs();
 
     setBounds(x, y, width, height);
 
-    double inValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING);
-    double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
+    double inValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, EdgeDirection.INCOMING);
+    double outValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, EdgeDirection.OUTGOING);
 
 
     double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
@@ -234,6 +237,10 @@ public class VisualTimelineNodeCell extends PNode {
     }
 
     addInputEventListener(inputEventListener);
+  }
+
+  public String getWeightAttrName() {
+    return weightAttrName;
   }
 
   private PPath createHalfCircle(double x, double y, boolean leftNotRight, double normalizedValue) {

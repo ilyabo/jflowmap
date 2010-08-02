@@ -20,6 +20,7 @@ package jflowmap.data;
 
 import java.util.Map;
 
+import jflowmap.EdgeDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
@@ -36,17 +37,21 @@ import com.google.common.collect.Maps;
 public class FlowMapSummaries {
 
   // TODO: generalize FlowMapSummaries (shouldn't be only for regions)
-  public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
-  public static final String NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
+//  public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
+//  public static final String NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
 
   public static final String NODE_COLUMN__SUM_OUTGOING_INTRAREG = "outIntra:stat";
   public static final String NODE_COLUMN__SUM_INCOMING_INTRAREG = "inIntra:stat";
 
-  public static final String NODE_COLUMN__SUM_OUTGOING = "sumOut:stat";
-  public static final String NODE_COLUMN__SUM_INCOMING= "sumIn:stat";
+  private static final String NODE_COLUMN__SUM_OUTGOING = "sumOut:stat";
+  private static final String NODE_COLUMN__SUM_INCOMING= "sumIn:stat";
 
 
   private FlowMapSummaries() {
+  }
+
+  public static double getWeightSummary(Node node, String weightAttrName, EdgeDirection dir) {
+    return node.getDouble(getWeightSummaryNodeAttr(weightAttrName, dir));
   }
 
   public static void supplyNodesWithWeightSummaries(FlowMapGraphSet flowMapGraphSet) {
@@ -60,8 +65,22 @@ public class FlowMapSummaries {
    * the nodes with useful stats.
    */
   public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph) {
-    Graph g = flowMapGraph.getGraph();
+    for (String weightAttrName : flowMapGraph.getMatchingEdgeWeightAttrNames()) {
+      supplyNodesWithWeightSummaries(flowMapGraph, weightAttrName);
+    }
+  }
 
+  public static String getWeightSummaryNodeAttr(String weightAttrName, EdgeDirection dir) {
+    switch (dir) {
+    case OUTGOING: return NODE_COLUMN__SUM_OUTGOING + weightAttrName;
+    case INCOMING: return NODE_COLUMN__SUM_INCOMING + weightAttrName;
+    default: throw new IllegalArgumentException();
+    }
+  }
+
+  private static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph,
+      String weightAttrName) {
+    Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
 
     Map<Integer, Double> outsums = Maps.newHashMap();
@@ -70,7 +89,7 @@ public class FlowMapSummaries {
     for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
       Edge e = g.getEdge(i);
 
-      double v = e.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightAttrWildcard());
+      double v = e.getDouble(weightAttrName);
       if (!Double.isNaN(v)) {
         Node src = e.getSourceNode();
         Node trg = e.getTargetNode();
@@ -93,18 +112,28 @@ public class FlowMapSummaries {
       }
     }
 
-    nodeTable.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, double.class);
-    nodeTable.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING, double.class);
+    String outgoingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, EdgeDirection.OUTGOING);
+    String incomingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, EdgeDirection.INCOMING);
+
+    nodeTable.addColumn(outgoingSumAttrName, double.class);
+    nodeTable.addColumn(incomingSumAttrName, double.class);
+
     for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
       Node node = g.getNode(i);
       if (outsums.containsKey(i)) {
-        node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING, outsums.get(i));
+        node.setDouble(outgoingSumAttrName, outsums.get(i));
       }
       if (insums.containsKey(i)) {
-        node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING, insums.get(i));
+        node.setDouble(incomingSumAttrName, insums.get(i));
       }
     }
   }
+
+
+
+
+
+  // TODO: fix intrareg summaries to support wildcarded weight attrs
 
   public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr) {
     for (FlowMapGraph fmg : fmset.asList()) {
@@ -167,6 +196,7 @@ public class FlowMapSummaries {
   /**
    * This method requires that supplyNodesWithSummaries was already called for the graphs
    */
+  /*
   public static void supplyNodesWithDiffs(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
     Graph prevg = null;
     for (Graph g : graphs) {
@@ -206,6 +236,7 @@ public class FlowMapSummaries {
   private static double diffPercentage(double current, double prev) {
     return (current - prev)/prev;  // TODO: diffPercentage (ensure it works properly; check for division by zero)
   }
+  */
 
   /**
    * Find max outgoing or incoming summary weight for every node over the set.
@@ -213,6 +244,7 @@ public class FlowMapSummaries {
    * (invoke {@link#supplyNodesWithWeightSummaries(FlowMapGraphSet)} first)
    * @return Map: (nodeId -> maxWeight)
    */
+  /*
   public static Map<String, Double> findMaxWeightForEachNode(FlowMapGraphSet flowMapGraphSet,
       boolean incomingNotOutgoing) {
     Map<String, Double> map = Maps.newHashMap();
@@ -232,5 +264,6 @@ public class FlowMapSummaries {
     }
     return map;
   }
+  */
 
 }

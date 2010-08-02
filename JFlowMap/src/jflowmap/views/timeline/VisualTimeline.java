@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
+import jflowmap.EdgeDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
@@ -137,9 +138,12 @@ public class VisualTimeline extends PNode {
 
   private MinMax nodeSummaryMinMax(FlowMapStats stats) {
     FlowMapStats globalStats = flowMapGraphs.getStats();
+    String attr = flowMapGraphs.getAttrSpec().getEdgeWeightAttrWildcard();
     return stats
-      .getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING)
-      .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING))
+      .getNodeAttrStats(
+          FlowMapSummaries.getWeightSummaryNodeAttr(attr, EdgeDirection.INCOMING))
+      .mergeWith(globalStats.getNodeAttrStats(
+          FlowMapSummaries.getWeightSummaryNodeAttr(attr, EdgeDirection.OUTGOING)))
       .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG))
       .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG));
   }
@@ -253,7 +257,9 @@ public class VisualTimeline extends PNode {
       Node node = FlowMapGraph.findNodeById(g, nodeId);
       double x = cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
       double y = cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
-      row.addChild(new VisualTimelineNodeCell(this, node, x, y, cellWidth, cellHeight));
+      row.addChild(new VisualTimelineNodeCell(this, node,
+          graphs.getAttrSpec().getEdgeWeightAttrWildcard(),  // TODO: support for wildcarded attrs
+          x, y, cellWidth, cellHeight));
       row.setBounds(row.getFullBoundsReference());
       graphIndex++;
     }
@@ -282,15 +288,17 @@ public class VisualTimeline extends PNode {
     double x = 0, y = 0;
     x = cellSpacingX + i * (cellWidth + cellSpacingX);
     y = 0;
-    t.setJustification(JComponent.LEFT_ALIGNMENT);
+    t.setHorizontalAlignment(JComponent.LEFT_ALIGNMENT);
     t.setBounds(x + container.getItemsOffsetX() + (cellWidth - t.getWidth())/2, y - t.getHeight()*1.5, t.getWidth(), t.getHeight());
     return t;
   }
 
   public void showTooltip(VisualTimelineNodeCell vc) {
     Node node = vc.getNode();
-    double inValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING);
-    double outValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING);
+
+    double inValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), EdgeDirection.INCOMING);
+    double outValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), EdgeDirection.OUTGOING);
+
     double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
     double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
 //    double inDiffValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR);
