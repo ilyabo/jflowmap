@@ -28,16 +28,19 @@ public enum MapProjections implements MapProjection {
   NONE {
     @Override
     public Point2D project(double lon, double lat) {
-      return new Point2D.Double(lon, lat);
+      return new Point2D.Double(lat, lon);
     }
   },
 
   MERCATOR {
+    private final static double SCALE = 25;
+    private final static boolean INVERT_Y = true;
+
     @Override
     public Point2D project(double lon, double lat) {
       return new Point2D.Double(
-          lon / 180,
-          - (lat > 85 ?
+          SCALE * lon / 180,
+          SCALE * (INVERT_Y ? -1 : 1) * (lat > 85 ?
               1 : (lat < -85 ?
                   -1 : Math.log(Math.tan(Math.PI / 4 + radians(lat) / 2)) / Math.PI)
               ));

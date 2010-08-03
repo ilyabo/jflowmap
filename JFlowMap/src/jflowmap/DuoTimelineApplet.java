@@ -41,6 +41,7 @@ public class DuoTimelineApplet extends BaseApplet {
 //  }
 
   public DuoTimelineApplet() {
+    super("DuoTimeline");
   }
 
 

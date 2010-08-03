@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -41,14 +42,14 @@ public class DuoTimelineControlPanel extends JPanel {
 
   private final DuoTimelineView duoTimelineView;
 
-//  private final JTabbedPane tabbedPane;
+  private final JTabbedPane tabbedPane;
 
   public DuoTimelineControlPanel(DuoTimelineView duoTimelineView) {
     this.duoTimelineView = duoTimelineView;
 
     setLayout(new MigLayout("aligny top,alignx center,gapx 25", "", "grow"));
-//    tabbedPane = new JTabbedPane();
-//    add(tabbedPane);
+    tabbedPane = new JTabbedPane();
+    add(tabbedPane);
 
     addPanel(createDataPanel());
     addPanel(createFilterPanel());
@@ -56,9 +57,9 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
   private void addPanel(JPanel panel) {
-//    tabbedPane.addTab(panel.getName(), panel);
     panel.setBorder(BorderFactory.createTitledBorder(panel.getName()));
-    add(panel);
+//    add(panel);
+    tabbedPane.addTab(panel.getName(), panel);
   }
 
 

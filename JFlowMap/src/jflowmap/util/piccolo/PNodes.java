@@ -20,9 +20,13 @@ package jflowmap.util.piccolo;
 
 import java.util.Iterator;
 
+import jflowmap.util.MathUtils;
+
 import com.google.common.collect.Iterables;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -56,12 +60,12 @@ public class PNodes {
             public boolean hasNext() {
               return (nextPos < node.getChildrenCount());
             }
-  
+
             @Override
             public PNode next() {
               return node.getChild(nextPos++);
             }
-  
+
             @Override
             public void remove() {
               throw new UnsupportedOperationException();
@@ -88,6 +92,39 @@ public class PNodes {
     }
     return -1;
   }
+
+  /**
+   * @param halign -1 - stick to left side, 0 - center, 1 - stick to right side
+   * @param valign -1 - stick to top side, 0 - middle, 1 - stick to bottom side
+   * @param hsizeProp 0..1 Proportion of the width of the camera bounds which the node should take
+   * @param vsizeProp 0..1 Proportion of the height of the camera bounds which the node should take
+   */
+  public static void adjustStickyNodeToCameraSize(PCamera camera, PNode node,
+        double halign, double valign, double hsizeProp, double vsizeProp) {
+      PBounds cameraBounds = camera.getGlobalBounds();
+      PBounds nodeFullBounds = node.getUnionOfChildrenBounds(null);
+
+      double scale = Math.min(
+          hsizeProp * camera.getWidth() / nodeFullBounds.width,
+          vsizeProp * camera.getHeight() / nodeFullBounds.height);
+      if (scale <= 0) {
+        scale = node.getScale();
+      } else {
+        node.setScale(scale);
+      }
+      node.setOffset(
+          MathUtils.between(
+              (cameraBounds.getMinX() - nodeFullBounds.getMinX() * scale),
+              (cameraBounds.getMaxX() - nodeFullBounds.getMaxX() * scale),
+              (halign + 1) / 2  // make it between 0 and 1
+          ),
+          MathUtils.between(
+              (cameraBounds.getMinY() - nodeFullBounds.getMinY() * scale),
+              (cameraBounds.getMaxY() - nodeFullBounds.getMaxY() * scale),
+              (valign + 1) / 2  // make it between 0 and 1
+          )
+      );
+    }
 
 
 

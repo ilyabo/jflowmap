@@ -48,7 +48,7 @@ public class FlowTimelineApplet extends BaseApplet {
   private static final long serialVersionUID = 1L;
 
   public FlowTimelineApplet() {
-
+    super("FlowTimelineApplet");
   }
 
   @Override

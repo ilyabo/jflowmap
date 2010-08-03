@@ -63,4 +63,11 @@ public final class MathUtils {
 		public abstract long round(double value);
 	}
 
+  /**
+   * @param alpha between 0 and 1
+   */
+  public static double between(double a, double b, double alpha) {
+    return (a + (b - a) * alpha);
+  }
+
 }

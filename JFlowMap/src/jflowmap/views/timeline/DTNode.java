@@ -37,6 +37,10 @@ class DTNode extends PPath {
       this.edge = edge;
     }
 
+    public Edge getEdge() {
+      return edge;
+    }
+
     public FlowMapGraph getFlowMapGraph() {
       return flowMapGraph;
     }

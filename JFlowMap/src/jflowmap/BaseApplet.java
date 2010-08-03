@@ -18,11 +18,11 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
 import java.io.IOException;
 
 import javax.swing.JApplet;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
@@ -37,6 +37,11 @@ public abstract class BaseApplet extends JApplet {
 
   protected abstract IView createView() throws IOException;
 
+  public BaseApplet(String name) {
+    super();
+    setName(name);
+  }
+
 
   @Override
   public void init() {
@@ -46,7 +51,12 @@ public abstract class BaseApplet extends JApplet {
 
       JComponent controls = view.getControls();
       if (controls != null) {
-        add(controls, BorderLayout.NORTH);
+//        add(controls, BorderLayout.NORTH);
+        JFrame frame = new JFrame(getName() + " Controls");
+        frame.setResizable(false);
+        frame.add(controls);
+        frame.pack();
+        frame.setVisible(true);
       }
     } catch (IOException ex) {
       JMsgPane.showProblemDialog(this, "Error: " + ex.getMessage());

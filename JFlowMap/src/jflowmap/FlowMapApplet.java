@@ -29,6 +29,10 @@ import jflowmap.views.flowmap.FlowMapView;
  */
 public class FlowMapApplet extends BaseApplet {
 
+  public FlowMapApplet() {
+    super("FlowMapApplet");
+  }
+
   @Override
   protected IView createView() {
     FlowMapView jFlowMap = new FlowMapView(Arrays.asList(getDatasetSpec()), true);
