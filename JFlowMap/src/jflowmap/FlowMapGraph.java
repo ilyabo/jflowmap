@@ -42,6 +42,7 @@ import prefuse.data.Table;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -53,6 +54,8 @@ import com.google.common.collect.Sets;
  */
 
 public class FlowMapGraph {
+
+  private static final String EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX = ":diff";
 
   private static Logger logger = Logger.getLogger(FlowMapGraph.class);
 
@@ -166,8 +169,17 @@ public class FlowMapGraph {
     return matchingEdgeWeightAttrNames.size();
   }
 
-  public List<String> getMatchingEdgeWeightAttrNames() {
+  public List<String> getEdgeWeightAttrNames() {
     return matchingEdgeWeightAttrNames;
+  }
+
+  public List<String> getEdgeWeightDiffAttrNames() {
+    return ImmutableList.copyOf(Iterables.transform(matchingEdgeWeightAttrNames,
+        new Function<String, String>() {
+          public String apply(String weightAttr) {
+            return getEdgeWeightDiffAttr(weightAttr);
+          }
+        }));
   }
 
   public String getNodeLabelAttr() {
@@ -462,7 +474,7 @@ public class FlowMapGraph {
    */
   public double getMaxEdgeWeight(Edge e) {
     double max = Double.NaN;
-    for (String attr : getMatchingEdgeWeightAttrNames()) {
+    for (String attr : getEdgeWeightAttrNames()) {
       double v = e.getDouble(attr);
       if (Double.isNaN(max)  ||  v > max) {
         max = v;
@@ -480,5 +492,30 @@ public class FlowMapGraph {
     };
   }
 
+  public String getEdgeWeightDiffAttr(String weightAttr) {
+    return weightAttr + EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX;
+  }
+
+  public void addEdgeWeightDifferenceColumns() {
+    Iterable<Edge> edges = edges();
+
+    String prevAttr = null;
+    for (String attr : getEdgeWeightAttrNames()) {
+      String diffAttr = getEdgeWeightDiffAttr(attr);
+
+      graph.getEdges().addColumn(diffAttr, double.class);
+      for (Edge edge : edges) {
+        double diff;
+        if (prevAttr == null) {
+          diff = Double.NaN;
+        } else {
+          diff = edge.getDouble(attr) - edge.getDouble(prevAttr);
+        }
+        edge.setDouble(diffAttr, diff);
+      }
+
+      prevAttr = attr;
+    }
+  }
 
 }

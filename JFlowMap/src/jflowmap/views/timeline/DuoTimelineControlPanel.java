@@ -19,6 +19,8 @@
 package jflowmap.views.timeline;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -76,20 +78,27 @@ public class DuoTimelineControlPanel extends JPanel {
 
 
     panel.add(new JLabel("Group by:"), "al right, gapleft 15");
-    panel.add(new JComboBox(new Object[] { "<None>", "r", "rity" }), "height min, width min");
+    panel.add(new JComboBox(new Object[] { "<None>", "r", "rity" }), "height min, width min, wrap");
 
 
-    panel.add(new JButton("Update"), "gapleft 10, span, al right, wrap");
+//    JButton applyButton = new JButton("Apply");
+//    panel.add(applyButton, "gapleft 10, span, al right, wrap");
 
     // --
-    panel.add(new JCheckBox("Differences"), "al right, span 2");
+    final JCheckBox differencesChk = new JCheckBox("Differences",
+        duoTimelineView.getUseWeightDifferences());
+    panel.add(differencesChk, "al right, span 2");
+    differencesChk.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setUseWeightDifferences(differencesChk.isSelected());
+      }
+    });
 
     panel.add(new JLabel("Order by:"), "gapleft 10, al right");
     panel.add(new JComboBox(new Object[] {
         "max magnitude in row",
         "Euclidean distance from max" }), "");
-
-
 
     return panel;
   }
@@ -109,7 +118,7 @@ public class DuoTimelineControlPanel extends JPanel {
     panel.add(new JComboBox(new Object[] { 50, 100, 250, 500, "\u221e" /*infinity*/ }),
         "height min, width min");
 
-    panel.add(new JButton("Update"), "gapleft 15, wrap");
+    panel.add(new JButton("Apply"), "gapleft 15, wrap");
 
     //--
 

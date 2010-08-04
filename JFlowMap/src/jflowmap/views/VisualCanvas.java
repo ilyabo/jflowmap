@@ -20,6 +20,7 @@ package jflowmap.views;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import jflowmap.util.piccolo.PanHandler;
@@ -35,11 +36,17 @@ import edu.umd.cs.piccolo.util.PBounds;
 public class VisualCanvas extends PCanvas {
 
   private static final Dimension MIN_SIZE = new Dimension(150, 100);
+  private final ZoomHandler zoomHandler;
 
   public VisualCanvas() {
     setZoomEventHandler(null);
-    addInputEventListener(new ZoomHandler());
+    zoomHandler = new ZoomHandler();
+    addInputEventListener(zoomHandler);
     setPanEventHandler(new PanHandler());
+  }
+
+  public void setViewZoomPoint(Point2D point) {
+    zoomHandler.setViewZoomPoint(point);
   }
 
   public void fitChildrenInCameraView() {

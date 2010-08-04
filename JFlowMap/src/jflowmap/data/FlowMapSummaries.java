@@ -65,7 +65,7 @@ public class FlowMapSummaries {
    * the nodes with useful stats.
    */
   public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph) {
-    for (String weightAttrName : flowMapGraph.getMatchingEdgeWeightAttrNames()) {
+    for (String weightAttrName : flowMapGraph.getEdgeWeightAttrNames()) {
       supplyNodesWithWeightSummaries(flowMapGraph, weightAttrName);
     }
   }

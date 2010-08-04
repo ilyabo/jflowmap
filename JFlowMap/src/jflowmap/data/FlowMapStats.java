@@ -100,12 +100,34 @@ public class FlowMapStats {
     return getCachedOrCalc(
         EDGE_ATTR_KEY_PREFIX + "WEIGHT",
         new AttrStatsCalculator() {
+          @Override public MinMax calc() {
+            MinMax minMax = null;
+            for (FlowMapGraph fmg : flowMapGraphs) {
+              MinMax mm = TupleStats.createFor(fmg.getGraph().getEdges(),
+                  fmg.getEdgeWeightAttrNames());
+              if (minMax == null) {
+                minMax = mm;
+              } else {
+                minMax = minMax.mergeWith(mm);
+              }
+            }
+            return minMax;
+          }
+        }
+    );
+  }
+
+  public MinMax getEdgeWeightDiffStats() {
+    return getCachedOrCalc(
+        EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF",
+        new AttrStatsCalculator() {
           @Override
           public MinMax calc() {
             MinMax minMax = null;
             for (FlowMapGraph fmg : flowMapGraphs) {
               MinMax mm = TupleStats.createFor(fmg.getGraph().getEdges(),
-                  fmg.getMatchingEdgeWeightAttrNames());
+                  fmg.getEdgeWeightDiffAttrNames()
+                  );
               if (minMax == null) {
                 minMax = mm;
               } else {
