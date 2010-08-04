@@ -34,7 +34,7 @@ import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.ColorScheme;
+import jflowmap.views.IColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
 import prefuse.data.Node;
 import prefuse.util.ColorLib;
@@ -256,7 +256,7 @@ public class VisualTimelineNodeCell extends PNode {
   }
 
   private PPath colorizeHalfCircle(PPath halfCircle, double normalizedValue, boolean leftNotRight, boolean intrareg) {
-    ColorScheme cs = timeline.getColorScheme();
+    IColorScheme cs = timeline.getColorScheme();
 
     Color cmax = cs.get(leftNotRight ? ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT : ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT);
 

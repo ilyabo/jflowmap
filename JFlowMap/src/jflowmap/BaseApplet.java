@@ -54,6 +54,7 @@ public abstract class BaseApplet extends JApplet {
 //        add(controls, BorderLayout.NORTH);
         JFrame frame = new JFrame(getName() + " Controls");
         frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.add(controls);
         frame.pack();
         frame.setVisible(true);

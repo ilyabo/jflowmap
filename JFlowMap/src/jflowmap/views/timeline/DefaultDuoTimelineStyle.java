@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Stroke;
 
-import prefuse.util.ColorLib;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
@@ -59,6 +58,7 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
     return Color.lightGray;
   }
 
+  /*
 
   private static final int[] sequentialValueColors = new int[] {
       // ColorBrewer  OrRd (sequential)
@@ -126,6 +126,7 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   public int[] getDivergingValueColors() {
     return divergingValueColors;
   }
+  */
 
   private static final BasicStroke TIMELINE_CELL_STROKE = null;
   @Override

@@ -18,7 +18,6 @@
 
 package jflowmap.views.timeline;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,21 +25,23 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import jflowmap.ColorSchemes;
+import jflowmap.FlowMapGraph;
 import net.miginfocom.swing.MigLayout;
+import prefuse.data.Edge;
+
+import com.google.common.base.Predicate;
 
 /**
  * @author Ilya Boyandin
  */
 public class DuoTimelineControlPanel extends JPanel {
-
-  private static final Color LABEL_COLOR = new Color(0, 70, 213);
 
   private final DuoTimelineView duoTimelineView;
 
@@ -55,7 +56,7 @@ public class DuoTimelineControlPanel extends JPanel {
 
     addPanel(createDataPanel());
     addPanel(createFilterPanel());
-    addPanel(createAestheticsPanel());
+    addPanel(createHeatmapColorsPanel());
   }
 
   private void addPanel(JPanel panel) {
@@ -73,21 +74,13 @@ public class DuoTimelineControlPanel extends JPanel {
 //    FlowMapGraphSet fmgs = duoTimelineView.getFlowMapGraph();
 
 
-    panel.add(new JLabel("Attribute:"), "al right");
-    panel.add(new JComboBox(new Object[] { "r", "rity" }), "height min, width min");
+//    panel.add(new JLabel("Attribute:"), "al right");
+//    panel.add(new JComboBox(new Object[] { "r", "rity" }), "height min, width min");
 
 
-    panel.add(new JLabel("Group by:"), "al right, gapleft 15");
-    panel.add(new JComboBox(new Object[] { "<None>", "r", "rity" }), "height min, width min, wrap");
-
-
-//    JButton applyButton = new JButton("Apply");
-//    panel.add(applyButton, "gapleft 10, span, al right, wrap");
-
-    // --
     final JCheckBox differencesChk = new JCheckBox("Differences",
         duoTimelineView.getUseWeightDifferences());
-    panel.add(differencesChk, "al right, span 2");
+    panel.add(differencesChk, "al right");
     differencesChk.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -95,10 +88,23 @@ public class DuoTimelineControlPanel extends JPanel {
       }
     });
 
+
+    panel.add(new JLabel("Group by:"), "al right, gapleft 15");
+    JComboBox groupByCombo = new JComboBox(new Object[] { "<None>", "r", "rity" });
+    panel.add(groupByCombo, "height min, width min");
+    groupByCombo.setEnabled(false);
+
+
+//    JButton applyButton = new JButton("Apply");
+//    panel.add(applyButton, "gapleft 10, span, al right, wrap");
+
+
     panel.add(new JLabel("Order by:"), "gapleft 10, al right");
-    panel.add(new JComboBox(new Object[] {
+    JComboBox orderByCombo = new JComboBox(new Object[] {
         "max magnitude in row",
-        "Euclidean distance from max" }), "");
+        "Euclidean distance from max" });
+    panel.add(orderByCombo, "");
+    orderByCombo.setEnabled(false);
 
     return panel;
   }
@@ -109,16 +115,37 @@ public class DuoTimelineControlPanel extends JPanel {
     panel.setName("Filter");
 
     panel.add(new JLabel("Source:"), "al right, gapleft 10");
-    panel.add(new JTextField(), "growx, wmin 150, gapright 5");
+    final JTextField srcField = new JTextField();
+    panel.add(srcField, "growx, wmin 150, gapright 5");
 
     panel.add(new JLabel("Target:"), "al right");
-    panel.add(new JTextField(), "growx, wmin 150");
+    final JTextField targetField = new JTextField();
+    panel.add(targetField, "growx, wmin 150");
 
     panel.add(new JLabel("Max rows:"), "gapleft 10, al right");  //
     panel.add(new JComboBox(new Object[] { 50, 100, 250, 500, "\u221e" /*infinity*/ }),
         "height min, width min");
 
-    panel.add(new JButton("Apply"), "gapleft 15, wrap");
+    JButton applyButton = new JButton("Apply");
+    panel.add(applyButton, "gapleft 15, wrap");
+    applyButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setEdgeFilter(new Predicate<Edge>() {
+          FlowMapGraph fmg = duoTimelineView.getFlowMapGraph();
+          String src = srcField.getText().toLowerCase();
+          String target = targetField.getText().toLowerCase();
+          @Override
+          public boolean apply(Edge edge) {
+            return
+              (src.length() == 0 || fmg.getNodeLabel(edge.getSourceNode()).toLowerCase().contains(src))  &&
+              (target.length() == 0 || fmg.getNodeLabel(edge.getTargetNode()).toLowerCase().contains(target))
+              ;
+          }
+        });
+      }
+    });
 
     //--
 
@@ -126,12 +153,39 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
 
-  private JPanel createAestheticsPanel() {
+  private JPanel createHeatmapColorsPanel() {
     JPanel panel = new JPanel(new MigLayout("", "", "[]15[]"));
-    panel.setName("Aesthetics");
-    panel.add(new JLabel("Heatmap colors:"), "al right");
-    panel.add(new JComboBox(new Object[] { "RdBu 5" }), "");
-    panel.add(new JCheckBox("Interpolate"), "gapleft 15");
+    panel.setName("Heatmap colors");
+    panel.add(new JLabel("Diverging:"), "al right");
+
+    final JComboBox divergingCombo =
+      new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.DIVERGING).toArray());
+    divergingCombo.setSelectedItem(duoTimelineView.getDivergingColorScheme());
+    panel.add(divergingCombo, "");
+    divergingCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setDivergingColorScheme((ColorSchemes) divergingCombo.getSelectedItem());
+      }
+    });
+
+    panel.add(new JLabel("Sequential:"), "gapleft 15, al right");
+    final JComboBox sequentialCombo =
+      new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.SEQUENTIAL).toArray());
+    sequentialCombo.setSelectedItem(duoTimelineView.getSequentialColorScheme());
+    sequentialCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
+      }
+    });
+    panel.add(sequentialCombo, "");
+    final JCheckBox interpolateChk = new JCheckBox("Interpolate",
+        duoTimelineView.getInterpolateColors());
+    panel.add(interpolateChk, "gapleft 15");
+    interpolateChk.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setInterpolateColors(interpolateChk.isSelected());
+      }
+    });
     return panel;
   }
 
@@ -140,12 +194,12 @@ public class DuoTimelineControlPanel extends JPanel {
     return new JLabel(text, SwingConstants.LEADING);
   }
 
-  public static void main(String[] args) {
-    JFrame frame = new JFrame();
-    frame.add(new DuoTimelineControlPanel(null));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setSize(1600, 200);
-    frame.setLocation(100, 700);
-    frame.setVisible(true);
-  }
+//  public static void main(String[] args) {
+//    JFrame frame = new JFrame();
+//    frame.add(new DuoTimelineControlPanel(new DuoTimelineView(null, null)));
+//    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//    frame.setSize(1600, 200);
+//    frame.setLocation(100, 700);
+//    frame.setVisible(true);
+//  }
 }

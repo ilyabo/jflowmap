@@ -34,8 +34,10 @@ public class ZoomHandler extends PDragSequenceEventHandler {
   private double minScale = 0;
   private double maxScale = Double.MAX_VALUE;
   private Point2D viewZoomPoint;
+  private boolean fixZoomPoint = false;
 
   public ZoomHandler() {
+    this(0, Double.MAX_VALUE);
   }
 
   public ZoomHandler(double minScale, double maxScale) {
@@ -67,8 +69,9 @@ public class ZoomHandler extends PDragSequenceEventHandler {
     return viewZoomPoint != null;
   }
 
-  public void setViewZoomPoint(Point2D viewZoomPoint) {
+  public void setFixedViewZoomPoint(Point2D viewZoomPoint) {
     this.viewZoomPoint = viewZoomPoint;
+    this.fixZoomPoint = (viewZoomPoint != null);
   }
 
   @Override
@@ -130,7 +133,9 @@ public class ZoomHandler extends PDragSequenceEventHandler {
 
   @Override
   protected void dragActivityFinalStep(PInputEvent aEvent) {
-    viewZoomPoint = null;
+    if (!fixZoomPoint) {
+      viewZoomPoint = null;
+    }
   }
 
 }

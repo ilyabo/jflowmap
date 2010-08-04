@@ -37,9 +37,9 @@ public interface DuoTimelineStyle {
 
   Color getMissingValueColor();
 
-  int[] getSequentialValueColors();
-
-  int[] getDivergingValueColors();
+//  int[] getSequentialValueColors();
+//
+//  int[] getDivergingValueColors();
 
   Stroke getSelectedTimelineCellStroke();
 

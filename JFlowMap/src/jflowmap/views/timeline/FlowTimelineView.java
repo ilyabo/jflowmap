@@ -26,7 +26,7 @@ import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraphSet;
 import jflowmap.data.FlowMapSummaries;
-import jflowmap.views.ColorScheme;
+import jflowmap.views.IColorScheme;
 
 import org.apache.log4j.Logger;
 
@@ -44,7 +44,7 @@ public class FlowTimelineView extends AbstractCanvasView {
   public static final Color CANVAS_BACKGROUND_COLOR = Color.white;
 //    new Color(47, 89, 134);
   private final VisualTimeline visualTimeline;
-  private final ColorScheme colorScheme;
+  private final IColorScheme colorScheme;
 
 
 //  public FlowTimelineView(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
@@ -78,7 +78,7 @@ public class FlowTimelineView extends AbstractCanvasView {
     return "FlowTimeline";
   }
 
-  public ColorScheme getColorScheme() {
+  public IColorScheme getColorScheme() {
     return colorScheme;
   }
 

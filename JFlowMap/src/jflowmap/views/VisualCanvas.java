@@ -46,7 +46,15 @@ public class VisualCanvas extends PCanvas {
   }
 
   public void setViewZoomPoint(Point2D point) {
-    zoomHandler.setViewZoomPoint(point);
+    zoomHandler.setFixedViewZoomPoint(point);
+  }
+
+  public void setMinZoomScale(double minScale) {
+    zoomHandler.setMinScale(minScale);
+  }
+
+  public void setMaxZoomScale(double maxScale) {
+    zoomHandler.setMaxScale(maxScale);
   }
 
   public void fitChildrenInCameraView() {

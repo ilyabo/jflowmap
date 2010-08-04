@@ -38,7 +38,7 @@ import javax.swing.SwingWorker;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
-import jflowmap.views.ColorScheme;
+import jflowmap.views.IColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMap;
 import jflowmap.views.flowmap.VisualFlowMapModel;
@@ -119,7 +119,7 @@ public class SmallMultiplesMain extends JFrame {
     this.showLegend = showLegend;
   }
 
-  public void setColorScheme(ColorScheme colorScheme) {
+  public void setColorScheme(IColorScheme colorScheme) {
     jFlowMap.setColorScheme(colorScheme);
   }
 

@@ -34,7 +34,7 @@ import jflowmap.geo.MapProjections;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.ColorScheme;
+import jflowmap.views.IColorScheme;
 
 import org.apache.log4j.Logger;
 
@@ -49,7 +49,7 @@ public class FlowMapView extends AbstractCanvasView {
 
   private ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
-  private ColorScheme colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
+  private IColorScheme colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
@@ -113,7 +113,7 @@ public class FlowMapView extends AbstractCanvasView {
     return visualFlowMap.getName();
   }
 
-  public void setColorScheme(ColorScheme colorScheme) {
+  public void setColorScheme(IColorScheme colorScheme) {
     this.colorScheme = colorScheme;
     getVisualCanvas().setBackground(colorScheme.get(ColorCodes.BACKGROUND));
     if (visualFlowMap != null) {
@@ -124,7 +124,7 @@ public class FlowMapView extends AbstractCanvasView {
     }
   }
 
-  public ColorScheme getColorScheme() {
+  public IColorScheme getColorScheme() {
     return colorScheme;
   }
 
