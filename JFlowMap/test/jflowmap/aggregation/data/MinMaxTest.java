@@ -14,6 +14,14 @@ public class MinMaxTest {
   private static final double EPS = 1e-7;
 
   @Test
+  public void test_normalizeLog_smallDiff() {
+    MinMax mm = MinMax.createFor(Arrays.asList(7.47725554761535E-10, 1.0512433341615857));
+    //mm.normalize(1.0512433341615857);
+    assertEquals(1.0, mm.normalizeLog(1.0512433341615857), EPS); // used to yield 1.0000000000000004
+                                                                 // and throw an exception
+  }
+
+  @Test
   public void test_createFor_negative() {
     MinMax minMax = MinMax.createFor(Arrays.asList(-1.0, -1.1, -1.4, -100.0, -10.0).iterator());
     assertEquals(-100.0, minMax.getMin(), EPS);

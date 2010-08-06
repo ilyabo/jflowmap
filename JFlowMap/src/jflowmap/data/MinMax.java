@@ -175,6 +175,12 @@ public class MinMax {
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
+    if (value == min) {
+      return 0.0;
+    }
+    if (value == max) {
+      return 1.0;
+    }
     checkInterval(value, min, max);
     if (max == min) return 1.0;
     double logOfRadius = Math.log10(1.0 + (max - min));
