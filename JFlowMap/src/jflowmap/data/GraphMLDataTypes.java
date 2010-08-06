@@ -20,20 +20,25 @@ package jflowmap.data;
 
 import java.util.Date;
 
+/**
+ * @author Ilya Boyandin
+ */
 public enum GraphMLDataTypes {
-  INT(int.class, "int", "integer"),
-  LONG(long.class, "long"),
-  FLOAT(float.class, "float"),
-  DOUBLE(double.class, "double", "real"),
-  BOOLEAN(boolean.class, "boolean"),
-  STRING(String.class, "string"),
-  DATE(Date.class, "date");
+  INT(int.class, null, "int", "integer"),
+  LONG(long.class, null, "long"),
+  FLOAT(float.class, Float.NaN, "float"),
+  DOUBLE(double.class, Double.NaN, "double", "real"),
+  BOOLEAN(boolean.class, null, "boolean"),
+  STRING(String.class, "", "string"),
+  DATE(Date.class, null, "date");
 
   final Class<?> klass;
   private final String[] names;
+  private Object defaultValue;
 
-  private GraphMLDataTypes(Class<?> klass, String ... names) {
+  private GraphMLDataTypes(Class<?> klass, Object defaultValue, String ... names) {
     this.klass = klass;
+    this.defaultValue = defaultValue;
     this.names = names;
   }
 
@@ -46,5 +51,9 @@ public enum GraphMLDataTypes {
       }
     }
     throw new IllegalArgumentException("Type " + typeName + " is not supported");
+  }
+
+  public Object getDefaultValue() {
+    return defaultValue;
   }
 }

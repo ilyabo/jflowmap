@@ -254,6 +254,7 @@ public class GraphMLReader3 {
 
     attrIdToName.put(id, name);
 
+    /*
     String defaultValStr = in.getAttributeValue(NAMESPACE, "default");
     final Object defaultVal;
     if (defaultValStr == null) {
@@ -261,6 +262,8 @@ public class GraphMLReader3 {
     } else {
       defaultVal = parseData(defaultValStr, type.klass);
     }
+    */
+    Object defaultVal = type.getDefaultValue();
 
     if (forWhat == null  ||  forWhat.equals("all")) {
       nodeSchema.addColumn(name, type.klass, defaultVal);
