@@ -38,6 +38,7 @@ import jflowmap.ColorSchemes;
 import jflowmap.EdgeDirection;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
+import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjections;
@@ -251,11 +252,14 @@ public class DuoTimelineView extends AbstractCanvasView {
 
     flowMapGraph.addEdgeWeightDifferenceColumns();
 
-//    FlowMapStats stats = flowMapGraph.getStats();
-//    MinMax xstats = stats.getNodeXStats();
-//    MinMax ystats = stats.getNodeYStats();
-    double dotSize = .25;
-//      Math.min(xstats.getMax() - xstats.getMin(), ystats.getMax() - ystats.getMin()) / 100;
+    FlowMapStats stats = flowMapGraph.getStats();
+    MinMax xstats = stats.getNodeXStats();
+    MinMax ystats = stats.getNodeYStats();
+
+    Point2D maxDist = sourceVisualAreaMap.getMapProjection().project(
+        xstats.getMax() - xstats.getMin(), ystats.getMax() - ystats.getMin());
+
+    double dotSize = Math.abs(Math.min(maxDist.getX(), maxDist.getY()) / 75.0);
 
     for (int i = 0, count = g.getNodeCount(); i < count; i++) {
       Node node = g.getNode(i);
