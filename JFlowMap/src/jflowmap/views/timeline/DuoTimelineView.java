@@ -159,7 +159,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     this.edgeFilter = edgeFilter;
     visibleEdges = null;
     renewHeatmap();
-    fitInView();
+//    fitInView();
   }
 
   private List<Edge> getVisibleEdges() {
@@ -273,7 +273,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       PPath fromPoint = createCentroidDot(sourceVisualAreaMap, fp.getX(), fp.getY(), dotSize);
       PPath toPoint = createCentroidDot(targetVisualAreaMap, tp.getX(), tp.getY(), dotSize);
 
-      countryCentroids.put(FlowMapGraph.getNodeId(node), Pair.of(fromPoint, toPoint));
+      countryCentroids.put(flowMapGraph.getNodeId(node), Pair.of(fromPoint, toPoint));
     }
   }
 
@@ -317,13 +317,13 @@ public class DuoTimelineView extends AbstractCanvasView {
       Pair<PLine, PLine> lines = edgeLines.get(edge);
 
       PNode srcMapPoint = countryCentroids.get(
-          FlowMapGraph.getNodeId(edge.getSourceNode())).first();
+          flowMapGraph.getNodeId(edge.getSourceNode())).first();
       PBounds srcB = srcMapPoint.getFullBounds();
       srcMapPoint.localToGlobal(srcB);
 
 
       PNode targetMapPoint = countryCentroids.get(
-          FlowMapGraph.getNodeId(edge.getTargetNode())).second();
+          flowMapGraph.getNodeId(edge.getTargetNode())).second();
       PBounds targetB = targetMapPoint.getFullBounds();
       targetMapPoint.localToGlobal(targetB);
 
@@ -619,7 +619,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     double middleGap = camera.getViewBounds().getWidth() * .3;
     boundRect.height = boundRect.width * viewBounds.height / middleGap;
 
-    camera.animateViewToCenterBounds(boundRect, true, 0);
+    camera.animateViewToCenterBounds(boundRect, true, 100);
 
     getVisualCanvas().setViewZoomPoint(viewBounds.getCenter2D());
   }

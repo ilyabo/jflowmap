@@ -22,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -30,11 +29,15 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
 import jflowmap.FlowMapGraph;
+import jflowmap.util.BagOfWordsFilter;
 import net.miginfocom.swing.MigLayout;
 import prefuse.data.Edge;
+import prefuse.data.Node;
 
 import com.google.common.base.Predicate;
 
@@ -126,32 +129,55 @@ public class DuoTimelineControlPanel extends JPanel {
     panel.add(new JComboBox(new Object[] { 50, 100, 250, 500, "\u221e" /*infinity*/ }),
         "height min, width min");
 
-    JButton applyButton = new JButton("Apply");
-    panel.add(applyButton, "gapleft 15, wrap");
-    applyButton.addActionListener(new ActionListener() {
+//    JButton applyButton = new JButton("Apply");
+//    panel.add(applyButton, "gapleft 15, wrap");
 
+    DocumentListener docListener = new DocumentListener() {
       @Override
-      public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setEdgeFilter(new Predicate<Edge>() {
-          FlowMapGraph fmg = duoTimelineView.getFlowMapGraph();
-          String src = srcField.getText().toLowerCase();
-          String target = targetField.getText().toLowerCase();
-          @Override
-          public boolean apply(Edge edge) {
-            return
-              (src.length() == 0 || fmg.getNodeLabel(edge.getSourceNode()).toLowerCase().contains(src))  &&
-              (target.length() == 0 || fmg.getNodeLabel(edge.getTargetNode()).toLowerCase().contains(target))
-              ;
-          }
-        });
+      public void removeUpdate(DocumentEvent e) {
+        doFilterBySrcDest(srcField, targetField);
       }
-    });
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        doFilterBySrcDest(srcField, targetField);
+      }
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        doFilterBySrcDest(srcField, targetField);
+      }
+    };
+    srcField.getDocument().addDocumentListener(docListener);
+    targetField.getDocument().addDocumentListener(docListener);
 
     //--
 
     return panel;
   }
 
+  private void doFilterBySrcDest(final JTextField srcField, final JTextField targetField) {
+    duoTimelineView.setEdgeFilter(new Predicate<Edge>() {
+
+      FlowMapGraph fmg = duoTimelineView.getFlowMapGraph();
+
+      String srcQuery = srcField.getText().toLowerCase();
+      String targetQuery = targetField.getText().toLowerCase();
+
+      String[] srcQueryWords = BagOfWordsFilter.words(srcQuery);
+      String[] targetQueryWords = BagOfWordsFilter.words(targetQuery);
+
+      @Override
+      public boolean apply(Edge edge) {
+        Node srcNode = edge.getSourceNode();
+        Node targetNode = edge.getTargetNode();
+
+        String srcNames = fmg.getNodeLabel(srcNode);
+        String targetNames = fmg.getNodeLabel(targetNode);
+
+        return BagOfWordsFilter.ALL.apply(srcNames, srcQueryWords)  &&
+               BagOfWordsFilter.ALL.apply(targetNames, targetQueryWords);
+      }
+    });
+  }
 
   private JPanel createHeatmapColorsPanel() {
     JPanel panel = new JPanel(new MigLayout("", "", "[]15[]"));

@@ -207,7 +207,11 @@ public class FlowMapGraph {
     graph.putClientProperty(GRAPH_CLIENT_PROPERTY__ID, name);
   }
 
-  public static String getNodeId(Node node) {
+  public String getNodeId(Node node) {
+    return getIdOfNode(node);
+  }
+
+  private static String getIdOfNode(Node node) {
     return node.getString(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
   }
 
@@ -243,7 +247,7 @@ public class FlowMapGraph {
   public static int findNodeIndexById(Graph graph, String nodeId) {
     for (int i = 0, len = graph.getNodeCount(); i < len; i++) {
       Node node = graph.getNode(i);
-      if (nodeId.equals(getNodeId(node))) {
+      if (nodeId.equals(getIdOfNode(node))) {
         return i;
       }
     }
@@ -397,7 +401,7 @@ public class FlowMapGraph {
     Map<String, String> nodeIdsToLabels = Maps.newLinkedHashMap();
     for (int i = 0, numNodes = graph.getNodeCount(); i < numNodes; i++) {
       Node node = graph.getNode(i);
-      nodeIdsToLabels.put(FlowMapGraph.getNodeId(node), node.getString(nodeAttr));
+      nodeIdsToLabels.put(getNodeId(node), node.getString(nodeAttr));
     }
     return nodeIdsToLabels;
   }
