@@ -49,4 +49,10 @@ public interface DuoTimelineStyle {
 
   Paint getTimelineCellStrokeColor();
 
+  Paint getMapAreaCentroidPaint();
+
+  Paint getMapAreaSelectedCentroidPaint();
+
+  Color getLassoStrokePaint();
+
 }

@@ -152,4 +152,22 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
     return SELECTED_TIMELINE_CELL_STROKE_COLOR;
   }
 
+  private static final Color MAP_AREA_CENTROID_PAINT = new Color(100, 100, 100);
+  @Override
+  public Paint getMapAreaCentroidPaint() {
+    return MAP_AREA_CENTROID_PAINT;
+  }
+
+  private static final Color MAP_AREA_SELECTED_CENTROID_PAINT = new Color(200, 0, 0);
+  @Override
+  public Paint getMapAreaSelectedCentroidPaint() {
+    return MAP_AREA_SELECTED_CENTROID_PAINT;
+  }
+
+  private static final Color LASSO_STROKE_PAINT = new Color(200, 0, 0, 150);
+
+  @Override
+  public Color getLassoStrokePaint() {
+    return LASSO_STROKE_PAINT;
+  }
 }

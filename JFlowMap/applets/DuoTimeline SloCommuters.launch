@@ -7,7 +7,7 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
-<intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="1200"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
 <mapEntry key="yNodeAttr" value="lat"/>
@@ -17,7 +17,7 @@
 <mapEntry key="maxVisibleTuples" value="1000"/>
 <mapEntry key="src" value="data\commuters\slo\slo-commuters-new.xml.gz"/>
 </mapAttribute>
-<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1900"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.DuoTimelineApplet"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>

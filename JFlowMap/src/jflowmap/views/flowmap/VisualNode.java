@@ -218,18 +218,18 @@ public class VisualNode extends PNode {
     return (ClusterTag)getAttribute(Attributes.CLUSTER_TAG, null);
   }
 
-	public String getFullLabel() {
-	  String fullLabel;
-	  ClusterTag clusterTag = getClusterTag();
-		if (clusterTag != null) {
-	    StringBuilder sb = new StringBuilder(getLabel());
-		  sb.append(" [Cluster ").append(clusterTag.getClusterId()).append("]");
-		  fullLabel = sb.toString();
-		} else {
-		  fullLabel = getLabel();
-		}
-		return fullLabel;
-	}
+  public String getFullLabel() {
+    String fullLabel;
+    ClusterTag clusterTag = getClusterTag();
+    if (clusterTag != null) {
+      StringBuilder sb = new StringBuilder(getLabel());
+      sb.append(" [Cluster ").append(clusterTag.getClusterId()).append("]");
+      fullLabel = sb.toString();
+    } else {
+      fullLabel = getLabel();
+    }
+    return fullLabel;
+  }
 
   private static final PInputEventListener INPUT_EVENT_HANDLER = new PBasicInputEventHandler() {
     @Override

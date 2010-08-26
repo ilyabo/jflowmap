@@ -20,8 +20,11 @@ package jflowmap.views.timeline;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -33,13 +36,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
-import jflowmap.FlowMapGraph;
 import jflowmap.util.BagOfWordsFilter;
 import net.miginfocom.swing.MigLayout;
-import prefuse.data.Edge;
-import prefuse.data.Node;
 
-import com.google.common.base.Predicate;
 
 /**
  * @author Ilya Boyandin
@@ -125,13 +124,6 @@ public class DuoTimelineControlPanel extends JPanel {
     final JTextField targetField = new JTextField();
     panel.add(targetField, "growx, wmin 150");
 
-    panel.add(new JLabel("Max rows:"), "gapleft 10, al right");  //
-    panel.add(new JComboBox(new Object[] { 50, 100, 250, 500, "\u221e" /*infinity*/ }),
-        "height min, width min");
-
-//    JButton applyButton = new JButton("Apply");
-//    panel.add(applyButton, "gapleft 15, wrap");
-
     DocumentListener docListener = new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent e) {
@@ -149,41 +141,58 @@ public class DuoTimelineControlPanel extends JPanel {
     srcField.getDocument().addDocumentListener(docListener);
     targetField.getDocument().addDocumentListener(docListener);
 
+
+    JButton clearBut = new JButton("Clear");
+    panel.add(clearBut, "gapleft 5");
+    clearBut.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setEdgeFilter(null);
+        srcField.setText("");
+        targetField.setText("");
+      }
+    });
+
+
+    panel.add(new JLabel("Max rows:"), "gapleft 10, al right");  //
+    JComboBox maxRowsCombo = new JComboBox(MaxRowNumValues.values());
+    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(duoTimelineView.getMaxVisibleTuples()));
+    panel.add(maxRowsCombo, "height min, width min");
+    maxRowsCombo.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        duoTimelineView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
+      }
+    });
+
     //--
 
     return panel;
   }
 
-  private void doFilterBySrcDest(final JTextField srcField, final JTextField targetField) {
-    duoTimelineView.setEdgeFilter(new Predicate<Edge>() {
-
-      FlowMapGraph fmg = duoTimelineView.getFlowMapGraph();
-
-      String srcQuery = srcField.getText().toLowerCase();
-      String targetQuery = targetField.getText().toLowerCase();
-
-      String[] srcQueryWords = BagOfWordsFilter.words(srcQuery);
-      String[] targetQueryWords = BagOfWordsFilter.words(targetQuery);
-
-      @Override
-      public boolean apply(Edge edge) {
-        Node srcNode = edge.getSourceNode();
-        Node targetNode = edge.getTargetNode();
-
-        String srcNames = fmg.getNodeLabel(srcNode);
-        String targetNames = fmg.getNodeLabel(targetNode);
-
-        return BagOfWordsFilter.ALL.apply(srcNames, srcQueryWords)  &&
-               BagOfWordsFilter.ALL.apply(targetNames, targetQueryWords);
-      }
-    });
+  private void doFilterBySrcDest(JTextField srcField, JTextField targetField) {
+    duoTimelineView.setEdgeFilter(DuoTimelineView.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
+        duoTimelineView.getFlowMapGraph(), srcField.getText(), targetField.getText(),
+        BagOfWordsFilter.ALL));
   }
+
 
   private JPanel createHeatmapColorsPanel() {
     JPanel panel = new JPanel(new MigLayout("", "", "[]15[]"));
     panel.setName("Heatmap colors");
-    panel.add(new JLabel("Diverging:"), "al right");
 
+    panel.add(new JLabel("Sequential:"), "al right");
+    final JComboBox sequentialCombo =
+      new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.SEQUENTIAL).toArray());
+    sequentialCombo.setSelectedItem(duoTimelineView.getSequentialColorScheme());
+    sequentialCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
+      }
+    });
+    panel.add(sequentialCombo, "");
+
+    panel.add(new JLabel("Diverging:"), "gapleft 15, al right");
     final JComboBox divergingCombo =
       new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.DIVERGING).toArray());
     divergingCombo.setSelectedItem(duoTimelineView.getDivergingColorScheme());
@@ -194,16 +203,6 @@ public class DuoTimelineControlPanel extends JPanel {
       }
     });
 
-    panel.add(new JLabel("Sequential:"), "gapleft 15, al right");
-    final JComboBox sequentialCombo =
-      new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.SEQUENTIAL).toArray());
-    sequentialCombo.setSelectedItem(duoTimelineView.getSequentialColorScheme());
-    sequentialCombo.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
-      }
-    });
-    panel.add(sequentialCombo, "");
     final JCheckBox interpolateChk = new JCheckBox("Interpolate",
         duoTimelineView.getInterpolateColors());
     panel.add(interpolateChk, "gapleft 15");
@@ -212,6 +211,13 @@ public class DuoTimelineControlPanel extends JPanel {
         duoTimelineView.setInterpolateColors(interpolateChk.isSelected());
       }
     });
+
+
+    final JCheckBox focusChk = new JCheckBox("Focus on visible rows"/*,
+        duoTimelineView.get...()*/);
+    panel.add(focusChk, "gapleft 15");
+    focusChk.setEnabled(false);
+
     return panel;
   }
 
@@ -228,4 +234,29 @@ public class DuoTimelineControlPanel extends JPanel {
 //    frame.setLocation(100, 700);
 //    frame.setVisible(true);
 //  }
+
+  private enum MaxRowNumValues {
+    _25(25), _50(50), _100(100), _250(250), _500(500), _1000(1000), INFINITY(-1, "\u221e");
+    final int num;
+    final String str;
+
+    private MaxRowNumValues(int num) {
+      this(num, Integer.toString(num));
+    }
+    private MaxRowNumValues(int num, String str) {
+      this.num = num;
+      this.str = str;
+    }
+    @Override
+    public String toString() {
+      return str;
+    }
+    public static MaxRowNumValues valueOf(int num) {
+      for (MaxRowNumValues n : values()) {
+        if (n.num == num) return n;
+      }
+      return null;
+    }
+  }
+
 }
