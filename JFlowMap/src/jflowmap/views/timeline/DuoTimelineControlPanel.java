@@ -62,7 +62,8 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
   private void addPanel(JPanel panel) {
-    panel.setBorder(BorderFactory.createTitledBorder(panel.getName()));
+//    panel.setBorder(BorderFactory.createTitledBorder(panel.getName()));
+    panel.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
 //    add(panel);
     tabbedPane.addTab(panel.getName(), panel);
   }

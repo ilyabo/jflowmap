@@ -395,24 +395,29 @@ public class DuoTimelineView extends AbstractCanvasView {
         final String prop = evt.getPropertyName();
         if (prop == PCamera.PROPERTY_VIEW_TRANSFORM) {
           updateMapToMatrixLines();
+          getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
         } else if (prop == PCamera.PROPERTY_BOUNDS) {
           fitInView();
         }
     }
   }
 
+  /**
+   * @returns null if no nodes were selected by lasso
+   */
   private List<String> lassoNodeCentroids(Shape shape, EdgeDirection dir) {
-    List<String> nodeIds = Lists.newArrayList();
+    List<String> nodeIds = null;
     for (Map.Entry<String, Pair<PPath, PPath>> e : nodeIdsToCentroids.entrySet()) {
       Pair<PPath, PPath> v = e.getValue();
       PPath c = (dir == EdgeDirection.OUTGOING ? v.first() : v.second());
       if (shape.contains(c.getFullBounds().getCenter2D())) {
+        if (nodeIds == null) {
+          nodeIds = Lists.newArrayList();
+        }
         nodeIds.add(e.getKey());
         c.setPaint(style.getMapAreaSelectedCentroidPaint());
       } else {
-        PPath oppC = (dir == EdgeDirection.OUTGOING ? v.second() : v.first());
         c.setPaint(style.getMapAreaCentroidPaint());
-        oppC.setPaint(style.getMapAreaCentroidPaint());
       }
     }
     return nodeIds;
@@ -440,9 +445,16 @@ public class DuoTimelineView extends AbstractCanvasView {
 //    createAreaCentroids()
 //  }
 
+
+  private void updateEdgeFilter() {
+    setEdgeFilter(createEdgeFilter_bySrcAndTargetNodeIds(
+        flowMapGraph, selSrcNodes, selTargetNodes));
+  }
+
+  private List<String> selSrcNodes, selTargetNodes;
+
   private void createAreaMaps(AreaMap areaMap) {
     sourceVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
-
     targetVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
 
 //    sourcesVisualAreaMap.translate(800, 0);
@@ -455,26 +467,22 @@ public class DuoTimelineView extends AbstractCanvasView {
     createAreaCentroids();
 
     sourceVisualAreaMap.setBounds(sourceVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
-    sourceVisualAreaMap.addInputEventListener(
+    getCamera().addInputEventListener(
         new Lasso(sourceVisualAreaMap, style.getLassoStrokePaint()) {
       @Override
       public void selectionMade(Shape shape) {
-        List<String> selNodes = lassoNodeCentroids(shape, EdgeDirection.OUTGOING);
-//        setSelectedNodes(selNodes, EdgeDirection.OUTGOING);
-        setEdgeFilter(createEdgeFilter_bySrcAndTargetNodeIds(
-            flowMapGraph, selNodes, null));
+        selSrcNodes = lassoNodeCentroids(shape, EdgeDirection.OUTGOING);
+        updateEdgeFilter();
       }
     });
 
     targetVisualAreaMap.setBounds(targetVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
-    targetVisualAreaMap.addInputEventListener(
+    getCamera().addInputEventListener(
         new Lasso(targetVisualAreaMap, style.getLassoStrokePaint()) {
       @Override
       public void selectionMade(Shape shape) {
-        List<String> selNodes = lassoNodeCentroids(shape, EdgeDirection.INCOMING);
-//        setSelectedNodes(selNodes, EdgeDirection.INCOMING);
-        setEdgeFilter(createEdgeFilter_bySrcAndTargetNodeIds(
-            flowMapGraph, null, selNodes));
+        selTargetNodes = lassoNodeCentroids(shape, EdgeDirection.INCOMING);
+        updateEdgeFilter();
       }
     });
 
@@ -700,10 +708,6 @@ public class DuoTimelineView extends AbstractCanvasView {
     return ((DTCell)node).getTooltipValues();
   }
 
-  enum Align {
-
-  }
-
   @Override
   public void fitInView() {
     PNodes.adjustStickyNodeToCameraSize(getCamera(), sourceVisualAreaMap, -1, 0, .3, .9);
@@ -722,9 +726,10 @@ public class DuoTimelineView extends AbstractCanvasView {
     getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
   }
 
+
   public static Predicate<Edge> createEdgeFilter_bySrcAndTargetNodeIds( final FlowMapGraph fmg,
       final List<String> srcIds, final List<String> targetIds) {
-    if ((srcIds == null  ||  srcIds.isEmpty())  &&  (targetIds == null  ||  targetIds.isEmpty())) {
+    if (srcIds == null  &&  targetIds == null) {
       return null;
     }
     return new Predicate<Edge>() {
