@@ -18,11 +18,11 @@
 
 package jflowmap.util;
 
-import java.util.ArrayList;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 
 /**
  * Example usage:
@@ -34,11 +34,6 @@ import java.lang.reflect.Proxy;
  * list.addListener(new PropertyChangeListener() {
  *  public void propertyChange(PropertyChangeEvent evt) {
  *  }
- * });
- *
- * list.addListener(new PropertyChangeListener() {
- *   public void propertyChange(PropertyChangeEvent evt) {
- *   }
  * });
  *
  * list.fire().propertyChange(new PropertyChangeEvent("bebe", "name", null, null));
@@ -61,7 +56,11 @@ public class EventListenerList<L> extends ArrayList<L> implements InvocationHand
            new Class<?>[]{listenerInterface}, this);
   }
 
-  public void addListener( L l ) {
+  public static <L> EventListenerList<L> createFor(Class<? extends L> klass) {
+    return new EventListenerList<L>(klass);
+  }
+
+  public void addListener(L l) {
     synchronized (proxy) {
       if (!contains(l)) {
         add(l);
