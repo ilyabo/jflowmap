@@ -21,6 +21,8 @@ package jflowmap;
 import java.io.IOException;
 import java.util.Collections;
 
+import javax.swing.UIManager;
+
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.timeline.DuoTimelineView;
@@ -42,6 +44,17 @@ public class DuoTimelineApplet extends BaseApplet {
 
   public DuoTimelineApplet() {
     super("DuoTimeline");
+  }
+
+
+  @Override
+  public void init() {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) {
+        System.err.println("Can't set look & feel:" + e);
+    }
+    super.init();
   }
 
 

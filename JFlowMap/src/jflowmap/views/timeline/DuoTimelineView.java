@@ -664,8 +664,10 @@ public class DuoTimelineView extends AbstractCanvasView {
         node.setStroke(style.getSelectedTimelineCellStroke());
         node.setStrokePaint(style.getSelectedTimelineCellStrokeColor());
         Pair<PLine, PLine> lines = lines(event);
-        lines.first().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
-        lines.second().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+        if (lines != null) {
+          lines.first().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+          lines.second().setStrokePaint(style.getMapToMatrixLineHighlightedColor());
+        }
       }
 
       @Override
@@ -675,8 +677,10 @@ public class DuoTimelineView extends AbstractCanvasView {
         node.setStroke(style.getTimelineCellStroke());
         node.setStrokePaint(style.getTimelineCellStrokeColor());
         Pair<PLine, PLine> lines = lines(event);
-        lines.first().setStrokePaint(style.getMapToMatrixLineLinesColor());
-        lines.second().setStrokePaint(style.getMapToMatrixLineLinesColor());
+        if (lines != null) {
+          lines.first().setStrokePaint(style.getMapToMatrixLineLinesColor());
+          lines.second().setStrokePaint(style.getMapToMatrixLineLinesColor());
+        }
       }
 
       private Pair<PLine, PLine> lines(PInputEvent event) {
@@ -721,7 +725,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     double middleGap = camera.getViewBounds().getWidth() * .3;
     boundRect.height = boundRect.width * viewBounds.height / middleGap;
 
-    camera.animateViewToCenterBounds(boundRect, true, 50);
+    camera.animateViewToCenterBounds(boundRect, true, 0);
 
     getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
   }

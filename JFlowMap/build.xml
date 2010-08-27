@@ -104,7 +104,7 @@
 	<target name="proguard">		
 		<proguard configuration="proguard.cfg">
             <libraryjar path="${java.home}/lib/rt.jar"/>
-            <injar refid="libs-classpath" filter="!META-INF/MANIFEST.MF,!extras.manifest"/>
+            <injar refid="libs-classpath" filter="!META-INF/MANIFEST.MF,!extras.manifest,!**/*.jj"/>
             <injar path="${path.build}/${app.name}-no-libs.jar"/>
             <outjar path="${path.build}/${app.name}.jar"/>
 		</proguard>

@@ -18,11 +18,11 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
 import java.io.IOException;
 
 import javax.swing.JApplet;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 import org.apache.log4j.Logger;
 
@@ -49,19 +49,24 @@ public abstract class BaseApplet extends JApplet {
       view = createView();
       add(view.getViewComponent());
 
-      JComponent controls = view.getControls();
-      if (controls != null) {
-//        add(controls, BorderLayout.NORTH);
-        JFrame frame = new JFrame(getName() + " Controls");
-        frame.setResizable(false);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.add(controls);
-        frame.pack();
-        frame.setVisible(true);
-      }
+      initControls();
     } catch (IOException ex) {
       JMsgPane.showProblemDialog(this, "Error: " + ex.getMessage());
       Logger.getLogger(getClass()).error("Exception: ", ex);
+    }
+  }
+
+  protected void initControls() {
+    JComponent controls = view.getControls();
+    if (controls != null) {
+        add(controls, BorderLayout.NORTH);
+
+//      JFrame frame = new JFrame(getName() + " Controls");
+//      frame.setResizable(false);
+//      frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//      frame.add(controls);
+//      frame.pack();
+//      frame.setVisible(true);
     }
   }
 

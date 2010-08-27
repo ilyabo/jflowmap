@@ -29,8 +29,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -47,14 +47,17 @@ public class DuoTimelineControlPanel extends JPanel {
 
   private final DuoTimelineView duoTimelineView;
 
-  private final JTabbedPane tabbedPane;
+//  private final JTabbedPane tabbedPane;
 
   public DuoTimelineControlPanel(DuoTimelineView duoTimelineView) {
     this.duoTimelineView = duoTimelineView;
 
-    setLayout(new MigLayout("aligny top,alignx center,gapx 25", "", "grow"));
-    tabbedPane = new JTabbedPane();
-    add(tabbedPane);
+    setLayout(new MigLayout("insets 0 0 0 0,btt,nogrid", "", ""));
+//    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+//    setLayout(new FlowLayout());
+
+//    tabbedPane = new JTabbedPane();
+//    add(tabbedPane);
 
     addPanel(createDataPanel());
     addPanel(createFilterPanel());
@@ -62,15 +65,28 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
   private void addPanel(JPanel panel) {
-//    panel.setBorder(BorderFactory.createTitledBorder(panel.getName()));
-    panel.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
-//    add(panel);
-    tabbedPane.addTab(panel.getName(), panel);
+    add(panel);
+    panel.setBorder(BorderFactory.createTitledBorder(panel.getName()));
+
+//    panel.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+//    tabbedPane.addTab(panel.getName(), panel);
+
+    JToolBar tb = new JToolBar(panel.getName());
+    tb.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
+    tb.add(panel);
+    tb.setFloatable(true);
+//    tb.addSeparator();
+
+    add(tb);
   }
 
 
+  private JPanel createPanel() {
+    return new JPanel(new MigLayout("insets 0 5 0 5", "", ""));
+  }
+
   private JPanel createDataPanel() {
-    JPanel panel = new JPanel(new MigLayout("", "", /*"[pref!][grow]",*/ "[]15[]"));
+    JPanel panel = createPanel();
     panel.setName("Data");
 
 
@@ -92,7 +108,7 @@ public class DuoTimelineControlPanel extends JPanel {
     });
 
 
-    panel.add(new JLabel("Group by:"), "al right, gapleft 15");
+    panel.add(new JLabel("Group by:"), "al right, gapleft 10");
     JComboBox groupByCombo = new JComboBox(new Object[] { "<None>", "r", "rity" });
     panel.add(groupByCombo, "height min, width min");
     groupByCombo.setEnabled(false);
@@ -114,10 +130,10 @@ public class DuoTimelineControlPanel extends JPanel {
 
 
   private JPanel createFilterPanel() {
-    JPanel panel = new JPanel(new MigLayout("", "", /*"[pref!][grow]",*/ "[]15[]"));
+    JPanel panel = createPanel();
     panel.setName("Filter");
 
-    panel.add(new JLabel("Source:"), "al right, gapleft 10");
+    panel.add(new JLabel("Source:"), "al right");
     final JTextField srcField = new JTextField();
     panel.add(srcField, "growx, wmin 150, gapright 5");
 
@@ -179,7 +195,7 @@ public class DuoTimelineControlPanel extends JPanel {
 
 
   private JPanel createHeatmapColorsPanel() {
-    JPanel panel = new JPanel(new MigLayout("", "", "[]15[]"));
+    JPanel panel = createPanel();
     panel.setName("Heatmap colors");
 
     panel.add(new JLabel("Sequential:"), "al right");
