@@ -57,7 +57,7 @@ public class Lasso extends PBasicInputEventHandler {
   @Override
   public void mouseReleased(PInputEvent event) {
     if (inTarget(event)) {
-      if (line.getPointCount() > 0) {
+      /*if (line.getPointCount() > 0)*/ {
         Area area = asArea(line.getLineReference());
         if (event.isShiftDown()) {
           area.add(prevSelectionArea);

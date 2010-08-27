@@ -27,6 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +55,6 @@ import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.ColorSchemeAware;
-import jflowmap.views.flowmap.VisualArea;
 import jflowmap.views.flowmap.VisualAreaMap;
 
 import org.apache.log4j.Logger;
@@ -84,7 +84,10 @@ import edu.umd.cs.piccolox.swing.PScrollPane;
  */
 public class DuoTimelineView extends AbstractCanvasView {
 
-  private int maxVisibleTuples;
+  enum Properties {
+//    EDGE_FILTER;
+  }
+
   private static final Font NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
   private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 15);
 
@@ -100,12 +103,15 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   private final JPanel controlPanel;
   private boolean useWeightDifferences = false;
+  private int maxVisibleTuples;
 
   private ColorSchemes sequentialColorScheme = ColorSchemes.OrRd;
   private ColorSchemes divergingColorScheme = ColorSchemes.RdBu5;
 
   private final PInputEventListener tooltipListener = createTooltipListener(DTCell.class);
   private final PInputEventListener highlightListener = createMapToMatrixLineHighlightListener();
+  private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
+
   private final PNode heatmapLayer;
   private final PNode mapToMatrixLinesLayer;
 
@@ -117,7 +123,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private VisualAreaMap targetVisualAreaMap;
 
   private List<Edge> visibleEdges;
-  private Predicate<Edge> edgeFilter;
+  private Predicate<Edge> customEdgeFilter;
 
   public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -161,6 +167,9 @@ public class DuoTimelineView extends AbstractCanvasView {
     return "DuoTimeline";
   }
 
+  public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
+    changes.addPropertyChangeListener(prop.name(), listener);
+  }
 
   public void setMaxVisibleTuples(int maxVisibleTuples) {
     if (this.maxVisibleTuples != maxVisibleTuples) {
@@ -174,20 +183,37 @@ public class DuoTimelineView extends AbstractCanvasView {
     return maxVisibleTuples;
   }
 
-  public void setEdgeFilter(Predicate<Edge> edgeFilter) {
-    if (this.edgeFilter != edgeFilter) {
-      this.edgeFilter = edgeFilter;
-      visibleEdges = null;
-      renewHeatmap();
-  //    fitInView();
+  public void setCustomEdgeFilter(Predicate<Edge> edgeFilter) {
+    if (this.customEdgeFilter != edgeFilter) {
+      this.customEdgeFilter = edgeFilter;
+      updateVisibleEdges();
     }
+  }
+
+  private void updateVisibleEdges() {
+    visibleEdges = null;
+    renewHeatmap();
+    updateAreaCentroidColors();
+  }
+
+  private Predicate<Edge> getEdgePredicate() {
+    return new Predicate<Edge>() {
+      @Override
+      public boolean apply(Edge edge) {
+        return
+          (customEdgeFilter == null  ||  customEdgeFilter.apply(edge))  &&
+          (selSrcNodes == null  ||  selSrcNodes.contains(flowMapGraph.getNodeId(edge.getSourceNode())))  &&
+          (selTargetNodes == null  ||  selTargetNodes.contains(flowMapGraph.getNodeId(edge.getTargetNode())));
+      }
+    };
   }
 
   private List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
       List<Edge> edges = new ArrayList<Edge>(flowMapGraph.getGraph().getEdgeCount());
+      Predicate<Edge> filter = getEdgePredicate();
       for (Edge edge : flowMapGraph.edges()) {
-        if (edgeFilter == null  ||  edgeFilter.apply(edge)) {
+        if (filter.apply(edge)) {
           edges.add(edge);
         }
       }
@@ -415,21 +441,30 @@ public class DuoTimelineView extends AbstractCanvasView {
           nodeIds = Lists.newArrayList();
         }
         nodeIds.add(e.getKey());
-        c.setPaint(style.getMapAreaSelectedCentroidPaint());
-      } else {
-        c.setPaint(style.getMapAreaCentroidPaint());
       }
     }
     return nodeIds;
   }
 
-//private List<String> selectedSrcNodes;
-//private List<String> selectedTargetNodes;
-//private void updateAreaCentroidColors() {
-//  for (Map.Entry<String, Pair<PPath, PPath>> e : nodeIdsToCentroids.entrySet()) {
-//
-//  }
-//}
+  private void updateAreaCentroidColors() {
+    for (Map.Entry<String, Pair<PPath, PPath>> e : nodeIdsToCentroids.entrySet()) {
+      String nodeId = e.getKey();
+
+      PPath srcCentroid = e.getValue().first();
+      if (selSrcNodes != null  &&  selSrcNodes.contains(nodeId)) {
+        srcCentroid.setPaint(style.getMapAreaSelectedCentroidPaint());
+      } else {
+        srcCentroid.setPaint(style.getMapAreaCentroidPaint());
+      }
+
+      PPath targetCentroid = e.getValue().second();
+      if (selTargetNodes != null  &&  selTargetNodes.contains(nodeId)) {
+        targetCentroid.setPaint(style.getMapAreaSelectedCentroidPaint());
+      } else {
+        targetCentroid.setPaint(style.getMapAreaCentroidPaint());
+      }
+    }
+  }
 
 //  private void setSelectedNodes(List<String> nodes, EdgeDirection dir) {
 //    switch (dir) {
@@ -445,11 +480,6 @@ public class DuoTimelineView extends AbstractCanvasView {
 //    createAreaCentroids()
 //  }
 
-
-  private void updateEdgeFilter() {
-    setEdgeFilter(createEdgeFilter_bySrcAndTargetNodeIds(
-        flowMapGraph, selSrcNodes, selTargetNodes));
-  }
 
   private List<String> selSrcNodes, selTargetNodes;
 
@@ -472,7 +502,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       @Override
       public void selectionMade(Shape shape) {
         selSrcNodes = lassoNodeCentroids(shape, EdgeDirection.OUTGOING);
-        updateEdgeFilter();
+        updateVisibleEdges();
       }
     });
 
@@ -482,7 +512,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       @Override
       public void selectionMade(Shape shape) {
         selTargetNodes = lassoNodeCentroids(shape, EdgeDirection.INCOMING);
-        updateEdgeFilter();
+        updateVisibleEdges();
       }
     });
 
@@ -529,26 +559,26 @@ public class DuoTimelineView extends AbstractCanvasView {
     */
   }
 
-  private void colorizeMap(VisualAreaMap visualAreaMap, FlowMapGraph fmg,
-      String weightAttrName, EdgeDirection dir) {
-    if (fmg == null) {
-      for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
-        va.setPaint(style.getMissingValueColor());
-      }
-    } else {
-      String weightSumAttr = FlowMapSummaries.getWeightSummaryNodeAttr(weightAttrName, dir);
-      MinMax mm = fmg.getStats().getNodeAttrStats(weightSumAttr);
-
-      for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
-        Node node = FlowMapGraph.findNodeById(fmg.getGraph(), va.getArea().getId());
-        if (node != null) {
-          Double w = node.getDouble(weightSumAttr);
-          if (w == null) w = Double.NaN;
-          va.setPaint(getColorForWeight(w, mm));
-        }
-      }
-    }
-  }
+//  private void colorizeMap(VisualAreaMap visualAreaMap, FlowMapGraph fmg,
+//      String weightAttrName, EdgeDirection dir) {
+//    if (fmg == null) {
+//      for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+//        va.setPaint(style.getMissingValueColor());
+//      }
+//    } else {
+//      String weightSumAttr = FlowMapSummaries.getWeightSummaryNodeAttr(weightAttrName, dir);
+//      MinMax mm = fmg.getStats().getNodeAttrStats(weightSumAttr);
+//
+//      for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+//        Node node = FlowMapGraph.findNodeById(fmg.getGraph(), va.getArea().getId());
+//        if (node != null) {
+//          Double w = node.getDouble(weightSumAttr);
+//          if (w == null) w = Double.NaN;
+//          va.setPaint(getColorForWeight(w, mm));
+//        }
+//      }
+//    }
+//  }
 
   public Color getColorForWeight(double weight, MinMax wstats) {
     DuoTimelineStyle style = getStyle();
@@ -763,6 +793,8 @@ public class DuoTimelineView extends AbstractCanvasView {
       }
     };
   }
+
+
 }
 
 

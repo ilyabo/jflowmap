@@ -97,6 +97,7 @@ public class DuoTimelineControlPanel extends JPanel {
 //    panel.add(new JComboBox(new Object[] { "r", "rity" }), "height min, width min");
 
 
+
     final JCheckBox differencesChk = new JCheckBox("Differences",
         duoTimelineView.getUseWeightDifferences());
     panel.add(differencesChk, "al right");
@@ -104,6 +105,18 @@ public class DuoTimelineControlPanel extends JPanel {
       @Override
       public void actionPerformed(ActionEvent e) {
         duoTimelineView.setUseWeightDifferences(differencesChk.isSelected());
+      }
+    });
+
+
+    panel.add(new JLabel("Max rows:"), "gapleft 5, al right");  //
+    JComboBox maxRowsCombo = new JComboBox(MaxRowNumValues.values());
+    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(duoTimelineView.getMaxVisibleTuples()));
+    panel.add(maxRowsCombo, "height min, width min");
+    maxRowsCombo.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        duoTimelineView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
       }
     });
 
@@ -125,13 +138,14 @@ public class DuoTimelineControlPanel extends JPanel {
     panel.add(orderByCombo, "");
     orderByCombo.setEnabled(false);
 
+
     return panel;
   }
 
 
   private JPanel createFilterPanel() {
     JPanel panel = createPanel();
-    panel.setName("Filter");
+    panel.setName("Filter by name");
 
     panel.add(new JLabel("Source:"), "al right");
     final JTextField srcField = new JTextField();
@@ -159,28 +173,26 @@ public class DuoTimelineControlPanel extends JPanel {
     targetField.getDocument().addDocumentListener(docListener);
 
 
+//    duoTimelineView.addPropertyChangeListener(DuoTimelineView.Properties.EDGE_FILTER,
+//        new PropertyChangeListener() {
+//          @Override
+//          public void propertyChange(PropertyChangeEvent evt) {
+//            srcField.setText("");
+//            targetField.setText("");
+//          }
+//        });
+
     JButton clearBut = new JButton("Clear");
     panel.add(clearBut, "gapleft 5");
     clearBut.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setEdgeFilter(null);
+        duoTimelineView.setCustomEdgeFilter(null);
         srcField.setText("");
         targetField.setText("");
       }
     });
 
-
-    panel.add(new JLabel("Max rows:"), "gapleft 10, al right");  //
-    JComboBox maxRowsCombo = new JComboBox(MaxRowNumValues.values());
-    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(duoTimelineView.getMaxVisibleTuples()));
-    panel.add(maxRowsCombo, "height min, width min");
-    maxRowsCombo.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        duoTimelineView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
-      }
-    });
 
     //--
 
@@ -188,7 +200,7 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
   private void doFilterBySrcDest(JTextField srcField, JTextField targetField) {
-    duoTimelineView.setEdgeFilter(DuoTimelineView.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
+    duoTimelineView.setCustomEdgeFilter(DuoTimelineView.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
         duoTimelineView.getFlowMapGraph(), srcField.getText(), targetField.getText(),
         BagOfWordsFilter.ALL));
   }
