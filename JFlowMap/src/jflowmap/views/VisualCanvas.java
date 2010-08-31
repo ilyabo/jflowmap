@@ -37,12 +37,29 @@ public class VisualCanvas extends PCanvas {
 
   private static final Dimension MIN_SIZE = new Dimension(150, 100);
   private final ZoomHandler zoomHandler;
+  private boolean autoFitOnBoundsChange = true;
 
   public VisualCanvas() {
     setZoomEventHandler(null);
-    zoomHandler = new ZoomHandler();
+    zoomHandler = createZoomHandler();
     addInputEventListener(zoomHandler);
     setPanEventHandler(new PanHandler());
+  }
+
+  public ZoomHandler getZoomHandler() {
+    return zoomHandler;
+  }
+
+  protected ZoomHandler createZoomHandler() {
+    return new ZoomHandler();
+  }
+
+  public boolean getAutoFitOnBoundsChange() {
+    return autoFitOnBoundsChange;
+  }
+
+  public void setAutoFitOnBoundsChange(boolean autoFitOnBoundsChange) {
+    this.autoFitOnBoundsChange = autoFitOnBoundsChange;
   }
 
   public void setViewZoomPoint(Point2D point) {
@@ -71,13 +88,17 @@ public class VisualCanvas extends PCanvas {
 
   @Override
   public void setBounds(int x, int y, int w, int h) {
-    Rectangle2D oldVisibleBounds =  getVisibleBounds();
-    Rectangle2D oldContentBounds = getViewContentBounds();
+    if (autoFitOnBoundsChange) {
+      Rectangle2D oldVisibleBounds =  getVisibleBounds();
+      Rectangle2D oldContentBounds = getViewContentBounds();
 
-    super.setBounds(x, y, w, h);
+      super.setBounds(x, y, w, h);
 
-    if (oldVisibleBounds != null) {
-      fitVisibleInCameraView(oldVisibleBounds, oldContentBounds);
+      if (oldVisibleBounds != null) {
+        fitVisibleInCameraView(oldVisibleBounds, oldContentBounds);
+      }
+    } else {
+      super.setBounds(x, y, w, h);
     }
   }
 

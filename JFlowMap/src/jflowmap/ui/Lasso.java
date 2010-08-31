@@ -28,6 +28,7 @@ import java.awt.geom.Point2D;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolox.nodes.PLine;
 import edu.umd.cs.piccolox.util.LineShape;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
@@ -52,6 +53,12 @@ public class Lasso extends PBasicInputEventHandler {
     this.targetNode = targetNode;
     line = new PLine(null, LINE_STROKE);
     line.setStrokePaint(lineColor);
+    setEventFilter(new PInputEventFilter() {
+      @Override
+      public boolean acceptsEvent(PInputEvent event, int type) {
+        return event.isShiftDown() || event.isAltDown();
+      }
+    });
   }
 
   @Override
@@ -59,7 +66,7 @@ public class Lasso extends PBasicInputEventHandler {
     if (inTarget(event)) {
       /*if (line.getPointCount() > 0)*/ {
         Area area = asArea(line.getLineReference());
-        if (event.isShiftDown()) {
+        if (event.isShiftDown()  &&  prevSelectionArea != null) {
           area.add(prevSelectionArea);
         } else if (event.isAltDown()) {
           prevSelectionArea.subtract(area);

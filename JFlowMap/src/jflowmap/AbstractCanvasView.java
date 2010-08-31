@@ -20,6 +20,7 @@ package jflowmap;
 
 import java.awt.Component;
 import java.awt.Frame;
+import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 
@@ -80,11 +81,20 @@ public abstract class AbstractCanvasView implements IView {
     return null;
   }
 
+  public Tooltip getTooltipBox() {
+    return tooltipBox;
+  }
+
   protected void showTooltip(PNode node, String header, String labels, String values) {
-    PBounds bounds = node.getGlobalBounds();
+    Point2D pos = getTooltipPosition(node);
     tooltipBox.setText(header, labels, values);
-    tooltipBox.showTooltipAt(bounds.getMaxX(), bounds.getMaxY(), 0, 0);
+    tooltipBox.showTooltipAt(pos.getX(), pos.getY(), 0, 0);
     tooltipBox.moveToFront();
+  }
+
+  protected Point2D getTooltipPosition(PNode node) {
+    PBounds bounds = node.getGlobalBounds();
+    return new Point2D.Double(bounds.getMaxX(), bounds.getMaxY());
   }
 
   protected void hideTooltip() {

@@ -65,19 +65,22 @@ import prefuse.data.Node;
 import prefuse.util.ColorLib;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PInputEventListener;
+import edu.umd.cs.piccolo.event.PPanEventHandler;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
 import edu.umd.cs.piccolox.nodes.PLine;
-import edu.umd.cs.piccolox.swing.PScrollPane;
 
 /**
  * @author Ilya Boyandin
@@ -99,7 +102,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
   private final FlowMapGraph flowMapGraph;
-  private final PScrollPane scrollPane;
+//  private final PScrollPane scrollPane;
 
   private final JPanel controlPanel;
   private boolean useWeightDifferences = false;
@@ -112,7 +115,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private final PInputEventListener highlightListener = createMapToMatrixLineHighlightListener();
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
-  private final PNode heatmapLayer;
+  private final PNode heatmapNode;
   private final PNode mapToMatrixLinesLayer;
 
   private Map<String, Pair<PPath, PPath>> nodeIdsToCentroids;
@@ -125,6 +128,14 @@ public class DuoTimelineView extends AbstractCanvasView {
   private List<Edge> visibleEdges;
   private Predicate<Edge> customEdgeFilter;
 
+  private final PCamera sourcesCamera = new PCamera();
+  private final PCamera heatmapCamera = new PCamera();
+  private final PCamera targetsCamera = new PCamera();
+
+  private final PLayer sourcesLayer = new PLayer();
+  private final PLayer heatmapLayer = new PLayer();
+  private final PLayer targetsLayer = new PLayer();
+
   public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
   }
@@ -134,32 +145,80 @@ public class DuoTimelineView extends AbstractCanvasView {
     this.maxVisibleTuples = maxVisibleTuples;
 
     VisualCanvas canvas = getVisualCanvas();
+    canvas.setAutoFitOnBoundsChange(false);
     canvas.setBackground(style.getBackgroundColor());
-    canvas.setPanEventHandler(null);
-    canvas.setMinZoomScale(1e-2);
-    canvas.setMaxZoomScale(1.0);
+    PPanEventHandler panHandler = new PPanEventHandler();
+    PInputEventFilter noGlobalCameraFilter = new PInputEventFilter() {
+      @Override
+      public boolean acceptsEvent(PInputEvent event, int type) {
+        Point2D p = event.getCanvasPosition();
+        return
+          (!event.isShiftDown()  &&  !event.isAltDown())  &&
+//          (sourcesCamera.getBounds().contains(p) ||
+//           targetsCamera.getBounds().contains(p) ||
+//           heatmapCamera.getBounds().contains(p));
+          (event.getCamera() != getVisualCanvas().getCamera());
+      }
+    };
+    panHandler.setEventFilter(noGlobalCameraFilter);
+    canvas.setPanEventHandler(panHandler);
+    canvas.getZoomHandler().setEventFilter(noGlobalCameraFilter);
+//    canvas.setMinZoomScale(1e-2);
+//    canvas.setMaxZoomScale(1.0);
+    canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+    canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+
+
+    sourcesCamera.addLayer(sourcesLayer);
+    heatmapCamera.addLayer(heatmapLayer);
+    targetsCamera.addLayer(targetsLayer);
+
+
+    PLayer canvasLayer = canvas.getLayer();
+    canvasLayer.addChild(sourcesCamera);
+    canvasLayer.addChild(heatmapCamera);
+    canvasLayer.addChild(targetsCamera);
+
+
 
     controlPanel = new DuoTimelineControlPanel(this);
-    scrollPane = new PScrollPane(canvas);
-    scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.setVerticalScrollBarPolicy(PScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+//    scrollPane = new PScrollPane(canvas);
+//    scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//    scrollPane.setVerticalScrollBarPolicy(PScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
 
     createAreaMaps(areaMap);
-    heatmapLayer = new PNode();
-    getVisualCanvas().getLayer().addChild(heatmapLayer);
-//    getVisualCanvas().setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
-    getVisualCanvas().setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
-    getVisualCanvas().setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+    heatmapNode = new PNode();
+    heatmapLayer.addChild(heatmapNode);
+
+//    getVisualCanvas().getLayer().addChild(heatmapNode);
 
     mapToMatrixLinesLayer = new PNode();
     getCamera().addChild(mapToMatrixLinesLayer);
 
     renewHeatmap();
 
+    getCamera().addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
+          fitInView();
+        }
+      }
+    });
 
-    getCamera().addPropertyChangeListener(new CameraListener());
+    PropertyChangeListener linesUpdater = new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
+          updateMapToMatrixLines();
+          // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
+        }
+      }
+    };
+    sourcesCamera.addPropertyChangeListener(linesUpdater);
+    targetsCamera.addPropertyChangeListener(linesUpdater);
+    heatmapCamera.addPropertyChangeListener(linesUpdater);
   }
 
   @Override
@@ -287,7 +346,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private final ColorSchemeAware mapColorScheme = new ColorSchemeAware() {
     @Override
     public Color getColor(ColorCodes code) {
-      return FlowMapColorSchemes.INVERTED.get(code);
+      return FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.get(code);
     }
   };
 
@@ -357,46 +416,59 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
   private void updateMapToMatrixLines() {
-    PCamera camera = getCamera();
-    PBounds viewBounds = camera.getViewBounds();
+//    PCamera camera = getCamera();
+//    PBounds viewBounds = camera.getViewBounds();
+    PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
 //    FontMetrics fm = getVisualCanvas().getFontMetrics(NODE_MARK_FONT);
     for (Edge edge : getVisibleEdges()) {
       Pair<PLine, PLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = edgesToLabels.get(edge);
 
-      PNode srcMapPoint = nodeIdsToCentroids.get(
+      PNode srcMapCentroid = nodeIdsToCentroids.get(
           flowMapGraph.getNodeId(edge.getSourceNode())).first();
-      PBounds srcB = srcMapPoint.getFullBounds();
-      srcMapPoint.localToGlobal(srcB);
+      PBounds srcB = srcMapCentroid.getFullBounds();
+      boolean inVis = sourcesCamera.getViewBounds().contains(srcB);
+//      srcMapCentroid.localToGlobal(srcB);
+      sourcesCamera.viewToLocal(srcB);
 
 
-      PNode targetMapPoint = nodeIdsToCentroids.get(
+      PNode targetMapCentroid = nodeIdsToCentroids.get(
           flowMapGraph.getNodeId(edge.getTargetNode())).second();
-      PBounds targetB = targetMapPoint.getFullBounds();
-      targetMapPoint.localToGlobal(targetB);
+      PBounds targetB = targetMapCentroid.getFullBounds();
+      boolean outVis = targetsCamera.getViewBounds().contains(targetB);
+//      targetMapCentroid.localToGlobal(targetB);
+      targetsCamera.viewToLocal(targetB);
+
+
 
       Point2D.Double matrixIn = getMatrixInPoint(row);
-      boolean inVis = viewBounds.contains(matrixIn);
-      camera.viewToLocal(matrixIn);
+//      boolean inVis = heatMapViewBounds.contains(matrixIn);
+      inVis = inVis && heatMapViewBounds.contains(matrixIn);
+//      camera.viewToLocal(matrixIn);
+      heatmapCamera.viewToLocal(matrixIn);
       PLine lineIn = lines.first();
       lineIn.setVisible(inVis);
-      lineIn.setPickable(inVis);
+      lineIn.setPickable(false);
       lineIn.setPoint(0, srcB.getCenterX(), srcB.getCenterY());
-      Rectangle2D fromLabelBounds = getCamera().viewToLocal(labels.first().getBounds());
+//      Rectangle2D fromLabelBounds = getCamera().viewToLocal(labels.first().getBounds());
+      Rectangle2D fromLabelBounds = heatmapCamera.viewToLocal(labels.first().getBounds());
       lineIn.setPoint(1, matrixIn.x - fromLabelBounds.getWidth(), matrixIn.y +
           fromLabelBounds.getHeight()/2);
       lineIn.setPoint(2, matrixIn.x, matrixIn.y + fromLabelBounds.getHeight()/2);
 
 
       Point2D.Double matrixOut = getMatrixOutPoint(row);
-      boolean outVis = viewBounds.contains(matrixOut);
-      camera.viewToLocal(matrixOut);
+//      boolean outVis = heatMapViewBounds.contains(matrixOut);
+      outVis = outVis && heatMapViewBounds.contains(matrixOut);
+//      camera.viewToLocal(matrixOut);
+      heatmapCamera.viewToLocal(matrixOut);
       PLine lineOut = lines.second();
       lineOut.setVisible(outVis);
-      lineOut.setPickable(outVis);
+      lineOut.setPickable(false);
       lineOut.setPoint(0, targetB.getCenterX(), targetB.getCenterY());
-      Rectangle2D toLabelBounds = getCamera().viewToLocal(labels.second().getBounds());
+//      Rectangle2D toLabelBounds = getCamera().viewToLocal(labels.second().getBounds());
+      Rectangle2D toLabelBounds = heatmapCamera.viewToLocal(labels.second().getBounds());
       lineOut.setPoint(1, matrixOut.x + toLabelBounds.getWidth(), matrixOut.y +
           toLabelBounds.getHeight()/2);
       lineOut.setPoint(2, matrixOut.x, matrixOut.y + toLabelBounds.getHeight()/2);
@@ -416,18 +488,6 @@ public class DuoTimelineView extends AbstractCanvasView {
         getTupleY(row) + cellHeight/2);
   }
 
-  private class CameraListener implements PropertyChangeListener {
-    public void propertyChange(PropertyChangeEvent evt) {
-        final String prop = evt.getPropertyName();
-        if (prop == PCamera.PROPERTY_VIEW_TRANSFORM) {
-          updateMapToMatrixLines();
-          getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
-        } else if (prop == PCamera.PROPERTY_BOUNDS) {
-          fitInView();
-        }
-    }
-  }
-
   /**
    * @returns null if no nodes were selected by lasso
    */
@@ -435,8 +495,13 @@ public class DuoTimelineView extends AbstractCanvasView {
     List<String> nodeIds = null;
     for (Map.Entry<String, Pair<PPath, PPath>> e : nodeIdsToCentroids.entrySet()) {
       Pair<PPath, PPath> v = e.getValue();
-      PPath c = (dir == EdgeDirection.OUTGOING ? v.first() : v.second());
-      if (shape.contains(c.getFullBounds().getCenter2D())) {
+      PPath centroid = (dir == EdgeDirection.OUTGOING ? v.first() : v.second());
+      PBounds centroidBounds = centroid.getFullBounds();
+
+      PCamera cam = (dir == EdgeDirection.OUTGOING ? sourcesCamera : targetsCamera);
+      cam.viewToLocal(centroidBounds);
+
+      if (shape.contains(centroidBounds.getCenter2D())) {
         if (nodeIds == null) {
           nodeIds = Lists.newArrayList();
         }
@@ -487,6 +552,16 @@ public class DuoTimelineView extends AbstractCanvasView {
     sourceVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
     targetVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
 
+    sourcesLayer.addChild(sourceVisualAreaMap);
+    targetsLayer.addChild(targetVisualAreaMap);
+    sourcesCamera.setPaint(sourceVisualAreaMap.getPaint());
+    targetsCamera.setPaint(targetVisualAreaMap.getPaint());
+
+//    sourcesCamera.setViewBounds(sourcesLayer.getFullBounds());
+//    targetsCamera.setViewBounds(targetsLayer.getFullBounds());
+
+
+
 //    sourcesVisualAreaMap.translate(800, 0);
 
     addMouseOverListenersToMaps(sourceVisualAreaMap);
@@ -498,7 +573,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
     sourceVisualAreaMap.setBounds(sourceVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
     getCamera().addInputEventListener(
-        new Lasso(sourceVisualAreaMap, style.getLassoStrokePaint()) {
+        new Lasso(sourcesCamera, style.getLassoStrokePaint()) {
       @Override
       public void selectionMade(Shape shape) {
         selSrcNodes = lassoNodeCentroids(shape, EdgeDirection.OUTGOING);
@@ -508,7 +583,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
     targetVisualAreaMap.setBounds(targetVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
     getCamera().addInputEventListener(
-        new Lasso(targetVisualAreaMap, style.getLassoStrokePaint()) {
+        new Lasso(targetsCamera, style.getLassoStrokePaint()) {
       @Override
       public void selectionMade(Shape shape) {
         selTargetNodes = lassoNodeCentroids(shape, EdgeDirection.INCOMING);
@@ -516,8 +591,8 @@ public class DuoTimelineView extends AbstractCanvasView {
       }
     });
 
-    getCamera().addChild(sourceVisualAreaMap);
-    getCamera().addChild(targetVisualAreaMap);
+//    getCamera().addChild(sourceVisualAreaMap);
+//    getCamera().addChild(targetVisualAreaMap);
 
 //    anchorRightVisualAreaMap();
   }
@@ -598,7 +673,8 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   @Override
   public JComponent getViewComponent() {
-    return scrollPane;
+//    return scrollPane;
+    return getVisualCanvas();
   }
 
   @Override
@@ -608,7 +684,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
 
   private void renewHeatmap() {
-    heatmapLayer.removeAllChildren();
+    heatmapNode.removeAllChildren();
 
     int row = 0, maxCol = 0;
 
@@ -624,7 +700,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       srcLabel.setFont(NODE_MARK_FONT);
       srcLabel.setX(-srcLabel.getFullBoundsReference().getWidth() - 6);
       srcLabel.setY(y + (cellHeight - srcLabel.getFullBoundsReference().getHeight())/ 2);
-      heatmapLayer.addChild(srcLabel);
+      heatmapNode.addChild(srcLabel);
 
       // "value" box node
       for (String weightAttr : flowMapGraph.getEdgeWeightAttrNames()) {
@@ -636,7 +712,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //        if (!Double.isNaN(cell.getWeight())) {
           cell.addInputEventListener(tooltipListener);
 //        }
-          heatmapLayer.addChild(cell);
+          heatmapNode.addChild(cell);
 
         col++;
         if (col > maxCol) maxCol = col;
@@ -647,7 +723,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       targetLabel.setFont(NODE_MARK_FONT);
       targetLabel.setX(cellWidth * maxCol + 6);
       targetLabel.setY(y + (cellHeight - targetLabel.getFullBoundsReference().getHeight())/ 2);
-      heatmapLayer.addChild(targetLabel);
+      heatmapNode.addChild(targetLabel);
 
 
       edgesToLabels.put(edge, Pair.of(srcLabel, targetLabel));
@@ -655,8 +731,11 @@ public class DuoTimelineView extends AbstractCanvasView {
       row++;
     }
 
+//    heatmapCamera.setViewBounds(heatmapNode.getFullBounds());
+
     createYearMarks();
     renewMapToMatrixLines();
+
 
 //    layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight * row)));
   }
@@ -670,14 +749,14 @@ public class DuoTimelineView extends AbstractCanvasView {
       graphIdMark.setX(col * cellWidth +
           (cellWidth - graphIdMark.getFullBoundsReference().getWidth())/2);
       graphIdMark.setY(-graphIdMark.getFont().getSize2D() - 2);
-      heatmapLayer.addChild(graphIdMark);
+      heatmapNode.addChild(graphIdMark);
       col++;
     }
   }
 
 
   private void updateHeatmapColors() {
-    for (DTCell cell : PNodes.childrenOfType(heatmapLayer, DTCell.class)) {
+    for (DTCell cell : PNodes.childrenOfType(heatmapNode, DTCell.class)) {
       cell.updateColor();
     }
     getVisualCanvas().repaint();
@@ -743,21 +822,51 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
   @Override
-  public void fitInView() {
-    PNodes.adjustStickyNodeToCameraSize(getCamera(), sourceVisualAreaMap, -1, 0, .3, .9);
-    PNodes.adjustStickyNodeToCameraSize(getCamera(), targetVisualAreaMap, +1, 0, .3, .9);
+  protected Point2D getTooltipPosition(PNode node) {
+    if (PNodes.getRootAncestor(node) == heatmapLayer) {
+      PBounds bounds = node.getGlobalBounds();
+      heatmapCamera.viewToLocal(bounds);
+      heatmapCamera.localToGlobal(bounds);
+      return new Point2D.Double(bounds.getMaxX(), bounds.getMaxY());
+    } else {
+      return super.getTooltipPosition(node);
+    }
+  }
 
+  private boolean fitInViewOnce = false;
+
+  @Override
+  public void fitInView() {
+    fitCamera(sourcesCamera, -1, 0, .3, .9);
+    fitCamera(heatmapCamera, 0, 0, .4, 1.0);
+    fitCamera(targetsCamera, +1, 0, .3, .9);
+
+    if (!fitInViewOnce) {
+      sourcesCamera.setViewBounds(sourcesLayer.getFullBounds());
+
+      PBounds heatmapBounds = heatmapLayer.getFullBounds();
+      heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height / heatmapCamera.getWidth();
+
+      heatmapCamera.setViewBounds(heatmapBounds);
+
+      targetsCamera.setViewBounds(targetsLayer.getFullBounds());
+      fitInViewOnce = true;
+    }
     updateMapToMatrixLines();
 
-    PCamera camera = getCamera();
-    PBounds viewBounds = camera.getViewBounds();
-    PBounds boundRect = getVisualCanvas().getLayer().getFullBounds();
-    double middleGap = camera.getViewBounds().getWidth() * .3;
-    boundRect.height = boundRect.width * viewBounds.height / middleGap;
-
-    camera.animateViewToCenterBounds(boundRect, true, 0);
-
+    /*
     getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
+     */
+  }
+
+
+  private void fitCamera(PCamera camera,
+      double halign, double valign, double hsizeProportion, double vsizeProportion) {
+    PBounds globalViewBounds = getCamera().getViewBounds();
+    PBounds viewBounds = camera.getViewBounds();
+    PNodes.alignNodeInBounds_bySetBounds(camera, globalViewBounds,
+        halign, valign, hsizeProportion, vsizeProportion);
+    camera.setViewBounds(viewBounds);
   }
 
 
@@ -777,23 +886,40 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
   public static Predicate<Edge> createEdgeFilter_bySrcTargetNamesAsBagOfWords(final FlowMapGraph fmg,
-      String srcQuery, String targetQuery, final BagOfWordsFilter filter) {
-    final String[] srcQueryWords = BagOfWordsFilter.words(srcQuery.toLowerCase());
-    final String[] targetQueryWords = BagOfWordsFilter.words(targetQuery.toLowerCase());
+      String srcQuery, String targetQuery) {
+    final List<String[]> srcQueryWordGroups = BagOfWordsFilter.wordGroups(srcQuery.toLowerCase());
+    final List<String[]> targetQueryWordGroups = BagOfWordsFilter.wordGroups(targetQuery.toLowerCase());
     return new Predicate<Edge>() {
       @Override
       public boolean apply(Edge edge) {
         Node srcNode = edge.getSourceNode();
         Node targetNode = edge.getTargetNode();
 
-        String srcNames = fmg.getNodeLabel(srcNode);
-        String targetNames = fmg.getNodeLabel(targetNode);
+        final String srcNames = fmg.getNodeLabel(srcNode);
+        final String targetNames = fmg.getNodeLabel(targetNode);
 
-        return filter.apply(srcNames, srcQueryWords) && filter.apply(targetNames, targetQueryWords);
+        return
+          (srcQueryWordGroups.isEmpty()  ||
+           Iterables.any(srcQueryWordGroups, new Predicate<String[]>() {
+            @Override
+            public boolean apply(String[] srcQueryWords) {
+              return BagOfWordsFilter.ALL.apply(srcNames, srcQueryWords);
+            }
+          }))
+            &&
+          (targetQueryWordGroups.isEmpty()  ||
+           Iterables.any(targetQueryWordGroups, new Predicate<String[]>() {
+            @Override
+            public boolean apply(String[] targetQueryWords) {
+              return BagOfWordsFilter.ALL.apply(targetNames, targetQueryWords);
+            }
+          }));
+
+//          BagOfWordsFilter.ALL.apply(srcNames, srcQueryWords)   &&
+//          BagOfWordsFilter.ALL.apply(targetNames, targetQueryWords);
       }
     };
   }
-
 
 }
 

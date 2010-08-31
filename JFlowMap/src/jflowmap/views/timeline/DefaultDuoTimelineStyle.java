@@ -43,6 +43,7 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   }
 
   private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(0f, 0f, 0f, .05f);
+//  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(200, 200, 200);
   @Override
   public Color getMapToMatrixLineLinesColor() {
     return MAP_TO_MATRIX_LINE_COLOR;

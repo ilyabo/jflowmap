@@ -36,7 +36,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
-import jflowmap.util.BagOfWordsFilter;
 import net.miginfocom.swing.MigLayout;
 
 
@@ -201,8 +200,8 @@ public class DuoTimelineControlPanel extends JPanel {
 
   private void doFilterBySrcDest(JTextField srcField, JTextField targetField) {
     duoTimelineView.setCustomEdgeFilter(DuoTimelineView.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
-        duoTimelineView.getFlowMapGraph(), srcField.getText(), targetField.getText(),
-        BagOfWordsFilter.ALL));
+        duoTimelineView.getFlowMapGraph(), srcField.getText(), targetField.getText()
+        ));
   }
 
 

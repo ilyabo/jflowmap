@@ -22,6 +22,7 @@ import jflowmap.geo.MapProjection;
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.util.piccolo.PNodes;
+import jflowmap.views.ColorCodes;
 import edu.umd.cs.piccolo.PNode;
 
 /**
@@ -45,6 +46,7 @@ public class VisualAreaMap extends PNode {
     for (Area area : mapModel.getAreas()) {
       addChild(new VisualArea(this, area));
     }
+    setPaint(getColorSchemaAware().getColor(ColorCodes.BACKGROUND));
   }
 
   public MapProjection getMapProjection() {

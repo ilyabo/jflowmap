@@ -18,6 +18,9 @@
 
 package jflowmap.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Ilya Boyandin
  */
@@ -70,6 +73,25 @@ public enum BagOfWordsFilter {
 
   public static String[] words(String str) {
     return str.trim().toLowerCase().split("[^\\p{Alnum}]+");
+  }
+
+  /**
+   * Splits the string into groups separated by commas, and returns words
+   * of each of the groups.
+   */
+  public static List<String[]> wordGroups(String str) {
+    String[] groups = str.split(",");
+    List<String[]> list = new ArrayList<String[]>(groups.length);
+    for (String g : groups) {
+      g = g.trim();
+      if (g.length() > 0) {
+        String[] words = words(g);
+        if (words.length > 0) {
+          list.add(words);
+        }
+      }
+    }
+    return list;
   }
 
 }
