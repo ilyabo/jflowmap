@@ -18,6 +18,7 @@
 
 package jflowmap.util.piccolo;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
@@ -157,5 +158,12 @@ public class PNodes {
     node.setBounds(x, y, width, height);
   }
 
+  public static void setPosition(PNode node, double x, double y) {
+    node.setBounds(x, y, node.getWidth(), node.getHeight());
+  }
+
+  public static void setPosition(PNode node, Point2D pos) {
+    node.setBounds(pos.getX(), pos.getY(), node.getWidth(), node.getHeight());
+  }
 
 }

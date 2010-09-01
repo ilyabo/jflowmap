@@ -21,6 +21,7 @@ package jflowmap.views.timeline;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
@@ -87,6 +88,8 @@ import edu.umd.cs.piccolox.nodes.PLine;
  */
 public class DuoTimelineView extends AbstractCanvasView {
 
+  private static final double CENTROID_DOT_SIZE = 3.0;
+
   enum Properties {
 //    EDGE_FILTER;
   }
@@ -118,7 +121,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private final PNode heatmapNode;
   private final PNode mapToMatrixLinesLayer;
 
-  private Map<String, Pair<PPath, PPath>> nodeIdsToCentroids;
+  private Map<String, Pair<Centroid, Centroid>> nodeIdsToCentroids;
   private Map<Edge, Pair<PLine, PLine>> edgesToLines;
   private Map<Edge, Pair<PText, PText>> edgesToLabels;
 
@@ -153,6 +156,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       public boolean acceptsEvent(PInputEvent event, int type) {
         return
           event.isLeftMouseButton()  &&
+          !event.isControlDown()  &&  // shouldn't pan when zooming
           (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
@@ -212,6 +216,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     PropertyChangeListener linesUpdater = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
+          updateCentroids();
           updateMapToMatrixLines();
           // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
         }
@@ -253,7 +258,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private void updateVisibleEdges() {
     visibleEdges = null;
     renewHeatmap();
-    updateAreaCentroidColors();
+    updateCentroidColors();
   }
 
   private Predicate<Edge> getEdgePredicate() {
@@ -366,7 +371,8 @@ public class DuoTimelineView extends AbstractCanvasView {
     Point2D maxDist = sourceVisualAreaMap.getMapProjection().project(
         xstats.getMax() - xstats.getMin(), ystats.getMax() - ystats.getMin());
 
-    double dotSize = Math.abs(Math.min(maxDist.getX(), maxDist.getY()) / 75.0);
+//    double dotSize = Math.abs(Math.min(maxDist.getX(), maxDist.getY()) / 75.0);
+//    double dotSize = 3;
 
     for (int i = 0, count = g.getNodeCount(); i < count; i++) {
       Node node = g.getNode(i);
@@ -377,19 +383,43 @@ public class DuoTimelineView extends AbstractCanvasView {
       Point2D fp = sourceVisualAreaMap.getMapProjection().project(lon, lat);
       Point2D tp = targetVisualAreaMap.getMapProjection().project(lon, lat);
 
-      PPath fromPoint = createCentroidDot(sourceVisualAreaMap, fp.getX(), fp.getY(), dotSize);
-      PPath toPoint = createCentroidDot(targetVisualAreaMap, tp.getX(), tp.getY(), dotSize);
+      Centroid fromPoint = createCentroidDot(fp.getX(), fp.getY());
+      Centroid toPoint = createCentroidDot(tp.getX(), tp.getY());
+
+      sourcesCamera.addChild(fromPoint);
+      targetsCamera.addChild(toPoint);
 
       nodeIdsToCentroids.put(flowMapGraph.getNodeId(node), Pair.of(fromPoint, toPoint));
     }
   }
 
-  private PPath createCentroidDot(VisualAreaMap visualAreaMap, double x, double y, double dotSize) {
-    PPath dot = new PPath(new Ellipse2D.Double(x - dotSize/2, y - dotSize/2, dotSize, dotSize));
-    dot.setPaint(style.getMapAreaCentroidPaint());
-    dot.setStroke(null);
-    visualAreaMap.addChild(dot);
-    return dot;
+  private Centroid createCentroidDot(double x, double y) {
+    return new Centroid(x, y, CENTROID_DOT_SIZE, style.getMapAreaCentroidPaint());
+  }
+
+  private static class Centroid extends PPath {
+    private final Point2D point;
+    private final double size;
+
+    public Centroid(double origX, double origY, double size, Paint paint) {
+      super(new Ellipse2D.Double(origX - size/2, origY - size/2, size, size));
+      this.point = new Point2D.Double(origX, origY);
+      this.size = size;
+      setPaint(paint);
+      setStroke(null);
+    }
+
+    public Point2D getPoint() {
+      return (Point2D) point.clone();
+    }
+
+    void updateInCamera(PCamera cam) {
+      Point2D p = getPoint();
+      setVisible(cam.getViewBounds().contains(p));
+      cam.viewToLocal(p);
+      p.setLocation(p.getX() - size/2, p.getY() - size/2);
+      PNodes.setPosition(this, p);
+    }
   }
 
   private void renewMapToMatrixLines() {
@@ -416,43 +446,43 @@ public class DuoTimelineView extends AbstractCanvasView {
     return lineIn;
   }
 
+  private void updateCentroids() {
+    for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
+      Pair<Centroid, Centroid> pair = e.getValue();
+      pair.first().updateInCamera(sourcesCamera);
+      pair.second().updateInCamera(targetsCamera);
+    }
+  }
+
   private void updateMapToMatrixLines() {
-//    PCamera camera = getCamera();
-//    PBounds viewBounds = camera.getViewBounds();
     PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
-//    FontMetrics fm = getVisualCanvas().getFontMetrics(NODE_MARK_FONT);
     for (Edge edge : getVisibleEdges()) {
       Pair<PLine, PLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = edgesToLabels.get(edge);
 
-      PNode srcMapCentroid = nodeIdsToCentroids.get(
+      Centroid srcMapCentroid = nodeIdsToCentroids.get(
           flowMapGraph.getNodeId(edge.getSourceNode())).first();
-      PBounds srcB = srcMapCentroid.getFullBounds();
-      boolean inVis = sourcesCamera.getViewBounds().contains(srcB);
-//      srcMapCentroid.localToGlobal(srcB);
-      sourcesCamera.viewToLocal(srcB);
+      Point2D srcCentroidPoint = srcMapCentroid.getPoint();
+      boolean inVis = sourcesCamera.getViewBounds().contains(srcCentroidPoint);
+      sourcesCamera.viewToLocal(srcCentroidPoint);
 
 
-      PNode targetMapCentroid = nodeIdsToCentroids.get(
+      Centroid targetMapCentroid = nodeIdsToCentroids.get(
           flowMapGraph.getNodeId(edge.getTargetNode())).second();
-      PBounds targetB = targetMapCentroid.getFullBounds();
-      boolean outVis = targetsCamera.getViewBounds().contains(targetB);
-//      targetMapCentroid.localToGlobal(targetB);
-      targetsCamera.viewToLocal(targetB);
+      Point2D targetMapCentroidPoint = targetMapCentroid.getPoint();
+      boolean outVis = targetsCamera.getViewBounds().contains(targetMapCentroidPoint);
+      targetsCamera.viewToLocal(targetMapCentroidPoint);
 
 
 
       Point2D.Double matrixIn = getMatrixInPoint(row);
-//      boolean inVis = heatMapViewBounds.contains(matrixIn);
       inVis = inVis && heatMapViewBounds.contains(matrixIn);
-//      camera.viewToLocal(matrixIn);
       heatmapCamera.viewToLocal(matrixIn);
       PLine lineIn = lines.first();
       lineIn.setVisible(inVis);
       lineIn.setPickable(false);
-      lineIn.setPoint(0, srcB.getCenterX(), srcB.getCenterY());
-//      Rectangle2D fromLabelBounds = getCamera().viewToLocal(labels.first().getBounds());
+      lineIn.setPoint(0, srcCentroidPoint.getX(), srcCentroidPoint.getY());
       Rectangle2D fromLabelBounds = heatmapCamera.viewToLocal(labels.first().getBounds());
       lineIn.setPoint(1, matrixIn.x - fromLabelBounds.getWidth(), matrixIn.y +
           fromLabelBounds.getHeight()/2);
@@ -460,15 +490,12 @@ public class DuoTimelineView extends AbstractCanvasView {
 
 
       Point2D.Double matrixOut = getMatrixOutPoint(row);
-//      boolean outVis = heatMapViewBounds.contains(matrixOut);
       outVis = outVis && heatMapViewBounds.contains(matrixOut);
-//      camera.viewToLocal(matrixOut);
       heatmapCamera.viewToLocal(matrixOut);
       PLine lineOut = lines.second();
       lineOut.setVisible(outVis);
       lineOut.setPickable(false);
-      lineOut.setPoint(0, targetB.getCenterX(), targetB.getCenterY());
-//      Rectangle2D toLabelBounds = getCamera().viewToLocal(labels.second().getBounds());
+      lineOut.setPoint(0, targetMapCentroidPoint.getX(), targetMapCentroidPoint.getY());
       Rectangle2D toLabelBounds = heatmapCamera.viewToLocal(labels.second().getBounds());
       lineOut.setPoint(1, matrixOut.x + toLabelBounds.getWidth(), matrixOut.y +
           toLabelBounds.getHeight()/2);
@@ -494,15 +521,15 @@ public class DuoTimelineView extends AbstractCanvasView {
    */
   private List<String> lassoNodeCentroids(Shape shape, EdgeDirection dir) {
     List<String> nodeIds = null;
-    for (Map.Entry<String, Pair<PPath, PPath>> e : nodeIdsToCentroids.entrySet()) {
-      Pair<PPath, PPath> v = e.getValue();
-      PPath centroid = (dir == EdgeDirection.OUTGOING ? v.first() : v.second());
-      PBounds centroidBounds = centroid.getFullBounds();
+    for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
+      Pair<Centroid, Centroid> pair = e.getValue();
+      Centroid centroid = (dir == EdgeDirection.OUTGOING ? pair.first() : pair.second());
 
       PCamera cam = (dir == EdgeDirection.OUTGOING ? sourcesCamera : targetsCamera);
-      cam.viewToLocal(centroidBounds);
+      Point2D centroidPoint = centroid.getPoint();
+      cam.viewToLocal(centroidPoint);
 
-      if (shape.contains(centroidBounds.getCenter2D())) {
+      if (shape.contains(centroidPoint)) {
         if (nodeIds == null) {
           nodeIds = Lists.newArrayList();
         }
@@ -512,20 +539,20 @@ public class DuoTimelineView extends AbstractCanvasView {
     return nodeIds;
   }
 
-  private void updateAreaCentroidColors() {
-    for (Map.Entry<String, Pair<PPath, PPath>> e : nodeIdsToCentroids.entrySet()) {
+  private void updateCentroidColors() {
+    for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
       String nodeId = e.getKey();
 
       PPath srcCentroid = e.getValue().first();
       if (selSrcNodes != null  &&  selSrcNodes.contains(nodeId)) {
-        srcCentroid.setPaint(style.getMapAreaSelectedCentroidPaint());
+        srcCentroid.setPaint(style.getMapAreaSelectedSourceCentroidPaint());
       } else {
         srcCentroid.setPaint(style.getMapAreaCentroidPaint());
       }
 
       PPath targetCentroid = e.getValue().second();
       if (selTargetNodes != null  &&  selTargetNodes.contains(nodeId)) {
-        targetCentroid.setPaint(style.getMapAreaSelectedCentroidPaint());
+        targetCentroid.setPaint(style.getMapAreaSelectedTargetCentroidPaint());
       } else {
         targetCentroid.setPaint(style.getMapAreaCentroidPaint());
       }
@@ -574,7 +601,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
     sourceVisualAreaMap.setBounds(sourceVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
     getCamera().addInputEventListener(
-        new Lasso(sourcesCamera, style.getLassoStrokePaint()) {
+        new Lasso(sourcesCamera, style.getLassoSourcesStrokePaint()) {
       @Override
       public void selectionMade(Shape shape) {
         selSrcNodes = lassoNodeCentroids(shape, EdgeDirection.OUTGOING);
@@ -584,7 +611,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 
     targetVisualAreaMap.setBounds(targetVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
     getCamera().addInputEventListener(
-        new Lasso(targetsCamera, style.getLassoStrokePaint()) {
+        new Lasso(targetsCamera, style.getLassoTargetsStrokePaint()) {
       @Override
       public void selectionMade(Shape shape) {
         selTargetNodes = lassoNodeCentroids(shape, EdgeDirection.INCOMING);

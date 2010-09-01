@@ -51,8 +51,12 @@ public interface DuoTimelineStyle {
 
   Paint getMapAreaCentroidPaint();
 
-  Paint getMapAreaSelectedCentroidPaint();
+  Paint getMapAreaSelectedSourceCentroidPaint();
 
-  Color getLassoStrokePaint();
+  Color getLassoSourcesStrokePaint();
+
+  Color getLassoTargetsStrokePaint();
+
+  Paint getMapAreaSelectedTargetCentroidPaint();
 
 }
