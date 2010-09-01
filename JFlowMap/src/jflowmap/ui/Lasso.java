@@ -56,7 +56,7 @@ public class Lasso extends PBasicInputEventHandler {
     setEventFilter(new PInputEventFilter() {
       @Override
       public boolean acceptsEvent(PInputEvent event, int type) {
-        return event.isShiftDown() || event.isAltDown();
+        return event.isRightMouseButton();
       }
     });
   }
@@ -66,7 +66,7 @@ public class Lasso extends PBasicInputEventHandler {
     if (inTarget(event)) {
       /*if (line.getPointCount() > 0)*/ {
         Area area = asArea(line.getLineReference());
-        if (event.isShiftDown()  &&  prevSelectionArea != null) {
+        if (event.isShiftDown()) {
           area.add(prevSelectionArea);
         } else if (event.isAltDown()) {
           prevSelectionArea.subtract(area);

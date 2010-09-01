@@ -148,21 +148,22 @@ public class DuoTimelineView extends AbstractCanvasView {
     canvas.setAutoFitOnBoundsChange(false);
     canvas.setBackground(style.getBackgroundColor());
     PPanEventHandler panHandler = new PPanEventHandler();
-    PInputEventFilter noGlobalCameraFilter = new PInputEventFilter() {
+    panHandler.setEventFilter(new PInputEventFilter() {
       @Override
       public boolean acceptsEvent(PInputEvent event, int type) {
-        Point2D p = event.getCanvasPosition();
         return
-          (!event.isShiftDown()  &&  !event.isAltDown())  &&
-//          (sourcesCamera.getBounds().contains(p) ||
-//           targetsCamera.getBounds().contains(p) ||
-//           heatmapCamera.getBounds().contains(p));
+          event.isLeftMouseButton()  &&
           (event.getCamera() != getVisualCanvas().getCamera());
       }
-    };
-    panHandler.setEventFilter(noGlobalCameraFilter);
+    });
     canvas.setPanEventHandler(panHandler);
-    canvas.getZoomHandler().setEventFilter(noGlobalCameraFilter);
+    canvas.getZoomHandler().setEventFilter(new PInputEventFilter() {
+      @Override
+      public boolean acceptsEvent(PInputEvent event, int type) {
+        return
+          (event.getCamera() != getVisualCanvas().getCamera());
+      }
+    });
 //    canvas.setMinZoomScale(1e-2);
 //    canvas.setMaxZoomScale(1.0);
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
