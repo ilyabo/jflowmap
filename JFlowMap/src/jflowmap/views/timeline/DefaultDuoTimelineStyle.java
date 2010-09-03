@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Stroke;
 
+import jflowmap.EdgeDirection;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
@@ -160,28 +161,32 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   }
 
   private static final Color MAP_AREA_SELECTED_SOURCE_CENTROID_PAINT = new Color(200, 0, 0);
-  @Override
-  public Paint getMapAreaSelectedSourceCentroidPaint() {
-    return MAP_AREA_SELECTED_SOURCE_CENTROID_PAINT;
-  }
-
   private static final Color MAP_AREA_SELECTED_TARGET_CENTROID_PAINT = new Color(0, 0, 200);
+
   @Override
-  public Paint getMapAreaSelectedTargetCentroidPaint() {
-    return MAP_AREA_SELECTED_TARGET_CENTROID_PAINT;
+  public Paint getMapAreaSelectedCentroidPaint(EdgeDirection dir) {
+    switch (dir) {
+    case OUTGOING:
+      return MAP_AREA_SELECTED_SOURCE_CENTROID_PAINT;
+    case INCOMING:
+      return MAP_AREA_SELECTED_TARGET_CENTROID_PAINT;
+    default:
+      throw new AssertionError();
+    }
   }
 
   private static final Color LASSO_SOURCES_STROKE_PAINT = new Color(200, 0, 0, 150);
-
-  @Override
-  public Color getLassoSourcesStrokePaint() {
-    return LASSO_SOURCES_STROKE_PAINT;
-  }
-
   private static final Color LASSO_TARGETS_STROKE_PAINT = new Color(0, 0, 200, 150);
 
   @Override
-  public Color getLassoTargetsStrokePaint() {
-    return LASSO_TARGETS_STROKE_PAINT;
+  public Color getLassoStrokePaint(EdgeDirection dir) {
+    switch (dir) {
+    case OUTGOING:
+      return LASSO_SOURCES_STROKE_PAINT;
+    case INCOMING:
+      return LASSO_TARGETS_STROKE_PAINT;
+    default:
+      throw new AssertionError();
+    }
   }
 }

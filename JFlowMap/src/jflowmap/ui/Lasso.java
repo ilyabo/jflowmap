@@ -25,7 +25,7 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
-import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
@@ -41,22 +41,22 @@ public class Lasso extends PBasicInputEventHandler {
   private static final Stroke LINE_STROKE = new PFixedWidthStroke(2.0f);
   private static final double MIN_DIST_BETWEEN_SUBSEQUENT_POINTS = 5.0;  // on screen
 
-  private final PNode targetNode;
+  private final PCamera camera;
   private final PLine line;
   private Point2D lastPos;
   private Area prevSelectionArea;
 
   /**
-   * @param targetNode Node to which the lasso node will be added.
+   * @param camera Node to which the lasso node will be added.
    */
-  public Lasso(PNode targetNode, Color lineColor) {
-    this.targetNode = targetNode;
+  public Lasso(PCamera camera, Color lineColor) {
+    this.camera = camera;
     line = new PLine(null, LINE_STROKE);
     line.setStrokePaint(lineColor);
     setEventFilter(new PInputEventFilter() {
       @Override
       public boolean acceptsEvent(PInputEvent event, int type) {
-        return event.isRightMouseButton();
+        return event.isControlDown();
       }
     });
   }
@@ -80,7 +80,7 @@ public class Lasso extends PBasicInputEventHandler {
   }
 
   /**
-   * @param shape In targetNode's local coords
+   * @param shape In camera's local coords
    */
   public void selectionMade(Shape shape) {
     // to be overriden
@@ -95,7 +95,7 @@ public class Lasso extends PBasicInputEventHandler {
 
 //  @Override
 //  public void mouseExited(PInputEvent event) {
-//    if (event.getPickedNode() == targetNode) {
+//    if (event.getPickedNode() == camera) {
 //      clear();
 //    }
 //  }
@@ -110,7 +110,7 @@ public class Lasso extends PBasicInputEventHandler {
       }
       if (numPoints == 0   ||  posInCanvas.distance(lastPos) > MIN_DIST_BETWEEN_SUBSEQUENT_POINTS) {
         lastPos = (Point2D) posInCanvas.clone();  // copy to be stored
-        Point2D pos = targetNode.globalToLocal((Point2D)posInCanvas.clone());
+        Point2D pos = camera.globalToLocal((Point2D)posInCanvas.clone());
         if (numPoints == 0) {
           line.addPoint(numPoints, pos.getX(), pos.getY());
           line.addPoint(numPoints + 1, pos.getX(), pos.getY());
@@ -121,27 +121,31 @@ public class Lasso extends PBasicInputEventHandler {
     }
   }
 
-private boolean inTarget(PInputEvent event) {
-  return targetNode.getFullBounds().contains(event.getCanvasPosition());
-}
+  private boolean inTarget(PInputEvent event) {
+    return camera.getFullBounds().contains(event.getCanvasPosition());
+  }
 
   private void start() {
-    targetNode.addChild(line);
+    camera.addChild(line);
   }
 
   public void clear() {
-    targetNode.removeChild(line);
+    camera.removeChild(line);
     line.removeAllPoints();
     lastPos = null;
   }
 
-  public static Area asArea(LineShape line) {
+  public Area asArea(LineShape line) {
     GeneralPath path = new GeneralPath();
     int numPoints = line.getPointCount();
     if (numPoints > 0) {
-      path.moveTo(line.getX(0), line.getY(0));
+      Point2D.Double p = new Point2D.Double(line.getX(0), line.getY(0));
+      camera.localToView(p);
+      path.moveTo(p.x, p.y);
       for (int i = 0; i < numPoints; i++) {
-        path.lineTo(line.getX(i), line.getY(i));
+        p.setLocation(line.getX(i), line.getY(i));
+        camera.localToView(p);
+        path.lineTo(p.x, p.y);
       }
     }
     return new Area(path);

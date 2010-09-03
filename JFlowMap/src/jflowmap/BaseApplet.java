@@ -72,7 +72,9 @@ public abstract class BaseApplet extends JApplet {
 
   @Override
   public void start() {
-    view.fitInView();
+    if (view != null) {
+      view.fitInView();
+    }
   }
 
   protected DatasetSpec getDatasetSpec() {

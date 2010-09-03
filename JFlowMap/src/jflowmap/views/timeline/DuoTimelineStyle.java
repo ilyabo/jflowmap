@@ -22,6 +22,8 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Stroke;
 
+import jflowmap.EdgeDirection;
+
 /**
  * @author Ilya Boyandin
  */
@@ -51,12 +53,8 @@ public interface DuoTimelineStyle {
 
   Paint getMapAreaCentroidPaint();
 
-  Paint getMapAreaSelectedSourceCentroidPaint();
+  Paint getMapAreaSelectedCentroidPaint(EdgeDirection dir);
 
-  Color getLassoSourcesStrokePaint();
-
-  Color getLassoTargetsStrokePaint();
-
-  Paint getMapAreaSelectedTargetCentroidPaint();
+  Color getLassoStrokePaint(EdgeDirection dir);
 
 }

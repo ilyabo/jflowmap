@@ -199,7 +199,7 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
   private void doFilterBySrcDest(JTextField srcField, JTextField targetField) {
-    duoTimelineView.setCustomEdgeFilter(DuoTimelineView.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
+    duoTimelineView.setCustomEdgeFilter(DuoTimelineRowFilters.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
         duoTimelineView.getFlowMapGraph(), srcField.getText(), targetField.getText()
         ));
   }

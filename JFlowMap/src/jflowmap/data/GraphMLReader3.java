@@ -82,7 +82,11 @@ public class GraphMLReader3 {
 
   public Iterable<Graph> readFromLocation(String location) throws IOException {
     logger.info("Loading file \"" + location + "\"");
-    Iterable<Graph> graphs = readFromStream(IOLib.streamFromString(location));
+    InputStream is = IOLib.streamFromString(location);
+    if (is == null) {
+      throw new IOException("Couldn't read from location: \"" + location + "\"");
+    }
+    Iterable<Graph> graphs = readFromStream(is);
     logger.info("Finished loading file");
     return graphs;
   }
