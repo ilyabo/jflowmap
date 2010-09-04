@@ -36,6 +36,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
+import jflowmap.views.timeline.DuoTimelineView.RowOrderings;
 import net.miginfocom.swing.MigLayout;
 
 
@@ -130,12 +131,16 @@ public class DuoTimelineControlPanel extends JPanel {
 //    panel.add(applyButton, "gapleft 10, span, al right, wrap");
 
 
-    panel.add(new JLabel("Order by:"), "gapleft 10, al right");
-    JComboBox orderByCombo = new JComboBox(new Object[] {
-        "max magnitude in row",
-        "Euclidean distance from max" });
+    panel.add(new JLabel("Order:"), "gapleft 10, al right");
+    JComboBox orderByCombo = new JComboBox(RowOrderings.values());
     panel.add(orderByCombo, "");
-    orderByCombo.setEnabled(false);
+    orderByCombo.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        duoTimelineView.setRowOrder((RowOrderings)e.getItem());
+      }
+    });
+//    orderByCombo.setEnabled(false);
 
 
     return panel;

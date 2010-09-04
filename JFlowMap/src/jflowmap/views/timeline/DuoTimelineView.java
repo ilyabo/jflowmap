@@ -29,6 +29,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -276,7 +277,7 @@ public class DuoTimelineView extends AbstractCanvasView {
           edges.add(edge);
         }
       }
-      Collections.sort(edges, Collections.reverseOrder(flowMapGraph.createMaxWeightComparator()));
+      Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
 
       if (maxVisibleTuples >= 0) {
         if (edges.size() > maxVisibleTuples) {
@@ -823,6 +824,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
   private boolean fitInViewOnce = false;
+  private RowOrderings rowOrdering = RowOrderings.MAX_MAGNITUDE_IN_ROW;
 
   @Override
   public void fitInView() {
@@ -848,7 +850,6 @@ public class DuoTimelineView extends AbstractCanvasView {
      */
   }
 
-
   private void fitCamera(PCamera camera,
       double halign, double valign, double hsizeProportion, double vsizeProportion) {
     PBounds globalViewBounds = getCamera().getViewBounds();
@@ -858,6 +859,69 @@ public class DuoTimelineView extends AbstractCanvasView {
     camera.setViewBounds(viewBounds);
   }
 
+  enum RowOrderings {
+    MAX_MAGNITUDE_IN_ROW("max magnitude in row") {
+      @Override
+      public Comparator<Edge> getComparator(FlowMapGraph fmg) {
+        return Collections.reverseOrder(fmg.createMaxWeightComparator());
+      }
+    },
+    SRC_TARGET_NAMES("src,target node names") {
+      @Override
+      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
+        return new Comparator<Edge>() {
+          @Override
+          public int compare(Edge e1, Edge e2) {
+            int c = fmg.getNodeLabel(e1.getSourceNode()).compareTo(fmg.getNodeLabel(e2.getSourceNode()));
+            if (c == 0) {
+              c = fmg.getNodeLabel(e1.getTargetNode()).compareTo(fmg.getNodeLabel(e2.getTargetNode()));
+            }
+            return c;
+          }
+        };
+      }
+    },
+    MINIMIZE_SRC_CROSSINGS("minimizing src crossings") {
+      @Override
+      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
+        return new Comparator<Edge>() {
+          @Override
+          public int compare(Edge e1, Edge e2) {
+            String yattr = fmg.getAttrSpec().getYNodeAttr();
+            if (e1.getSourceNode() != e2.getSourceNode()) {
+              return -(int)Math.signum(
+                  e1.getSourceNode().getDouble(yattr) - e2.getSourceNode().getDouble(yattr));
+            } else {
+              return -(int)Math.signum(
+                  e1.getTargetNode().getDouble(yattr) - e2.getTargetNode().getDouble(yattr));
+            }
+          }
+        };
+      }
+    };
+//    EUCLIDEAN_DIST_FROM_MAX("Euclidean distance from max");
+
+    private String description;
+
+    private RowOrderings(String description) {
+      this.description = description;
+    }
+
+    @Override
+    public String toString() {
+      return description;
+    }
+
+    public abstract Comparator<Edge> getComparator(FlowMapGraph fmg);
+
+  }
+
+  public void setRowOrder(RowOrderings rowOrder) {
+    if (this.rowOrdering != rowOrder) {
+      this.rowOrdering = rowOrder;
+      updateVisibleEdges();
+    }
+  }
 }
 
 

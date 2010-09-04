@@ -43,7 +43,8 @@ class Centroid extends PPath {
   public boolean setBounds(double x, double y,
       double width, double height) {
     if (labelNode != null) {
-      PNodes.setPosition(labelNode, x + size*1.5, y - labelNode.getFont().getSize2D()/2.0);
+//      PNodes.setPosition(labelNode, x + size*1.5, y - labelNode.getFont().getSize2D()/2.0);
+      PNodes.setPosition(labelNode, x - labelNode.getWidth()/2, y + size /*- labelNode.getFont().getSize2D()/2.0*/);
     }
     return super.setBounds(x, y, width, height);
   }
