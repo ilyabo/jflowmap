@@ -33,7 +33,8 @@
         	<param name="include.data" value="true"/>
         </antcall>
     </target>
-	
+
+	<!--
    <target name="build-duotimeline-xjar">
         <antcall target="_build">
             <param name="app.name" value="duotimeline"/>
@@ -42,6 +43,7 @@
             <param name="include.data.explicit" value="data/refugees/refugees_1975-2008.xml.gz,data/refugees/countries-areas.xml.gz"/>
         </antcall>
     </target>
+    -->
 
    <target name="build-duotimeline-applet">
         <antcall target="_build">

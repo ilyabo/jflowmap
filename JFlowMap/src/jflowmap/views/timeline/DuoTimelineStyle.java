@@ -57,4 +57,8 @@ public interface DuoTimelineStyle {
 
   Color getLassoStrokePaint(EdgeDirection dir);
 
+  Color getMapAreaHighlightedStrokePaint();
+
+  Color getMapAreaHighlightedPaint();
+
 }

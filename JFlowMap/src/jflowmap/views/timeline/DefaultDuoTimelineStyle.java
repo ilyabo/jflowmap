@@ -43,14 +43,14 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
     return FLOW_CIRCLE_COLOR;
   }
 
-  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(0f, 0f, 0f, .1f);
+  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(0f, 0f, 0f, .05f);
 //  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(200, 200, 200);
   @Override
   public Color getMapToMatrixLineLinesColor() {
     return MAP_TO_MATRIX_LINE_COLOR;
   }
 
-  private static final Color MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR = new Color(0f, 0f, .7f, .7f);
+  private static final Color MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR = new Color(0f, 0f, .7f, .5f);
   @Override
   public Paint getMapToMatrixLineHighlightedColor() {
     return MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR;
@@ -188,5 +188,17 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
     default:
       throw new AssertionError();
     }
+  }
+
+
+  private static final Color MAP_AREA_HIGHLIGHTED_PAINT = new Color(255, 208, 144);
+  @Override
+  public Color getMapAreaHighlightedPaint() {
+    return MAP_AREA_HIGHLIGHTED_PAINT;
+  }
+
+  @Override
+  public Color getMapAreaHighlightedStrokePaint() {
+    return MAP_AREA_HIGHLIGHTED_PAINT;
   }
 }

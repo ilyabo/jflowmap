@@ -19,9 +19,11 @@
 package jflowmap.views.flowmap;
 
 import java.awt.Color;
+import java.awt.Paint;
 
 import jflowmap.models.map.Area;
 import jflowmap.views.ColorCodes;
+import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
@@ -33,6 +35,7 @@ public class VisualArea extends PPath {
   private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
   private final VisualAreaMap visualAreaMap;
   private final Area area;
+  private PActivity lastActivity;
 
   public VisualArea(VisualAreaMap visualAreaMap, Area area) {
     super(area.asPath(visualAreaMap.getMapProjection()));
@@ -54,4 +57,23 @@ public class VisualArea extends PPath {
     setStroke(mapStroke);
   }
 
+  @Override
+  public void setPaint(Paint newPaint) {
+    super.setPaint(newPaint);
+    repaint();
+  }
+
+  @Override
+  public boolean addActivity(PActivity activity) {
+    if (lastActivity != null && lastActivity.isStepping()) {
+      lastActivity.terminate(PActivity.TERMINATE_WITHOUT_FINISHING);
+      lastActivity = null;
+    }
+    if (super.addActivity(activity)) {
+      lastActivity = activity;
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

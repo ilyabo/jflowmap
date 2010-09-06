@@ -31,11 +31,23 @@ class Centroid extends PPath {
     addChild(labelNode);
   }
 
+  public PText getLabelNode() {
+    return labelNode;
+  }
+
   @Override
   public void setPaint(Paint newPaint) {
     super.setPaint(newPaint);
     if (labelNode != null) {
       labelNode.setTextPaint(newPaint);
+    }
+  }
+
+  @Override
+  public void setPickable(boolean isPickable) {
+    super.setPickable(isPickable);
+    if (labelNode != null) {
+      labelNode.setPickable(isPickable);
     }
   }
 
