@@ -4,7 +4,7 @@
 
 	<property file="build.properties"/>
 
-    <property name="app.name" value="JFlowMap"/>
+    <property name="app.name" value="jflowmap"/>
     <property name="cert.name" value="JFlowMap"/>
 	<property name="path.src" value="src"/>
 	<property name="path.classes" value="bin"/>
@@ -38,10 +38,9 @@
     </target>
     -->
 
-   <target name="build-duotimeline-applet">
+   <target name="build">
         <antcall target="_build">
-            <param name="app.name" value="duotimeline-applet"/>
-            <param name="mainclass" value="jflowmap.DuoTimelineApplet"/>
+            <!--param name="app.name" value="duotimeline-applet"/-->
             <param name="mode" value="applet"/>
             <param name="include.applet.meta-inf" value="true"/>
         </antcall>
