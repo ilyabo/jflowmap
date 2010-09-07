@@ -12,16 +12,10 @@
 	<property name="path.build" value="build"/>
 	<property name="mainclass" value="jflowmap.FlowMapMain"/>
 
+    <!--
     <target name="build-prod">
         <antcall target="_build">
            <param name="mode" value="prod"/>
-        </antcall>
-        <antcall target="sign"/>
-    </target>
-
-   <target name="build-applet">
-        <antcall target="_build">
-           <param name="mode" value="applet"/>
         </antcall>
         <antcall target="sign"/>
     </target>
@@ -34,7 +28,6 @@
         </antcall>
     </target>
 
-	<!--
    <target name="build-duotimeline-xjar">
         <antcall target="_build">
             <param name="app.name" value="duotimeline"/>
