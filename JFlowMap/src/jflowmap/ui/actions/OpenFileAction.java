@@ -40,6 +40,8 @@ import at.fhj.utils.swing.JMsgPane;
  */
 public class OpenFileAction extends AbstractAction {
 
+  private static final Logger logger = Logger.getLogger(OpenFileAction.class);
+
   private static final ImageIcon ICON = new ImageIcon(
       OpenFileAction.class.getResource("images/Open16-2.gif"));
 
@@ -110,9 +112,12 @@ public class OpenFileAction extends AbstractAction {
         target.open(app, fc.getSelectedFile().getAbsolutePath());
         AppPreferences.INSTANCE.setFileOpenLastVisitedDir(fc.getSelectedFile().getParent());
       }
-    } catch (Throwable th) {
-      JMsgPane.showProblemDialog(app, "File couldn't be loaded: " + th.getMessage());
-      Logger.getLogger(getClass().getName()).error("Exception: ", th);
+    } catch (Exception ex) {
+      JMsgPane.showProblemDialog(app, "File couldn't be loaded: " + ex.getMessage());
+      logger.error("Exception: ", ex);
+    } catch (Error err) {
+      logger.error(err);
+      System.exit(1);
     }
   }
 

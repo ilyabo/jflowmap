@@ -543,11 +543,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       public Object construct() {
         try {
           bundler.bundle(getProgressTracker());
-        } catch (Throwable th) {
-          logger.error("Bundling error", th);
+        } catch (Exception ex) {
+          logger.error("Bundling error", ex);
           JOptionPane.showMessageDialog(jFlowMap.getViewComponent(),
-              "Bundling error: [" + th.getClass().getSimpleName()+ "] " + th.getMessage()
+              "Bundling error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
           );
+        } catch (Error err) {
+          logger.error(err);
+          System.exit(1);
         }
         return null;
       }
@@ -610,11 +613,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
             }
           });
           repaint();
-        } catch (Throwable th) {
-          logger.error("Aggregation error", th);
+        } catch (Exception ex) {
+          logger.error("Aggregation error", ex);
           JOptionPane.showMessageDialog(jFlowMap.getViewComponent(),
-              "Aggregation error: [" + th.getClass().getSimpleName()+ "] " + th.getMessage()
+              "Aggregation error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
           );
+        } catch (Error err) {
+          logger.error(err);
+          System.exit(1);
         }
         return null;
       }

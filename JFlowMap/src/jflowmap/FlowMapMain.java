@@ -382,7 +382,7 @@ public class FlowMapMain extends JFrame {
 //      logger.info("Loading preferences from " + fileName);
 //      try {
 //        Preferences.importPreferences(new FileInputStream(fileName));
-//      } catch (Throwable th) {
+//      } catch (Exception th) {
 //        logger.error("Loading preferences failed", th);
 //      }
 //    }
@@ -393,7 +393,7 @@ public class FlowMapMain extends JFrame {
 //    logger.info("Saving preferences to " + fileName);
 //    try {
 //      Preferences.userRoot().exportSubtree(new FileOutputStream(fileName));
-//    } catch (Throwable th) {
+//    } catch (Exception th) {
 //      logger.error("Loading preferences failed", th);
 //    }
 //  }

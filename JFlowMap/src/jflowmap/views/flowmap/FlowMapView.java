@@ -100,11 +100,14 @@ public class FlowMapView extends AbstractCanvasView {
       }
       setVisualFlowMap(visualFlowMap);
 
-    } catch (Throwable th) {
-      logger.error("Couldn't load flow map " + dataset.getFilename(), th);
+    } catch (Exception ex) {
+      logger.error("Couldn't load flow map " + dataset.getFilename(), ex);
       JOptionPane.showMessageDialog(this.getViewComponent(),
           "Couldn't load flow map '"  + dataset.getFilename() + "': [" +
-          th.getClass().getSimpleName()+ "] " + th.getMessage());
+          ex.getClass().getSimpleName()+ "] " + ex.getMessage());
+    } catch (Error err) {
+      logger.error(err);
+      System.exit(1);
     }
   }
 
