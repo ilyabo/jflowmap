@@ -22,7 +22,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Shape;
-import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -90,7 +89,7 @@ import edu.umd.cs.piccolox.nodes.PLine;
  */
 public class DuoTimelineView extends AbstractCanvasView {
 
-  private static final double CENTROID_DOT_SIZE = 3.0;
+  private static final double CENTROID_DOT_SIZE = 2.0;
 
   enum Properties {
 //    EDGE_FILTER;
@@ -444,29 +443,66 @@ public class DuoTimelineView extends AbstractCanvasView {
     return lineIn;
   }
 
+  static class RectSet {
+    private final List<Rectangle2D> rects;
+
+    public RectSet(int initialCapacity) {
+      rects = new ArrayList<Rectangle2D>(initialCapacity);
+    }
+
+    public void add(Rectangle2D rect) {
+      rects.add(rect);
+    }
+
+    public boolean intersects(Rectangle2D rect) {
+      for (Rectangle2D r : rects) {
+        if (r.intersects(rect)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public boolean addIfNotIntersects(Rectangle2D rect) {
+      if (intersects(rect)) {
+        return false;
+      } else {
+        add(rect);
+        return true;
+      }
+    }
+  }
+
   private void updateCentroids() {
-    Area occupied = new Area();
+    int maxRectNum = nodeIdsToCentroids.size();
+    RectSet occupiedInSrc = new RectSet(maxRectNum);
+    RectSet occupiedInTarget = new RectSet(maxRectNum);
     for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
       Pair<Centroid, Centroid> pair = e.getValue();
       Centroid cl = pair.first();
       Centroid cr = pair.second();
+
       cl.updateInCamera(sourcesCamera);
+      if (cl.getVisible()) {
+        cl.getLabelNode().setVisible(occupiedInSrc.addIfNotIntersects(cl.getLabelNode().getBounds()));
+      }
+
       cr.updateInCamera(targetsCamera);
-
-      cl.getLabelNode().setVisible(addIfNotIntersects(occupied, cl));
-      cr.getLabelNode().setVisible(addIfNotIntersects(occupied, cr));
+      if (cr.getVisible()) {
+        cr.getLabelNode().setVisible(occupiedInTarget.addIfNotIntersects(cr.getLabelNode().getBounds()));
+      }
     }
   }
 
-  private boolean addIfNotIntersects(Area occupied, Centroid c) {
-    PBounds clb = c.getLabelNode().getBounds();
-    if (!occupied.intersects(clb)) {
-      occupied.add(new Area(clb));
-      return true;
-    } else {
-      return false;
-    }
-  }
+//  private boolean addIfNotIntersects(Area occupied, Centroid c) {
+//    PBounds clb = c.getLabelNode().getBounds();
+//    if (!occupied.intersects(clb)) {
+//      occupied.add(new Area(clb));
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
 
 
   private void updateMapToHeatmapLinePositions() {
