@@ -27,13 +27,17 @@ import prefuse.util.ColorLib;
  */
 public class ColorUtils {
 
-  public static final Color[] createCategoryColors(int numberOfColors) {
+  public static final Color[] createCategoryColors(int numberOfColors, float alpha) {
     Color[] colors = new Color[numberOfColors];
-    int[] palette = ColorLib.getCategoryPalette(numberOfColors, .7f, .4f, 1.f, 1.f);
+    int[] palette = ColorLib.getCategoryPalette(numberOfColors, .7f, .4f, 1.f, alpha);
     for (int i = 0; i < numberOfColors; i++) {
-      colors[i] = new Color(palette[i]);
+      colors[i] = new Color(palette[i], true);
     }
     return colors;
+  }
+
+  public static final Color[] createCategoryColors(int numberOfColors) {
+    return createCategoryColors(numberOfColors, 1.f);
   }
 
   /**
@@ -105,5 +109,9 @@ public class ColorUtils {
       Math.abs(c1.getRed() - c2.getRed()) +
       Math.abs(c1.getGreen() - c2.getGreen()) +
       Math.abs(c1.getBlue() - c2.getBlue());
+  }
+
+  public static Color setAlpha(Color color, int alpha) {
+    return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
   }
 }

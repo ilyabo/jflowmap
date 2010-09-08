@@ -19,7 +19,6 @@
 package jflowmap.views.timeline;
 
 import java.awt.Color;
-import java.awt.Paint;
 import java.awt.Stroke;
 
 import jflowmap.EdgeDirection;
@@ -33,9 +32,9 @@ public interface DuoTimelineStyle {
 
   Color getFlowCircleColor();
 
-  Paint getMapToMatrixLineHighlightedColor();
+  Color getFlowLineHighlightedColor();
 
-  Color getMapToMatrixLineLinesColor();
+  Color getFlowLineColor();
 
   Color getMissingValueColor();
 
@@ -45,20 +44,28 @@ public interface DuoTimelineStyle {
 
   Stroke getSelectedTimelineCellStroke();
 
-  Paint getSelectedTimelineCellStrokeColor();
+  Color getSelectedTimelineCellStrokeColor();
 
   Stroke getTimelineCellStroke();
 
-  Paint getTimelineCellStrokeColor();
+  Color getTimelineCellStrokeColor();
 
-  Paint getMapAreaCentroidPaint();
+  Color getMapAreaCentroidPaint();
 
-  Paint getMapAreaSelectedCentroidPaint(EdgeDirection dir);
+  Color getMapAreaSelectedCentroidPaint();
 
   Color getLassoStrokePaint(EdgeDirection dir);
 
   Color getMapAreaHighlightedStrokePaint();
 
   Color getMapAreaHighlightedPaint();
+
+  Color getMapAreaSelectedCentroidLabelTextPaint();
+
+  Color getMapAreaCentroidLabelTextPaint();
+
+  Color getMapAreaSelectedCentroidLabelPaint();
+
+  Color getMapAreaCentroidLabelPaint();
 
 }

@@ -18,7 +18,6 @@
 
 package jflowmap.views.timeline;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Shape;
@@ -26,13 +25,14 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -68,21 +68,19 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
-import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
-import edu.umd.cs.piccolox.nodes.PLine;
 
 /**
  * @author Ilya Boyandin
@@ -91,8 +89,12 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   private static final double CENTROID_DOT_SIZE = 2.0;
 
-  enum Properties {
+//  enum Properties {
 //    EDGE_FILTER;
+//  }
+
+  enum FlowLinesColoringMode {
+    SAME_COLOR, SOURCE, TARGET
   }
 
   private static final Font NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
@@ -110,14 +112,15 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   private final JPanel controlPanel;
   private boolean useWeightDifferences = false;
+  private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.SOURCE;
   private int maxVisibleTuples;
 
   private ColorSchemes sequentialColorScheme = ColorSchemes.OrRd;
   private ColorSchemes divergingColorScheme = ColorSchemes.RdBu5;
 
   private final PInputEventListener tooltipListener = createTooltipListener(DTCell.class);
-  private final PInputEventListener highlightListener = createMapToMatrixLineHighlightListener();
-  private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
+  private final PInputEventListener highlightListener = createFlowLineHighlightListener();
+//  private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
   private final PNode heatmapNode;
   private final PNode mapToMatrixLinesLayer;
@@ -139,6 +142,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private final PLayer sourcesLayer = new PLayer();
   private final PLayer heatmapLayer = new PLayer();
   private final PLayer targetsLayer = new PLayer();
+  private HashMap<String, Color> flowLinesPalette;
 
   public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -217,7 +221,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           updateCentroids();
-          updateMapToHeatmapLinePositions();
+          updateFlowLinePositions();
           // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
         }
       }
@@ -232,9 +236,9 @@ public class DuoTimelineView extends AbstractCanvasView {
     return "DuoTimeline";
   }
 
-  public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
-    changes.addPropertyChangeListener(prop.name(), listener);
-  }
+//  public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
+//    changes.addPropertyChangeListener(prop.name(), listener);
+//  }
 
   public void setMaxVisibleTuples(int maxVisibleTuples) {
     if (this.maxVisibleTuples != maxVisibleTuples) {
@@ -272,6 +276,30 @@ public class DuoTimelineView extends AbstractCanvasView {
     };
   }
 
+  private void updateFlowLinesPalette() {
+    if (flowLinesColoringMode == FlowLinesColoringMode.SAME_COLOR) {
+      if (flowLinesPalette != null) flowLinesPalette.clear();
+      return;
+    }
+    Set<String> ids = Sets.newHashSet();
+    for (Edge e : visibleEdges) {
+      switch (flowLinesColoringMode) {
+      case SOURCE:
+        ids.add(flowMapGraph.getSourceNodeId(e));
+        break;
+      case TARGET:
+        ids.add(flowMapGraph.getTargetNodeId(e));
+        break;
+      }
+    }
+    flowLinesPalette = new HashMap<String, Color>(ids.size());
+    Color[] palette = ColorUtils.createCategoryColors(ids.size(), .1f);
+    int i = 0;
+    for (String src : ids) {
+      flowLinesPalette.put(src, palette[i++]);
+    }
+  }
+
   private List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
       List<Edge> edges = new ArrayList<Edge>(flowMapGraph.getGraph().getEdgeCount());
@@ -290,6 +318,8 @@ public class DuoTimelineView extends AbstractCanvasView {
       }
 
       visibleEdges = edges;
+
+      updateFlowLinesPalette();
     }
 
     return visibleEdges;
@@ -384,93 +414,73 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
   private Centroid createCentroidDot(double x, double y, String nodeLabel) {
-    Centroid c = new Centroid(x, y, CENTROID_DOT_SIZE, style.getMapAreaCentroidPaint(), nodeLabel);
+    Centroid c = new Centroid(this, x, y, CENTROID_DOT_SIZE, style.getMapAreaCentroidPaint(), nodeLabel);
     c.setPickable(false);
     return c;
   }
 
-  private void renewMapToMatrixLines() {
+  private void renewFlowLines() {
     mapToMatrixLinesLayer.removeAllChildren();
 
     edgesToLines = Maps.newHashMap();
     for (Edge edge : getVisibleEdges()) {
       edgesToLines.put(edge,
-          Pair.of(createMapToMatrixLine(), createMapToMatrixLine()));
+          Pair.of(createFlowLine(edge), createFlowLine(edge)));
     }
 
-    updateMapToHeatmapLinePositions();
+    updateFlowLineColors();
+    updateFlowLinePositions();
   }
 
-  static class FlowLine extends PLine {
-    private static final BasicStroke STROKE = new BasicStroke(2);
+  public FlowLinesColoringMode getFlowLinesColoringMode() {
+    return flowLinesColoringMode;
+  }
 
-    private boolean isHighlighted;
+  public void setFlowLinesColoringMode(FlowLinesColoringMode flowLinesColoringMode) {
+    this.flowLinesColoringMode = flowLinesColoringMode;
+    updateFlowLinesPalette();
+    updateFlowLineColors();
+  }
 
-    private final DuoTimelineView view;
+  private FlowLine createFlowLine(Edge edge) {
+    FlowLine line = new FlowLine();
+    mapToMatrixLinesLayer.addChild(line);
+    return line;
+  }
 
-    public FlowLine(DuoTimelineView view) {
-      this.view = view;
-      setStroke(STROKE);
-      for (int i = 0; i < 3; i++) {
-        addPoint(i, 0, 0);
-      }
-      updateColor();
-    }
+  private void updateFlowLineColors() {
+    for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
+      Pair<FlowLine, FlowLine> p = e.getValue();
+      Pair<Color, Color> colors = getFlowLineColors(e.getKey());
 
-    public boolean isHighlighted() {
-      return isHighlighted;
-    }
+      FlowLine srcLine = p.first();
+      srcLine.setColor(colors.first());
+      srcLine.setHighlightedColor(colors.second());
 
-    public void setHighlighted(boolean isHighlighted) {
-      if (this.isHighlighted != isHighlighted) {
-        this.isHighlighted = isHighlighted;
-        updateColor();
-      }
-    }
-
-    public void updateColor() {
-      if (isHighlighted) {
-        setStrokePaint(view.getStyle().getMapToMatrixLineHighlightedColor());
-      } else {
-        setStrokePaint(view.getStyle().getMapToMatrixLineLinesColor());
-      }
+      FlowLine targetLine = p.second();
+      targetLine.setColor(colors.first());
+      targetLine.setHighlightedColor(colors.second());
     }
   }
 
-  private FlowLine createMapToMatrixLine() {
-    FlowLine lineIn = new FlowLine(this);
-    mapToMatrixLinesLayer.addChild(lineIn);
-    return lineIn;
-  }
+  private Pair<Color, Color> getFlowLineColors(Edge edge) {
+    Color c;
+    switch (flowLinesColoringMode) {
+    case SAME_COLOR:
+      return Pair.of(
+          style.getFlowLineColor(),
+          style.getFlowLineHighlightedColor());
 
-  static class RectSet {
-    private final List<Rectangle2D> rects;
+    case SOURCE:
+      c = flowLinesPalette.get(flowMapGraph.getSourceNodeId(edge));
+      return Pair.of(c, ColorUtils.setAlpha(c, 255));
 
-    public RectSet(int initialCapacity) {
-      rects = new ArrayList<Rectangle2D>(initialCapacity);
+    case TARGET:
+      c = flowLinesPalette.get(flowMapGraph.getTargetNodeId(edge));
+      return Pair.of(c, ColorUtils.setAlpha(c, 255));
+
     }
-
-    public void add(Rectangle2D rect) {
-      rects.add(rect);
-    }
-
-    public boolean intersects(Rectangle2D rect) {
-      for (Rectangle2D r : rects) {
-        if (r.intersects(rect)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    public boolean addIfNotIntersects(Rectangle2D rect) {
-      if (intersects(rect)) {
-        return false;
-      } else {
-        add(rect);
-        return true;
-      }
-    }
+    throw new AssertionError();
   }
 
   private void updateCentroids() {
@@ -505,7 +515,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //  }
 
 
-  private void updateMapToHeatmapLinePositions() {
+  private void updateFlowLinePositions() {
     PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
@@ -594,19 +604,11 @@ public class DuoTimelineView extends AbstractCanvasView {
     for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
       String nodeId = e.getKey();
 
-      PPath srcCentroid = e.getValue().first();
-      if (selSrcNodes != null  &&  selSrcNodes.contains(nodeId)) {
-        srcCentroid.setPaint(style.getMapAreaSelectedCentroidPaint(EdgeDirection.OUTGOING));
-      } else {
-        srcCentroid.setPaint(style.getMapAreaCentroidPaint());
-      }
+      Centroid srcCentroid = e.getValue().first();
+      srcCentroid.setSelected(selSrcNodes != null  &&  selSrcNodes.contains(nodeId));
 
-      PPath targetCentroid = e.getValue().second();
-      if (selTargetNodes != null  &&  selTargetNodes.contains(nodeId)) {
-        targetCentroid.setPaint(style.getMapAreaSelectedCentroidPaint(EdgeDirection.INCOMING));
-      } else {
-        targetCentroid.setPaint(style.getMapAreaCentroidPaint());
-      }
+      Centroid targetCentroid = e.getValue().second();
+      targetCentroid.setSelected(selTargetNodes != null  &&  selTargetNodes.contains(nodeId));
     }
   }
 
@@ -686,9 +688,9 @@ public class DuoTimelineView extends AbstractCanvasView {
 //  }
 
 
-  private void schedule(PActivity activity) {
-    getCamera().getRoot().getActivityScheduler().addActivity(activity);
-  }
+//  private void schedule(PActivity activity) {
+//    getCamera().getRoot().getActivityScheduler().addActivity(activity);
+//  }
 
   private Iterable<Edge> findVisibleEdges(final List<String> nodeIds, final EdgeDirection dir) {
     return Iterables.filter(visibleEdges, new Predicate<Edge>() {
@@ -860,7 +862,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //    heatmapCamera.setViewBounds(heatmapNode.getFullBounds());
 
     createYearMarks();
-    renewMapToMatrixLines();
+    renewFlowLines();
 
 
 //    layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight * row)));
@@ -889,7 +891,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
 
-  private PTypedBasicInputEventHandler<DTCell> createMapToMatrixLineHighlightListener() {
+  private PTypedBasicInputEventHandler<DTCell> createFlowLineHighlightListener() {
     return new PTypedBasicInputEventHandler<DTCell>(DTCell.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
@@ -979,7 +981,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       targetsCamera.setViewBounds(targetsLayer.getFullBounds());
       fitInViewOnce = true;
     }
-    updateMapToHeatmapLinePositions();
+    updateFlowLinePositions();
 
     /*
     getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
@@ -1055,7 +1057,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     };
 //    EUCLIDEAN_DIST_FROM_MAX("Euclidean distance from max");
 
-    private String description;
+    private final String description;
 
     private RowOrderings(String description) {
       this.description = description;

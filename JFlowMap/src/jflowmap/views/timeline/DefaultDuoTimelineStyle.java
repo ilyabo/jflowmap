@@ -20,7 +20,6 @@ package jflowmap.views.timeline;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Paint;
 import java.awt.Stroke;
 
 import jflowmap.EdgeDirection;
@@ -46,13 +45,13 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(0f, 0f, 0f, .05f);
 //  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(200, 200, 200);
   @Override
-  public Color getMapToMatrixLineLinesColor() {
+  public Color getFlowLineColor() {
     return MAP_TO_MATRIX_LINE_COLOR;
   }
 
   private static final Color MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR = new Color(0f, 0f, .7f, .5f);
   @Override
-  public Paint getMapToMatrixLineHighlightedColor() {
+  public Color getFlowLineHighlightedColor() {
     return MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR;
   }
   @Override
@@ -144,35 +143,27 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
 
   private static final Color TIMELINE_CELL_STROKE_COLOR = null;
   @Override
-  public Paint getTimelineCellStrokeColor() {
+  public Color getTimelineCellStrokeColor() {
     return TIMELINE_CELL_STROKE_COLOR;
   }
 
   private static final Color SELECTED_TIMELINE_CELL_STROKE_COLOR = new Color(255, 128, 64);
   @Override
-  public Paint getSelectedTimelineCellStrokeColor() {
+  public Color getSelectedTimelineCellStrokeColor() {
     return SELECTED_TIMELINE_CELL_STROKE_COLOR;
   }
 
   private static final Color MAP_AREA_CENTROID_PAINT = new Color(100, 100, 100, 150);
   @Override
-  public Paint getMapAreaCentroidPaint() {
+  public Color getMapAreaCentroidPaint() {
     return MAP_AREA_CENTROID_PAINT;
   }
 
-  private static final Color MAP_AREA_SELECTED_SOURCE_CENTROID_PAINT = new Color(200, 0, 0);
-  private static final Color MAP_AREA_SELECTED_TARGET_CENTROID_PAINT = new Color(0, 0, 200);
+  private static final Color MAP_AREA_SELECTED_CENTROID_PAINT = new Color(200, 0, 0);
 
   @Override
-  public Paint getMapAreaSelectedCentroidPaint(EdgeDirection dir) {
-    switch (dir) {
-    case OUTGOING:
-      return MAP_AREA_SELECTED_SOURCE_CENTROID_PAINT;
-    case INCOMING:
-      return MAP_AREA_SELECTED_TARGET_CENTROID_PAINT;
-    default:
-      throw new AssertionError();
-    }
+  public Color getMapAreaSelectedCentroidPaint() {
+    return MAP_AREA_SELECTED_CENTROID_PAINT;
   }
 
   private static final Color LASSO_SOURCES_STROKE_PAINT = new Color(200, 0, 0, 150);
@@ -201,4 +192,29 @@ public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
   public Color getMapAreaHighlightedStrokePaint() {
     return MAP_AREA_HIGHLIGHTED_PAINT;
   }
+
+  private static final Color MAP_AREA_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 200, 200);
+
+  @Override
+  public Color getMapAreaCentroidLabelTextPaint() {
+    return MAP_AREA_CENTROID_LABEL_TEXT_PAINT;
+  }
+
+  private static final Color MAP_AREA_SELECTED_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 0, 200);
+  @Override
+  public Color getMapAreaSelectedCentroidLabelTextPaint() {
+    return MAP_AREA_SELECTED_CENTROID_LABEL_TEXT_PAINT;
+  }
+
+  @Override
+  public Color getMapAreaCentroidLabelPaint() {
+    return new Color(255, 255, 255, 100);
+  }
+
+  private static final Color MAP_AREA_SELECTED_CENTROID_LABEL_PAINT = new Color(0, 213, 213, 150);
+  @Override
+  public Color getMapAreaSelectedCentroidLabelPaint() {
+    return MAP_AREA_SELECTED_CENTROID_LABEL_PAINT;
+  }
+
 }

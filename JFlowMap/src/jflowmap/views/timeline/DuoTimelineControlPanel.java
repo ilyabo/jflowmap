@@ -31,11 +31,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
+import jflowmap.views.timeline.DuoTimelineView.FlowLinesColoringMode;
 import jflowmap.views.timeline.DuoTimelineView.RowOrderings;
 import net.miginfocom.swing.MigLayout;
 
@@ -62,6 +62,7 @@ public class DuoTimelineControlPanel extends JPanel {
     addPanel(createDataPanel());
     addPanel(createFilterPanel());
     addPanel(createHeatmapColorsPanel());
+    addPanel(createFlowLinesPanel());
   }
 
   private void addPanel(JPanel panel) {
@@ -255,9 +256,28 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
 
-  private static JLabel createLabel(String text) {
-    return new JLabel(text, SwingConstants.LEADING);
+
+  private JPanel createFlowLinesPanel() {
+    JPanel panel = createPanel();
+    panel.setName("Flow lines");
+
+    panel.add(new JLabel("Coloring:"), "al right");
+    final JComboBox coloringCombo = new JComboBox(FlowLinesColoringMode.values());
+    coloringCombo.setSelectedItem(duoTimelineView.getFlowLinesColoringMode());
+    coloringCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        duoTimelineView.setFlowLinesColoringMode(
+            (FlowLinesColoringMode)coloringCombo.getSelectedItem());
+      }
+    });
+    panel.add(coloringCombo, "");
+
+    return panel;
   }
+
+//  private static JLabel createLabel(String text) {
+//    return new JLabel(text, SwingConstants.LEADING);
+//  }
 
 //  public static void main(String[] args) {
 //    JFrame frame = new JFrame();

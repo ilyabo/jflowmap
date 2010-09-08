@@ -18,30 +18,56 @@ class Centroid extends PPath {
   private final Point2D point;
   private final double size;
   private final PText labelNode;
+  private boolean isSelected;
+  private final DuoTimelineView view;
 
-  public Centroid(double origX, double origY, double size, Paint paint, String nodeLabel) {
+  public Centroid(DuoTimelineView view, double origX, double origY, double size, Paint paint, String nodeLabel) {
     super(new Ellipse2D.Double(origX - size/2, origY - size/2, size, size));
+    this.view = view;
     this.point = new Point2D.Double(origX, origY);
     this.size = size;
-    setPaint(paint);
-    setStroke(null);
     this.labelNode = new PText(nodeLabel);
-    labelNode.setFont(LABEL_FONT);
-    labelNode.setTextPaint(paint);
     addChild(labelNode);
+    labelNode.setFont(LABEL_FONT);
+    setStroke(null);
+    updateColors();
+  }
+
+  public boolean isSelected() {
+    return isSelected;
+  }
+
+  public void setSelected(boolean selected) {
+    if (this.isSelected != selected) {
+      this.isSelected = selected;
+      updateColors();
+    }
+  }
+
+  private void updateColors() {
+    DuoTimelineStyle style = view.getStyle();
+    if (isSelected) {
+      setPaint(style.getMapAreaSelectedCentroidPaint());
+      labelNode.setPaint(style.getMapAreaSelectedCentroidLabelPaint());
+      labelNode.setTextPaint(style.getMapAreaSelectedCentroidLabelTextPaint());
+    } else {
+      setPaint(style.getMapAreaCentroidPaint());
+      labelNode.setPaint(style.getMapAreaCentroidLabelPaint());
+      labelNode.setTextPaint(style.getMapAreaCentroidLabelTextPaint());
+    }
   }
 
   public PText getLabelNode() {
     return labelNode;
   }
 
-  @Override
-  public void setPaint(Paint newPaint) {
-    super.setPaint(newPaint);
-    if (labelNode != null) {
-      labelNode.setTextPaint(newPaint);
-    }
-  }
+//  @Override
+//  public void setPaint(Paint newPaint) {
+//    super.setPaint(newPaint);
+//    if (labelNode != null) {
+//      labelNode.setTextPaint(newPaint);
+//    }
+//  }
 
   @Override
   public void setPickable(boolean isPickable) {

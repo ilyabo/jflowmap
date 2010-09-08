@@ -522,4 +522,12 @@ public class FlowMapGraph {
     }
   }
 
+  public String getSourceNodeId(Edge edge) {
+    return getNodeId(edge.getSourceNode());
+  }
+
+  public String getTargetNodeId(Edge edge) {
+    return getNodeId(edge.getTargetNode());
+  }
+
 }
