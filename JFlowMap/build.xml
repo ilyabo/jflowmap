@@ -1,4 +1,4 @@
-<project name="JFlowMap" basedir=".">
+<project name="JFlowMap" basedir="." default="build">
 
 	<taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar" />
 
