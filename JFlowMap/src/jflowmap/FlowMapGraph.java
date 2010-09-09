@@ -95,56 +95,20 @@ public class FlowMapGraph {
 
   public Iterable<Node> nodes() {
     return new Iterable<Node>() {
+      @SuppressWarnings("unchecked")
       @Override
       public Iterator<Node> iterator() {
-        return new Iterator<Node>() {
-          final Graph g = getGraph();
-          final int count = g.getNodeCount();
-          int pos = 0;
-          @Override
-          public boolean hasNext() {
-            return pos < count - 1;
-          }
-
-          @Override
-          public Node next() {
-            return g.getNode(pos++);
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-
-        };
+        return getGraph().nodes();
       }
     };
   }
 
   public Iterable<Edge> edges() {
     return new Iterable<Edge>() {
+      @SuppressWarnings("unchecked")
       @Override
       public Iterator<Edge> iterator() {
-        return new Iterator<Edge>() {
-          final Graph g = getGraph();
-          final int count = g.getEdgeCount();
-          int pos = 0;
-          @Override
-          public boolean hasNext() {
-            return pos < count - 1;
-          }
-
-          @Override
-          public Edge next() {
-            return g.getEdge(pos++);
-          }
-
-          @Override
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-
-        };
+        return getGraph().edges();
       }
     };
   }
