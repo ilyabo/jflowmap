@@ -93,6 +93,9 @@ public class FlowMapGraph {
     this.stats = stats;
   }
 
+  /**
+   * Note: Returned iterators are not guaranteed to be fail-safe
+   */
   public Iterable<Node> nodes() {
     return new Iterable<Node>() {
       @SuppressWarnings("unchecked")
@@ -103,6 +106,9 @@ public class FlowMapGraph {
     };
   }
 
+  /**
+   * Note: Returned iterators are not guaranteed to be fail-safe
+   */
   public Iterable<Edge> edges() {
     return new Iterable<Edge>() {
       @SuppressWarnings("unchecked")
