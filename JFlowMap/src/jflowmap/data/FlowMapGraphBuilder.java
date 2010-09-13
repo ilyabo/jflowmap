@@ -20,40 +20,35 @@ package jflowmap.data;
 
 import java.util.HashMap;
 
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.Point;
-import jflowmap.views.flowmap.VisualFlowMapModel;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
 /**
+ * TODO: make FlowMapGraphBuilder work with wildcards
+ *
  * @author Ilya Boyandin
  */
 public class FlowMapGraphBuilder {
 
-  private final String nodeIdAttr = FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
-  private String nodeXAttr = VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
-  private String nodeYAttr = VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
-  private String edgeWeightAttr = VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
-  private String nodeLabelAttr = VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME;
+  private static final String nodeIdAttr = FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
 
   private final Graph graph;
   private HashMap<EdgeKey, Edge> cumulatedEdges;
-  private boolean columnsInitialized;
+  private final FlowMapAttrSpec attrSpec;
 
-  public FlowMapGraphBuilder(String graphId) {
+  public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
+    this.attrSpec = attrSpec;
     graph = new Graph();
     FlowMapGraph.setGraphId(graph, graphId);
-  }
-
-  private void initColumns() {
-    graph.addColumn(nodeXAttr, double.class);
-    graph.addColumn(nodeYAttr, double.class);
-    graph.addColumn(edgeWeightAttr, double.class);
-    graph.addColumn(nodeLabelAttr, String.class);
     graph.addColumn(nodeIdAttr, String.class);
-    columnsInitialized = true;
+    graph.addColumn(attrSpec.getXNodeAttr(), double.class);
+    graph.addColumn(attrSpec.getYNodeAttr(), double.class);
+    graph.addColumn(attrSpec.getEdgeWeightAttrWildcard(), double.class);
+    graph.addColumn(attrSpec.getNodeLabelAttr(), String.class);
   }
 
   public FlowMapGraphBuilder addNodeAttr(String name, Class<?> type) {
@@ -61,28 +56,8 @@ public class FlowMapGraphBuilder {
     return this;
   }
 
-  public FlowMapGraphBuilder withCumulativeEdges() {
+  public FlowMapGraphBuilder withCumulatedEdges() {
     this.cumulatedEdges = new HashMap<EdgeKey, Edge>();
-    return this;
-  }
-
-  public FlowMapGraphBuilder withNodeXAttr(String attrName) {
-    this.nodeXAttr = attrName;
-    return this;
-  }
-
-  public FlowMapGraphBuilder withNodeYAttr(String attrName) {
-    this.nodeYAttr = attrName;
-    return this;
-  }
-
-  public FlowMapGraphBuilder withEdgeWeightAttr(String attrName) {
-    this.edgeWeightAttr = attrName;
-    return this;
-  }
-
-  public FlowMapGraphBuilder withNodeLabelAttr(String attrName) {
-    this.nodeLabelAttr = attrName;
     return this;
   }
 
@@ -91,21 +66,15 @@ public class FlowMapGraphBuilder {
   }
 
   public Node addNode(String id, Point position, String label) {
-    if (!columnsInitialized) {
-      initColumns();
-    }
     Node node = graph.addNode();
     node.setString(nodeIdAttr, id);
-    node.setDouble(nodeXAttr, position.x());
-    node.setDouble(nodeYAttr, position.y());
-    node.set(nodeLabelAttr, label);
+    node.setDouble(attrSpec.getXNodeAttr(), position.x());
+    node.setDouble(attrSpec.getYNodeAttr(), position.y());
+    node.set(attrSpec.getNodeLabelAttr(), label);
     return node;
   }
 
   public Edge addEdge(Node from, Node to, double weight) {
-    if (!columnsInitialized) {
-      initColumns();
-    }
     EdgeKey key = new EdgeKey(from, to);
     double sumWeight = weight;
     Edge edge;
@@ -117,19 +86,21 @@ public class FlowMapGraphBuilder {
         edge = graph.addEdge(from, to);
         cumulatedEdges.put(key, edge);
       } else {
-        sumWeight += edge.getDouble(edgeWeightAttr);
+        // TODO: fix: cumulated edges in FlowMapGraphBuilder won't work with wildcards
+        sumWeight += edge.getDouble(attrSpec.getEdgeWeightAttrWildcard());
       }
     }
-    edge.setDouble(edgeWeightAttr, sumWeight);
+    edge.setDouble(attrSpec.getEdgeWeightAttrWildcard(), sumWeight);
     return edge;
   }
 
-  public Graph build() {
-    if (!columnsInitialized) {
-      initColumns();
-    }
+  private Graph buildGraph() {
     cumulatedEdges = null;
     return graph;
+  }
+
+  public FlowMapGraph build() {
+    return new FlowMapGraph(buildGraph(), attrSpec);
   }
 
   private static class EdgeKey {

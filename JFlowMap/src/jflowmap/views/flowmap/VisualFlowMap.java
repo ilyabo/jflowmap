@@ -37,7 +37,6 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.aggregation.EdgeSegment;
 import jflowmap.aggregation.EdgeSegmentAggregator;
@@ -907,19 +906,9 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //      addChild(marker);
 //    }
 
-    Graph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(visualNodeClusters);
-    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(
-        new FlowMapGraph(
-          clusteredGraph,
-          new FlowMapAttrSpec(
-            VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME,
-            VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME,
-            VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME,
-            VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME,
-            0
-          )
-        )
-    );
+    FlowMapGraph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(
+        getFlowMapGraph().getAttrSpec(), visualNodeClusters);
+    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph);
     if (areaMap != null) {
       clusteredFlowMap.setAreaMap(new VisualAreaMap(areaMap));
     }

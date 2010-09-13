@@ -28,11 +28,18 @@ import prefuse.data.Table;
  */
 public class FlowMapAttrSpec {
 
+//  private String nodeXAttr = VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
+//  private String nodeYAttr = VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
+//  private String edgeWeightAttr = VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
+//  private String nodeLabelAttr = VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME;
+
+  // TODO: List of weight attrs in FlowMapAttrSpec instead of wildcard
   private final String edgeWeightAttrWildcard;
   private final String nodeLabelAttr;
   private final String xNodeAttr, yNodeAttr;
 
-  private final double weightFilterMin;  // TODO: weightFilterMin shouldn't be in FlowMapAttrSpec
+  // TODO: weightFilterMin shouldn't be in FlowMapAttrSpec
+  private final double weightFilterMin;
 
   /**
    * @param edgeWeightAttrWildcard is a regular expression specifying a series of attributes
@@ -67,6 +74,11 @@ public class FlowMapAttrSpec {
 
   public double getWeightFilterMin() {
     return weightFilterMin;
+  }
+
+  public FlowMapAttrSpec withWeightFilterMin(double weightFilterMin) {
+    return new FlowMapAttrSpec(edgeWeightAttrWildcard, nodeLabelAttr, xNodeAttr, yNodeAttr,
+        weightFilterMin);
   }
 
 //  private boolean hasWildcardEdgeWeightAttr() {

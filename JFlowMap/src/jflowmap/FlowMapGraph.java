@@ -327,17 +327,55 @@ public class FlowMapGraph {
   }
 
   /**
+   * Creates a new FlowMapGraph in which edges of this FlowMapGraph
+   * having the same value of {@nodeAttrToGroupBy} are grouped together.
+   */
+  public FlowMapGraph groupEdgesBy(Function<Edge, Object> groupFunction) {
+
+//  .withCumulativeEdges()
+
+//    String strv = v.toString();
+//    Node node = builder.addNode(strv, new Point(0, 0), strv);
+//    valueToEdge.put(v, node);
+
+    /*
+     Requirements:
+     - Grouping by src/target nodes
+     - Grouping by an src/target node attr
+     - References from group nodes/edges to the ones in the group
+     - Hierarchy of groupings (is an ordered list enough?)
+     - Possibility to obtain edge weight stats for groupings (and merge them with stats of groupings
+       on other levels).
+
+     Solution:
+     1.Create new FlowMapGraph for each grouping
+     or 2. a dedicated EdgeGrouping class
+
+
+     Heatmap drawing code will have to support 1. or 2.
+     And to know which groups are "expanded" and which are not: boolean property per group
+
+     EdgeGrouping could encapsulate the hierarchy and "expanded"
+
+     class EdgeGrouping {
+       List<EdgeGroup> getEdgeGroups()
+       MinMax getWeightStats()
+
+     }
+
+     */
+
+
+    return null;
+  }
+
+  /**
    * Creates a new FlowMapGraph in which nodes of this FlowMapGraph
    * having the same value of {@nodeAttrToGroupBy} are grouped together.
    */
   public FlowMapGraph groupNodesBy(String nodeAttrToGroupBy) {
-    FlowMapGraphBuilder builder = new FlowMapGraphBuilder(getId())
+    FlowMapGraphBuilder builder = new FlowMapGraphBuilder(getId(), attrSpec);
 //          .withCumulativeEdges()      // TODO: why isn't it working?
-      .withNodeXAttr(attrSpec.getXNodeAttr())
-      .withNodeYAttr(attrSpec.getYNodeAttr())
-      .withEdgeWeightAttr(attrSpec.getEdgeWeightAttrWildcard())
-      .withNodeLabelAttr(attrSpec.getNodeLabelAttr())
-      ;
 
     Map<Object, Node> valueToNode = Maps.newHashMap();
     for (Object v : nodeAttrValues(nodeAttrToGroupBy)) {
@@ -364,7 +402,7 @@ public class FlowMapGraph {
           e.getDouble(attrSpec.getEdgeWeightAttrWildcard()));
     }
 
-    return new FlowMapGraph(builder.build(), attrSpec);
+    return builder.build();
   }
 
   public Map<String, String> mapOfNodeIdsToAttrValues(String nodeAttr) {
@@ -478,13 +516,15 @@ public class FlowMapGraph {
       String diffAttr = getEdgeWeightDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
+
       for (Edge edge : edges) {
-        double diff;
-        if (prevAttr == null) {
-          diff = Double.NaN;
-        } else {
-          diff = edge.getDouble(attr) - edge.getDouble(prevAttr);
+        double prevVal = Double.NaN;
+        if (prevAttr != null) {
+           prevVal = edge.getDouble(prevAttr);
         }
+                                             // if there is no prev value, we'll assume it's zero,
+                                             // so that we can at least see the absolute value
+        double diff = edge.getDouble(attr) - (Double.isNaN(prevVal) ? 0 : prevVal);
         edge.setDouble(diffAttr, diff);
       }
 

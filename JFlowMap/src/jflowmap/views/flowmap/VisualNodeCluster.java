@@ -27,12 +27,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.FlowMapAttrSpec;
+import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
-import prefuse.data.Graph;
 import prefuse.data.Node;
 
 import com.google.common.collect.ImmutableList;
@@ -167,9 +168,11 @@ public class VisualNodeCluster implements Iterable<VisualNode> {
   }
 
 
-  public static Graph createClusteredFlowMap(List<VisualNodeCluster> clusters) {
+  public static FlowMapGraph createClusteredFlowMap(FlowMapAttrSpec flowMapAttrSpec,
+      List<VisualNodeCluster> clusters) {
     FlowMapGraphBuilder builder =
-      new FlowMapGraphBuilder(null).withCumulativeEdges().addNodeAttr(
+      new FlowMapGraphBuilder(null, flowMapAttrSpec.withWeightFilterMin(Double.NEGATIVE_INFINITY))
+      .withCumulatedEdges().addNodeAttr(
           JOINED_FLOW_MAP_CLUSTER_ATTR, VisualNodeCluster.class);
 
     // Create (visualNode->cluster node) mapping

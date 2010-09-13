@@ -152,6 +152,8 @@ public class DuoTimelineView extends AbstractCanvasView {
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
 
+    flowMapGraph.addEdgeWeightDifferenceColumns();
+
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
     canvas.setBackground(style.getBackgroundColor());
@@ -390,8 +392,6 @@ public class DuoTimelineView extends AbstractCanvasView {
     nodeIdsToCentroids = Maps.newHashMap();
 
     Graph g = flowMapGraph.getGraph();
-
-    flowMapGraph.addEdgeWeightDifferenceColumns();
 
     for (int i = 0, count = g.getNodeCount(); i < count; i++) {
       Node node = g.getNode(i);

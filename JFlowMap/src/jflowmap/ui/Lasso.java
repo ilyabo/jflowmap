@@ -28,7 +28,6 @@ import java.awt.geom.Point2D;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolox.nodes.PLine;
 import edu.umd.cs.piccolox.util.LineShape;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
@@ -53,12 +52,12 @@ public class Lasso extends PBasicInputEventHandler {
     this.camera = camera;
     line = new PLine(null, LINE_STROKE);
     line.setStrokePaint(lineColor);
-    setEventFilter(new PInputEventFilter() {
-      @Override
-      public boolean acceptsEvent(PInputEvent event, int type) {
-        return event.isControlDown();
-      }
-    });
+//    setEventFilter(new PInputEventFilter() {
+//      @Override
+//      public boolean acceptsEvent(PInputEvent event, int type) {
+//        return event.isControlDown();
+//      }
+//    });
   }
 
   @Override
@@ -102,7 +101,7 @@ public class Lasso extends PBasicInputEventHandler {
 
   @Override
   public void mouseDragged(PInputEvent event) {
-    if (inTarget(event)) {
+    if (event.isControlDown()  &&  inTarget(event)) {
       Point2D posInCanvas = event.getCanvasPosition();
       int numPoints = line.getPointCount();
       if (numPoints == 0) {

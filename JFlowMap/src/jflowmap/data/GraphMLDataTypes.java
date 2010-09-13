@@ -19,17 +19,67 @@
 package jflowmap.data;
 
 import java.util.Date;
+import java.util.Iterator;
+
+import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 
 /**
  * @author Ilya Boyandin
  */
-public enum GraphMLDataTypes {
-  INT(int.class, null, "int", "integer"),
-  LONG(long.class, null, "long"),
-  FLOAT(float.class, Float.NaN, "float"),
-  DOUBLE(double.class, Double.NaN, "double", "real"),
+public enum GraphMLDataTypes implements ValueAggregator {
+  INT(int.class, null, "int", "integer") {
+    @Override
+    public Object aggregate(Iterable<Object> values) {
+      int sum = 0;
+      for (Object obj : values) {
+        sum += ((Integer)obj).intValue();
+      }
+      return sum;
+    }
+  },
+  LONG(long.class, null, "long") {
+    @Override
+    public Object aggregate(Iterable<Object> values) {
+      long sum = 0;
+      for (Object obj : values) {
+        sum += ((Long)obj).longValue();
+      }
+      return sum;
+    }
+  },
+  FLOAT(float.class, Float.NaN, "float") {
+    @Override
+    public Object aggregate(Iterable<Object> values) {
+      float sum = 0;
+      for (Object obj : values) {
+        sum += ((Float)obj).floatValue();
+      }
+      return sum;
+    }
+  },
+  DOUBLE(double.class, Double.NaN, "double", "real") {
+    @Override
+    public Object aggregate(Iterable<Object> values) {
+      double sum = 0;
+      for (Object obj : values) {
+        sum += ((Double)obj).doubleValue();
+      }
+      return sum;
+    }
+  },
   BOOLEAN(boolean.class, null, "boolean"),
-  STRING(String.class, "", "string"),
+  STRING(String.class, "", "string") {
+    @Override
+    public Object aggregate(Iterable<Object> values) {
+      StringBuilder sb = new StringBuilder();
+      String str = null;
+      for (Iterator<Object> it = values.iterator(); it.hasNext(); str = it.next().toString()) {
+        sb.append(str);
+        if (it.hasNext()) { sb.append(","); }
+      }
+      return sb.toString();
+    }
+  },
   DATE(Date.class, null, "date");
 
   final Class<?> klass;
@@ -40,6 +90,15 @@ public enum GraphMLDataTypes {
     this.klass = klass;
     this.defaultValue = defaultValue;
     this.names = names;
+  }
+
+  public static GraphMLDataTypes getByType(Class<?> type) {
+    for (GraphMLDataTypes t : values()) {
+      if (t.klass.equals(type)) {
+        return t;
+      }
+    }
+    return null;
   }
 
   public static GraphMLDataTypes parse(String typeName) {
@@ -55,5 +114,10 @@ public enum GraphMLDataTypes {
 
   public Object getDefaultValue() {
     return defaultValue;
+  }
+
+  @Override
+  public Object aggregate(Iterable<Object> values) {
+    return null;
   }
 }
