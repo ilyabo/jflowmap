@@ -66,8 +66,10 @@ public class SmallMultiplesMain extends JFrame {
 
   private static Logger logger = Logger.getLogger(SmallMultiplesMain.class);
 
-  private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
-  private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
+//  private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
+//  private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
+  private static final Font TITLE_FONT = new Font("Helvetica", Font.BOLD, 32);
+  private static final Font LABEL_FONT = new Font("Helvetica", Font.PLAIN, 5);
   private Color datasetNameLabelColor = Color.gray;
 
   private double zoom = 1.0;
@@ -82,6 +84,9 @@ public class SmallMultiplesMain extends JFrame {
 
   private boolean useGlobalVisualMappings = true;
   private int numColumns = 5;
+
+  private int paddingX = 5;
+  private int paddingY = 5;
 
   private final Map<String, DatasetSpec> datasets;
 
@@ -105,6 +110,14 @@ public class SmallMultiplesMain extends JFrame {
     setBackground(new Color(0x60, 0x60, 0x60));
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+
+  public void setPaddingX(int paddingX) {
+    this.paddingX = paddingX;
+  }
+
+  public void setPaddingY(int paddingY) {
+    this.paddingY = paddingY;
   }
 
   public void setNumColumns(int numColumns) {
@@ -197,9 +210,6 @@ public class SmallMultiplesMain extends JFrame {
 
   private class RenderTask extends SwingWorker<Void, Void> {
 
-    final int paddingX = 5;
-    final int paddingY = 5;
-
     private final ProgressMonitor progress;
     private final FlowMapView jFlowMap;
     private final int width;
@@ -288,7 +298,9 @@ public class SmallMultiplesMain extends JFrame {
               cluster();
             }
             if (fdebInitializer != null) {
-              ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(visualFlowMap.getFlowMapGraph());
+              FlowMapGraph fmg = visualFlowMap.getFlowMapGraph();
+              ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(
+                  fmg, visualFlowMap.getEdgeWeightAttr());
               setupBundlerParams(bundlerParams);
               visualFlowMap.bundleEdges(bundlerParams);
             }
@@ -502,17 +514,23 @@ public class SmallMultiplesMain extends JFrame {
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz"),
-        eachYear(1989, 2008, +1));
-    sm.setSize(640, 480);
-    sm.setZoom(1.3);
-    sm.setTranslation(30, -50);
-    sm.setUseGlobalVisualMappings(true);
+        eachYear(1993, 2008, +1));
+//    sm.setSize(640, 480);
+//    sm.setSize(1280, 1024);
+//    sm.setSize(1600, 1200);
+    sm.setNumColumns(4);
+    sm.setSize(1024, 768);
+    sm.setZoom(1.2);
+    sm.setPaddingX(10);
+    sm.setTranslation(50, 0);
+    sm.setUseGlobalVisualMappings(false);
     sm.setShowLegend(false);
-    sm.setColorScheme(FlowMapColorSchemes.DARK.getScheme());
+//    sm.setColorScheme(FlowMapColorSchemes.DARK.getScheme());
+    sm.setColorScheme(FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme());
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {
-        model.setMaxEdgeWidth(10);
+        model.setMaxEdgeWidth(20);
         model.setNodeSize(3);
         model.setShowDirectionMarkers(true);
         model.setDirectionMarkerSize(.17);
@@ -698,7 +716,8 @@ public class SmallMultiplesMain extends JFrame {
   }
 
   public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
-    SmallMultiplesMain sm = createSM_eurovisPoster_6years_global();
+//    SmallMultiplesMain sm = createSM_eurovisPoster_6years_global();
+    SmallMultiplesMain sm = createSM_TLBS_all();
     sm.setVisible(true);
     sm.start();
   }
