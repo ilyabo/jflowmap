@@ -12,22 +12,14 @@ public class DatasetSpec {
   private final String areaMapFilename;
   private final FlowMapAttrSpec attrsSpec;
 
-  public DatasetSpec(String filename, String weightAttrName, String xNodeAttr, String yNodeAttr,
-  		String labelAttrName, String areaMapFilename) {
-    this(filename, weightAttrName, xNodeAttr, yNodeAttr,
-    		labelAttrName, areaMapFilename, Double.NaN);
-  }
-
   public DatasetSpec(String filename, String weightAttrName,
   		String xNodeAttr, String yNodeAttr,
-  		String labelAttrName, String areaMapFilename, double valueFilterMin) {
+  		String labelAttrName, String areaMapFilename) {
     this(filename, areaMapFilename, new FlowMapAttrSpec(
         weightAttrName,
         labelAttrName,
         xNodeAttr,
-        yNodeAttr,
-        valueFilterMin
-    ));
+        yNodeAttr));
   }
 
   public DatasetSpec(String filename, String areaMapFilename, FlowMapAttrSpec attrsSpec) {

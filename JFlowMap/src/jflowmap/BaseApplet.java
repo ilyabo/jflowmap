@@ -84,8 +84,7 @@ public abstract class BaseApplet extends JApplet {
         getParameter("xNodeAttr"),
         getParameter("yNodeAttr"),
         getParameter("labelAttr"),
-        getParameter("areaMapSrc"),
-        getDoubleParameter("weightFilterMin"));
+        getParameter("areaMapSrc"));
   }
 
   protected double getDoubleParameter(String name) {

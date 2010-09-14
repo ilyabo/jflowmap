@@ -42,7 +42,7 @@ public class FlowTimelineApplet extends BaseApplet {
       // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
 //      "rity",
       "r",
-      "name", "x", "y", 0);
+      "name", "x", "y");
 
 
   private static final long serialVersionUID = 1L;

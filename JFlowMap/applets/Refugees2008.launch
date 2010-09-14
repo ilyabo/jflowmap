@@ -10,17 +10,16 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="areaMapSrc" value="data/refugees/countries-areas.xml.gz"/>
+<mapEntry key="colorScheme" value="Dark"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="yNodeAttr" value="y"/>
+<mapEntry key="src" value="data/refugees/refugees-2008.xml.gz"/>
 <mapEntry key="weightAttr" value="ritypnv"/>
 <mapEntry key="weightFilterMin" value="50"/>
 <mapEntry key="xNodeAttr" value="x"/>
-<mapEntry key="src" value="data/refugees/refugees-2008.xml.gz"/>
-<mapEntry key="areaMapSrc" value="data/refugees/countries-areas.xml.gz"/>
-<mapEntry key="colorScheme" value="Dark"/>
+<mapEntry key="yNodeAttr" value="y"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
-<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowMapApplet"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024M"/>

@@ -55,6 +55,8 @@ import com.google.common.collect.Sets;
 
 public class FlowMapGraph {
 
+//  private static final String EDGE_GROUPING_COLUMN = "_GROUPING";
+
   private static final String EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX = ":diff";
 
   private static Logger logger = Logger.getLogger(FlowMapGraph.class);
@@ -94,7 +96,7 @@ public class FlowMapGraph {
   }
 
   /**
-   * Note: Returned iterators are not guaranteed to be fail-safe
+   * Note: the iterators are not guaranteed to be fail-safe
    */
   public Iterable<Node> nodes() {
     return new Iterable<Node>() {
@@ -107,7 +109,7 @@ public class FlowMapGraph {
   }
 
   /**
-   * Note: Returned iterators are not guaranteed to be fail-safe
+   * Note: the iterators are not guaranteed to be fail-safe
    */
   public Iterable<Edge> edges() {
     return new Iterable<Edge>() {
@@ -118,6 +120,24 @@ public class FlowMapGraph {
       }
     };
   }
+
+//  /**
+//   * Returns all egdes which constitute the grouping with the given groupingName.
+//   * @param groupingName If null, returns edges which are not in any grouping
+//   */
+//  public Iterable<Edge> edges(final String groupingName) {
+//    return Iterables.filter(edges(), new Predicate<Edge>() {
+//      @Override
+//      public boolean apply(Edge e) {
+//        String group = getEdgeGroupingName(e);
+//        if (groupingName == null) {
+//          return group == null;
+//        } else {
+//          return groupingName.equals(group);
+//        }
+//      }
+//    });
+//  }
 
   public String getId() {
     return getGraphId(graph);
@@ -404,6 +424,58 @@ public class FlowMapGraph {
 
     return builder.build();
   }
+
+
+//
+//  /**
+//   * Will add edges summarizing the weight attrs of the existing edges (which were not added by
+//   * another grouping) to the graph and mark them as grouping edges with the given
+//   * groupingName.
+//   */
+//  public void groupEdgesInPlace(String groupingName,
+//      Function<Edge, Object> groupFunction, GroupingEdgeFactory factory) {
+//    // Sort edges by groups
+//    Multimap<Object, Edge> mmap = ArrayListMultimap.create();
+//    for (Edge e : edges(null)) {
+//      mmap.put(groupFunction.apply(e), e);
+//    }
+//
+//    // Create grouped edges
+//    for (Object key : mmap.keySet()) {
+//      graph.addEdge();
+//      graph.getEdges().addTuple(factory.createGroupingEdge(mmap.get(key)));
+//    }
+//
+//  }
+//
+//  public interface GroupingEdgeFactory {
+//    Edge createGroupingEdge(Iterable<Edge> edges);
+//  }
+//
+//  public boolean isGroupingEdge(Edge e) {
+//    return (getEdgeGroupingName(e) != null);
+//  }
+//
+//  public String getEdgeGroupingName(Edge e) {
+//    if (!e.canGet(EDGE_GROUPING_COLUMN, String.class)) {
+//      return null;
+//    }
+//    return e.getString(EDGE_GROUPING_COLUMN);
+//  }
+//
+//  protected void setNameOfEdgeGrouping(Edge e, String nameOfTheGrouping) {
+//    if (e.canGet(EDGE_GROUPING_COLUMN, String.class)) {
+//      if (e.getString(EDGE_GROUPING_COLUMN) != null) {
+//        throw new IllegalArgumentException("Already a grouping edge");
+//      }
+//    } else {
+//      e.getTable().addColumn(EDGE_GROUPING_COLUMN, String.class);
+//    }
+//    e.setString(EDGE_GROUPING_COLUMN, nameOfTheGrouping);
+//  }
+
+
+
 
   public Map<String, String> mapOfNodeIdsToAttrValues(String nodeAttr) {
     Map<String, String> nodeIdsToLabels = Maps.newLinkedHashMap();

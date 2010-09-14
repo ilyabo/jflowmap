@@ -57,8 +57,7 @@ public class DuoTimelineMain extends JFrame {
         "r.*",
         "lon", "lat",
         "name",
-        "data/refugees/countries-areas-ll.xml.gz",
-        Double.NaN));
+        "data/refugees/countries-areas-ll.xml.gz"));
   }
 
 }

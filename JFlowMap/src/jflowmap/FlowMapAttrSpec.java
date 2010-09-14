@@ -38,19 +38,15 @@ public class FlowMapAttrSpec {
   private final String nodeLabelAttr;
   private final String xNodeAttr, yNodeAttr;
 
-  // TODO: weightFilterMin shouldn't be in FlowMapAttrSpec
-  private final double weightFilterMin;
-
   /**
    * @param edgeWeightAttrWildcard is a regular expression specifying a series of attributes
    */
   public FlowMapAttrSpec(String edgeWeightAttrWildcard, String nodeLabelAttr,
-      String xNodeAttr, String yNodeAttr, double weightFilterMin) {
+      String xNodeAttr, String yNodeAttr) {
     this.edgeWeightAttrWildcard = edgeWeightAttrWildcard;
     this.nodeLabelAttr = nodeLabelAttr;
     this.xNodeAttr = xNodeAttr;
     this.yNodeAttr = yNodeAttr;
-    this.weightFilterMin = weightFilterMin;
   }
 
   /**
@@ -70,15 +66,6 @@ public class FlowMapAttrSpec {
 
   public String getYNodeAttr() {
     return yNodeAttr;
-  }
-
-  public double getWeightFilterMin() {
-    return weightFilterMin;
-  }
-
-  public FlowMapAttrSpec withWeightFilterMin(double weightFilterMin) {
-    return new FlowMapAttrSpec(edgeWeightAttrWildcard, nodeLabelAttr, xNodeAttr, yNodeAttr,
-        weightFilterMin);
   }
 
 //  private boolean hasWildcardEdgeWeightAttr() {
@@ -121,9 +108,6 @@ public class FlowMapAttrSpec {
     int result = 1;
     result = prime * result + ((edgeWeightAttrWildcard == null) ? 0 : edgeWeightAttrWildcard.hashCode());
     result = prime * result + ((nodeLabelAttr == null) ? 0 : nodeLabelAttr.hashCode());
-    long temp;
-    temp = Double.doubleToLongBits(weightFilterMin);
-    result = prime * result + (int) (temp ^ (temp >>> 32));
     result = prime * result + ((xNodeAttr == null) ? 0 : xNodeAttr.hashCode());
     result = prime * result + ((yNodeAttr == null) ? 0 : yNodeAttr.hashCode());
     return result;
@@ -148,8 +132,6 @@ public class FlowMapAttrSpec {
         return false;
     } else if (!nodeLabelAttr.equals(other.nodeLabelAttr))
       return false;
-    if (Double.doubleToLongBits(weightFilterMin) != Double.doubleToLongBits(other.weightFilterMin))
-      return false;
     if (xNodeAttr == null) {
       if (other.xNodeAttr != null)
         return false;
@@ -162,6 +144,7 @@ public class FlowMapAttrSpec {
       return false;
     return true;
   }
+
 
 
 }

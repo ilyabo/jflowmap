@@ -97,6 +97,10 @@ public class DuoTimelineView extends AbstractCanvasView {
     SAME_COLOR, SOURCE, TARGET
   }
 
+  enum GroupBy {
+    SOURCE
+  }
+
   private static final Font NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
   private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 15);
 

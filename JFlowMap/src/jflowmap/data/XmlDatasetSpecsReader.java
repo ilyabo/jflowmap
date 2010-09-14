@@ -50,7 +50,7 @@ public class XmlDatasetSpecsReader {
     List<XmlElement> listOfDatasetXmlNodes = new Xb1XPath("/datasets/dataset").selectNodes(doc);
 
     for (XmlElement datasetNode : listOfDatasetXmlNodes) {
-      String valueFilterMin = datasetNode.getAttributeValue(null, "valueFilterMin");
+//      String valueFilterMin = datasetNode.getAttributeValue(null, "valueFilterMin");
       listOfDatasetSpecs.add(
           new DatasetSpec(
               datasetNode.getAttributeValue(null, "src"),
@@ -58,8 +58,8 @@ public class XmlDatasetSpecsReader {
               datasetNode.getAttributeValue(null, "xNodeAttr"),
               datasetNode.getAttributeValue(null, "yNodeAttr"),
               datasetNode.getAttributeValue(null, "labelAttr"),
-              datasetNode.getAttributeValue(null, "areaMapSrc"),
-              valueFilterMin != null ? Double.parseDouble(valueFilterMin) : Double.NaN
+              datasetNode.getAttributeValue(null, "areaMapSrc")
+//              valueFilterMin != null ? Double.parseDouble(valueFilterMin) : Double.NaN
           )
       );
     }
