@@ -83,7 +83,7 @@ public class VisualNodeCluster implements Iterable<VisualNode> {
 
   public String getNodeListAsString() {
     if (cachedNodeListAsString == null) {
-      cachedNodeListAsString = makeCumulatedLabel(this);
+      cachedNodeListAsString = makeNodeClusterLabel(this);
     }
     return cachedNodeListAsString;
   }
@@ -183,7 +183,7 @@ public class VisualNodeCluster implements Iterable<VisualNode> {
             cluster.iterator(), VisualNode.TRANSFORM_NODE_TO_POSITION
           )
       );
-      Node node = builder.addNode(centroid, makeCumulatedLabel(cluster));
+      Node node = builder.addNode(centroid, makeNodeClusterLabel(cluster));
       node.set(JOINED_FLOW_MAP_CLUSTER_ATTR, cluster);
       for (VisualNode visualNode : cluster) {
         visualToNode.put(visualNode, node);
@@ -205,8 +205,8 @@ public class VisualNodeCluster implements Iterable<VisualNode> {
     return builder.build();
   }
 
-  private static String makeCumulatedLabel(VisualNodeCluster cluster) {
-    ArrayList<VisualNode> nodes = Lists.newArrayList(cluster);
+  private static String makeNodeClusterLabel(VisualNodeCluster cluster) {
+    List<VisualNode> nodes = Lists.newArrayList(cluster);
     Collections.sort(nodes, VisualNode.LABEL_COMPARATOR);
     StringBuilder label = new StringBuilder();
     label.append("[");
