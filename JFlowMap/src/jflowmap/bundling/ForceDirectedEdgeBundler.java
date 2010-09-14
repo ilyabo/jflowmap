@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.geom.Vector2D;
@@ -70,10 +69,8 @@ public class ForceDirectedEdgeBundler {
   private final ForceDirectedBundlerParameters params;
 
   private ProgressTracker progressTracker;
-
-  private MinMax nodeXStats;
-
-  private MinMax nodeYStats;
+//  private MinMax nodeXStats;
+//  private MinMax nodeYStats;
 
   public ForceDirectedEdgeBundler(
       FlowMapGraph flowMapGraph,
@@ -159,8 +156,8 @@ public class ForceDirectedEdgeBundler {
       edgeValues = new double[numEdges];
     }
 
-    nodeXStats = flowMapGraph.getStats().getNodeXStats();
-    nodeYStats = flowMapGraph.getStats().getNodeYStats();
+//    nodeXStats = flowMapGraph.getStats().getNodeXStats();
+//    nodeYStats = flowMapGraph.getStats().getNodeYStats();
 
     for (int i = 0; i < numEdges; i++) {
       Edge edge = flowMapGraph.getGraph().getEdge(i);
@@ -170,7 +167,7 @@ public class ForceDirectedEdgeBundler {
       if (Math.abs(length) < EPS) length = 0.0;
       edgeLengths[i] = length;
       if (params.getEdgeValueAffectsAttraction()) {
-        double value = flowMapGraph.getEdgeWeight(edge);
+        double value = flowMapGraph.getEdgeWeight(edge, params.getEdgeWeightAttr());
         edgeValues[i] = value;
         if (value > evMax) {
           evMax = value;

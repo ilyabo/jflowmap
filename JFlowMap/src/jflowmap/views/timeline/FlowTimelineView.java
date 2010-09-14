@@ -61,8 +61,11 @@ public class FlowTimelineView extends AbstractCanvasView {
     if (nodeAttrToGroupBy != null) {
       FlowMapGraphSet groupedFmset = fmset.groupNodesBy(nodeAttrToGroupBy);
 
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmset, nodeAttrToGroupBy);
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(groupedFmset, fmset.getAttrSpec().getNodeLabelAttr());
+      String edgeWeightAttr = fmset.getAttrSpec().getEdgeWeightAttrs().get(0);
+      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmset, nodeAttrToGroupBy,
+          edgeWeightAttr);
+      FlowMapSummaries.supplyNodesWithIntraregSummaries(groupedFmset,
+          fmset.getAttrSpec().getNodeLabelAttr(), edgeWeightAttr);
 
       visualTimeline = new VisualTimeline(this, fmset, groupedFmset, nodeAttrToGroupBy);
     } else {

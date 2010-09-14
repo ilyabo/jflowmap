@@ -60,7 +60,6 @@ public class DuoTimelineApplet extends BaseApplet {
 
   @Override
   protected IView createView() throws IOException {
-    DatasetSpec ds = getDatasetSpec();
     String areaMapSrc = getParameter("areaMapSrc");
     AreaMap areaMap;
     if (areaMapSrc == null) {
@@ -69,6 +68,7 @@ public class DuoTimelineApplet extends BaseApplet {
       areaMap = AreaMap.load(areaMapSrc);
     }
     String maxVisibleTuples = getParameter("maxVisibleTuples");
+    DatasetSpec ds = getDatasetSpec();
     return new DuoTimelineView(
         FlowMapGraph.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
 //        FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),

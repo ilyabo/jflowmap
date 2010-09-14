@@ -47,9 +47,16 @@ public class ForceDirectedBundlerParameters {
   private double repulsionAmount;
   private double subdivisionPointsCycleIncreaseRate;
 
-  public ForceDirectedBundlerParameters(FlowMapGraph flowMapGraph) {
+  private final String edgeWeightAttr;
+
+  public ForceDirectedBundlerParameters(FlowMapGraph flowMapGraph, String edgeWeightAttr) {
     this.flowMapGraph = flowMapGraph;
+    this.edgeWeightAttr = edgeWeightAttr;
     resetToDefaults();
+  }
+
+  public String getEdgeWeightAttr() {
+    return edgeWeightAttr;
   }
 
   public void resetToDefaults() {

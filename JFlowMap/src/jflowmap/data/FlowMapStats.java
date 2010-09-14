@@ -103,7 +103,8 @@ public class FlowMapStats {
           @Override public MinMax calc() {
             MinMax minMax = null;
             for (FlowMapGraph fmg : flowMapGraphs) {
-              MinMax mm = TupleStats.createFor(fmg.getGraph().getEdges(),
+              MinMax mm = TupleStats.createFor(
+                  fmg.getGraph().getEdges(),
                   fmg.getEdgeWeightAttrNames());
               if (minMax == null) {
                 minMax = mm;

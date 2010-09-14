@@ -19,26 +19,25 @@
 package jflowmap.data;
 
 import java.util.HashMap;
+import java.util.List;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.Point;
+import jflowmap.util.ArrayUtils;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
 /**
- * TODO: make FlowMapGraphBuilder work with wildcards
- *
  * @author Ilya Boyandin
  */
 public class FlowMapGraphBuilder {
 
   private static final String nodeIdAttr = FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID;
-
   private final Graph graph;
-  private HashMap<EdgeKey, Edge> cumulatedEdges;
   private final FlowMapAttrSpec attrSpec;
+  private HashMap<EdgeKey, Edge> cumulatedEdges;
 
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
@@ -47,7 +46,9 @@ public class FlowMapGraphBuilder {
     graph.addColumn(nodeIdAttr, String.class);
     graph.addColumn(attrSpec.getXNodeAttr(), double.class);
     graph.addColumn(attrSpec.getYNodeAttr(), double.class);
-    graph.addColumn(attrSpec.getEdgeWeightAttrWildcard(), double.class);
+    for (String attr : attrSpec.getEdgeWeightAttrs()) {
+      graph.addColumn(attr, FlowMapGraph.WEIGHT_COLUMNS_DATA_TYPE);
+    }
     graph.addColumn(attrSpec.getNodeLabelAttr(), String.class);
   }
 
@@ -74,9 +75,19 @@ public class FlowMapGraphBuilder {
     return node;
   }
 
-  public Edge addEdge(Node from, Node to, double weight) {
+  public Edge addEdge(Node from, Node to, Iterable<Double> weights) {
+    return addEdge(from, to, ArrayUtils.toArrayOfPrimitives(weights));
+  }
+
+  public Edge addEdge(Node from, Node to, double ... weights) {
+    List<String> weightAttrs = attrSpec.getEdgeWeightAttrs();
+    if (weights.length != weightAttrs.size()) {
+      throw new IllegalArgumentException(
+          "Number of supplied weights doesn't match the number of weight attrs");
+    }
+
     EdgeKey key = new EdgeKey(from, to);
-    double sumWeight = weight;
+    double[] sumWeights = weights.clone();
     Edge edge;
     if (cumulatedEdges == null) {
       edge = graph.addEdge(from, to);
@@ -86,11 +97,16 @@ public class FlowMapGraphBuilder {
         edge = graph.addEdge(from, to);
         cumulatedEdges.put(key, edge);
       } else {
-        // TODO: fix: cumulated edges in FlowMapGraphBuilder won't work with wildcards
-        sumWeight += edge.getDouble(attrSpec.getEdgeWeightAttrWildcard());
+        for (int i = 0; i < weightAttrs.size(); i++) {
+          sumWeights[i] += edge.getDouble(weightAttrs.get(i));
+        }
       }
     }
-    edge.setDouble(attrSpec.getEdgeWeightAttrWildcard(), sumWeight);
+
+    for (int i = 0; i < weightAttrs.size(); i++) {
+      edge.setDouble(weightAttrs.get(i), sumWeights[i]);
+    }
+
     return edge;
   }
 

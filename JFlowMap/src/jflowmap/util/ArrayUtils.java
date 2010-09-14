@@ -18,6 +18,8 @@
 
 package jflowmap.util;
 
+import com.google.common.collect.Iterables;
+
 /**
  * @author Ilya Boyandin
  */
@@ -49,6 +51,13 @@ public class ArrayUtils {
       a[left] = a[right];
       a[right] = _;
     }
+    return a;
+  }
+
+  public static double[] toArrayOfPrimitives(Iterable<Double> data) {
+    double[] a = new double[Iterables.size(data)];
+    int i = 0;
+    for (Double v : data) { a[i++] = v; }
     return a;
   }
 

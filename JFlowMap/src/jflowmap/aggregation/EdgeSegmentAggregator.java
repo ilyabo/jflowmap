@@ -210,7 +210,8 @@ public class EdgeSegmentAggregator {
         } else {
           b = new FPoint(points.get(pi), false);
         }
-        EdgeSegment seg = new EdgeSegment(a, b, flowMapGraph.getEdgeWeight(edge));
+        EdgeSegment seg = new EdgeSegment(a, b,
+            flowMapGraph.getEdgeWeight(edge, flowMapGraph.getEdgeWeightAttrs().get(0)));
         segments.add(seg);
         segmentedEdge.addConsecutiveSegment(seg);
       }

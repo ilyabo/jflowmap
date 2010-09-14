@@ -18,42 +18,53 @@
 
 package jflowmap;
 
+import java.util.Arrays;
 import java.util.List;
 
 import prefuse.data.Graph;
 import prefuse.data.Table;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Ilya Boyandin
  */
 public class FlowMapAttrSpec {
 
-//  private String nodeXAttr = VisualFlowMapModel.DEFAULT_NODE_X_ATTR_NAME;
-//  private String nodeYAttr = VisualFlowMapModel.DEFAULT_NODE_Y_ATTR_NAME;
-//  private String edgeWeightAttr = VisualFlowMapModel.DEFAULT_EDGE_WEIGHT_ATTR_NAME;
-//  private String nodeLabelAttr = VisualFlowMapModel.DEFAULT_NODE_LABEL_ATTR_NAME;
-
-  // TODO: List of weight attrs in FlowMapAttrSpec instead of wildcard
-  private final String edgeWeightAttrWildcard;
+  private final List<String> edgeWeightAttrs;
   private final String nodeLabelAttr;
   private final String xNodeAttr, yNodeAttr;
 
-  /**
-   * @param edgeWeightAttrWildcard is a regular expression specifying a series of attributes
-   */
-  public FlowMapAttrSpec(String edgeWeightAttrWildcard, String nodeLabelAttr,
+  public FlowMapAttrSpec(List<String> edgeWeightAttrs, String nodeLabelAttr,
       String xNodeAttr, String yNodeAttr) {
-    this.edgeWeightAttrWildcard = edgeWeightAttrWildcard;
+    this.edgeWeightAttrs = ImmutableList.copyOf(edgeWeightAttrs);
     this.nodeLabelAttr = nodeLabelAttr;
     this.xNodeAttr = xNodeAttr;
     this.yNodeAttr = yNodeAttr;
   }
 
+  public FlowMapAttrSpec(List<String> edgeWeightAttrs, String nodeLabelAttr) {
+    this(edgeWeightAttrs, nodeLabelAttr, null, null);
+  }
+
+  public FlowMapAttrSpec(String edgeWeightAttr, String nodeLabelAttr,
+      String xNodeAttr, String yNodeAttr) {
+    this(Arrays.asList(edgeWeightAttr), nodeLabelAttr, xNodeAttr, yNodeAttr);
+  }
+
+  public FlowMapAttrSpec(String edgeWeightAttr, String nodeLabelAttr) {
+    this(Arrays.asList(edgeWeightAttr), nodeLabelAttr, null, null);
+  }
+
+  public boolean hasNodePositions() {
+    return (xNodeAttr != null  &&  yNodeAttr != null);
+  }
+
   /**
-   * A regular expression specifying a series of attributes
+   * @return An immutable list which can thus be reused without defensive copying.
    */
-  public String getEdgeWeightAttrWildcard() {
-    return edgeWeightAttrWildcard;
+  public List<String> getEdgeWeightAttrs() {
+    return edgeWeightAttrs;
   }
 
   public String getNodeLabelAttr() {
@@ -68,30 +79,12 @@ public class FlowMapAttrSpec {
     return yNodeAttr;
   }
 
-//  private boolean hasWildcardEdgeWeightAttr() {
-//    return edgeWeightAttrWildcard.indexOf('*') >= 0;
-//  }
-
   public void checkValidityFor(Graph graph) {
     validateAttr(graph, graph.getNodeTable(), xNodeAttr, double.class);
     validateAttr(graph, graph.getNodeTable(), yNodeAttr, double.class);
     validateAttr(graph, graph.getNodeTable(), nodeLabelAttr, String.class);
-//    if (hasWildcardEdgeWeightAttr()) {
-      validateWildcardAttrs(graph, edgeWeightAttrWildcard);
-//    } else {
-//      validateAttr(graph, graph.getEdgeTable(), edgeWeightAttrWildcard, double.class);
-//    }
-  }
-
-  private void validateWildcardAttrs(Graph graph, String wildcard) {
-    List<String> matches = FlowMapGraph.findEdgeAttrsByWildcard(graph, wildcard);
-    if (matches.size() == 0) {
-      throw new IllegalArgumentException("No edge attrs matching pattern:'" + wildcard +
-          "' in graph id:'" + FlowMapGraph.getGraphId(graph) + "'");
-    } else {
-      for (String attr : matches) {
-        validateAttr(graph, graph.getEdgeTable(), attr, double.class);
-      }
+    for (String attr : edgeWeightAttrs) {
+      validateAttr(graph, graph.getEdgeTable(), attr, double.class);
     }
   }
 
@@ -106,7 +99,7 @@ public class FlowMapAttrSpec {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((edgeWeightAttrWildcard == null) ? 0 : edgeWeightAttrWildcard.hashCode());
+    result = prime * result + ((edgeWeightAttrs == null) ? 0 : edgeWeightAttrs.hashCode());
     result = prime * result + ((nodeLabelAttr == null) ? 0 : nodeLabelAttr.hashCode());
     result = prime * result + ((xNodeAttr == null) ? 0 : xNodeAttr.hashCode());
     result = prime * result + ((yNodeAttr == null) ? 0 : yNodeAttr.hashCode());
@@ -122,10 +115,10 @@ public class FlowMapAttrSpec {
     if (getClass() != obj.getClass())
       return false;
     FlowMapAttrSpec other = (FlowMapAttrSpec) obj;
-    if (edgeWeightAttrWildcard == null) {
-      if (other.edgeWeightAttrWildcard != null)
+    if (edgeWeightAttrs == null) {
+      if (other.edgeWeightAttrs != null)
         return false;
-    } else if (!edgeWeightAttrWildcard.equals(other.edgeWeightAttrWildcard))
+    } else if (!edgeWeightAttrs.equals(other.edgeWeightAttrs))
       return false;
     if (nodeLabelAttr == null) {
       if (other.nodeLabelAttr != null)
@@ -144,7 +137,6 @@ public class FlowMapAttrSpec {
       return false;
     return true;
   }
-
 
 
 }

@@ -123,8 +123,13 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
   private final VisualLegend visualLegend;
 
+  private final String edgeWeightAttr;
+
+
   public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend) {
     this.jFlowMap = jFlowMap;
+
+    edgeWeightAttr = flowMapGraph.getEdgeWeightAttrNames().get(0);
 
     visualFlowMapModel = new VisualFlowMapModel(flowMapGraph);
 //    double minWeight = flowMapGraph.getAttrSpec().getWeightFilterMin();
@@ -154,6 +159,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     initModelChangeListeners(visualFlowMapModel);
 //    fitInCameraView();
 //    fitInCameraView(false);
+  }
+
+  public String getEdgeWeightAttr() {
+    return edgeWeightAttr;
   }
 
   @Override
@@ -270,7 +279,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
 //    Iterator<Integer> it = graph.getEdgeTable().rows();
     @SuppressWarnings("unchecked")
-    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(getFlowMapGraph().getEdgeWeightAttrWildcard(), true);
+    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(edgeWeightAttr, true);
 
     while (it.hasNext()) {
       Edge edge = graph.getEdge(it.next());
@@ -291,7 +300,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //        );
 //      }
 
-      double value = edge.getDouble(getFlowMapGraph().getEdgeWeightAttrWildcard());
+      double value = edge.getDouble(edgeWeightAttr);
       if (Double.isNaN(value)) {
         // Warning "Omitting edge with NaN value" Commented out: because it was slowing bundling down too much
 //        logger.warn(
@@ -390,7 +399,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       VisualEdge edge = (VisualEdge) component;
       tooltipBox.setText(
           wordWrapLabel(edge.getLabel(), maxLabelWidth),
-          getFlowMapGraph().getEdgeWeightAttrWildcard() + ": ", Double.toString(edge.getEdgeWeight()));
+          getFlowMapGraph().getEdgeWeightAttrs() + ": ", Double.toString(edge.getEdgeWeight()));
     } else {
       return;
     }
@@ -536,7 +545,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   public void bundleEdges(ForceDirectedBundlerParameters bundlerParams) {
     final ProgressTracker pt = new ProgressTracker();
-    final ForceDirectedEdgeBundler bundler = new ForceDirectedEdgeBundler(getFlowMapGraph(), bundlerParams);
+    final ForceDirectedEdgeBundler bundler = new ForceDirectedEdgeBundler(
+        getFlowMapGraph(), bundlerParams);
     ProgressWorker worker = new ProgressWorker(pt) {
       @Override
       public Object construct() {

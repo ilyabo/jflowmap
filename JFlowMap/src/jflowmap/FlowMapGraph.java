@@ -61,6 +61,7 @@ public class FlowMapGraph {
 
   private static Logger logger = Logger.getLogger(FlowMapGraph.class);
 
+  public static final Class<Double> WEIGHT_COLUMNS_DATA_TYPE = double.class;
   public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
   public static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
 
@@ -71,6 +72,7 @@ public class FlowMapGraph {
   private final FlowMapStats stats;
 
   private final List<String> matchingEdgeWeightAttrNames;
+
 
   public FlowMapGraph(Graph graph, FlowMapAttrSpec attrSpec) {
     this(graph, attrSpec, null);
@@ -86,8 +88,7 @@ public class FlowMapGraph {
     attrSpec.checkValidityFor(graph);
     this.graph = graph;
     this.attrSpec = attrSpec;
-    this.matchingEdgeWeightAttrNames = ImmutableList.copyOf(
-        findEdgeAttrsByWildcard(attrSpec.getEdgeWeightAttrWildcard()));
+    this.matchingEdgeWeightAttrNames = attrSpec.getEdgeWeightAttrs();
     if (stats == null) {
       stats = FlowMapStats.createFor(this);
       logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
@@ -151,8 +152,11 @@ public class FlowMapGraph {
     return attrSpec.getYNodeAttr();
   }
 
-  public String getEdgeWeightAttrWildcard() {
-    return attrSpec.getEdgeWeightAttrWildcard();
+  /**
+   * @return An immutable list which can thus be reused without defensive copying.
+   */
+  public List<String> getEdgeWeightAttrs() {
+    return attrSpec.getEdgeWeightAttrs();
   }
 
   public int getEdgeWeightAttrsCount() {
@@ -217,10 +221,6 @@ public class FlowMapGraph {
     return null;
   }
 
-  public List<String> findEdgeAttrsByWildcard(String wildcard) {
-    return findEdgeAttrsByWildcard(graph, wildcard);
-  }
-
   public static List<String> findEdgeAttrsByWildcard(Graph graph, String wildcard) {
     Pattern re = Pattern.compile(wildcard);
     Table et = graph.getEdgeTable();
@@ -252,8 +252,17 @@ public class FlowMapGraph {
     return stats.getEdgeLengthStats();
   }
 
-  public double getEdgeWeight(Edge edge) {
-    return edge.getDouble(attrSpec.getEdgeWeightAttrWildcard());
+  public double getEdgeWeight(Edge edge, String weightAttr) {
+    return edge.getDouble(weightAttr);
+  }
+
+  public Iterable<Double> getEdgeWeights(final Edge edge) {
+    return Iterables.transform(getEdgeWeightAttrs(), new Function<String, Double>() {
+      @Override
+      public Double apply(String weightAttr) {
+        return getEdgeWeight(edge, weightAttr);
+      }
+    });
   }
 
   public List<Point> getEdgePoints(Edge edge) {
@@ -419,7 +428,7 @@ public class FlowMapGraph {
       builder.addEdge(
           valueToNode.get(srcV),
           valueToNode.get(trgV),
-          e.getDouble(attrSpec.getEdgeWeightAttrWildcard()));
+          getEdgeWeights(e));
     }
 
     return builder.build();
@@ -530,7 +539,7 @@ public class FlowMapGraph {
     if (list.isEmpty()) {
       throw new IOException("No graphs found in '" + filename + "'");
     }
-    return list.iterator().next();
+    return list.get(0);
   }
 
   public static final Comparator<? super FlowMapGraph> COMPARE_BY_GRAPH_IDS =

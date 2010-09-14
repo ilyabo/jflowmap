@@ -41,6 +41,7 @@ import prefuse.data.parser.ParserFactory;
 import prefuse.util.collections.IntIterator;
 import prefuse.util.io.IOLib;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -87,8 +88,12 @@ public class GraphMLReader3 {
       throw new IOException("Couldn't read from location: \"" + location + "\"");
     }
     Iterable<Graph> graphs = readFromStream(is);
-    logger.info("Finished loading file");
+    logger.info("Finished loading file. Number of graphs loaded: " + Iterables.size(graphs));
     return graphs;
+  }
+
+  public static Iterable<Graph> loadGraphs(String filename) throws IOException {
+    return new GraphMLReader3().readFromLocation(filename);
   }
 
   public Iterable<Graph> readFromStream(InputStream is) throws IOException {

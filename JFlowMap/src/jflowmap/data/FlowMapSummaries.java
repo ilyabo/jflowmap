@@ -135,13 +135,15 @@ public class FlowMapSummaries {
 
   // TODO: fix intrareg summaries to support wildcarded weight attrs
 
-  public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr) {
+  public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr,
+      String edgeWeightAttr) {
     for (FlowMapGraph fmg : fmset.asList()) {
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr);
+      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr, edgeWeightAttr);
     }
   }
 
-  public static void supplyNodesWithIntraregSummaries(FlowMapGraph flowMapGraph, String nodeRegionAttr) {
+  public static void supplyNodesWithIntraregSummaries(FlowMapGraph flowMapGraph,
+      String nodeRegionAttr, String edgeWeightAttr) {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
     FlowMapAttrSpec as = flowMapGraph.getAttrSpec();
@@ -152,7 +154,7 @@ public class FlowMapSummaries {
     for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
       Edge e = g.getEdge(i);
 
-      double w = e.getDouble(as.getEdgeWeightAttrWildcard());
+      double w = e.getDouble(edgeWeightAttr);
       if (!Double.isNaN(w)) {
         Node src = e.getSourceNode();
         Node trg = e.getTargetNode();
