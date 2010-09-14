@@ -56,6 +56,7 @@ public class VisualLegend extends PPath {
     setStroke(null);
     setStrokePaint(null);
     this.visualFlowMap = visualFlowMap;
+    setPickable(false);
     update();
   }
 
@@ -70,7 +71,7 @@ public class VisualLegend extends PPath {
     posY += spaceForArrow;
 
     MinMax stats = visualFlowMap.getFlowMapGraph().getStats().getEdgeWeightStats();
-    List<Double> legendValues = LedgendValuesGenerator.generateLegendValues(
+    List<Double> legendValues = LegendValuesGenerator.generateLegendValues(
         stats.getMin(), stats.getMax(), NUM_LEGEND_WEIGHT_VALUES);
 
     PPath line = null;
