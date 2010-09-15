@@ -514,12 +514,15 @@ public class SmallMultiplesMain extends JFrame {
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz"),
-        eachYear(1993, 2008, +1));
+//          eachYear(1993, 2008, +1));
+        eachYear(1992, 2008, +2));
+//    eachYear(1991, 2007, +2));
 //    sm.setSize(640, 480);
 //    sm.setSize(1280, 1024);
 //    sm.setSize(1600, 1200);
-    sm.setNumColumns(4);
+    sm.setNumColumns(3);
     sm.setSize(1024, 768);
+//  sm.setSize(1280, 1024);
     sm.setZoom(1.2);
     sm.setPaddingX(10);
     sm.setTranslation(50, 0);
@@ -530,7 +533,7 @@ public class SmallMultiplesMain extends JFrame {
     sm.setFlowMapModelInitializer(new FlowMapModelInitializer() {
       @Override
       public void setupFlowMapModel(VisualFlowMapModel model) {
-        model.setMaxEdgeWidth(20);
+        model.setMaxEdgeWidth(15);
         model.setNodeSize(3);
         model.setShowDirectionMarkers(true);
         model.setDirectionMarkerSize(.17);
