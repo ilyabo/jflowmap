@@ -35,8 +35,7 @@ public class DuoTimelineMain extends JFrame {
   public DuoTimelineMain(DatasetSpec ds) throws IOException {
     super("DuoTimeline");
     final DuoTimelineView view = new DuoTimelineView(
-        FlowMapGraph.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
-        AreaMap.load(ds.getAreaMapFilename())
+        FlowMapGraph.loadGraphML(ds), AreaMap.load(ds.getAreaMapFilename())
     );
     add(view.getViewComponent());
     addWindowListener(new WindowAdapter() {

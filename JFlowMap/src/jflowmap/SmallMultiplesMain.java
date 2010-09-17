@@ -253,9 +253,8 @@ public class SmallMultiplesMain extends JFrame {
         List<FlowMapGraph> gs = Lists.newArrayList();
         for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
           final String name = entry.getKey();
-          final DatasetSpec ds = entry.getValue();
           progress.setNote("Gathering stats for " + name);
-          gs.add(FlowMapGraph.loadGraphML(ds.getFilename(), ds.getAttrsSpec()));
+          gs.add(FlowMapGraph.loadGraphML(entry.getValue()));
         }
         stats = FlowMapStats.createFor(gs);
       } else {

@@ -89,8 +89,7 @@ public class FlowMapView extends AbstractCanvasView {
   public void load(DatasetSpec dataset, FlowMapStats stats) {
     logger.info("> Loading flow map '" + dataset + "'");
     try {
-      FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset.getFilename(),
-          dataset.getAttrsSpec(), stats);
+      FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset, stats);
 
       VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph);
       if (dataset.getAreaMapFilename() != null) {

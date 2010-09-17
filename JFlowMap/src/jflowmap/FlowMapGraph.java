@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.GraphMLReader3;
 import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
@@ -221,8 +222,8 @@ public class FlowMapGraph {
     return null;
   }
 
-  public static List<String> findEdgeAttrsByWildcard(Graph graph, String wildcard) {
-    Pattern re = Pattern.compile(wildcard);
+  public static List<String> findEdgeAttrsByPattern(Graph graph, String pattern) {
+    Pattern re = Pattern.compile(pattern);
     Table et = graph.getEdgeTable();
     List<String> attrs = Lists.newArrayList();
     for (int i = 0; i < et.getColumnCount(); i++) {
@@ -526,6 +527,19 @@ public class FlowMapGraph {
     throws IOException
   {
     return loadGraphML(filename, attrSpec, null);
+  }
+
+  public static FlowMapGraph loadGraphML(DatasetSpec dataset) throws IOException {
+    return loadGraphML(dataset, null);
+  }
+
+  public static FlowMapGraph loadGraphML(DatasetSpec dataset, FlowMapStats stats) throws IOException {
+    Iterator<Graph> it = GraphMLReader3.loadGraphs(dataset.getFilename()).iterator();
+    if (!it.hasNext()) {
+      throw new IOException("No graphs found in '" + dataset.getFilename() + "'");
+    }
+    Graph graph = it.next();
+    return new FlowMapGraph(graph, dataset.createFlowMapAttrsSpecFor(graph), stats);
   }
 
   /**

@@ -68,10 +68,8 @@ public class DuoTimelineApplet extends BaseApplet {
       areaMap = AreaMap.load(areaMapSrc);
     }
     String maxVisibleTuples = getParameter("maxVisibleTuples");
-    DatasetSpec ds = getDatasetSpec();
     return new DuoTimelineView(
-        FlowMapGraph.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
-//        FlowMapGraphSet.loadGraphML(ds.getFilename(), ds.getAttrsSpec()),
+        FlowMapGraph.loadGraphML(getDatasetSpec()),
         areaMap,
         maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)
     );
