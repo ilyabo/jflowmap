@@ -72,9 +72,9 @@ public enum GraphMLDataTypes implements ValueAggregator {
     @Override
     public Object aggregate(Iterable<Object> values) {
       StringBuilder sb = new StringBuilder();
-      String str = null;
-      for (Iterator<Object> it = values.iterator(); it.hasNext(); str = it.next().toString()) {
-        sb.append(str);
+      for (Iterator<Object> it = values.iterator(); it.hasNext(); ) {
+        Object obj = it.next();
+        sb.append(obj != null ? obj.toString() : "null");
         if (it.hasNext()) { sb.append(","); }
       }
       return sb.toString();

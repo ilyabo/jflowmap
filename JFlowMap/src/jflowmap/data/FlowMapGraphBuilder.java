@@ -44,8 +44,10 @@ public class FlowMapGraphBuilder {
     graph = new Graph();
     FlowMapGraph.setGraphId(graph, graphId);
     graph.addColumn(nodeIdAttr, String.class);
-    graph.addColumn(attrSpec.getXNodeAttr(), double.class);
-    graph.addColumn(attrSpec.getYNodeAttr(), double.class);
+    if (attrSpec.hasNodePositions()) {
+      graph.addColumn(attrSpec.getXNodeAttr(), double.class);
+      graph.addColumn(attrSpec.getYNodeAttr(), double.class);
+    }
     for (String attr : attrSpec.getEdgeWeightAttrs()) {
       graph.addColumn(attr, FlowMapGraph.WEIGHT_COLUMNS_DATA_TYPE);
     }
@@ -62,15 +64,26 @@ public class FlowMapGraphBuilder {
     return this;
   }
 
+  public Node addNode(String id, String label) {
+    return addNode(id, null, label);
+  }
+
   public Node addNode(Point position, String label) {
     return addNode(null, position, label);
   }
 
   public Node addNode(String id, Point position, String label) {
     Node node = graph.addNode();
-    node.setString(nodeIdAttr, id);
-    node.setDouble(attrSpec.getXNodeAttr(), position.x());
-    node.setDouble(attrSpec.getYNodeAttr(), position.y());
+    if (id != null) {
+      node.setString(nodeIdAttr, id);
+    }
+    if (attrSpec.hasNodePositions()) {
+      if (position == null) {
+        throw new IllegalArgumentException("Node positions must be supplied for this flowMapGraph");
+      }
+      node.setDouble(attrSpec.getXNodeAttr(), position.x());
+      node.setDouble(attrSpec.getYNodeAttr(), position.y());
+    }
     node.set(attrSpec.getNodeLabelAttr(), label);
     return node;
   }

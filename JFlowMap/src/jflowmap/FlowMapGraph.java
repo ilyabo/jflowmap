@@ -360,7 +360,7 @@ public class FlowMapGraph {
    * Creates a new FlowMapGraph in which edges of this FlowMapGraph
    * having the same value of {@nodeAttrToGroupBy} are grouped together.
    */
-  public FlowMapGraph groupEdgesBy(Function<Edge, Object> groupFunction) {
+//  public FlowMapGraph groupEdgesBy(Function<Edge, Object> groupFunction) {
 
 //  .withCumulativeEdges()
 
@@ -396,8 +396,8 @@ public class FlowMapGraph {
      */
 
 
-    return null;
-  }
+//    return null;
+//  }
 
   /**
    * Creates a new FlowMapGraph in which nodes of this FlowMapGraph
@@ -556,26 +556,6 @@ public class FlowMapGraph {
     return list.get(0);
   }
 
-  public static final Comparator<? super FlowMapGraph> COMPARE_BY_GRAPH_IDS =
-    new Comparator<FlowMapGraph>() {
-      @Override
-      public int compare(FlowMapGraph o1, FlowMapGraph o2) {
-        return o1.getId().compareTo(o2.getId());
-      }
-    };
-
-//  public List<FlowTuple> listFlowTuples(Predicate<Edge> edgeP) {
-//    List<FlowTuple> list = Lists.newArrayList();
-//    for (int i = 0, numEdges = graph.getEdgeCount(); i < numEdges; i++) {
-//      Edge e = graph.getEdge(i);
-//      if (edgeP == null  ||  edgeP.apply(e)) {
-//        for (String attr : matchingEdgeWeightAttrNames) {
-//          list.add(new FlowTuple(srcNodeId, targetNodeId, edges, fmgs));
-//        }
-//      }
-//    }
-//  }
-
   /**
    * Returns max edge weight (for wildcarded weight attrs)
    */
@@ -635,4 +615,40 @@ public class FlowMapGraph {
     return getNodeId(edge.getTargetNode());
   }
 
+
+  public static final Comparator<? super FlowMapGraph> COMPARE_BY_GRAPH_IDS =
+    new Comparator<FlowMapGraph>() {
+      @Override
+      public int compare(FlowMapGraph o1, FlowMapGraph o2) {
+        return o1.getId().compareTo(o2.getId());
+      }
+    };
+
+  public static final Comparator<Node> COMPARE_NODES_BY_IDS = new Comparator<Node>() {
+    @Override
+    public int compare(Node o1, Node o2) {
+      return getIdOfNode(o1).compareTo(getIdOfNode(o2));
+    }
+  };
+
+
+  private List<String> aggregatableNodeColumns;
+
+  public List<String> getAggregatableNodeColumns() {
+    if (aggregatableNodeColumns == null) {
+      List<String> columns = Lists.newArrayList();
+      columns.add(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
+      columns.add(attrSpec.getNodeLabelAttr());
+      if (attrSpec.hasNodePositions()) {
+        columns.add(attrSpec.getXNodeAttr());
+        columns.add(attrSpec.getXNodeAttr());
+      }
+      aggregatableNodeColumns = ImmutableList.copyOf(columns);
+    }
+    return aggregatableNodeColumns;
+  }
+
+  public List<String> getAggregatableEdgeColumns() {
+    return getEdgeWeightAttrNames();
+  }
 }

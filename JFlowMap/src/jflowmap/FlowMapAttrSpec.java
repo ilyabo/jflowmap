@@ -80,8 +80,10 @@ public class FlowMapAttrSpec {
   }
 
   public void checkValidityFor(Graph graph) {
-    validateAttr(graph, graph.getNodeTable(), xNodeAttr, double.class);
-    validateAttr(graph, graph.getNodeTable(), yNodeAttr, double.class);
+    if (hasNodePositions()) {
+      validateAttr(graph, graph.getNodeTable(), xNodeAttr, double.class);
+      validateAttr(graph, graph.getNodeTable(), yNodeAttr, double.class);
+    }
     validateAttr(graph, graph.getNodeTable(), nodeLabelAttr, String.class);
     for (String attr : edgeWeightAttrs) {
       validateAttr(graph, graph.getEdgeTable(), attr, double.class);

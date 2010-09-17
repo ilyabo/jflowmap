@@ -1,8 +1,10 @@
 package jflowmap.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
@@ -16,6 +18,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 /**
  * @author Ilya Boyandin
@@ -27,7 +30,7 @@ public class FlowMapGraphEdgeAggregator {
   private final Function<Edge, Object> groupFunction;
   private Graph aggGraph;
 
-  private FlowMapGraphEdgeAggregator(FlowMapGraph fmg, Function<Edge, Object> groupFunction) {
+  public FlowMapGraphEdgeAggregator(FlowMapGraph fmg, Function<Edge, Object> groupFunction) {
     this.flowMapGraph = fmg;
     this.groupFunction = groupFunction;
   }
@@ -40,10 +43,12 @@ public class FlowMapGraphEdgeAggregator {
    *
    */
   public static FlowMapGraph aggregate(FlowMapGraph fmg, Function<Edge, Object> groupFunction) {
-    return new FlowMapGraphEdgeAggregator(fmg, groupFunction).doAggregate();
+    return new FlowMapGraphEdgeAggregator(fmg, groupFunction).aggregate();
   }
 
-  private FlowMapGraph doAggregate() {
+  // TODO: add withCustomNodeAggregator(column, NodeAggregator)
+
+  public FlowMapGraph aggregate() {
     Multimap<Object, Edge> groups = ArrayListMultimap.create();
     for (Edge e : flowMapGraph.edges()) {
       groups.put(groupFunction.apply(e), e);
@@ -59,35 +64,51 @@ public class FlowMapGraphEdgeAggregator {
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
       Edge newEdge = aggGraph.addEdge(
-          aggregate(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.SOURCE)),
-          aggregate(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.TARGET)));
+          aggregateNodes(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.SOURCE)),
+          aggregateNodes(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.TARGET)));
 
-      aggregateColumns(edges, newEdge);
+      aggregateEdges(edges, newEdge);
     }
 
     return new FlowMapGraph(aggGraph, flowMapGraph.getAttrSpec());
   }
 
-  private Node aggregate(Iterable<Node> nodes) {
-    Iterable<String> nodeIds = nodeIdsOf(nodes);
+  private void aggregateEdges(Collection<Edge> edges, Edge newEdge) {
+    aggregateColumns(edges, newEdge, flowMapGraph.getAggregatableEdgeColumns());
+  }
+
+  private Node aggregateNodes(Iterable<Node> nodes) {
+    nodes = unique(nodes);
+    List<String> nodeIds = nodeIdsOf(nodes);
     Node newNode = nodesByIds.get(nodeIds);
     if (newNode == null) {
-      newNode = aggregateColumns(nodes, aggGraph.addNode());
+      newNode = aggregateColumns(nodes, aggGraph.addNode(),
+          flowMapGraph.getAggregatableNodeColumns());
+
+      nodesByIds.put(nodeIds, newNode);
     }
     return newNode;
   }
 
-  private <T extends Tuple> T aggregateColumns(Iterable<T> tuples, T newTuple) {
-    for (int i = 0; i < newTuple.getColumnCount(); i++) {
-      final int columnIndex = i;
-      ValueAggregator agg = getAggregator(newTuple.getColumnType(i));
+  private Set<Node> unique(Iterable<Node> nodes) {
+    Set<Node> unique = Sets.newTreeSet(FlowMapGraph.COMPARE_NODES_BY_IDS);
+    for (Node node : nodes) {
+      unique.add(node);
+    }
+    return unique;
+  }
+
+  private <T extends Tuple> T aggregateColumns(Iterable<T> tuples, T newTuple,
+      Iterable<String> columns) {
+    for (final String column : columns) {
+      ValueAggregator agg = getAggregator(newTuple.getColumnType(column));
       Object aggValue = agg.aggregate(Iterables.transform(tuples, new Function<Tuple, Object>() {
         @Override
         public Object apply(Tuple t) {
-          return t.get(columnIndex);
+          return t.get(column);
         }
       }));
-      newTuple.set(i, aggValue);
+      newTuple.set(column, aggValue);
     }
     return newTuple;
   }
@@ -100,13 +121,12 @@ public class FlowMapGraphEdgeAggregator {
     Object aggregate(Iterable<Object> values);
   }
 
-  private Iterable<String> nodeIdsOf(Iterable<Node> nodes) {
-    return Iterables.transform(nodes, new Function<Node, String>() {
-      @Override
-      public String apply(Node node) {
-        return flowMapGraph.getNodeId(node);
-      }
-    });
+  private List<String> nodeIdsOf(Iterable<Node> nodes) {
+    List<String> ids = new ArrayList<String>();
+    for (Node node : nodes) {
+      ids.add(flowMapGraph.getNodeId(node));
+    }
+    return ids;
   }
 
 }
