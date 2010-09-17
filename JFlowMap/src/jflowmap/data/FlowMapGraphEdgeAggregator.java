@@ -46,6 +46,22 @@ public class FlowMapGraphEdgeAggregator {
     return new FlowMapGraphEdgeAggregator(fmg, groupFunction).aggregate();
   }
 
+  public enum GroupFunctions implements Function<Edge, Object> {
+    SRC_NODE {
+      @Override
+      public Object apply(Edge edge) {
+        return FlowMapGraph.getIdOfNode(edge.getSourceNode());
+      }
+    },
+    TARGET_NODE {
+      @Override
+      public Object apply(Edge edge) {
+        return FlowMapGraph.getIdOfNode(edge.getTargetNode());
+      }
+    }
+    ;
+  }
+
   // TODO: add withCustomNodeAggregator(column, NodeAggregator)
 
   public FlowMapGraph aggregate() {

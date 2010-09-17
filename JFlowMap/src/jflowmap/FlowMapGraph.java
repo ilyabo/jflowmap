@@ -206,7 +206,7 @@ public class FlowMapGraph {
     return getIdOfNode(node);
   }
 
-  private static String getIdOfNode(Node node) {
+  public static String getIdOfNode(Node node) {
     return node.getString(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
   }
 
@@ -641,7 +641,7 @@ public class FlowMapGraph {
       columns.add(attrSpec.getNodeLabelAttr());
       if (attrSpec.hasNodePositions()) {
         columns.add(attrSpec.getXNodeAttr());
-        columns.add(attrSpec.getXNodeAttr());
+        columns.add(attrSpec.getYNodeAttr());
       }
       aggregatableNodeColumns = ImmutableList.copyOf(columns);
     }

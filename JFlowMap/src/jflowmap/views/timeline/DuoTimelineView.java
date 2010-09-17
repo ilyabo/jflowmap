@@ -148,15 +148,23 @@ public class DuoTimelineView extends AbstractCanvasView {
   private final PLayer targetsLayer = new PLayer();
   private HashMap<String, Color> flowLinesPalette;
 
+  private boolean showLinesForHighligtedOnly = false;
+
   public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
   }
 
   public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
+
+    // aggregate by source node
+//    flowMapGraph = FlowMapGraphEdgeAggregator.aggregate(
+//        flowMapGraph, FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
+
+
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
 
-    flowMapGraph.addEdgeWeightDifferenceColumns();
+    this.flowMapGraph.addEdgeWeightDifferenceColumns();
 
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
@@ -423,13 +431,21 @@ public class DuoTimelineView extends AbstractCanvasView {
     return c;
   }
 
+  public void setShowLinesForHighligtedOnly(boolean showLinesForHighligtedOnly) {
+    this.showLinesForHighligtedOnly = showLinesForHighligtedOnly;
+    renewFlowLines();
+  }
+
   private void renewFlowLines() {
     mapToMatrixLinesLayer.removeAllChildren();
 
     edgesToLines = Maps.newHashMap();
-    for (Edge edge : getVisibleEdges()) {
-      edgesToLines.put(edge,
-          Pair.of(createFlowLine(edge), createFlowLine(edge)));
+
+    if (!showLinesForHighligtedOnly) {
+      for (Edge edge : getVisibleEdges()) {
+        edgesToLines.put(edge,
+            Pair.of(createFlowLine(edge), createFlowLine(edge)));
+      }
     }
 
     updateFlowLineColors();
@@ -453,6 +469,10 @@ public class DuoTimelineView extends AbstractCanvasView {
   }
 
   private void updateFlowLineColors() {
+    if (showLinesForHighligtedOnly) {
+      return;
+    }
+
     for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
       Pair<FlowLine, FlowLine> p = e.getValue();
       Pair<Color, Color> colors = getFlowLineColors(e.getKey());
@@ -520,6 +540,9 @@ public class DuoTimelineView extends AbstractCanvasView {
 
 
   private void updateFlowLinePositions() {
+    if (showLinesForHighligtedOnly) {
+      return;
+    }
     PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
@@ -735,8 +758,10 @@ public class DuoTimelineView extends AbstractCanvasView {
 
           for (Edge e : findVisibleEdges(Arrays.asList(va.getArea().getId()), dir)) {
             Pair<FlowLine, FlowLine> pair = edgesToLines.get(e);
-            pair.first().setHighlighted(true);
-            pair.second().setHighlighted(true);
+            if (pair != null) {
+              pair.first().setHighlighted(true);
+              pair.second().setHighlighted(true);
+            }
           }
         }
       }
@@ -755,8 +780,10 @@ public class DuoTimelineView extends AbstractCanvasView {
 
           for (Edge e : findVisibleEdges(Arrays.asList(va.getArea().getId()), dir)) {
             Pair<FlowLine, FlowLine> pair = edgesToLines.get(e);
-            pair.first().setHighlighted(false);
-            pair.second().setHighlighted(false);
+            if (pair != null) {
+              pair.first().setHighlighted(false);
+              pair.second().setHighlighted(false);
+            }
           }
         }
       }

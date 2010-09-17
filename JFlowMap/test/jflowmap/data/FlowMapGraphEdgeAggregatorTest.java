@@ -12,7 +12,6 @@ import org.junit.Test;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -41,12 +40,7 @@ public class FlowMapGraphEdgeAggregatorTest {
 
     // aggregate by source node
     FlowMapGraph aggregated = FlowMapGraphEdgeAggregator.aggregate(fmg,
-        new Function<Edge, Object>() {
-          @Override
-          public Object apply(Edge edge) {
-            return fmg.getNodeId(edge.getSourceNode());
-          }
-        });
+        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
 
     assertEquals(4, Iterables.size(aggregated.nodes()));
     assertEquals(2, Iterables.size(aggregated.edges()));

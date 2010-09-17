@@ -61,10 +61,18 @@ public enum GraphMLDataTypes implements ValueAggregator {
     @Override
     public Object aggregate(Iterable<Object> values) {
       double sum = 0;
+      int cnt = 0;
       for (Object obj : values) {
-        sum += ((Double)obj).doubleValue();
+        double v = ((Double)obj).doubleValue();
+        if (!Double.isNaN(v)) {
+          sum += v;
+          cnt++;
+        }
       }
-      return sum;
+      if (cnt == 0)
+        return Double.NaN;
+      else
+        return sum;
     }
   },
   BOOLEAN(boolean.class, null, "boolean"),
