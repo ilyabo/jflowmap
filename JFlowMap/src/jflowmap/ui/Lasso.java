@@ -60,21 +60,14 @@ public class Lasso extends PBasicInputEventHandler {
 //    });
   }
 
+  private boolean isSelecting() {
+    return line.getPointCount() > 0;
+  }
+
   @Override
   public void mouseReleased(PInputEvent event) {
     if (inTarget(event)) {
-      /*if (line.getPointCount() > 0)*/ {
-        Area area = asArea(line.getLineReference());
-        if (event.isShiftDown()) {
-          area.add(prevSelectionArea);
-        } else if (event.isAltDown()) {
-          prevSelectionArea.subtract(area);
-          area = prevSelectionArea;
-        }
-        selectionMade(area);
-        prevSelectionArea = area;
-        clear();
-      }
+      stop(event);
     }
   }
 
@@ -86,11 +79,12 @@ public class Lasso extends PBasicInputEventHandler {
   }
 
 //  @Override
-//  public void mouseMoved(PInputEvent event) {
-//    if (!event.isLeftMouseButton()) {
-//      clear();
-//    }
-//  }
+  @Override
+  public void mouseMoved(PInputEvent event) {
+    if (isSelecting()  &&  !event.isControlDown()  &&  !event.isLeftMouseButton()) {
+      stop(event);
+    }
+  }
 
 //  @Override
 //  public void mouseExited(PInputEvent event) {
@@ -101,21 +95,25 @@ public class Lasso extends PBasicInputEventHandler {
 
   @Override
   public void mouseDragged(PInputEvent event) {
-    if (event.isControlDown()  &&  inTarget(event)) {
-      Point2D posInCanvas = event.getCanvasPosition();
-      int numPoints = line.getPointCount();
-      if (numPoints == 0) {
-        start();
-      }
-      if (numPoints == 0   ||  posInCanvas.distance(lastPos) > MIN_DIST_BETWEEN_SUBSEQUENT_POINTS) {
-        lastPos = (Point2D) posInCanvas.clone();  // copy to be stored
-        Point2D pos = camera.globalToLocal((Point2D)posInCanvas.clone());
+    if (inTarget(event)) {
+      if (event.isControlDown()) {
+        Point2D posInCanvas = event.getCanvasPosition();
+        int numPoints = line.getPointCount();
         if (numPoints == 0) {
-          line.addPoint(numPoints, pos.getX(), pos.getY());
-          line.addPoint(numPoints + 1, pos.getX(), pos.getY());
-        } else {
-          line.addPoint(numPoints - 1, pos.getX(), pos.getY());
+          start();
         }
+        if (numPoints == 0   ||  posInCanvas.distance(lastPos) > MIN_DIST_BETWEEN_SUBSEQUENT_POINTS) {
+          lastPos = (Point2D) posInCanvas.clone();  // copy to be stored
+          Point2D pos = camera.globalToLocal((Point2D)posInCanvas.clone());
+          if (numPoints == 0) {
+            line.addPoint(numPoints, pos.getX(), pos.getY());
+            line.addPoint(numPoints + 1, pos.getX(), pos.getY());
+          } else {
+            line.addPoint(numPoints - 1, pos.getX(), pos.getY());
+          }
+        }
+      } else {
+//        stop(event);
       }
     }
   }
@@ -127,6 +125,19 @@ public class Lasso extends PBasicInputEventHandler {
 
   private void start() {
     camera.addChild(line);
+  }
+
+  private void stop(PInputEvent event) {
+    Area area = asArea(line.getLineReference());
+    if (event.isShiftDown()) {
+      area.add(prevSelectionArea);
+    } else if (event.isAltDown()) {
+      prevSelectionArea.subtract(area);
+      area = prevSelectionArea;
+    }
+    selectionMade(area);
+    prevSelectionArea = area;
+    clear();
   }
 
   public void clear() {
