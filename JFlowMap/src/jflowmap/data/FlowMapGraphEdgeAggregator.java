@@ -29,6 +29,7 @@ public class FlowMapGraphEdgeAggregator {
   private final FlowMapGraph flowMapGraph;
   private final Function<Edge, Object> groupFunction;
   private Graph aggGraph;
+  private Map<String, ValueAggregator> customValueAggregators;
 
   public FlowMapGraphEdgeAggregator(FlowMapGraph fmg, Function<Edge, Object> groupFunction) {
     this.flowMapGraph = fmg;
@@ -62,7 +63,15 @@ public class FlowMapGraphEdgeAggregator {
     ;
   }
 
-  // TODO: add withCustomNodeAggregator(column, NodeAggregator)
+  public FlowMapGraphEdgeAggregator withCustomValueAggregator(
+      String attrName, ValueAggregator agg) {
+    if (customValueAggregators == null) {
+      customValueAggregators = Maps.newHashMap();
+    }
+    customValueAggregators.put(attrName, agg);
+    return this;
+  }
+
 
   public FlowMapGraph aggregate() {
     Multimap<Object, Edge> groups = ArrayListMultimap.create();
@@ -117,7 +126,7 @@ public class FlowMapGraphEdgeAggregator {
   private <T extends Tuple> T aggregateColumns(Iterable<T> tuples, T newTuple,
       Iterable<String> columns) {
     for (final String column : columns) {
-      ValueAggregator agg = getAggregator(newTuple.getColumnType(column));
+      ValueAggregator agg = getAggregator(column, newTuple.getColumnType(column));
       Object aggValue = agg.aggregate(Iterables.transform(tuples, new Function<Tuple, Object>() {
         @Override
         public Object apply(Tuple t) {
@@ -129,11 +138,45 @@ public class FlowMapGraphEdgeAggregator {
     return newTuple;
   }
 
-  private ValueAggregator getAggregator(Class<?> columnType) {
-    return GraphMLDataTypes.getByType(columnType);
+  private ValueAggregator getAggregator(String columnName, Class<?> columnType) {
+    ValueAggregator agg = customValueAggregators.get(columnName);
+    if (agg == null) {
+      agg = AttrDataTypes.getByType(columnType);
+    }
+    return agg;
   }
 
-  interface ValueAggregator {
+  public enum ValueAggregators implements ValueAggregator {
+    DOUBLE_AVERAGE {
+      @Override
+      public Object aggregate(Iterable<Object> values) {
+        double sum = 0;
+        int count = 0;
+        for (Object obj : values) {
+          double val = (Double)obj;
+          if (!Double.isNaN(val)) {
+            sum += val;
+            count++;
+          }
+        }
+        if (count == 0) {
+          return Double.NaN;
+        }
+        return sum / count;
+      }
+    },
+    STRING_ONE_OR_NONE {
+      @Override
+      public Object aggregate(Iterable<Object> values) {
+        if (Iterables.size(values) == 1) {
+          return Iterables.get(values, 0);
+        }
+        return "";
+      }
+    }
+  }
+
+  public interface ValueAggregator {
     Object aggregate(Iterable<Object> values);
   }
 

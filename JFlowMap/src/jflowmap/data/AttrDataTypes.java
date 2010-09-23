@@ -26,7 +26,7 @@ import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 /**
  * @author Ilya Boyandin
  */
-public enum GraphMLDataTypes implements ValueAggregator {
+public enum AttrDataTypes implements ValueAggregator {
   INT(int.class, null, "int", "integer") {
     @Override
     public Object aggregate(Iterable<Object> values) {
@@ -94,14 +94,14 @@ public enum GraphMLDataTypes implements ValueAggregator {
   private final String[] names;
   private Object defaultValue;
 
-  private GraphMLDataTypes(Class<?> klass, Object defaultValue, String ... names) {
+  private AttrDataTypes(Class<?> klass, Object defaultValue, String ... names) {
     this.klass = klass;
     this.defaultValue = defaultValue;
     this.names = names;
   }
 
-  public static GraphMLDataTypes getByType(Class<?> type) {
-    for (GraphMLDataTypes t : values()) {
+  public static AttrDataTypes getByType(Class<?> type) {
+    for (AttrDataTypes t : values()) {
       if (t.klass.equals(type)) {
         return t;
       }
@@ -109,8 +109,8 @@ public enum GraphMLDataTypes implements ValueAggregator {
     return null;
   }
 
-  public static GraphMLDataTypes parse(String typeName) {
-    for (GraphMLDataTypes type : values()) {
+  public static AttrDataTypes parse(String typeName) {
+    for (AttrDataTypes type : values()) {
       for (String name : type.names) {
         if (typeName.equals(name)) {
           return type;

@@ -107,7 +107,7 @@ class GraphMLReader2 {
       String id = keyNode.getAttributeValue(null, "id");
       String forWhat = keyNode.getAttributeValue(null, "for");
       String name = keyNode.getAttributeValue(null, "attr.name");
-      GraphMLDataTypes type = GraphMLDataTypes.parse(keyNode.getAttributeValue(null, "attr.type"));
+      AttrDataTypes type = AttrDataTypes.parse(keyNode.getAttributeValue(null, "attr.type"));
 
       attrIdToName.put(id, name);
 

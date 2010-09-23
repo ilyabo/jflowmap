@@ -157,8 +157,16 @@ public class FlowtimapsView extends AbstractCanvasView {
   public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
-//    flowMapGraph = FlowMapGraphEdgeAggregator.aggregate(
-//        flowMapGraph, FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
+//    flowMapGraph =
+//      new FlowMapGraphEdgeAggregator(flowMapGraph,
+//                                     FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
+//      .withCustomValueAggregator("lat",
+//          FlowMapGraphEdgeAggregator.ValueAggregators.DOUBLE_AVERAGE)
+//      .withCustomValueAggregator("lon",
+//          FlowMapGraphEdgeAggregator.ValueAggregators.DOUBLE_AVERAGE)
+//      .withCustomValueAggregator("name",
+//          FlowMapGraphEdgeAggregator.ValueAggregators.STRING_ONE_OR_NONE)
+//      .aggregate();
 
 
     this.flowMapGraph = flowMapGraph;

@@ -259,7 +259,7 @@ public class GraphMLReader3 {
     String id = in.getAttributeValue(NAMESPACE, "id");
     String forWhat = in.getAttributeValue(NAMESPACE, "for");
     String name = in.getAttributeValue(NAMESPACE, "attr.name");
-    GraphMLDataTypes type = GraphMLDataTypes.parse(in.getAttributeValue(NAMESPACE, "attr.type"));
+    AttrDataTypes type = AttrDataTypes.parse(in.getAttributeValue(NAMESPACE, "attr.type"));
 
     attrIdToName.put(id, name);
 
