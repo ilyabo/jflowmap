@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,22 +35,22 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
-import jflowmap.views.timeline.DuoTimelineView.FlowLinesColoringMode;
-import jflowmap.views.timeline.DuoTimelineView.RowOrderings;
+import jflowmap.views.flowtimaps.FlowtimapsView.FlowLinesColoringMode;
+import jflowmap.views.flowtimaps.FlowtimapsView.RowOrderings;
 import net.miginfocom.swing.MigLayout;
 
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineControlPanel extends JPanel {
+public class FlowtimapsControlPanel extends JPanel {
 
-  private final DuoTimelineView duoTimelineView;
+  private final FlowtimapsView flowtimapsView;
 
 //  private final JTabbedPane tabbedPane;
 
-  public DuoTimelineControlPanel(DuoTimelineView duoTimelineView) {
-    this.duoTimelineView = duoTimelineView;
+  public FlowtimapsControlPanel(FlowtimapsView view) {
+    this.flowtimapsView = view;
 
     setLayout(new MigLayout("insets 0 0 0 0,btt,nogrid", "", ""));
 //    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -100,24 +100,24 @@ public class DuoTimelineControlPanel extends JPanel {
 
 
     final JCheckBox differencesChk = new JCheckBox("Differences",
-        duoTimelineView.getUseWeightDifferences());
+        flowtimapsView.getUseWeightDifferences());
     panel.add(differencesChk, "al right");
     differencesChk.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setUseWeightDifferences(differencesChk.isSelected());
+        flowtimapsView.setUseWeightDifferences(differencesChk.isSelected());
       }
     });
 
 
     panel.add(new JLabel("Max rows:"), "gapleft 5, al right");  //
     JComboBox maxRowsCombo = new JComboBox(MaxRowNumValues.values());
-    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(duoTimelineView.getMaxVisibleTuples()));
+    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(flowtimapsView.getMaxVisibleTuples()));
     panel.add(maxRowsCombo, "height min, width min");
     maxRowsCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        duoTimelineView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
+        flowtimapsView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
       }
     });
 
@@ -138,7 +138,7 @@ public class DuoTimelineControlPanel extends JPanel {
     orderByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        duoTimelineView.setRowOrder((RowOrderings)e.getItem());
+        flowtimapsView.setRowOrder((RowOrderings)e.getItem());
       }
     });
 //    orderByCombo.setEnabled(false);
@@ -192,7 +192,7 @@ public class DuoTimelineControlPanel extends JPanel {
     clearBut.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setCustomEdgeFilter(null);
+        flowtimapsView.setCustomEdgeFilter(null);
         srcField.setText("");
         targetField.setText("");
       }
@@ -205,8 +205,8 @@ public class DuoTimelineControlPanel extends JPanel {
   }
 
   private void doFilterBySrcDest(JTextField srcField, JTextField targetField) {
-    duoTimelineView.setCustomEdgeFilter(DuoTimelineRowFilters.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
-        duoTimelineView.getFlowMapGraph(), srcField.getText(), targetField.getText()
+    flowtimapsView.setCustomEdgeFilter(FlowtimapsHeatmapRowFilters.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
+        flowtimapsView.getFlowMapGraph(), srcField.getText(), targetField.getText()
         ));
   }
 
@@ -218,10 +218,10 @@ public class DuoTimelineControlPanel extends JPanel {
     panel.add(new JLabel("Sequential:"), "al right");
     final JComboBox sequentialCombo =
       new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.SEQUENTIAL).toArray());
-    sequentialCombo.setSelectedItem(duoTimelineView.getSequentialColorScheme());
+    sequentialCombo.setSelectedItem(flowtimapsView.getSequentialColorScheme());
     sequentialCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
+        flowtimapsView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
       }
     });
     panel.add(sequentialCombo, "");
@@ -229,20 +229,20 @@ public class DuoTimelineControlPanel extends JPanel {
     panel.add(new JLabel("Diverging:"), "gapleft 15, al right");
     final JComboBox divergingCombo =
       new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.DIVERGING).toArray());
-    divergingCombo.setSelectedItem(duoTimelineView.getDivergingColorScheme());
+    divergingCombo.setSelectedItem(flowtimapsView.getDivergingColorScheme());
     panel.add(divergingCombo, "");
     divergingCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setDivergingColorScheme((ColorSchemes) divergingCombo.getSelectedItem());
+        flowtimapsView.setDivergingColorScheme((ColorSchemes) divergingCombo.getSelectedItem());
       }
     });
 
     final JCheckBox interpolateChk = new JCheckBox("Interpolate",
-        duoTimelineView.getInterpolateColors());
+        flowtimapsView.getInterpolateColors());
     panel.add(interpolateChk, "gapleft 15");
     interpolateChk.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setInterpolateColors(interpolateChk.isSelected());
+        flowtimapsView.setInterpolateColors(interpolateChk.isSelected());
       }
     });
 
@@ -263,10 +263,10 @@ public class DuoTimelineControlPanel extends JPanel {
 
     panel.add(new JLabel("Coloring:"), "al right");
     final JComboBox coloringCombo = new JComboBox(FlowLinesColoringMode.values());
-    coloringCombo.setSelectedItem(duoTimelineView.getFlowLinesColoringMode());
+    coloringCombo.setSelectedItem(flowtimapsView.getFlowLinesColoringMode());
     coloringCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        duoTimelineView.setFlowLinesColoringMode(
+        flowtimapsView.setFlowLinesColoringMode(
             (FlowLinesColoringMode)coloringCombo.getSelectedItem());
       }
     });

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -31,14 +31,14 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 class DTCell extends PPath {
 
-  private final DuoTimelineView duoTimeline;
+  private final FlowtimapsView duoTimeline;
   private final String weightAttr;
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public DTCell(DuoTimelineView duoTimeline, double x, double y, String weightAttr,
+  public DTCell(FlowtimapsView duoTimeline, double x, double y, String weightAttr,
       FlowMapGraph fmg, Edge edge) {
-    super(new Rectangle2D.Double(x, y, DuoTimelineView.cellWidth, DuoTimelineView.cellHeight), null);
+    super(new Rectangle2D.Double(x, y, FlowtimapsView.cellWidth, FlowtimapsView.cellHeight), null);
     this.duoTimeline = duoTimeline;
     this.flowMapGraph = fmg;
     this.weightAttr = weightAttr;

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.Color;
 import java.awt.Stroke;
@@ -26,7 +26,7 @@ import jflowmap.EdgeDirection;
 /**
  * @author Ilya Boyandin
  */
-public interface DuoTimelineStyle {
+public interface FlowtimapsStyle {
 
   Color getBackgroundColor();
 

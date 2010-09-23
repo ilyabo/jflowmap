@@ -25,12 +25,12 @@ import javax.swing.UIManager;
 
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
-import jflowmap.views.timeline.DuoTimelineView;
+import jflowmap.views.flowtimaps.FlowtimapsView;
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineApplet extends BaseApplet {
+public class FlowtimapsApplet extends BaseApplet {
 
 //  static {
 //    // The statements below cause the objects to go straight for the default implementations
@@ -42,8 +42,8 @@ public class DuoTimelineApplet extends BaseApplet {
 //                                       "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
 //  }
 
-  public DuoTimelineApplet() {
-    super("DuoTimeline");
+  public FlowtimapsApplet() {
+    super("Flowtimaps");
   }
 
 
@@ -68,7 +68,7 @@ public class DuoTimelineApplet extends BaseApplet {
       areaMap = AreaMap.load(areaMapSrc);
     }
     String maxVisibleTuples = getParameter("maxVisibleTuples");
-    return new DuoTimelineView(
+    return new FlowtimapsView(
         FlowMapGraph.loadGraphML(getDatasetSpec()),
         areaMap,
         maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)

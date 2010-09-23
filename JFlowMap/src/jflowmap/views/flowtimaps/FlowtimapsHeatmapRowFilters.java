@@ -1,4 +1,4 @@
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import com.google.common.collect.Iterables;
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineRowFilters {
+public class FlowtimapsHeatmapRowFilters {
 
-  private DuoTimelineRowFilters() {
+  private FlowtimapsHeatmapRowFilters() {
   }
 
   public static Predicate<Edge> createEdgeFilter_bySrcAndTargetNodeIds( final FlowMapGraph fmg,

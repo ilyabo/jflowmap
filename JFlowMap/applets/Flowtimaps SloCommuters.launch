@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.jdt.launching.javaApplet">
 <stringAttribute key="bad_container_name" value="\JFlowMap\launch"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/JFlowMap/src/jflowmap/DuoTimelineApplet.java"/>
+<listEntry value="/JFlowMap/src/jflowmap/FlowtimapsApplet.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -18,7 +18,7 @@
 <mapEntry key="yNodeAttr" value="lat"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1900"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.DuoTimelineApplet"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowtimapsApplet"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx256M"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:JFlowMap}"/>

@@ -25,16 +25,16 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import jflowmap.models.map.AreaMap;
-import jflowmap.views.timeline.DuoTimelineView;
+import jflowmap.views.flowtimaps.FlowtimapsView;
 
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineMain extends JFrame {
+public class FlotimapsMain extends JFrame {
 
-  public DuoTimelineMain(DatasetSpec ds) throws IOException {
+  public FlotimapsMain(DatasetSpec ds) throws IOException {
     super("DuoTimeline");
-    final DuoTimelineView view = new DuoTimelineView(
+    final FlowtimapsView view = new FlowtimapsView(
         FlowMapGraph.loadGraphML(ds), AreaMap.load(ds.getAreaMapFilename())
     );
     add(view.getViewComponent());
@@ -51,7 +51,7 @@ public class DuoTimelineMain extends JFrame {
   }
 
   public static void main(String[] args) throws IOException {
-    new DuoTimelineMain(new DatasetSpec(
+    new FlotimapsMain(new DatasetSpec(
         "data/refugees/refugees.xml.gz",
         "r.*",
         "lon", "lat",

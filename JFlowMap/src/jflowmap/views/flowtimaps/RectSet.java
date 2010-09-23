@@ -1,4 +1,4 @@
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;

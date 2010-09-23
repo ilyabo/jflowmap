@@ -1,4 +1,4 @@
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -8,14 +8,14 @@ import edu.umd.cs.piccolox.nodes.PLine;
 /**
  * @author Ilya Boyandin
  */
-class FlowLine extends PLine {
+class FlowtiLine extends PLine {
   private static final BasicStroke STROKE = new BasicStroke(2);
 
   private boolean isHighlighted;
   private Color color = Color.white;
   private Color highlightedColor = Color.yellow;
 
-  public FlowLine() {
+  public FlowtiLine() {
 //    this.color = color;
 //    this.highlightedColor = highlightedColor;
     setStroke(STROKE);

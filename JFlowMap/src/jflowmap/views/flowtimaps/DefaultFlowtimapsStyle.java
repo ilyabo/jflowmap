@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,7 +28,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 /**
  * @author Ilya Boyandin
  */
-public class DefaultDuoTimelineStyle implements DuoTimelineStyle {
+public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
 
 
   @Override

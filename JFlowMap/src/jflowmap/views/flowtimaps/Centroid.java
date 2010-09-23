@@ -1,4 +1,4 @@
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.Font;
 import java.awt.Paint;
@@ -19,9 +19,9 @@ class Centroid extends PPath {
   private final double size;
   private final PText labelNode;
   private boolean isSelected;
-  private final DuoTimelineView view;
+  private final FlowtimapsView view;
 
-  public Centroid(DuoTimelineView view, double origX, double origY, double size, Paint paint, String nodeLabel) {
+  public Centroid(FlowtimapsView view, double origX, double origY, double size, Paint paint, String nodeLabel) {
     super(new Ellipse2D.Double(origX - size/2, origY - size/2, size, size));
     this.view = view;
     this.point = new Point2D.Double(origX, origY);
@@ -45,7 +45,7 @@ class Centroid extends PPath {
   }
 
   private void updateColors() {
-    DuoTimelineStyle style = view.getStyle();
+    FlowtimapsStyle style = view.getStyle();
     if (isSelected) {
       setPaint(style.getMapAreaSelectedCentroidPaint());
       labelNode.setPaint(style.getMapAreaSelectedCentroidLabelPaint());

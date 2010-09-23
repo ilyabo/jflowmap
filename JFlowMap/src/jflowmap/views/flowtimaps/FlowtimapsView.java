@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.timeline;
+package jflowmap.views.flowtimaps;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -85,7 +85,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 /**
  * @author Ilya Boyandin
  */
-public class DuoTimelineView extends AbstractCanvasView {
+public class FlowtimapsView extends AbstractCanvasView {
 
   private static final double CENTROID_DOT_SIZE = 2.0;
 
@@ -104,13 +104,13 @@ public class DuoTimelineView extends AbstractCanvasView {
   private static final Font NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
   private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 15);
 
-  public static Logger logger = Logger.getLogger(DuoTimelineView.class);
+  public static Logger logger = Logger.getLogger(FlowtimapsView.class);
 
   static final double cellWidth = 40;
   static final double cellHeight = 40;
   private boolean interpolateColors = true;
 
-  private final DuoTimelineStyle style = new DefaultDuoTimelineStyle();
+  private final FlowtimapsStyle style = new DefaultFlowtimapsStyle();
   private final FlowMapGraph flowMapGraph;
 //  private final PScrollPane scrollPane;
 
@@ -130,7 +130,7 @@ public class DuoTimelineView extends AbstractCanvasView {
   private final PNode mapToMatrixLinesLayer;
 
   private Map<String, Pair<Centroid, Centroid>> nodeIdsToCentroids;
-  private Map<Edge, Pair<FlowLine, FlowLine>> edgesToLines;
+  private Map<Edge, Pair<FlowtiLine, FlowtiLine>> edgesToLines;
   private Map<Edge, Pair<PText, PText>> edgesToLabels;
 
   private VisualAreaMap sourceVisualAreaMap;
@@ -150,11 +150,11 @@ public class DuoTimelineView extends AbstractCanvasView {
 
   private boolean showLinesForHighligtedOnly = false;
 
-  public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
+  public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
   }
 
-  public DuoTimelineView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
+  public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
 //    flowMapGraph = FlowMapGraphEdgeAggregator.aggregate(
@@ -205,7 +205,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     canvasLayer.addChild(targetsCamera);
 
 
-    controlPanel = new DuoTimelineControlPanel(this);
+    controlPanel = new FlowtimapsControlPanel(this);
 
 //    scrollPane = new PScrollPane(canvas);
 //    scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -462,8 +462,8 @@ public class DuoTimelineView extends AbstractCanvasView {
     updateFlowLineColors();
   }
 
-  private FlowLine createFlowLine(Edge edge) {
-    FlowLine line = new FlowLine();
+  private FlowtiLine createFlowLine(Edge edge) {
+    FlowtiLine line = new FlowtiLine();
     mapToMatrixLinesLayer.addChild(line);
     return line;
   }
@@ -473,15 +473,15 @@ public class DuoTimelineView extends AbstractCanvasView {
       return;
     }
 
-    for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
-      Pair<FlowLine, FlowLine> p = e.getValue();
+    for (Map.Entry<Edge, Pair<FlowtiLine, FlowtiLine>> e : edgesToLines.entrySet()) {
+      Pair<FlowtiLine, FlowtiLine> p = e.getValue();
       Pair<Color, Color> colors = getFlowLineColors(e.getKey());
 
-      FlowLine srcLine = p.first();
+      FlowtiLine srcLine = p.first();
       srcLine.setColor(colors.first());
       srcLine.setHighlightedColor(colors.second());
 
-      FlowLine targetLine = p.second();
+      FlowtiLine targetLine = p.second();
       targetLine.setColor(colors.first());
       targetLine.setHighlightedColor(colors.second());
     }
@@ -546,7 +546,7 @@ public class DuoTimelineView extends AbstractCanvasView {
     PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
-      Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
+      Pair<FlowtiLine, FlowtiLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = edgesToLabels.get(edge);
 
       Centroid srcMapCentroid = nodeIdsToCentroids.get(
@@ -567,7 +567,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       Point2D.Double matrixIn = getMatrixInPoint(row);
       inVis = inVis && heatMapViewBounds.contains(matrixIn);
       heatmapCamera.viewToLocal(matrixIn);
-      FlowLine lineIn = lines.first();
+      FlowtiLine lineIn = lines.first();
       lineIn.setVisible(inVis);
       lineIn.setPickable(false);
       lineIn.setPoint(0, srcCentroidPoint.getX(), srcCentroidPoint.getY());
@@ -580,7 +580,7 @@ public class DuoTimelineView extends AbstractCanvasView {
       Point2D.Double matrixOut = getMatrixOutPoint(row);
       outVis = outVis && heatMapViewBounds.contains(matrixOut);
       heatmapCamera.viewToLocal(matrixOut);
-      FlowLine lineOut = lines.second();
+      FlowtiLine lineOut = lines.second();
       lineOut.setVisible(outVis);
       lineOut.setPickable(false);
       lineOut.setPoint(0, targetMapCentroidPoint.getX(), targetMapCentroidPoint.getY());
@@ -757,7 +757,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //          schedule(act);
 
           for (Edge e : findVisibleEdges(Arrays.asList(va.getArea().getId()), dir)) {
-            Pair<FlowLine, FlowLine> pair = edgesToLines.get(e);
+            Pair<FlowtiLine, FlowtiLine> pair = edgesToLines.get(e);
             if (pair != null) {
               pair.first().setHighlighted(true);
               pair.second().setHighlighted(true);
@@ -779,7 +779,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //          schedule(act);
 
           for (Edge e : findVisibleEdges(Arrays.asList(va.getArea().getId()), dir)) {
-            Pair<FlowLine, FlowLine> pair = edgesToLines.get(e);
+            Pair<FlowtiLine, FlowtiLine> pair = edgesToLines.get(e);
             if (pair != null) {
               pair.first().setHighlighted(false);
               pair.second().setHighlighted(false);
@@ -815,7 +815,7 @@ public class DuoTimelineView extends AbstractCanvasView {
 //  }
 
   public Color getColorForWeight(double weight, MinMax wstats) {
-    DuoTimelineStyle style = getStyle();
+    FlowtimapsStyle style = getStyle();
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();
     }
@@ -931,7 +931,7 @@ public class DuoTimelineView extends AbstractCanvasView {
         node.moveToFront();
         node.setStroke(style.getSelectedTimelineCellStroke());
         node.setStrokePaint(style.getSelectedTimelineCellStrokeColor());
-        Pair<FlowLine, FlowLine> lines = lines(event);
+        Pair<FlowtiLine, FlowtiLine> lines = lines(event);
         if (lines != null) {
           lines.first().setHighlighted(true);
           lines.second().setHighlighted(true);
@@ -944,20 +944,20 @@ public class DuoTimelineView extends AbstractCanvasView {
         DTCell node = node(event);
         node.setStroke(style.getTimelineCellStroke());
         node.setStrokePaint(style.getTimelineCellStrokeColor());
-        Pair<FlowLine, FlowLine> lines = lines(event);
+        Pair<FlowtiLine, FlowtiLine> lines = lines(event);
         if (lines != null) {
           lines.first().setHighlighted(false);
           lines.second().setHighlighted(false);
         }
       }
 
-      private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
+      private Pair<FlowtiLine, FlowtiLine> lines(PInputEvent event) {
         return edgesToLines.get(node(event).getEdge());
       }
     };
   }
 
-  public DuoTimelineStyle getStyle() {
+  public FlowtimapsStyle getStyle() {
     return style;
   }
 
