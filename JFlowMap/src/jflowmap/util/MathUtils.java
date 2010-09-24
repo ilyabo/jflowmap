@@ -17,7 +17,7 @@
  */
 
 /**
- * 
+ *
  */
 package jflowmap.util;
 
@@ -27,47 +27,61 @@ package jflowmap.util;
  */
 public final class MathUtils {
 
-	private MathUtils() {
-	}
-	
-	public static double log(double x, double base) {
-		if (base == Math.E) {
-			return Math.log(x);
-		}
-		if (base == 10) {
-			return Math.log10(x);
-		}
-		return Math.log(x) / Math.log(base);
-	}
+  private MathUtils() {
+  }
 
-	public enum Rounding {
-		FLOOR {
-			@Override
-			public long round(double value) {
-				return (long) Math.floor(value);
-			}
-		},
-		CEIL {
-			@Override
-			public long round(double value) {
-				return (long) Math.ceil(value);
-			}
-		},
-		ROUND {
-			@Override
-			public long round(double value) {
-				return Math.round(value);
-			}
-		};
-		
-		public abstract long round(double value);
-	}
+  public static double log(double x, double base) {
+    if (base == Math.E) {
+      return Math.log(x);
+    }
+    if (base == 10) {
+      return Math.log10(x);
+    }
+    return Math.log(x) / Math.log(base);
+  }
+
+  public enum Rounding {
+    FLOOR {
+      @Override
+      public long round(double value) {
+        return (long) Math.floor(value);
+      }
+    },
+    CEIL {
+      @Override
+      public long round(double value) {
+        return (long) Math.ceil(value);
+      }
+    },
+    ROUND {
+      @Override
+      public long round(double value) {
+        return Math.round(value);
+      }
+    };
+
+    public abstract long round(double value);
+  }
 
   /**
-   * @param alpha between 0 and 1
+   * @param alpha
+   *          between 0 and 1
    */
   public static double between(double a, double b, double alpha) {
     return (a + (b - a) * alpha);
+  }
+
+  /**
+   * When using Double.compare NaN is the greatest value
+   */
+  public static int compareDoubles_smallestIsNaN(double d1, double d2) {
+    if (Double.isNaN(d1)) {
+      return (Double.isNaN(d2) ? 0 : -1);
+    }
+    if (Double.isNaN(d2)) {
+      return 1;
+    }
+    return Double.compare(d1, d2);
   }
 
 }

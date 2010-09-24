@@ -36,7 +36,6 @@ import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
 import jflowmap.views.flowtimaps.FlowtimapsView.FlowLinesColoringMode;
-import jflowmap.views.flowtimaps.FlowtimapsView.RowOrderings;
 import net.miginfocom.swing.MigLayout;
 
 

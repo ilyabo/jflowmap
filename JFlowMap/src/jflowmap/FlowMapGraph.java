@@ -33,6 +33,7 @@ import jflowmap.data.GraphMLReader3;
 import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
+import jflowmap.util.MathUtils;
 
 import org.apache.log4j.Logger;
 
@@ -557,7 +558,7 @@ public class FlowMapGraph {
   }
 
   /**
-   * Returns max edge weight (for wildcarded weight attrs)
+   * Returns max edge weight (over all weight attrs)
    */
   public double getMaxEdgeWeight(Edge e) {
     double max = Double.NaN;
@@ -570,11 +571,33 @@ public class FlowMapGraph {
     return max;
   }
 
+  public double getAvgEdgeWeight(Edge e) {
+    double sum = 0;
+    int cnt = 0;
+    for (String attr : getEdgeWeightAttrNames()) {
+      double v = e.getDouble(attr);
+      if (!Double.isNaN(v)) {
+        sum += v;
+        cnt++;
+      }
+    }
+    return (cnt == 0 ? Double.NaN : sum / cnt);
+  }
+
   public Comparator<Edge> createMaxWeightComparator() {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {
-        return (int)Math.signum(getMaxEdgeWeight(e1) - getMaxEdgeWeight(e2));
+        return MathUtils.compareDoubles_smallestIsNaN(getMaxEdgeWeight(e1), getMaxEdgeWeight(e2));
+      }
+    };
+  }
+
+  public Comparator<Edge> createAvgWeightComparator() {
+    return new Comparator<Edge>() {
+      @Override
+      public int compare(Edge e1, Edge e2) {
+        return MathUtils.compareDoubles_smallestIsNaN(getAvgEdgeWeight(e1), getAvgEdgeWeight(e2));
       }
     };
   }
@@ -651,4 +674,15 @@ public class FlowMapGraph {
   public List<String> getAggregatableEdgeColumns() {
     return getEdgeWeightAttrNames();
   }
+
+  public boolean hasNonZeroWeight(Edge edge) {
+    for (String attr : getEdgeWeightAttrNames()) {
+      if (!Double.isNaN(getEdgeWeight(edge, attr))) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }

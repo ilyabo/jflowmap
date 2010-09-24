@@ -25,10 +25,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -322,22 +320,39 @@ public class FlowtimapsView extends AbstractCanvasView {
     }
   }
 
+  private List<Edge> getTopEdges(Iterable<Edge> edges) {
+    List<Edge> list = Lists.newArrayList(edges);
+
+    // Sort by magnitude
+    Collections.sort(list, RowOrderings.MAX_MAGNITUDE_IN_ROW.getComparator(flowMapGraph));
+
+    // Take first maxVisibleTuples
+    if (maxVisibleTuples >= 0) {
+      if (list.size() > maxVisibleTuples) {
+        list = list.subList(0, maxVisibleTuples);
+      }
+    }
+    return list;
+  }
+
+  private Iterable<Edge> removeEdgesWithNaNs(Iterable<Edge> edges) {
+    return // Remove rows with no weights
+    Iterables.filter(edges, new Predicate<Edge>() {
+      @Override
+      public boolean apply(Edge e) {
+        return flowMapGraph.hasNonZeroWeight(e);
+      }
+    });
+  }
+
   private List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
-      List<Edge> edges = new ArrayList<Edge>(flowMapGraph.getGraph().getEdgeCount());
-      Predicate<Edge> filter = getEdgePredicate();
-      for (Edge edge : flowMapGraph.edges()) {
-        if (filter.apply(edge)) {
-          edges.add(edge);
-        }
-      }
-      Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
+      List<Edge> edges = Lists.newArrayList(
+          Iterables.filter(
+              getTopEdges(removeEdgesWithNaNs(flowMapGraph.edges())),
+              getEdgePredicate()));
 
-      if (maxVisibleTuples >= 0) {
-        if (edges.size() > maxVisibleTuples) {
-          edges = edges.subList(0, maxVisibleTuples);
-        }
-      }
+      Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
 
       visibleEdges = edges;
 
@@ -346,7 +361,6 @@ public class FlowtimapsView extends AbstractCanvasView {
 
     return visibleEdges;
   }
-
 
   public void setUseWeightDifferences(boolean value) {
     if (useWeightDifferences != value) {
@@ -1034,81 +1048,6 @@ public class FlowtimapsView extends AbstractCanvasView {
     PNodes.alignNodeInBounds_bySetBounds(camera, globalViewBounds,
         halign, valign, hsizeProportion, vsizeProportion);
     camera.setViewBounds(viewBounds);
-  }
-
-  enum RowOrderings {
-    MAX_MAGNITUDE_IN_ROW("max magnitude in row") {
-      @Override
-      public Comparator<Edge> getComparator(FlowMapGraph fmg) {
-        return Collections.reverseOrder(fmg.createMaxWeightComparator());
-      }
-    },
-    SRC_TARGET_NAMES("src,target node names") {
-      @Override
-      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
-        return new Comparator<Edge>() {
-          @Override
-          public int compare(Edge e1, Edge e2) {
-            int c = fmg.getNodeLabel(e1.getSourceNode()).compareTo(fmg.getNodeLabel(e2.getSourceNode()));
-            if (c == 0) {
-              c = fmg.getNodeLabel(e1.getTargetNode()).compareTo(fmg.getNodeLabel(e2.getTargetNode()));
-            }
-            return c;
-          }
-        };
-      }
-    },
-    SRC_NODE_VERTICAL_POS("src,target node vertical pos") {
-      @Override
-      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
-        return new Comparator<Edge>() {
-          @Override
-          public int compare(Edge e1, Edge e2) {
-            String yattr = fmg.getAttrSpec().getYNodeAttr();
-            if (e1.getSourceNode() != e2.getSourceNode()) {
-              return -(int)Math.signum(
-                  e1.getSourceNode().getDouble(yattr) - e2.getSourceNode().getDouble(yattr));
-            } else {
-              return -(int)Math.signum(
-                  e1.getTargetNode().getDouble(yattr) - e2.getTargetNode().getDouble(yattr));
-            }
-          }
-        };
-      }
-    },
-    TARGET_NODE_VERTICAL_POS("target,src node vertical pos") {
-      @Override
-      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
-        return new Comparator<Edge>() {
-          @Override
-          public int compare(Edge e1, Edge e2) {
-            String yattr = fmg.getAttrSpec().getYNodeAttr();
-            if (e1.getTargetNode() != e2.getTargetNode()) {
-              return -(int)Math.signum(
-                  e1.getTargetNode().getDouble(yattr) - e2.getTargetNode().getDouble(yattr));
-            } else {
-              return -(int)Math.signum(
-                  e1.getSourceNode().getDouble(yattr) - e2.getSourceNode().getDouble(yattr));
-            }
-          }
-        };
-      }
-    };
-//    EUCLIDEAN_DIST_FROM_MAX("Euclidean distance from max");
-
-    private final String description;
-
-    private RowOrderings(String description) {
-      this.description = description;
-    }
-
-    @Override
-    public String toString() {
-      return description;
-    }
-
-    public abstract Comparator<Edge> getComparator(FlowMapGraph fmg);
-
   }
 
   public void setRowOrder(RowOrderings rowOrder) {
