@@ -104,8 +104,8 @@ public class FlowtimapsView extends AbstractCanvasView {
 
   public static Logger logger = Logger.getLogger(FlowtimapsView.class);
 
-  static final double cellWidth = 40;
-  static final double cellHeight = 40;
+  private static final double cellWidth = 60;
+  private static final double cellHeight = 30;
   private boolean interpolateColors = true;
 
   private final FlowtimapsStyle style = new DefaultFlowtimapsStyle();
@@ -120,7 +120,7 @@ public class FlowtimapsView extends AbstractCanvasView {
   private ColorSchemes sequentialColorScheme = ColorSchemes.OrRd;
   private ColorSchemes divergingColorScheme = ColorSchemes.RdBu5;
 
-  private final PInputEventListener tooltipListener = createTooltipListener(DTCell.class);
+  private final PInputEventListener tooltipListener = createTooltipListener(HeatMapCell.class);
   private final PInputEventListener highlightListener = createFlowLineHighlightListener();
 //  private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
@@ -887,7 +887,8 @@ public class FlowtimapsView extends AbstractCanvasView {
       for (String weightAttr : flowMapGraph.getEdgeWeightAttrNames()) {
         double x = col * cellWidth;
 
-        DTCell cell = new DTCell(this, x, y, weightAttr, flowMapGraph, edge);
+        HeatMapCell cell = new HeatMapCell(this, x, y, cellWidth, cellHeight,
+            weightAttr, flowMapGraph, edge);
 
         cell.addInputEventListener(highlightListener);
 //        if (!Double.isNaN(cell.getWeight())) {
@@ -937,18 +938,18 @@ public class FlowtimapsView extends AbstractCanvasView {
 
 
   private void updateHeatmapColors() {
-    for (DTCell cell : PNodes.childrenOfType(heatmapNode, DTCell.class)) {
+    for (HeatMapCell cell : PNodes.childrenOfType(heatmapNode, HeatMapCell.class)) {
       cell.updateColor();
     }
     getVisualCanvas().repaint();
   }
 
 
-  private PTypedBasicInputEventHandler<DTCell> createFlowLineHighlightListener() {
-    return new PTypedBasicInputEventHandler<DTCell>(DTCell.class) {
+  private PTypedBasicInputEventHandler<HeatMapCell> createFlowLineHighlightListener() {
+    return new PTypedBasicInputEventHandler<HeatMapCell>(HeatMapCell.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        DTCell node = node(event);
+        HeatMapCell node = node(event);
 //        updateMapColors(node.getFlowMapGraph());
         node.moveToFront();
         node.setStroke(style.getSelectedTimelineCellStroke());
@@ -963,7 +964,7 @@ public class FlowtimapsView extends AbstractCanvasView {
       @Override
       public void mouseExited(PInputEvent event) {
 //        updateMapColors(null);
-        DTCell node = node(event);
+        HeatMapCell node = node(event);
         node.setStroke(style.getTimelineCellStroke());
         node.setStrokePaint(style.getTimelineCellStrokeColor());
         Pair<FlowtiLine, FlowtiLine> lines = lines(event);
@@ -989,17 +990,17 @@ public class FlowtimapsView extends AbstractCanvasView {
 
   @Override
   protected String getTooltipHeaderFor(PNode node) {
-    return ((DTCell)node).getTooltipHeader();
+    return ((HeatMapCell)node).getTooltipHeader();
   }
 
   @Override
   protected String getTooltipLabelsFor(PNode node) {
-    return ((DTCell)node).getTooltipLabels();
+    return ((HeatMapCell)node).getTooltipLabels();
   }
 
   @Override
   protected String getTooltipValuesFor(PNode node) {
-    return ((DTCell)node).getTooltipValues();
+    return ((HeatMapCell)node).getTooltipValues();
   }
 
   @Override

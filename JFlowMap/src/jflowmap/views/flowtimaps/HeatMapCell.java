@@ -29,16 +29,16 @@ import edu.umd.cs.piccolo.nodes.PPath;
 /**
  * @author Ilya Boyandin
  */
-class DTCell extends PPath {
+class HeatMapCell extends PPath {
 
   private final FlowtimapsView duoTimeline;
   private final String weightAttr;
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public DTCell(FlowtimapsView duoTimeline, double x, double y, String weightAttr,
-      FlowMapGraph fmg, Edge edge) {
-    super(new Rectangle2D.Double(x, y, FlowtimapsView.cellWidth, FlowtimapsView.cellHeight), null);
+  public HeatMapCell(FlowtimapsView duoTimeline, double x, double y,
+      double cellWidth, double cellHeight, String weightAttr, FlowMapGraph fmg, Edge edge) {
+    super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
     this.duoTimeline = duoTimeline;
     this.flowMapGraph = fmg;
     this.weightAttr = weightAttr;
