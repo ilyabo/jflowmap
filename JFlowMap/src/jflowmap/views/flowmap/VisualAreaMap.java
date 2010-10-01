@@ -63,4 +63,10 @@ public class VisualAreaMap extends PNode {
     }
   }
 
+  public VisualArea getVisualAreaBy(String id) {
+    for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+      if (id.equals(va.getArea().getId())) return va;
+    }
+    return null;
+  }
 }

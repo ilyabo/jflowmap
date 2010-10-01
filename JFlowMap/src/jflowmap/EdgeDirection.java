@@ -18,9 +18,24 @@
 
 package jflowmap;
 
+import prefuse.data.Node;
+
 /**
  * @author Ilya Boyandin
  */
 public enum EdgeDirection {
-  INCOMING, OUTGOING;
+  INCOMING {
+    @Override
+    public int getDegree(Node node) {
+      return node.getInDegree();
+    }
+  },
+  OUTGOING {
+    @Override
+    public int getDegree(Node node) {
+      return node.getOutDegree();
+    }
+  };
+
+  public abstract int getDegree(Node node);
 }

@@ -43,6 +43,7 @@ import prefuse.data.Node;
 import prefuse.data.Table;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
@@ -73,7 +74,7 @@ public class FlowMapGraph {
   private final FlowMapAttrSpec attrSpec;
   private final FlowMapStats stats;
 
-  private final List<String> matchingEdgeWeightAttrNames;
+  private final List<String> edgeWeightAttrNames;
 
 
   public FlowMapGraph(Graph graph, FlowMapAttrSpec attrSpec) {
@@ -90,7 +91,10 @@ public class FlowMapGraph {
     attrSpec.checkValidityFor(graph);
     this.graph = graph;
     this.attrSpec = attrSpec;
-    this.matchingEdgeWeightAttrNames = attrSpec.getEdgeWeightAttrs();
+    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrs());
+    Collections.sort(weightAttrs);
+    this.edgeWeightAttrNames = weightAttrs;
+    logger.info("Creating a FlowMapGraph with edge weight attrs: " + edgeWeightAttrNames);
     if (stats == null) {
       stats = FlowMapStats.createFor(this);
       logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
@@ -109,6 +113,15 @@ public class FlowMapGraph {
         return getGraph().nodes();
       }
     };
+  }
+
+  public Iterable<Node> nodesHavingEdges(final EdgeDirection dir) {
+    return Iterables.filter(nodes(), new Predicate<Node>() {
+      @Override
+      public boolean apply(Node node) {
+        return dir.getDegree(node) > 0;
+      }
+    });
   }
 
   /**
@@ -162,15 +175,15 @@ public class FlowMapGraph {
   }
 
   public int getEdgeWeightAttrsCount() {
-    return matchingEdgeWeightAttrNames.size();
+    return edgeWeightAttrNames.size();
   }
 
   public List<String> getEdgeWeightAttrNames() {
-    return matchingEdgeWeightAttrNames;
+    return edgeWeightAttrNames;
   }
 
   public List<String> getEdgeWeightDiffAttrNames() {
-    return ImmutableList.copyOf(Iterables.transform(matchingEdgeWeightAttrNames,
+    return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrNames,
         new Function<String, String>() {
           public String apply(String weightAttr) {
             return getEdgeWeightDiffAttr(weightAttr);

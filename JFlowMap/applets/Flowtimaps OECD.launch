@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.javaApplet">
+<stringAttribute key="bad_container_name" value="\JFlowMap\launch"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/JFlowMap/src/jflowmap/FlowtimapsApplet.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
+<stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
+<mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="areaMapSrc" value="data/refugees/countries-areas-ll.xml.gz"/>
+<mapEntry key="labelAttr" value="name"/>
+<mapEntry key="maxVisibleTuples" value="500"/>
+<mapEntry key="src" value="data/oecd-migrations/oecd-migrations.xml.gz"/>
+<mapEntry key="weightAttr" value="B11:TOT:[0-9]{4}"/>
+<mapEntry key="xNodeAttr" value="lon"/>
+<mapEntry key="yNodeAttr" value="lat"/>
+</mapAttribute>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1900"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowtimapsApplet"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx256M"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:JFlowMap}"/>
+</launchConfiguration>

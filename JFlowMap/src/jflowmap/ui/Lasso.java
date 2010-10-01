@@ -66,7 +66,8 @@ public class Lasso extends PBasicInputEventHandler {
 
   @Override
   public void mouseReleased(PInputEvent event) {
-    if (inTarget(event)) {
+    if ((isSelecting()  ||  event.isControlDown()) // to support "clear selection"
+        &&  inTarget(event)) {
       stop(event);
     }
   }

@@ -21,7 +21,7 @@ package jflowmap.views.flowtimaps;
 import java.awt.Color;
 import java.awt.Stroke;
 
-import jflowmap.EdgeDirection;
+import jflowmap.NodeEdgePos;
 
 /**
  * @author Ilya Boyandin
@@ -54,7 +54,7 @@ public interface FlowtimapsStyle {
 
   Color getMapAreaSelectedCentroidPaint();
 
-  Color getLassoStrokePaint(EdgeDirection dir);
+  Color getLassoStrokePaint(NodeEdgePos s);
 
   Color getMapAreaHighlightedStrokePaint();
 
@@ -67,5 +67,7 @@ public interface FlowtimapsStyle {
   Color getMapAreaSelectedCentroidLabelPaint();
 
   Color getMapAreaCentroidLabelPaint();
+
+  Color getMapAreaHasNoFlowsColor();
 
 }

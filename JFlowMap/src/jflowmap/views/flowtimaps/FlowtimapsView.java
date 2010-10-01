@@ -40,6 +40,7 @@ import jflowmap.ColorSchemes;
 import jflowmap.EdgeDirection;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
+import jflowmap.NodeEdgePos;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjections;
@@ -58,9 +59,9 @@ import jflowmap.views.flowmap.VisualAreaMap;
 import org.apache.log4j.Logger;
 
 import prefuse.data.Edge;
-import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.util.ColorLib;
+import at.fhj.utils.misc.StringUtils;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -127,7 +128,8 @@ public class FlowtimapsView extends AbstractCanvasView {
   private final PNode heatmapNode;
   private final PNode mapToMatrixLinesLayer;
 
-  private Map<String, Pair<Centroid, Centroid>> nodeIdsToCentroids;
+  private Map<String, Centroid> srcNodeIdsToCentroids;
+  private Map<String, Centroid> targetNodeIdsToCentroids;
   private Map<Edge, Pair<FlowtiLine, FlowtiLine>> edgesToLines;
   private Map<Edge, Pair<PText, PText>> edgesToLabels;
 
@@ -147,6 +149,8 @@ public class FlowtimapsView extends AbstractCanvasView {
   private HashMap<String, Color> flowLinesPalette;
 
   private boolean showLinesForHighligtedOnly = false;
+
+  private List<String> selSrcNodes, selTargetNodes;
 
   public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -421,30 +425,61 @@ public class FlowtimapsView extends AbstractCanvasView {
     }
   };
 
-
   private void createAreaCentroids() {
-    nodeIdsToCentroids = Maps.newHashMap();
+    srcNodeIdsToCentroids = Maps.newHashMap();
+    createAreaCentroids(NodeEdgePos.SOURCE);
 
-    Graph g = flowMapGraph.getGraph();
+    targetNodeIdsToCentroids = Maps.newHashMap();
+    createAreaCentroids(NodeEdgePos.TARGET);
+  }
 
-    for (int i = 0, count = g.getNodeCount(); i < count; i++) {
-      Node node = g.getNode(i);
-
+  private void createAreaCentroids(NodeEdgePos s) {
+    for (Node node : flowMapGraph.nodesHavingEdges(s.dir())) {
       double lon = node.getDouble(flowMapGraph.getXNodeAttr());
       double lat = node.getDouble(flowMapGraph.getYNodeAttr());
 
-      Point2D fp = sourceVisualAreaMap.getMapProjection().project(lon, lat);
-      Point2D tp = targetVisualAreaMap.getMapProjection().project(lon, lat);
+      Point2D fp = getVisualAreaMap(s).getMapProjection().project(lon, lat);
 
       String nodeLabel = flowMapGraph.getNodeLabel(node);
       Centroid fromPoint = createCentroidDot(fp.getX(), fp.getY(), nodeLabel);
-      Centroid toPoint = createCentroidDot(tp.getX(), tp.getY(), nodeLabel);
 
-      sourcesCamera.addChild(fromPoint);
-      targetsCamera.addChild(toPoint);
+      getVisualAreaMapCamera(s).addChild(fromPoint);
+//      VisualArea va = getVisualAreaMap(s).getVisualAreaBy(flowMapGraph.getNodeId(node));
 
-      nodeIdsToCentroids.put(flowMapGraph.getNodeId(node), Pair.of(fromPoint, toPoint));
+      getNodeIdsToCentroids(s).put(flowMapGraph.getNodeId(node), fromPoint);
     }
+  }
+
+  private PCamera getVisualAreaMapCamera(NodeEdgePos s) {
+    switch (s) {
+    case SOURCE: return sourcesCamera;
+    case TARGET: return targetsCamera;
+    }
+    throw new AssertionError();
+  }
+
+  private VisualAreaMap getVisualAreaMap(NodeEdgePos s) {
+    switch (s) {
+    case SOURCE: return sourceVisualAreaMap;
+    case TARGET: return targetVisualAreaMap;
+    }
+    throw new AssertionError();
+  }
+
+  private List<String> getSelectedNodes(NodeEdgePos s) {
+    switch (s) {
+    case SOURCE: return selSrcNodes;
+    case TARGET: return selTargetNodes;
+    }
+    throw new AssertionError();
+  }
+
+  private Map<String, Centroid> getNodeIdsToCentroids(NodeEdgePos s) {
+    switch (s) {
+    case SOURCE: return srcNodeIdsToCentroids;
+    case TARGET: return targetNodeIdsToCentroids;
+    }
+    throw new AssertionError();
   }
 
   private Centroid createCentroidDot(double x, double y, String nodeLabel) {
@@ -530,22 +565,17 @@ public class FlowtimapsView extends AbstractCanvasView {
   }
 
   private void updateCentroids() {
-    int maxRectNum = nodeIdsToCentroids.size();
-    RectSet occupiedInSrc = new RectSet(maxRectNum);
-    RectSet occupiedInTarget = new RectSet(maxRectNum);
-    for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
-      Pair<Centroid, Centroid> pair = e.getValue();
-      Centroid cl = pair.first();
-      Centroid cr = pair.second();
+    updateCentroids(NodeEdgePos.SOURCE);
+    updateCentroids(NodeEdgePos.TARGET);
+  }
 
-      cl.updateInCamera(sourcesCamera);
-      if (cl.getVisible()) {
-        cl.getLabelNode().setVisible(occupiedInSrc.addIfNotIntersects(cl.getLabelNode().getBounds()));
-      }
-
-      cr.updateInCamera(targetsCamera);
-      if (cr.getVisible()) {
-        cr.getLabelNode().setVisible(occupiedInTarget.addIfNotIntersects(cr.getLabelNode().getBounds()));
+  private void updateCentroids(NodeEdgePos s) {
+    Map<String, Centroid> centroidsMap = getNodeIdsToCentroids(s);
+    RectSet occupied = new RectSet(centroidsMap.size());
+    for (Centroid c : centroidsMap.values()) {
+      c.updateInCamera(getVisualAreaMapCamera(s));
+      if (c.getVisible()) {
+        c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getLabelNode().getBounds()));
       }
     }
   }
@@ -560,6 +590,11 @@ public class FlowtimapsView extends AbstractCanvasView {
 //    }
 //  }
 
+  private Point2D getCentroidPoint(Edge edge, NodeEdgePos s) {
+    Centroid centroid = getNodeIdsToCentroids(s).get(flowMapGraph.getNodeId(s.nodeOf(edge)));
+    Point2D point = centroid.getPoint();
+    return point;
+  }
 
   private void updateFlowLinePositions() {
     if (showLinesForHighligtedOnly) {
@@ -571,51 +606,53 @@ public class FlowtimapsView extends AbstractCanvasView {
       Pair<FlowtiLine, FlowtiLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = edgesToLabels.get(edge);
 
-      Centroid srcMapCentroid = nodeIdsToCentroids.get(
-          flowMapGraph.getNodeId(edge.getSourceNode())).first();
-      Point2D srcCentroidPoint = srcMapCentroid.getPoint();
-      boolean inVis = sourcesCamera.getViewBounds().contains(srcCentroidPoint);
-      sourcesCamera.viewToLocal(srcCentroidPoint);
+      Point2D srcCentroidPoint = getCentroidPoint(edge, NodeEdgePos.SOURCE);
+      Point2D targetCentroidPoint = getCentroidPoint(edge, NodeEdgePos.TARGET);
 
 
-      Centroid targetMapCentroid = nodeIdsToCentroids.get(
-          flowMapGraph.getNodeId(edge.getTargetNode())).second();
-      Point2D targetMapCentroidPoint = targetMapCentroid.getPoint();
-      boolean outVis = targetsCamera.getViewBounds().contains(targetMapCentroidPoint);
-      targetsCamera.viewToLocal(targetMapCentroidPoint);
-
-
-
-      Point2D.Double matrixIn = getMatrixInPoint(row);
-      inVis = inVis && heatMapViewBounds.contains(matrixIn);
-      heatmapCamera.viewToLocal(matrixIn);
       FlowtiLine lineIn = lines.first();
+      boolean inVis = sourcesCamera.getViewBounds().contains(srcCentroidPoint);
+      if (inVis) {
+        Point2D.Double matrixIn = getMatrixInPoint(row);
+        inVis = inVis && heatMapViewBounds.contains(matrixIn);
+        if (inVis) {
+          sourcesCamera.viewToLocal(srcCentroidPoint);
+          heatmapCamera.viewToLocal(matrixIn);
+          lineIn.setPoint(0, srcCentroidPoint.getX(), srcCentroidPoint.getY());
+          Rectangle2D fromLabelBounds = heatmapCamera.viewToLocal(labels.first().getBounds());
+          lineIn.setPoint(1, matrixIn.x - fromLabelBounds.getWidth(), matrixIn.y +
+              fromLabelBounds.getHeight()/2);
+          lineIn.setPoint(2, matrixIn.x, matrixIn.y + fromLabelBounds.getHeight()/2);
+        }
+      }
       lineIn.setVisible(inVis);
       lineIn.setPickable(false);
-      lineIn.setPoint(0, srcCentroidPoint.getX(), srcCentroidPoint.getY());
-      Rectangle2D fromLabelBounds = heatmapCamera.viewToLocal(labels.first().getBounds());
-      lineIn.setPoint(1, matrixIn.x - fromLabelBounds.getWidth(), matrixIn.y +
-          fromLabelBounds.getHeight()/2);
-      lineIn.setPoint(2, matrixIn.x, matrixIn.y + fromLabelBounds.getHeight()/2);
 
 
-      Point2D.Double matrixOut = getMatrixOutPoint(row);
-      outVis = outVis && heatMapViewBounds.contains(matrixOut);
-      heatmapCamera.viewToLocal(matrixOut);
       FlowtiLine lineOut = lines.second();
+      boolean outVis = targetsCamera.getViewBounds().contains(targetCentroidPoint);
+      if (outVis) {
+        Point2D.Double matrixOut = getMatrixOutPoint(row);
+        outVis = outVis && heatMapViewBounds.contains(matrixOut);
+        if (outVis) {
+          targetsCamera.viewToLocal(targetCentroidPoint);
+          heatmapCamera.viewToLocal(matrixOut);
+          lineOut.setPoint(0, targetCentroidPoint.getX(), targetCentroidPoint.getY());
+          Rectangle2D toLabelBounds = heatmapCamera.viewToLocal(labels.second().getBounds());
+          lineOut.setPoint(1, matrixOut.x + toLabelBounds.getWidth(), matrixOut.y +
+              toLabelBounds.getHeight()/2);
+          lineOut.setPoint(2, matrixOut.x, matrixOut.y + toLabelBounds.getHeight()/2);
+        }
+      }
       lineOut.setVisible(outVis);
       lineOut.setPickable(false);
-      lineOut.setPoint(0, targetMapCentroidPoint.getX(), targetMapCentroidPoint.getY());
-      Rectangle2D toLabelBounds = heatmapCamera.viewToLocal(labels.second().getBounds());
-      lineOut.setPoint(1, matrixOut.x + toLabelBounds.getWidth(), matrixOut.y +
-          toLabelBounds.getHeight()/2);
-      lineOut.setPoint(2, matrixOut.x, matrixOut.y + toLabelBounds.getHeight()/2);
 
       row++;
     }
 
     mapToMatrixLinesLayer.repaint();
   }
+
 
   private Point2D.Double getMatrixInPoint(int row) {
     return new Point2D.Double(-10, getTupleY(row) + cellHeight/2);
@@ -627,19 +664,13 @@ public class FlowtimapsView extends AbstractCanvasView {
   }
 
   /**
-   * @returns null if no nodes were selected by lasso
+   * @returns List of ids of selected nodes, or null if no nodes were selected
    */
-  private List<String> lassoNodeCentroids(Shape shape, EdgeDirection dir) {
+  private List<String> applyLassoToNodeCentroids(Shape shape, NodeEdgePos s) {
     List<String> nodeIds = null;
-    for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
-      Pair<Centroid, Centroid> pair = e.getValue();
-      Centroid centroid = (dir == EdgeDirection.OUTGOING ? pair.first() : pair.second());
-
-//      PCamera cam = (dir == EdgeDirection.OUTGOING ? sourcesCamera : targetsCamera);
-      Point2D centroidPoint = centroid.getPoint();
-//      cam.viewToLocal(centroidPoint);
-
-      if (shape.contains(centroidPoint)) {
+    for (Map.Entry<String, Centroid> e : getNodeIdsToCentroids(s).entrySet()) {
+      Centroid centroid = e.getValue();
+      if (shape.contains(centroid.getPoint())) {
         if (nodeIds == null) {
           nodeIds = Lists.newArrayList();
         }
@@ -650,17 +681,19 @@ public class FlowtimapsView extends AbstractCanvasView {
   }
 
   private void updateCentroidColors() {
-    for (Map.Entry<String, Pair<Centroid, Centroid>> e : nodeIdsToCentroids.entrySet()) {
-      String nodeId = e.getKey();
-
-      Centroid srcCentroid = e.getValue().first();
-      srcCentroid.setSelected(selSrcNodes != null  &&  selSrcNodes.contains(nodeId));
-
-      Centroid targetCentroid = e.getValue().second();
-      targetCentroid.setSelected(selTargetNodes != null  &&  selTargetNodes.contains(nodeId));
-    }
+    updateCentroidColors(NodeEdgePos.SOURCE);
+    updateCentroidColors(NodeEdgePos.TARGET);
   }
 
+  private void updateCentroidColors(NodeEdgePos s) {
+    List<String> selNodes = getSelectedNodes(s);
+    for (Map.Entry<String, Centroid> e : getNodeIdsToCentroids(s).entrySet()) {
+      String nodeId = e.getKey();
+      Centroid centroid = e.getValue();
+      centroid.setSelected(selNodes != null  &&  selNodes.contains(nodeId));
+    }
+
+  }
 //  private void setSelectedNodes(List<String> nodes, EdgeDirection dir) {
 //    switch (dir) {
 //    case INCOMING:
@@ -675,8 +708,6 @@ public class FlowtimapsView extends AbstractCanvasView {
 //    createAreaCentroids()
 //  }
 
-
-  private List<String> selSrcNodes, selTargetNodes;
 
   private void createAreaMaps(AreaMap areaMap) {
     sourceVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
@@ -698,17 +729,17 @@ public class FlowtimapsView extends AbstractCanvasView {
     createAreaCentroids();
 
     sourceVisualAreaMap.setBounds(sourceVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
-    sourcesCamera.addInputEventListener(createLasso(sourcesCamera, EdgeDirection.OUTGOING));
+    sourcesCamera.addInputEventListener(createLasso(sourcesCamera, NodeEdgePos.SOURCE));
 
     targetVisualAreaMap.setBounds(targetVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
-    targetsCamera.addInputEventListener(createLasso(targetsCamera, EdgeDirection.INCOMING));
+    targetsCamera.addInputEventListener(createLasso(targetsCamera, NodeEdgePos.TARGET));
   }
 
-  private Lasso createLasso(PCamera targetCamera, final EdgeDirection dir) {
-    return new Lasso(targetCamera, style.getLassoStrokePaint(dir)) {
+  private Lasso createLasso(PCamera targetCamera, final NodeEdgePos s) {
+    return new Lasso(targetCamera, style.getLassoStrokePaint(s)) {
       @Override
       public void selectionMade(Shape shape) {
-        setSelectedNodes(lassoNodeCentroids(shape, dir), dir);
+        setSelectedNodes(applyLassoToNodeCentroids(shape, s), s);
         updateVisibleEdges();
         updateCentroidColors();
       }
@@ -716,10 +747,10 @@ public class FlowtimapsView extends AbstractCanvasView {
   }
 
 
-  private void setSelectedNodes(List<String> nodeIds, EdgeDirection dir) {
-    switch (dir) {
-      case OUTGOING: selSrcNodes = nodeIds; break;
-      case INCOMING: selTargetNodes = nodeIds; break;
+  private void setSelectedNodes(List<String> nodeIds, NodeEdgePos s) {
+    switch (s) {
+      case SOURCE: selSrcNodes = nodeIds; break;
+      case TARGET: selTargetNodes = nodeIds; break;
       default: throw new AssertionError();
     }
   }
@@ -915,17 +946,20 @@ public class FlowtimapsView extends AbstractCanvasView {
 
 //    heatmapCamera.setViewBounds(heatmapNode.getFullBounds());
 
-    createYearMarks();
+    createColumnLabels();
     renewFlowLines();
 
 
 //    layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight * row)));
   }
 
-  private void createYearMarks() {
-    // Year marks
+  private void createColumnLabels() {
+
+    List<String> attrNames = flowMapGraph.getEdgeWeightAttrNames();
+    String cp = StringUtils.getCommonPrefix(attrNames.toArray(new String[attrNames.size()]));
     int col = 0;
-    for (String attr : flowMapGraph.getEdgeWeightAttrNames()) {
+    for (String attr : attrNames) {
+      attr = attr.substring(cp.length());
       PText graphIdMark = new PText(attr);
       graphIdMark.setFont(GRAPH_ID_MARK_FONT);
       graphIdMark.setX(col * cellWidth +

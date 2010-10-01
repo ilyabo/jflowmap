@@ -1,5 +1,7 @@
 package jflowmap;
 
+import org.apache.log4j.Logger;
+
 import prefuse.data.Graph;
 import at.fhj.utils.misc.FileUtils;
 
@@ -7,6 +9,8 @@ import at.fhj.utils.misc.FileUtils;
  * @author Ilya Boyandin
  */
 public class DatasetSpec {
+
+  private static Logger logger = Logger.getLogger(DatasetSpec.class);
 
   private final String filename;
   private final String name;
@@ -41,6 +45,7 @@ public class DatasetSpec {
   }
 
   public FlowMapAttrSpec createFlowMapAttrsSpecFor(Graph graph) {
+    logger.info("Creating FlowMapAttrsSpec with attrNamePattern: " + weightAttrNamePattern);
     return new FlowMapAttrSpec(
         FlowMapGraph.findEdgeAttrsByPattern(graph, weightAttrNamePattern),
         labelNodeAttr, xNodeAttr,  yNodeAttr);

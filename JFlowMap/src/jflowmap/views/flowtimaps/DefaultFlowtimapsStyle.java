@@ -22,7 +22,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
 
-import jflowmap.EdgeDirection;
+import jflowmap.NodeEdgePos;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
@@ -170,11 +170,11 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
   private static final Color LASSO_TARGETS_STROKE_PAINT = new Color(0, 0, 200, 150);
 
   @Override
-  public Color getLassoStrokePaint(EdgeDirection dir) {
-    switch (dir) {
-    case OUTGOING:
+  public Color getLassoStrokePaint(NodeEdgePos s) {
+    switch (s) {
+    case SOURCE:
       return LASSO_SOURCES_STROKE_PAINT;
-    case INCOMING:
+    case TARGET:
       return LASSO_TARGETS_STROKE_PAINT;
     default:
       throw new AssertionError();
@@ -217,4 +217,8 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
     return MAP_AREA_SELECTED_CENTROID_LABEL_PAINT;
   }
 
+  @Override
+  public Color getMapAreaHasNoFlowsColor() {
+    return null;
+  }
 }
