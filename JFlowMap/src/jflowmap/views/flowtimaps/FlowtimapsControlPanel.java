@@ -22,6 +22,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -176,15 +178,15 @@ public class FlowtimapsControlPanel extends JPanel {
     srcField.getDocument().addDocumentListener(docListener);
     targetField.getDocument().addDocumentListener(docListener);
 
-
-//    duoTimelineView.addPropertyChangeListener(DuoTimelineView.Properties.EDGE_FILTER,
-//        new PropertyChangeListener() {
-//          @Override
-//          public void propertyChange(PropertyChangeEvent evt) {
-//            srcField.setText("");
-//            targetField.setText("");
-//          }
-//        });
+    flowtimapsView.addPropertyChangeListener(FlowtimapsView.Properties.NODE_SELECTION,
+        new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        flowtimapsView.setCustomEdgeFilter(null);
+        srcField.setText("");
+        targetField.setText("");
+      }
+    });
 
     JButton clearBut = new JButton("Clear");
     panel.add(clearBut, "gapleft 5");
