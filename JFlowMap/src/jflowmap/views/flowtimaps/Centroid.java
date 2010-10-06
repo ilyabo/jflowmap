@@ -14,7 +14,7 @@ import edu.umd.cs.piccolo.nodes.PText;
  * @author Ilya Boyandin
  */
 class Centroid extends PPath {
-  private final static Font LABEL_FONT = new Font("Arial", Font.PLAIN, 8);
+  private final static Font LABEL_FONT = new Font("Arial", Font.PLAIN, 9);
   private final Point2D point;
   private final double size;
   private final PText labelNode;

@@ -46,6 +46,7 @@ import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.Lasso;
+import jflowmap.util.CollectionUtils;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
@@ -100,13 +101,13 @@ public class FlowtimapsView extends AbstractCanvasView {
     SOURCE
   }
 
-  private static final Font NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
+  private static final Font HEATMAP_NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
   private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 15);
 
   public static Logger logger = Logger.getLogger(FlowtimapsView.class);
 
-  private static final double cellWidth = 60;
-  private static final double cellHeight = 30;
+  private static final double cellWidth = 40;
+  private static final double cellHeight = 40;
   private boolean interpolateColors = true;
 
   private final FlowtimapsStyle style = new DefaultFlowtimapsStyle();
@@ -425,16 +426,20 @@ public class FlowtimapsView extends AbstractCanvasView {
     }
   };
 
-  private void createAreaCentroids() {
-    srcNodeIdsToCentroids = Maps.newHashMap();
-    createAreaCentroids(NodeEdgePos.SOURCE);
-
-    targetNodeIdsToCentroids = Maps.newHashMap();
-    createAreaCentroids(NodeEdgePos.TARGET);
+  private void createCentroids() {
+    srcNodeIdsToCentroids = createCentroids(NodeEdgePos.SOURCE);
+    targetNodeIdsToCentroids = createCentroids(NodeEdgePos.TARGET);
   }
 
-  private void createAreaCentroids(NodeEdgePos s) {
-    for (Node node : flowMapGraph.nodesHavingEdges(s.dir())) {
+  private Map<String, Centroid> createCentroids(NodeEdgePos s) {
+    Map<String, Centroid> map = Maps.newLinkedHashMap();
+
+    Iterable<Node> nodes = CollectionUtils.sort(
+        flowMapGraph.nodesHavingEdges(s.dir()),
+        Collections.reverseOrder(
+            FlowMapSummaries.createMaxNodeWeightSummariesComparator(flowMapGraph, s.dir())));
+
+    for (Node node : nodes) {
       double lon = node.getDouble(flowMapGraph.getXNodeAttr());
       double lat = node.getDouble(flowMapGraph.getYNodeAttr());
 
@@ -446,8 +451,9 @@ public class FlowtimapsView extends AbstractCanvasView {
       getVisualAreaMapCamera(s).addChild(fromPoint);
 //      VisualArea va = getVisualAreaMap(s).getVisualAreaBy(flowMapGraph.getNodeId(node));
 
-      getNodeIdsToCentroids(s).put(flowMapGraph.getNodeId(node), fromPoint);
+      map.put(flowMapGraph.getNodeId(node), fromPoint);
     }
+    return map;
   }
 
   private PCamera getVisualAreaMapCamera(NodeEdgePos s) {
@@ -726,7 +732,7 @@ public class FlowtimapsView extends AbstractCanvasView {
 
 //    updateMapColors(null);
 
-    createAreaCentroids();
+    createCentroids();
 
     sourceVisualAreaMap.setBounds(sourceVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
     sourcesCamera.addInputEventListener(createLasso(sourcesCamera, NodeEdgePos.SOURCE));
@@ -909,7 +915,7 @@ public class FlowtimapsView extends AbstractCanvasView {
 
       // "from" label
       PText srcLabel = new PText(flowMapGraph.getNodeLabel(edge.getSourceNode()));
-      srcLabel.setFont(NODE_MARK_FONT);
+      srcLabel.setFont(HEATMAP_NODE_MARK_FONT);
       srcLabel.setX(-srcLabel.getFullBoundsReference().getWidth() - 6);
       srcLabel.setY(y + (cellHeight - srcLabel.getFullBoundsReference().getHeight())/ 2);
       heatmapNode.addChild(srcLabel);
@@ -933,7 +939,7 @@ public class FlowtimapsView extends AbstractCanvasView {
 
       // "to" label
       PText targetLabel = new PText(flowMapGraph.getNodeLabel(edge.getTargetNode()));
-      targetLabel.setFont(NODE_MARK_FONT);
+      targetLabel.setFont(HEATMAP_NODE_MARK_FONT);
       targetLabel.setX(cellWidth * maxCol + 6);
       targetLabel.setY(y + (cellHeight - targetLabel.getFullBoundsReference().getHeight())/ 2);
       heatmapNode.addChild(targetLabel);

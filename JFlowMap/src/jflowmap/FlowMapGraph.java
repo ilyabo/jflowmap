@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import jflowmap.data.AttrDataTypes;
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.GraphMLReader3;
@@ -41,6 +42,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
+import prefuse.data.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -571,12 +573,12 @@ public class FlowMapGraph {
   }
 
   /**
-   * Returns max edge weight (over all weight attrs)
+   * Returns max node/edge weight over all specified attrs
    */
-  public double getMaxEdgeWeight(Edge e) {
+  public double getMaxAttrValue(Tuple nodeOrEdge, Iterable<String> attrNames) {
     double max = Double.NaN;
-    for (String attr : getEdgeWeightAttrNames()) {
-      double v = e.getDouble(attr);
+    for (String attr : attrNames) {
+      double v = nodeOrEdge.getDouble(attr);
       if (Double.isNaN(max)  ||  v > max) {
         max = v;
       }
@@ -584,11 +586,11 @@ public class FlowMapGraph {
     return max;
   }
 
-  public double getAvgEdgeWeight(Edge e) {
+  public double getAvgAttrValue(Tuple nodeOrEdge, Iterable<String> attrNames) {
     double sum = 0;
     int cnt = 0;
-    for (String attr : getEdgeWeightAttrNames()) {
-      double v = e.getDouble(attr);
+    for (String attr : attrNames) {
+      double v = nodeOrEdge.getDouble(attr);
       if (!Double.isNaN(v)) {
         sum += v;
         cnt++;
@@ -597,20 +599,32 @@ public class FlowMapGraph {
     return (cnt == 0 ? Double.NaN : sum / cnt);
   }
 
-  public Comparator<Edge> createMaxWeightComparator() {
-    return new Comparator<Edge>() {
+  public Comparator<Node> createMaxNodeAttrValueComparator(final Iterable<String> nodeAttrs) {
+    return new Comparator<Node>() {
       @Override
-      public int compare(Edge e1, Edge e2) {
-        return MathUtils.compareDoubles_smallestIsNaN(getMaxEdgeWeight(e1), getMaxEdgeWeight(e2));
+      public int compare(Node n1, Node n2) {
+        return MathUtils.compareDoubles_smallestIsNaN(
+            getMaxAttrValue(n1, nodeAttrs), getMaxAttrValue(n2, nodeAttrs));
       }
     };
   }
 
-  public Comparator<Edge> createAvgWeightComparator() {
+  public Comparator<Edge> createMaxEdgeWeightComparator() {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {
-        return MathUtils.compareDoubles_smallestIsNaN(getAvgEdgeWeight(e1), getAvgEdgeWeight(e2));
+        return MathUtils.compareDoubles_smallestIsNaN(
+            getMaxAttrValue(e1, edgeWeightAttrNames), getMaxAttrValue(e2, edgeWeightAttrNames));
+      }
+    };
+  }
+
+  public Comparator<Edge> createAvgEdgeWeightComparator() {
+    return new Comparator<Edge>() {
+      @Override
+      public int compare(Edge e1, Edge e2) {
+        return MathUtils.compareDoubles_smallestIsNaN(
+            getAvgAttrValue(e1, getEdgeWeightAttrNames()), getAvgAttrValue(e2, getEdgeWeightAttrNames()));
       }
     };
   }
@@ -696,6 +710,19 @@ public class FlowMapGraph {
     }
 
     return false;
+  }
+
+  public Iterable<Node> sortByAttr(Iterable<Node> nodes, final String attr) {
+    List<Node> list = Lists.newArrayList(nodes);
+    final AttrDataTypes type = AttrDataTypes.getByType(graph.getNodeTable().getColumnType(attr));
+    Collections.sort(list, new Comparator<Node>() {
+      @Override
+      public int compare(Node n1, Node n2) {
+        return type.compare(n1.get(attr), n2.get(attr));
+      }
+    });
+
+    return list;
   }
 
 }

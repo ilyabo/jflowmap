@@ -153,7 +153,7 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
     return SELECTED_TIMELINE_CELL_STROKE_COLOR;
   }
 
-  private static final Color MAP_AREA_CENTROID_PAINT = new Color(100, 100, 100, 150);
+  private static final Color MAP_AREA_CENTROID_PAINT = new Color(0, 0, 200, 75);
   @Override
   public Color getMapAreaCentroidPaint() {
     return MAP_AREA_CENTROID_PAINT;
@@ -193,7 +193,7 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
     return MAP_AREA_HIGHLIGHTED_PAINT;
   }
 
-  private static final Color MAP_AREA_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 200, 200);
+  private static final Color MAP_AREA_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 200);
 
   @Override
   public Color getMapAreaCentroidLabelTextPaint() {

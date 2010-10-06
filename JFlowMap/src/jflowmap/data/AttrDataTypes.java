@@ -128,4 +128,26 @@ public enum AttrDataTypes implements ValueAggregator {
   public Object aggregate(Iterable<Object> values) {
     return null;
   }
+
+  @SuppressWarnings("unchecked")
+  public int compare(Object v1, Object v2) {
+    if (!klass.isInstance(v1)  ||  !klass.isInstance(v2)) {
+      throw new IllegalArgumentException();
+    }
+
+    if (v1 == null) {
+      if (v2 == null) {
+        return 0;
+      }
+      return -1;
+    } else if (v2 == null) {
+      return 1;
+    }
+
+    if (!klass.isAssignableFrom(Comparable.class)) {
+      throw new UnsupportedOperationException();
+    }
+
+    return ((Comparable<Object>)v1).compareTo(v2);
+  }
 }

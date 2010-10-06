@@ -19,6 +19,7 @@
 package jflowmap.util;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,6 +41,12 @@ public class CollectionUtils {
     List<T> list = Lists.newArrayList(it);
     Collections.reverse(list);
     return list.iterator();
+  }
+
+  public static <T> Iterable<T> sort(Iterable<T> items, Comparator<T> comp) {
+    List<T> list = Lists.newArrayList(items);
+    Collections.sort(list, comp);
+    return list;
   }
 
 }

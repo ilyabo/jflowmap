@@ -18,6 +18,9 @@
 
 package jflowmap.data;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import jflowmap.EdgeDirection;
@@ -29,6 +32,7 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -43,8 +47,8 @@ public class FlowMapSummaries {
   public static final String NODE_COLUMN__SUM_OUTGOING_INTRAREG = "outIntra:stat";
   public static final String NODE_COLUMN__SUM_INCOMING_INTRAREG = "inIntra:stat";
 
-  private static final String NODE_COLUMN__SUM_OUTGOING = "sumOut:stat";
-  private static final String NODE_COLUMN__SUM_INCOMING= "sumIn:stat";
+  private static final String NODE_COLUMN__SUM_OUTGOING_PREFIX = "sumOut:stat";
+  private static final String NODE_COLUMN__SUM_INCOMING_PREFIX= "sumIn:stat";
 
 
   private FlowMapSummaries() {
@@ -72,8 +76,8 @@ public class FlowMapSummaries {
 
   public static String getWeightSummaryNodeAttr(String weightAttrName, EdgeDirection dir) {
     switch (dir) {
-    case OUTGOING: return NODE_COLUMN__SUM_OUTGOING + weightAttrName;
-    case INCOMING: return NODE_COLUMN__SUM_INCOMING + weightAttrName;
+    case OUTGOING: return NODE_COLUMN__SUM_OUTGOING_PREFIX + weightAttrName;
+    case INCOMING: return NODE_COLUMN__SUM_INCOMING_PREFIX + weightAttrName;
     default: throw new IllegalArgumentException();
     }
   }
@@ -193,6 +197,24 @@ public class FlowMapSummaries {
         node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, insums.get(i));
       }
     }
+  }
+
+  public static Iterable<String> getWeightSummaryNodeAttrs(
+      Iterable<String> edgeWeightAttrNames, EdgeDirection dir) {
+    List<String> list = new ArrayList<String>(Iterables.size(edgeWeightAttrNames));
+    for (String attr : edgeWeightAttrNames) {
+      list.add(getWeightSummaryNodeAttr(attr, dir));
+    }
+    return list;
+  }
+
+  public static Comparator<Node> createMaxNodeWeightSummariesComparator(FlowMapGraph fmg,
+      EdgeDirection dir) {
+    List<String> weightAttrs = fmg.getEdgeWeightAttrNames();
+    Comparator<Node> comp = fmg.createMaxNodeAttrValueComparator(
+          getWeightSummaryNodeAttrs(weightAttrs, dir)
+    );
+    return comp;
   }
 
   /**

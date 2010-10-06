@@ -13,13 +13,13 @@ enum RowOrderings {
     MAX_MAGNITUDE_IN_ROW("max magnitude in row") {
       @Override
       public Comparator<Edge> getComparator(FlowMapGraph fmg) {
-        return Collections.reverseOrder(fmg.createMaxWeightComparator());
+        return Collections.reverseOrder(fmg.createMaxEdgeWeightComparator());
       }
     },
     AVG_MAGNITUDE_IN_ROW("avg magnitude in row") {
       @Override
       public Comparator<Edge> getComparator(FlowMapGraph fmg) {
-        return Collections.reverseOrder(fmg.createAvgWeightComparator());
+        return Collections.reverseOrder(fmg.createAvgEdgeWeightComparator());
       }
     },
     SRC_TARGET_NAMES("src,target node names") {
