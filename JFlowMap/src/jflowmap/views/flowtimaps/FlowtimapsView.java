@@ -161,16 +161,13 @@ public class FlowtimapsView extends AbstractCanvasView {
   public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
-    // flowMapGraph =
-    // new FlowMapGraphEdgeAggregator(flowMapGraph,
-    // FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
-    // .withCustomValueAggregator("lat",
-    // FlowMapGraphEdgeAggregator.ValueAggregators.DOUBLE_AVERAGE)
-    // .withCustomValueAggregator("lon",
-    // FlowMapGraphEdgeAggregator.ValueAggregators.DOUBLE_AVERAGE)
-    // .withCustomValueAggregator("name",
-    // FlowMapGraphEdgeAggregator.ValueAggregators.STRING_ONE_OR_NONE)
-    // .aggregate();
+//    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
+////        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
+//        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
+//        .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
+//        .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
+//        .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
+//        .aggregate();
 
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
@@ -751,8 +748,8 @@ public class FlowtimapsView extends AbstractCanvasView {
     return new Lasso(targetCamera, style.getLassoStrokePaint(s)) {
       @Override
       public void selectionMade(Shape shape) {
-        setSelectedNodes(applyLassoToNodeCentroids(shape, s), s);
         setCustomEdgeFilter(null);
+        setSelectedNodes(applyLassoToNodeCentroids(shape, s), s);
         updateVisibleEdges();
         updateCentroidColors();
       }

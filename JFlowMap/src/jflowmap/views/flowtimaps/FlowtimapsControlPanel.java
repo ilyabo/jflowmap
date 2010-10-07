@@ -161,7 +161,7 @@ public class FlowtimapsControlPanel extends JPanel {
     final JTextField targetField = new JTextField();
     panel.add(targetField, "growx, wmin 150");
 
-    DocumentListener docListener = new DocumentListener() {
+    final DocumentListener docListener = new DocumentListener() {
       @Override
       public void removeUpdate(DocumentEvent e) {
         doFilterBySrcDest(srcField, targetField);
@@ -182,9 +182,15 @@ public class FlowtimapsControlPanel extends JPanel {
         new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        flowtimapsView.setCustomEdgeFilter(null);
+//        flowtimapsView.setCustomEdgeFilter(null);
+        srcField.getDocument().removeDocumentListener(docListener);
+        targetField.getDocument().removeDocumentListener(docListener);
+
         srcField.setText("");
         targetField.setText("");
+
+        srcField.getDocument().addDocumentListener(docListener);
+        targetField.getDocument().addDocumentListener(docListener);
       }
     });
 
