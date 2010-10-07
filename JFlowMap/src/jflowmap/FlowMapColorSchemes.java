@@ -21,8 +21,8 @@ package jflowmap;
 import java.awt.Color;
 
 import jflowmap.views.ColorCodes;
-import jflowmap.views.IColorScheme;
 import jflowmap.views.EnumColorScheme;
+import jflowmap.views.IColorScheme;
 
 /**
  * @author Ilya Boyandin
@@ -102,7 +102,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
       .build()),
 
-
+/*
   LIGHT_BLUE(new EnumColorScheme.Builder("Light Blue")
       .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
 //    .put(ColorCodes.BACKGROUND, new Color(216, 234, 255))
@@ -147,8 +147,9 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
     .build()),
+    */
 
-    LIGHT_BLUE__COLOR_BREWER(new EnumColorScheme.Builder("Light Blue / Color Brewer")
+    LIGHT_BLUE__COLOR_BREWER(new EnumColorScheme.Builder("Light Blue")
       .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
       .put(ColorCodes.AREA_PAINT, new Color(255, 255, 255))
       .put(ColorCodes.AREA_STROKE, new Color(225, 225, 225))
@@ -189,6 +190,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
       .build()),
 
+      /*
     LIGHT_BLUE__COLOR_BREWER__PHOTOCOPYABLE(new EnumColorScheme.Builder("Light Blue / Color Brewer")
       .put(ColorCodes.BACKGROUND, new Color(196, 224, 255))
       .put(ColorCodes.AREA_PAINT, new Color(255, 255, 255))
@@ -229,6 +231,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
       .build()),
+      */
 
 
   INVERTED(new EnumColorScheme.Builder("Inverted")
