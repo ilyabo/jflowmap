@@ -93,9 +93,10 @@ public class FlowMapGraph {
     attrSpec.checkValidityFor(graph);
     this.graph = graph;
     this.attrSpec = attrSpec;
-    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrs());
-    Collections.sort(weightAttrs);
-    this.edgeWeightAttrNames = weightAttrs;
+//    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrs());
+//    Collections.sort(weightAttrs);
+
+    this.edgeWeightAttrNames = ImmutableList.copyOf(attrSpec.getEdgeWeightAttrs());
     logger.info("Creating a FlowMapGraph with edge weight attrs: " + edgeWeightAttrNames);
     if (stats == null) {
       stats = FlowMapStats.createFor(this);
