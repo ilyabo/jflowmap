@@ -70,4 +70,10 @@ public interface FlowtimapsStyle {
 
   Color getMapAreaHasNoFlowsColor();
 
+  Color getMapAreaHighlightedCentroidColor();
+
+  Color getMapAreaHighlightedCentroidLabelColor();
+
+  Color getMapAreaHighlightedCentroidLabelTextColor();
+
 }

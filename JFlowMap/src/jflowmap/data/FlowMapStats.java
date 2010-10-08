@@ -96,16 +96,25 @@ public class FlowMapStats {
   }
 
 
-  public synchronized MinMax getEdgeWeightStats() {
+  public MinMax getEdgeWeightStats() {
+    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT",
+        new Function<FlowMapGraph, List<String>>() {
+          @Override
+          public List<String> apply(FlowMapGraph fmg) {
+            return fmg.getEdgeWeightAttrNames();
+          }
+        }
+    );
+  }
+
+  private MinMax getEdgeAttrsStats(String key, final Function<FlowMapGraph, List<String>> getEdgeAttrs) {
     return getCachedOrCalc(
-        EDGE_ATTR_KEY_PREFIX + "WEIGHT",
+        key,
         new AttrStatsCalculator() {
           @Override public MinMax calc() {
             MinMax minMax = null;
             for (FlowMapGraph fmg : flowMapGraphs) {
-              MinMax mm = TupleStats.createFor(
-                  fmg.getGraph().getEdges(),
-                  fmg.getEdgeWeightAttrNames());
+              MinMax mm = TupleStats.createFor(fmg.getGraph().getEdges(), getEdgeAttrs.apply(fmg));
               if (minMax == null) {
                 minMax = mm;
               } else {
@@ -119,26 +128,29 @@ public class FlowMapStats {
   }
 
   public MinMax getEdgeWeightDiffStats() {
-    return getCachedOrCalc(
-        EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF",
-        new AttrStatsCalculator() {
+    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF",
+        new Function<FlowMapGraph, List<String>>() {
           @Override
-          public MinMax calc() {
-            MinMax minMax = null;
-            for (FlowMapGraph fmg : flowMapGraphs) {
-              MinMax mm = TupleStats.createFor(fmg.getGraph().getEdges(),
-                  fmg.getEdgeWeightDiffAttrNames()
-                  );
-              if (minMax == null) {
-                minMax = mm;
-              } else {
-                minMax = minMax.mergeWith(mm);
-              }
-            }
-            return minMax;
+          public List<String> apply(FlowMapGraph fmg) {
+            return fmg.getEdgeWeightDiffAttrNames();
           }
-        });
+        }
+    );
   }
+
+
+  public MinMax getEdgeWeightRelativeDiffStats() {
+    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF",
+        new Function<FlowMapGraph, List<String>>() {
+          @Override
+          public List<String> apply(FlowMapGraph fmg) {
+            return fmg.getEdgeWeightRelativeDiffAttrNames();
+          }
+        }
+    );
+  }
+
+
 
   public MinMax getNodeXStats() {
     return getAttrStats(Attrs.NODE_X);
@@ -251,7 +263,6 @@ public class FlowMapStats {
       ;
     };
   }
-
 
 
 }

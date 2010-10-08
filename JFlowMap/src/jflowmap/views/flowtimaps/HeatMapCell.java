@@ -31,15 +31,15 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 class HeatMapCell extends PPath {
 
-  private final FlowtimapsView duoTimeline;
+  private final FlowtimapsView view;
   private final String weightAttr;
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public HeatMapCell(FlowtimapsView duoTimeline, double x, double y,
+  public HeatMapCell(FlowtimapsView view, double x, double y,
       double cellWidth, double cellHeight, String weightAttr, FlowMapGraph fmg, Edge edge) {
     super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
-    this.duoTimeline = duoTimeline;
+    this.view = view;
     this.flowMapGraph = fmg;
     this.weightAttr = weightAttr;
     this.edge = edge;
@@ -62,8 +62,8 @@ class HeatMapCell extends PPath {
     return edge.getDouble(weightAttr);
   }
 
-  private double getWeightDiff() {
-    return edge.getDouble(flowMapGraph.getEdgeWeightDiffAttr(weightAttr));
+  private double getWeightRelativeDiff() {
+    return edge.getDouble(flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr));
   }
 
   public String getTooltipHeader() {
@@ -78,21 +78,21 @@ class HeatMapCell extends PPath {
 
   public String getTooltipLabels() {
     return weightAttr + ":" + "\n" +
-    flowMapGraph.getEdgeWeightDiffAttr(weightAttr) + ":";
+    flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr) + ":";
   }
 
   public String getTooltipValues() {
     return Double.toString(edge.getDouble(weightAttr)) + "\n"
-        + Double.toString(edge.getDouble(flowMapGraph.getEdgeWeightDiffAttr(weightAttr)));
+        + Double.toString(edge.getDouble(flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr)));
   }
 
   public void updateColor() {
     Color color;
-    if (duoTimeline.getUseWeightDifferences()) {
-      color = duoTimeline.getColorForWeight(getWeightDiff(),
-          flowMapGraph.getStats().getEdgeWeightDiffStats());
+    if (view.getUseWeightDifferences()) {
+      color = view.getColorForWeight(getWeightRelativeDiff(),
+          flowMapGraph.getStats().getEdgeWeightRelativeDiffStats());
     } else {
-      color = duoTimeline.getColorForWeight(getWeight(),
+      color = view.getColorForWeight(getWeight(),
           flowMapGraph.getStats().getEdgeWeightStats());
     }
     setPaint(color);

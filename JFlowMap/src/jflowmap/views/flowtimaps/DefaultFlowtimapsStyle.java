@@ -166,22 +166,6 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
     return MAP_AREA_SELECTED_CENTROID_PAINT;
   }
 
-  private static final Color LASSO_SOURCES_STROKE_PAINT = new Color(200, 0, 0, 150);
-  private static final Color LASSO_TARGETS_STROKE_PAINT = new Color(0, 0, 200, 150);
-
-  @Override
-  public Color getLassoStrokePaint(NodeEdgePos s) {
-    switch (s) {
-    case SOURCE:
-      return LASSO_SOURCES_STROKE_PAINT;
-    case TARGET:
-      return LASSO_TARGETS_STROKE_PAINT;
-    default:
-      throw new AssertionError();
-    }
-  }
-
-
   private static final Color MAP_AREA_HIGHLIGHTED_PAINT = new Color(255, 208, 144);
   @Override
   public Color getMapAreaHighlightedPaint() {
@@ -200,15 +184,10 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
     return MAP_AREA_CENTROID_LABEL_TEXT_PAINT;
   }
 
-  private static final Color MAP_AREA_SELECTED_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 0, 200);
-  @Override
-  public Color getMapAreaSelectedCentroidLabelTextPaint() {
-    return MAP_AREA_SELECTED_CENTROID_LABEL_TEXT_PAINT;
-  }
-
+  private static final Color MAP_AREA_CENTROID_LABEL_PAINT = new Color(255, 255, 255, 100);
   @Override
   public Color getMapAreaCentroidLabelPaint() {
-    return new Color(255, 255, 255, 100);
+    return MAP_AREA_CENTROID_LABEL_PAINT;
   }
 
   private static final Color MAP_AREA_SELECTED_CENTROID_LABEL_PAINT = new Color(0, 213, 213, 150);
@@ -217,8 +196,51 @@ public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
     return MAP_AREA_SELECTED_CENTROID_LABEL_PAINT;
   }
 
+  private static final Color MAP_AREA_SELECTED_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 0, 200);
+  @Override
+  public Color getMapAreaSelectedCentroidLabelTextPaint() {
+    return MAP_AREA_SELECTED_CENTROID_LABEL_TEXT_PAINT;
+  }
+
+  private static final Color MAP_AREA_HIGHLIGHTED_CENTROID_PAINT = new Color(200, 200, 0);
+
+  @Override
+  public Color getMapAreaHighlightedCentroidColor() {
+    return MAP_AREA_HIGHLIGHTED_CENTROID_PAINT;
+  }
+
+  private static final Color MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_PAINT = new Color(244, 242, 46, 200);
+  @Override
+  public Color getMapAreaHighlightedCentroidLabelColor() {
+    return MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_PAINT;
+  }
+
+  private static final Color MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 0, 255);
+  @Override
+  public Color getMapAreaHighlightedCentroidLabelTextColor() {
+    return MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_TEXT_PAINT;
+  }
+
+  private static final Color LASSO_SOURCES_STROKE_PAINT = new Color(200, 0, 0, 150);
+  private static final Color LASSO_TARGETS_STROKE_PAINT = new Color(0, 0, 200, 150);
+
+  @Override
+  public Color getLassoStrokePaint(NodeEdgePos s) {
+    switch (s) {
+    case SOURCE:
+      return LASSO_SOURCES_STROKE_PAINT;
+    case TARGET:
+      return LASSO_TARGETS_STROKE_PAINT;
+    default:
+      throw new AssertionError();
+    }
+  }
+
+
+
   @Override
   public Color getMapAreaHasNoFlowsColor() {
     return null;
   }
+
 }
