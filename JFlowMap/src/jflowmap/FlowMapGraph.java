@@ -63,6 +63,7 @@ public class FlowMapGraph {
 //  private static final String EDGE_GROUPING_COLUMN = "_GROUPING";
 
   private static final String EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX = ":diff";
+  private static final String EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX = ":rdiff";
 
   private static Logger logger = Logger.getLogger(FlowMapGraph.class);
 
@@ -194,6 +195,15 @@ public class FlowMapGraph {
         }));
   }
 
+  public List<String> getEdgeWeightRelativeDiffAttrNames() {
+    return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrNames,
+        new Function<String, String>() {
+          public String apply(String weightAttr) {
+            return getEdgeWeightRelativeDiffAttr(weightAttr);
+          }
+        }));
+  }
+
   public String getNodeLabelAttr() {
     return attrSpec.getNodeLabelAttr();
   }
@@ -229,6 +239,14 @@ public class FlowMapGraph {
 
   public String getNodeLabel(Node node) {
     return node.getString(attrSpec.getNodeLabelAttr());
+  }
+
+  public Node getNodeOf(Edge edge, NodeEdgePos pos) {
+    switch (pos) {
+    case SOURCE: return edge.getSourceNode();
+    case TARGET: return edge.getTargetNode();
+    }
+    throw new AssertionError();
   }
 
   public static Node findNodeById(Graph graph, String nodeId) {
@@ -634,6 +652,10 @@ public class FlowMapGraph {
     return weightAttr + EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX;
   }
 
+  public String getEdgeWeightRelativeDiffAttr(String weightAttr) {
+    return weightAttr + EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX;
+  }
+
   public void addEdgeWeightDifferenceColumns() {
     Iterable<Edge> edges = edges();
 
@@ -652,6 +674,41 @@ public class FlowMapGraph {
                                              // so that we can at least see the absolute value
         double diff = edge.getDouble(attr) - (Double.isNaN(prevVal) ? 0 : prevVal);
         edge.setDouble(diffAttr, diff);
+      }
+
+      prevAttr = attr;
+    }
+  }
+
+  public void addEdgeWeightRelativeDifferenceColumns() {
+    Iterable<Edge> edges = edges();
+
+    String prevAttr = null;
+    for (String attr : getEdgeWeightAttrNames()) {
+      String diffAttr = getEdgeWeightRelativeDiffAttr(attr);
+
+      graph.getEdges().addColumn(diffAttr, double.class);
+
+      for (Edge edge : edges) {
+        double rdiff = Double.NaN;
+        double prevVal = Double.NaN;
+        if (prevAttr != null) {
+          prevVal = edge.getDouble(prevAttr);
+          if (!Double.isNaN(prevVal)) {
+            double val = edge.getDouble(attr);
+            if (prevVal == 0) {
+              if (val == 0) {
+                rdiff = 0;
+              } else {
+                rdiff = Math.signum(val);
+              }
+            } else {
+              rdiff = (val - prevVal) / prevVal;
+              //rdiff = Math.abs(val - prevVal) / ((Math.abs(val) + Math.abs(prevVal))/2);
+            }
+          }
+        }
+        edge.setDouble(diffAttr, rdiff);
       }
 
       prevAttr = attr;
