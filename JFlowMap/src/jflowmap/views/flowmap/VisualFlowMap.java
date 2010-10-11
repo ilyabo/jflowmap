@@ -20,6 +20,7 @@ package jflowmap.views.flowmap;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.LinearGradientPaint;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -47,6 +48,7 @@ import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjection;
 import jflowmap.geom.FPoint;
+import jflowmap.util.piccolo.PiccoloUtils;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Tooltip;
 
@@ -84,6 +86,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
+  private static final Insets FIT_IN_VIEW_INSETS = new Insets(30, 30, 30, 30);
   private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(VisualFlowMap.class);
 
@@ -385,7 +388,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   public void fitInCameraView() {
     PBounds boundRect = getVisualNodesBounds();
     boundRect = (PBounds)getCamera().globalToLocal(boundRect);
-    getCamera().animateViewToCenterBounds(boundRect, true, 0);
+    //getCamera().animateViewToCenterBounds(boundRect, true, 0);
+    PiccoloUtils.animateViewToPaddedBounds(getCamera(), boundRect, FIT_IN_VIEW_INSETS, 0);
   }
 
   public String getLabelAttr() {
