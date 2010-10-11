@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import jflowmap.DatasetSpec;
+import jflowmap.geo.MapProjections;
 
 import org.apache.log4j.Logger;
 import org.xmlpull.v1.XmlPullParserException;
@@ -51,6 +52,7 @@ public class XmlDatasetSpecsReader {
 
     for (XmlElement datasetNode : listOfDatasetXmlNodes) {
 //      String valueFilterMin = datasetNode.getAttributeValue(null, "valueFilterMin");
+      String projName = datasetNode.getAttributeValue(null, "mapProjection");
       listOfDatasetSpecs.add(
           new DatasetSpec(
               datasetNode.getAttributeValue(null, "src"),
@@ -58,7 +60,8 @@ public class XmlDatasetSpecsReader {
               datasetNode.getAttributeValue(null, "xNodeAttr"),
               datasetNode.getAttributeValue(null, "yNodeAttr"),
               datasetNode.getAttributeValue(null, "labelAttr"),
-              datasetNode.getAttributeValue(null, "areaMapSrc")
+              datasetNode.getAttributeValue(null, "areaMapSrc"),
+              (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
 //              valueFilterMin != null ? Double.parseDouble(valueFilterMin) : Double.NaN
           )
       );

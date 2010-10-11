@@ -45,6 +45,7 @@ import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
+import jflowmap.geo.MapProjection;
 import jflowmap.geom.FPoint;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Tooltip;
@@ -124,10 +125,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final VisualLegend visualLegend;
 
   private final String edgeWeightAttr;
+  private final MapProjection mapProjection;
 
 
-  public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend) {
+  public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend, MapProjection proj) {
     this.jFlowMap = jFlowMap;
+    this.mapProjection = proj;
 
     edgeWeightAttr = flowMapGraph.getEdgeWeightAttrNames().get(0);
 
@@ -196,6 +199,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return jFlowMap.getColor(code);
   }
 
+  public MapProjection getMapProjection() {
+    return mapProjection;
+  }
+
   public VisualEdgePaintFactory getVisualEdgePaintFactory() {
     return visualEdgePaintFactory;
   }
@@ -215,10 +222,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     for (int i = 0; i < numNodes; i++) {
       Node node = graph.getNode(i);
-      VisualNode vnode = new VisualNode(this, node,
-          node.getDouble(getFlowMapGraph().getXNodeAttr()), // - xStats.min,
-          node.getDouble(getFlowMapGraph().getYNodeAttr())// - yStats.min,
-      );
+      double lon = node.getDouble(getFlowMapGraph().getXNodeAttr());
+      double lat = node.getDouble(getFlowMapGraph().getYNodeAttr());
+
+      Point2D p = getMapProjection().project(lon, lat);
+
+      VisualNode vnode = new VisualNode(this, node, p.getX(), p.getY());
       nodeLayer.addChild(vnode);
       visualNodes.add(vnode);
       nodesToVisuals.put(node, vnode);
@@ -918,7 +927,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     FlowMapGraph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(
         getFlowMapGraph().getAttrSpec(), visualNodeClusters);
-    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph);
+    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph, mapProjection);
     if (areaMap != null) {
       clusteredFlowMap.setAreaMap(new VisualAreaMap(areaMap));
     }

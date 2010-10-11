@@ -1,5 +1,7 @@
 package jflowmap;
 
+import jflowmap.geo.MapProjection;
+
 import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
@@ -18,11 +20,12 @@ public class DatasetSpec {
   private final String labelNodeAttr;
   private final String xNodeAttr, yNodeAttr;
   private final String weightAttrNamePattern;
+  private final MapProjection mapProjection;
 
 
   public DatasetSpec(String filename, String weightAttrNamePattern,
   		String xNodeAttr, String yNodeAttr,
-  		String labelNodeAttr, String areaMapFilename) {
+  		String labelNodeAttr, String areaMapFilename, MapProjection proj) {
     this.weightAttrNamePattern = weightAttrNamePattern;
     this.filename = filename;
     this.name = FileUtils.getFilenameOnly(filename);
@@ -30,6 +33,7 @@ public class DatasetSpec {
     this.xNodeAttr = xNodeAttr;
     this.yNodeAttr = yNodeAttr;
     this.labelNodeAttr = labelNodeAttr;
+    this.mapProjection = proj;
   }
 
 //  public DatasetSpec(String filename, String areaMapFilename, FlowMapAttrSpec attrsSpec) {
@@ -41,7 +45,7 @@ public class DatasetSpec {
 
   public DatasetSpec withFilename(String filename) {
     return new DatasetSpec(filename, weightAttrNamePattern,
-        xNodeAttr, yNodeAttr, labelNodeAttr, areaMapFilename);
+        xNodeAttr, yNodeAttr, labelNodeAttr, areaMapFilename, mapProjection);
   }
 
   public FlowMapAttrSpec createFlowMapAttrsSpecFor(Graph graph) {
@@ -49,6 +53,10 @@ public class DatasetSpec {
     return new FlowMapAttrSpec(
         FlowMapGraph.findEdgeAttrsByPattern(graph, weightAttrNamePattern),
         labelNodeAttr, xNodeAttr,  yNodeAttr);
+  }
+
+  public MapProjection getMapProjection() {
+    return mapProjection;
   }
 
   public String getFilename() {

@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import jflowmap.geo.MapProjections;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.flowtimaps.FlowtimapsView;
 
@@ -56,7 +57,8 @@ public class FlotimapsMain extends JFrame {
         "r.*",
         "lon", "lat",
         "name",
-        "data/refugees/countries-areas-ll.xml.gz"));
+        "data/refugees/countries-areas-ll.xml.gz",
+        MapProjections.MERCATOR));
   }
 
 }

@@ -33,7 +33,7 @@ public enum MapProjections implements MapProjection {
   },
 
   MERCATOR {
-    private final static double SCALE = 25;
+    private final static double SCALE = 100; // 25;
     private final static boolean INVERT_Y = true;
 
     @Override

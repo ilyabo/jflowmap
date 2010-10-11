@@ -38,6 +38,7 @@ import javax.swing.SwingWorker;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.geo.MapProjections;
 import jflowmap.views.IColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMap;
@@ -441,7 +442,8 @@ public class SmallMultiplesMain extends JFrame {
             "data/refugees/refugees-{name}.xml.gz",
             "ritypnv",
 //            "r",
-            "x", "y", "name", "data/refugees/countries-areas.xml.gz"
+            "x", "y", "name", "data/refugees/countries-areas.xml.gz",
+            MapProjections.MERCATOR
         ),
 //        "1994", "1996", "2000", "2007", "2008"
 //        "1994", "2000", "2007"
@@ -512,7 +514,7 @@ public class SmallMultiplesMain extends JFrame {
         "refugees-small-multiples.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz"),
+          "data/refugees/countries-areas.xml.gz", MapProjections.MERCATOR),
 //          eachYear(1993, 2008, +1));
         eachYear(1992, 2008, +2));
 //    eachYear(1991, 2007, +2));
@@ -549,7 +551,7 @@ public class SmallMultiplesMain extends JFrame {
         "refugees-small-multiples_TLBS_3years_global.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz"),
+          "data/refugees/countries-areas.xml.gz", MapProjections.MERCATOR),
         "1996", "2000", "2008");
     sm.setSize(800, 600);
     sm.setZoom(1.3);
@@ -578,7 +580,7 @@ public class SmallMultiplesMain extends JFrame {
         "refugees-eu_global.png",
         new DatasetSpec(
           "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name",
-          "data/refugees-eu/countries-areas.xml"),
+          "data/refugees-eu/countries-areas.xml", MapProjections.MERCATOR),
         "1996", "2000", "2008");
     sm.setSize(800, 600);
     sm.setZoom(1.3);
@@ -608,7 +610,7 @@ public class SmallMultiplesMain extends JFrame {
         "bundled.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz"),
+          "data/refugees/countries-areas.xml.gz", MapProjections.MERCATOR),
 //        "1996", "2000", "2008"
           "2000"
         );
@@ -646,7 +648,7 @@ public class SmallMultiplesMain extends JFrame {
         "clustered.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz"),
+          "data/refugees/countries-areas.xml.gz", MapProjections.MERCATOR),
 //          "1996", "2000", "2008"
           "2000"
           );
@@ -693,7 +695,7 @@ public class SmallMultiplesMain extends JFrame {
         "refugees-small-multiples_eurovisPoster_6years_global.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz"),
+          "data/refugees/countries-areas.xml.gz", MapProjections.MERCATOR),
         "1996", "1998", "2003", "2004", "2005", "2008");
     sm.setSize(1150, 900);
     sm.setZoom(1.3);

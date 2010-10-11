@@ -24,6 +24,8 @@ import java.io.IOException;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
 
+import jflowmap.geo.MapProjections;
+
 import org.apache.log4j.Logger;
 
 import at.fhj.utils.swing.JMsgPane;
@@ -78,13 +80,16 @@ public abstract class BaseApplet extends JApplet {
   }
 
   protected DatasetSpec getDatasetSpec() {
+    String projName = getParameter("mapProjection");
     return new DatasetSpec(
         getParameter("src"),
         getParameter("weightAttr"),
         getParameter("xNodeAttr"),
         getParameter("yNodeAttr"),
         getParameter("labelAttr"),
-        getParameter("areaMapSrc"));
+        getParameter("areaMapSrc"),
+        (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
+        );
   }
 
   protected double getDoubleParameter(String name) {

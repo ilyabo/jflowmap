@@ -10,11 +10,11 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
-<mapEntry key="colorScheme" value="Light Blue"/>
+<mapEntry key="colorScheme" value="Dark"/>
 <mapEntry key="labelAttr" value="name"/>
 <mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="src" value="data/au-grads/au-graduates.xml.gz"/>
-<mapEntry key="weightAttr" value="os2006"/>
+<mapEntry key="src" value="data/commuters/slo/4paper/CommutersBetweenFunctionalRegionsAfterFirstAggregation.xml"/>
+<mapEntry key="weightAttr" value="value"/>
 <mapEntry key="xNodeAttr" value="lon"/>
 <mapEntry key="yNodeAttr" value="lat"/>
 </mapAttribute>

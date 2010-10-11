@@ -35,6 +35,7 @@ import jflowmap.data.MinMax;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.util.MathUtils;
+import jflowmap.util.Tables;
 
 import org.apache.log4j.Logger;
 
@@ -97,7 +98,13 @@ public class FlowMapGraph {
 //    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrs());
 //    Collections.sort(weightAttrs);
 
-    this.edgeWeightAttrNames = ImmutableList.copyOf(attrSpec.getEdgeWeightAttrs());
+    List<String> weightAttrs = attrSpec.getEdgeWeightAttrs();
+    if (weightAttrs.size() == 0) {
+      throw new IllegalArgumentException("FlowMapGraph must have at least one weight attr. " +
+      		"Available columns: " + Iterables.toString(Tables.columns(graph.getEdgeTable())));
+    }
+
+    this.edgeWeightAttrNames = ImmutableList.copyOf(weightAttrs);
     logger.info("Creating a FlowMapGraph with edge weight attrs: " + edgeWeightAttrNames);
     if (stats == null) {
       stats = FlowMapStats.createFor(this);

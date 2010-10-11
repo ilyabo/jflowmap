@@ -30,7 +30,7 @@ import jflowmap.DatasetSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
-import jflowmap.geo.MapProjections;
+import jflowmap.geo.MapProjection;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.views.ColorCodes;
@@ -53,11 +53,10 @@ public class FlowMapView extends AbstractCanvasView {
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
-  public FlowMapView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
-    setVisualFlowMap(createVisualFlowMap(flowMapGraph));
+  public FlowMapView(FlowMapGraph flowMapGraph, AreaMap areaMap, MapProjection proj) {
+    setVisualFlowMap(createVisualFlowMap(flowMapGraph, proj));
     if (areaMap != null) {
-      visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap,
-          MapProjections.NONE));
+      visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap, proj));
     }
   }
 
@@ -91,11 +90,11 @@ public class FlowMapView extends AbstractCanvasView {
     try {
       FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset, stats);
 
-      VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph);
+      VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph, dataset.getMapProjection());
       if (dataset.getAreaMapFilename() != null) {
         AreaMap areaMap = AreaMap.load(dataset.getAreaMapFilename());
         visualFlowMap.setAreaMap(
-            new VisualAreaMap(visualFlowMap, areaMap, MapProjections.NONE));
+            new VisualAreaMap(visualFlowMap, areaMap, dataset.getMapProjection()));
       }
       setVisualFlowMap(visualFlowMap);
 
@@ -134,8 +133,8 @@ public class FlowMapView extends AbstractCanvasView {
     return colorScheme.get(code);
   }
 
-  public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph) {
-    return new VisualFlowMap(this, flowMapGraph, true);
+  public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph, MapProjection proj) {
+    return new VisualFlowMap(this, flowMapGraph, true, proj);
   }
 
   public VisualFlowMap getVisualFlowMap() {

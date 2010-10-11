@@ -10,13 +10,14 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
-<mapEntry key="colorScheme" value="Light Blue"/>
+<mapEntry key="areaMapSrc" value="data/refugees/countries-areas.xml.gz"/>
+<mapEntry key="colorScheme" value="Dark"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="src" value="data/au-grads/au-graduates.xml.gz"/>
-<mapEntry key="weightAttr" value="os2006"/>
-<mapEntry key="xNodeAttr" value="lon"/>
-<mapEntry key="yNodeAttr" value="lat"/>
+<mapEntry key="src" value="data/refugees/refugees-2008.xml.gz"/>
+<mapEntry key="weightAttr" value="r2008"/>
+<mapEntry key="weightFilterMin" value="50"/>
+<mapEntry key="xNodeAttr" value="x"/>
+<mapEntry key="yNodeAttr" value="y"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowMapApplet"/>
