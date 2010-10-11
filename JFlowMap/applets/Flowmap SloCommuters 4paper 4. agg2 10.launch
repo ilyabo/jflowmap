@@ -14,8 +14,8 @@
 <mapEntry key="yNodeAttr" value="lat"/>
 <mapEntry key="weightAttr" value="value"/>
 <mapEntry key="xNodeAttr" value="lon"/>
+<mapEntry key="src" value="data/commuters/slo/4paper/CommutersTo10CentresOfFunctionalRegionsAfterSeconAggregation.xml "/>
 <mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="src" value="data/commuters/slo/4paper/CommutersBetweenAllMunicaipalities_Over50Commuters.xml"/>
 <mapEntry key="colorScheme" value="Dark"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1200"/>

@@ -10,12 +10,12 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="900"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
-<mapEntry key="labelAttr" value="name"/>
 <mapEntry key="yNodeAttr" value="lat"/>
+<mapEntry key="labelAttr" value="name"/>
 <mapEntry key="weightAttr" value="value"/>
 <mapEntry key="xNodeAttr" value="lon"/>
+<mapEntry key="src" value="data/commuters/slo/4paper/CommutersTo31CentresOfFunctionalRegionsAfterFirstAggregation.xml"/>
 <mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="src" value="data/commuters/slo/4paper/CommutersBetweenAllMunicaipalities_Over50Commuters.xml"/>
 <mapEntry key="colorScheme" value="Dark"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1200"/>
