@@ -48,7 +48,7 @@ import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjection;
 import jflowmap.geom.FPoint;
-import jflowmap.util.piccolo.PiccoloUtils;
+import jflowmap.geom.GeomUtils;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Tooltip;
 
@@ -222,7 +222,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     final int numNodes = graph.getNodeCount();
     visualNodes = new ArrayList<VisualNode>();
     nodesToVisuals = new LinkedHashMap<Node, VisualNode>();
-
     for (int i = 0; i < numNodes; i++) {
       Node node = graph.getNode(i);
       double lon = node.getDouble(getFlowMapGraph().getXNodeAttr());
@@ -388,8 +387,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   public void fitInCameraView() {
     PBounds boundRect = getVisualNodesBounds();
     boundRect = (PBounds)getCamera().globalToLocal(boundRect);
-    //getCamera().animateViewToCenterBounds(boundRect, true, 0);
-    PiccoloUtils.animateViewToPaddedBounds(getCamera(), boundRect, FIT_IN_VIEW_INSETS, 0);
+    getCamera().animateViewToCenterBounds(GeomUtils.growRect(boundRect, .1, .1, .1, .1), true, 0);
   }
 
   public String getLabelAttr() {

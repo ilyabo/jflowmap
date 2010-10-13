@@ -19,6 +19,7 @@
 package jflowmap.geom;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
 
@@ -102,6 +103,15 @@ public final class GeomUtils {
     return new Point(
         a.x() + (b.x() - a.x()) * alpha,
         a.y() + (b.y() - a.y()) * alpha
+    );
+  }
+
+  public static Rectangle2D growRect(Rectangle2D rect, double top, double right, double bottom, double left) {
+    return new Rectangle2D.Double(
+        rect.getX() - rect.getWidth() * left,
+        rect.getY() - rect.getHeight() * top,
+        rect.getWidth() * (1 + left + right),
+        rect.getHeight() * (1 + top + bottom)
     );
   }
 
