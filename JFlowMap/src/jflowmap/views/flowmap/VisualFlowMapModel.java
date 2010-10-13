@@ -92,7 +92,7 @@ public class VisualFlowMapModel {
 //        lenStats.getAvg() / 70,
 //        Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
 
-    nodeSize = lengthStats.getAvg() / 50;
+    nodeSize = lengthStats.getAvg() / 200;
   }
 
   public FlowMapGraph getFlowMapGraph() {
@@ -211,7 +211,7 @@ public class VisualFlowMapModel {
   public void setEdgeAlpha(int edgeAlpha) {
     int old = this.edgeAlpha;
     this.edgeAlpha = edgeAlpha;
-		changes.firePropertyChange(PROPERTY_EDGE_ALPHA, old, edgeAlpha);
+    changes.firePropertyChange(PROPERTY_EDGE_ALPHA, old, edgeAlpha);
   }
 
   public boolean getShowNodes() {
@@ -226,70 +226,71 @@ public class VisualFlowMapModel {
   }
 
   public double getNodeSize() {
-		return nodeSize;
-	}
+    return nodeSize;
+  }
 
-	public void setNodeSize(double size) {
-		if (nodeSize != size) {
-		  double old = nodeSize;
-		  nodeSize = size;
-			changes.firePropertyChange(PROPERTY_NODE_SIZE, old, nodeSize);
-		}
-	}
+  public void setNodeSize(double size) {
+    if (nodeSize != size) {
+      double old = nodeSize;
+      nodeSize = size;
+      changes.firePropertyChange(PROPERTY_NODE_SIZE, old, nodeSize);
+    }
+  }
 
-	public boolean getShowDirectionMarkers() {
-		return showDirectionMarkers;
-	}
+  public boolean getShowDirectionMarkers() {
+    return showDirectionMarkers;
+  }
 
-	public void setShowDirectionMarkers(boolean value) {
-		if (showDirectionMarkers != value) {
-			showDirectionMarkers = value;
-			changes.firePropertyChange(PROPERTY_SHOW_DIRECTION_MARKERS, !value, value);
-		}
-	}
+  public void setShowDirectionMarkers(boolean value) {
+    if (showDirectionMarkers != value) {
+      showDirectionMarkers = value;
+      changes.firePropertyChange(PROPERTY_SHOW_DIRECTION_MARKERS, !value, value);
+    }
+  }
 
-	public boolean getFillEdgesWithGradient() {
-		return fillEdgesWithGradient;
-	}
+  public boolean getFillEdgesWithGradient() {
+    return fillEdgesWithGradient;
+  }
 
-	public void setFillEdgesWithGradient(boolean value) {
-		if (fillEdgesWithGradient != value) {
-			fillEdgesWithGradient = value;
-			changes.firePropertyChange(PROPERTY_FILL_EDGES_WITH_GRADIENT, !value, value);
-		}
-	}
+  public void setFillEdgesWithGradient(boolean value) {
+    if (fillEdgesWithGradient != value) {
+      fillEdgesWithGradient = value;
+      changes.firePropertyChange(PROPERTY_FILL_EDGES_WITH_GRADIENT, !value, value);
+    }
+  }
 
-	public boolean getUseProportionalDirectionMarkers() {
-		return useProportionalDirectionMarkers;
-	}
+  public boolean getUseProportionalDirectionMarkers() {
+    return useProportionalDirectionMarkers;
+  }
 
-	public void setUseProportionalDirectionMarkers(boolean value) {
-		if (useProportionalDirectionMarkers != value) {
-			useProportionalDirectionMarkers = value;
-			changes.firePropertyChange(PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS, !value, value);
-		}
-	}
+  public void setUseProportionalDirectionMarkers(boolean value) {
+    if (useProportionalDirectionMarkers != value) {
+      useProportionalDirectionMarkers = value;
+      changes.firePropertyChange(PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS, !value, value);
+    }
+  }
 
-	public double getDirectionMarkerSize() {
-		return directionMarkerSize;
-	}
+  public double getDirectionMarkerSize() {
+    return directionMarkerSize;
+  }
 
-	/**
-	 * @param markerSize A double value between 0 and 0.5. When useProportionalDirectionMarkers
-	 * is true, the size of the marker for a certain edge E will be {@code markerSize * lengthOf(E)}.
-	 * Otherwise it's {@code markerSize * lengthOfTheLongestEdge}
-	 */
-	public void setDirectionMarkerSize(double markerSize) {
-		if (markerSize < 0  ||  markerSize > .5) {
-			throw new IllegalArgumentException(
-					"Direction marker size must be between 0.0 and 0.5: attempted to set " + markerSize);
-		}
-		if (this.directionMarkerSize != markerSize) {
-			double old = directionMarkerSize;
-			this.directionMarkerSize = markerSize;
-			changes.firePropertyChange(PROPERTY_DIRECTION_MARKER_SIZE, old, markerSize);
-		}
-	}
+  /**
+   * @param markerSize
+   *          A double value between 0 and 0.5. When useProportionalDirectionMarkers is true, the
+   *          size of the marker for a certain edge E will be {@code markerSize * lengthOf(E)}.
+   *          Otherwise it's {@code markerSize * lengthOfTheLongestEdge}
+   */
+  public void setDirectionMarkerSize(double markerSize) {
+    if (markerSize < 0 || markerSize > .5) {
+      throw new IllegalArgumentException(
+          "Direction marker size must be between 0.0 and 0.5: attempted to set " + markerSize);
+    }
+    if (this.directionMarkerSize != markerSize) {
+      double old = directionMarkerSize;
+      this.directionMarkerSize = markerSize;
+      changes.firePropertyChange(PROPERTY_DIRECTION_MARKER_SIZE, old, markerSize);
+    }
+  }
 
   public void addPropertyChangeListener(PropertyChangeListener listener) {
     changes.addPropertyChangeListener(listener);
@@ -303,7 +304,7 @@ public class VisualFlowMapModel {
     changes.removePropertyChangeListener(listener);
   }
 
-	public static final String PROPERTY_AUTO_ADJUST_COLOR_SCALE = "autoAdjustColorScale";
+  public static final String PROPERTY_AUTO_ADJUST_COLOR_SCALE = "autoAdjustColorScale";
   public static final String PROPERTY_USE_LOG_COLOR_SCALE = "useLogColorScale";
   public static final String PROPERTY_USE_LOG_WIDTH_SCALE = "useLogWidthScale";
   public static final String PROPERTY_MAX_LENGTH_FILTER = "lengthFilterMax";

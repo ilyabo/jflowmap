@@ -67,10 +67,10 @@ public class VisualNode extends PNode {
 
   private final VisualFlowMap visualFlowMap;
 
-	private final Node node;
+  private final Node node;
 
-	private final double valueX;
-	private final double valueY;
+  private final double valueX;
+  private final double valueY;
 
   private PPath clusterMarker;
 
@@ -133,7 +133,7 @@ public class VisualNode extends PNode {
 
     updateSize();
     updateVisibility();
-	}
+  }
 
   public Point2D getPosition() {
     return new Point2D.Double(valueX, valueY);
@@ -168,8 +168,8 @@ public class VisualNode extends PNode {
   }
 
   public double getValueY() {
-		return valueY;
-	}
+    return valueY;
+  }
 
 //  public void createNodeShape() {
 //    double sum = 0;
@@ -190,13 +190,13 @@ public class VisualNode extends PNode {
 //  }
 
 
-	public Node getNode() {
-		return node;
-	}
+  public Node getNode() {
+    return node;
+  }
 
   public VisualFlowMap getVisualGraph() {
-		return visualFlowMap;
-	}
+    return visualFlowMap;
+  }
 
   public String getLabel() {
     StringBuilder sb = new StringBuilder();
