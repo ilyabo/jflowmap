@@ -491,7 +491,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         } else if (prop.equals(VisualFlowMapModel.PROPERTY_NODE_SIZE)) {
           updateNodeSizes();
         } else if (prop.equals(VisualFlowMapModel.PROPERTY_AUTO_VISUAL_LEGEND_SCALE)) {
-          visualLegend.update();
+          visualLegend.updateScale();
         }
       }
     });

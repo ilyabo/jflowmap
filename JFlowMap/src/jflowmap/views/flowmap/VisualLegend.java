@@ -60,10 +60,12 @@ public class VisualLegend extends PPath {
     update();
   }
 
+  public void updateScale() {
+    setScale(visualFlowMap.getModel().getVisualLegendScale());
+  }
+
   public void update() {
     removeAllChildren();
-
-    setScale(visualFlowMap.getModel().getVisualLegendScale());
 
     double posX = startX + paddingX;
     double posY = startY + paddingY;

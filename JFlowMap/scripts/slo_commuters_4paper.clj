@@ -2,25 +2,32 @@
 
 (import
   '(javax.swing JFrame)
-  '(jflowmap DatasetSpec FlowMapToImageRenderer FlowMapToImageRenderer$FlowMapModelInitializer)
+  '(jflowmap DatasetSpec FlowMapToImageRenderer)
   '(jflowmap.geo MapProjections))
 
 
-(deftype FlowMapModelInitializer []
-  FlowMapToImageRenderer$FlowMapModelInitializer
-  (setupFlowMapModel [this model]
-    (doto model
-      (.setVisualLegendScale 3.5)
-      (.setMaxEdgeWidth 30))))
+;(deftype FlowMapModelInitializer []
+;  FlowMapToImageRenderer$FlowMapModelInitializer
+;  (setupFlowMapModel [this model]
+;    (doto model
+;      (.setVisualLegendScale 3.5)
+;      (.setMaxEdgeWidth 30))))
+
 
 (defn renderCommuters [^String name]
   (let [renderer (FlowMapToImageRenderer.
               (str name ".png")
               (DatasetSpec.
                    (str "data/commuters/slo/4paper/" name ".xml") "value" "lon" "lat" "name" nil (MapProjections/MERCATOR))
-                   (into-array String [name]))]
+                   (into-array String [name]))
+        model-init (proxy [jflowmap.FlowMapToImageRenderer$FlowMapModelInitializer] []
+          (setupFlowMapModel [model]
+            (doto model
+              (.setVisualLegendScale 3.5)
+              (.setMaxEdgeWidth 30))))
+        ]
     (doto renderer
-      (.setFlowMapModelInitializer (FlowMapModelInitializer.))
+      (.setFlowMapModelInitializer model-init)
       (.makeFullscreen)
       (.setPaddingX 0)
       (.setPaddingY 0)
