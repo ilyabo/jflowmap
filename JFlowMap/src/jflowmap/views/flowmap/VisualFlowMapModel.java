@@ -59,6 +59,7 @@ public class VisualFlowMapModel {
   private double maxEdgeWidth = 1.0;
   private double directionMarkerSize = .17; //0.1;
   private double nodeSize;
+  private double visualLegendScale = 1.0;
 
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
   private final FlowMapGraph flowMapGraph;
@@ -92,7 +93,17 @@ public class VisualFlowMapModel {
 //        lenStats.getAvg() / 70,
 //        Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
 
-    nodeSize = lengthStats.getAvg() / 200;
+    nodeSize = lengthStats.getAvg() / 50;
+  }
+
+  public void setVisualLegendScale(double scale) {
+    double old = this.visualLegendScale;
+    this.visualLegendScale = scale;
+    changes.firePropertyChange(PROPERTY_AUTO_VISUAL_LEGEND_SCALE, old, scale);
+  }
+
+  public double getVisualLegendScale() {
+    return visualLegendScale;
   }
 
   public FlowMapGraph getFlowMapGraph() {
@@ -304,6 +315,7 @@ public class VisualFlowMapModel {
     changes.removePropertyChangeListener(listener);
   }
 
+  public static final String PROPERTY_AUTO_VISUAL_LEGEND_SCALE = "visualLegendScale";
   public static final String PROPERTY_AUTO_ADJUST_COLOR_SCALE = "autoAdjustColorScale";
   public static final String PROPERTY_USE_LOG_COLOR_SCALE = "useLogColorScale";
   public static final String PROPERTY_USE_LOG_WIDTH_SCALE = "useLogWidthScale";

@@ -20,7 +20,10 @@ package jflowmap;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -61,11 +64,11 @@ import edu.umd.cs.piccolo.util.PBounds;
 /**
  * @author Ilya Boyandin
  */
-public class SmallMultiplesMain extends JFrame {
+public class FlowMapToImageRenderer extends JFrame {
 
   private static final long serialVersionUID = 1L;
 
-  private static Logger logger = Logger.getLogger(SmallMultiplesMain.class);
+  private static Logger logger = Logger.getLogger(FlowMapToImageRenderer.class);
 
 //  private static final Font TITLE_FONT = new Font("Dialog", Font.BOLD, 32);
 //  private static final Font LABEL_FONT = new Font("Dialog", Font.PLAIN, 5);
@@ -95,22 +98,33 @@ public class SmallMultiplesMain extends JFrame {
   private boolean showLegend = true;
   private final FlowMapView jFlowMap;
 
-  public SmallMultiplesMain(String outputFileName, DatasetSpec datasetSpec, String ... datasetNames) {
+  public FlowMapToImageRenderer(String outputFileName, DatasetSpec datasetSpec, String ... datasetNames) {
     this(outputFileName, datasetsMap(datasetSpec, datasetNames));
   }
 
-  public SmallMultiplesMain(String outputFileName,  Map<String, DatasetSpec> datasets) {
+  public FlowMapToImageRenderer(String outputFileName,  Map<String, DatasetSpec> datasets) {
     this.outputFileName = outputFileName;
     this.datasets = datasets;
 
     jFlowMap = new FlowMapView(null, false);
     add(jFlowMap.getViewComponent());
 
+
     setSize(1024, 768);
 
     setBackground(new Color(0x60, 0x60, 0x60));
+    setUndecorated(true);
+    setResizable(false);
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+
+  public void makeFullscreen() {
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
+    setSize((int)toolkit.getScreenSize().getWidth(), (int)toolkit.getScreenSize().getHeight());
+    setExtendedState(MAXIMIZED_BOTH);
+    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    gd.setFullScreenWindow(this);
   }
 
   public void setPaddingX(int paddingX) {
@@ -225,7 +239,7 @@ public class SmallMultiplesMain extends JFrame {
       this.parentFrame = parent;
 
       final int n = datasets.size();
-      progress = new ProgressMonitor(parent, "Rendering small multiples", "", 0, n);
+      progress = new ProgressMonitor(parent, "Rendering", "", 0, n);
 
       width = jFlowMap.getViewComponent().getWidth();
       height = jFlowMap.getViewComponent().getHeight();
@@ -383,7 +397,8 @@ public class SmallMultiplesMain extends JFrame {
           logger.error(e);
         }
       }
-      System.exit(0);
+//      System.exit(0);
+      dispose();
     }
   }
 
@@ -434,8 +449,8 @@ public class SmallMultiplesMain extends JFrame {
   }
 
 
-  public static final SmallMultiplesMain createSM_Experiment() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_Experiment() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples.png",
         new DatasetSpec(
 //            "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
@@ -509,8 +524,8 @@ public class SmallMultiplesMain extends JFrame {
     return sm;
   }
 
-  public static final SmallMultiplesMain createSM_TLBS_all() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_TLBS_all() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
@@ -522,7 +537,7 @@ public class SmallMultiplesMain extends JFrame {
 //    sm.setSize(1280, 1024);
 //    sm.setSize(1600, 1200);
     sm.setNumColumns(3);
-    sm.setSize(1024, 768);
+//    sm.setSize(1024, 768);
 //  sm.setSize(1280, 1024);
     sm.setZoom(1.2);
     sm.setPaddingX(10);
@@ -546,8 +561,8 @@ public class SmallMultiplesMain extends JFrame {
     return sm;
   }
 
-  public static final SmallMultiplesMain createSM_TLBS_3years() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_TLBS_3years() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples_TLBS_3years_global.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
@@ -575,8 +590,8 @@ public class SmallMultiplesMain extends JFrame {
   }
 
 
-  public static final SmallMultiplesMain createSM_TLBS_3years_OneRegion() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_TLBS_3years_OneRegion() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-eu_global.png",
         new DatasetSpec(
           "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name",
@@ -605,8 +620,8 @@ public class SmallMultiplesMain extends JFrame {
 
 
 
-  public static final SmallMultiplesMain createSM_TLBS_bundled() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_TLBS_bundled() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "bundled.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
@@ -643,8 +658,8 @@ public class SmallMultiplesMain extends JFrame {
     return sm;
   }
 
-  public static final SmallMultiplesMain createSM_TLBS_clustered() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_TLBS_clustered() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "clustered.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
@@ -690,8 +705,8 @@ public class SmallMultiplesMain extends JFrame {
 
 
 
-  public static final SmallMultiplesMain createSM_eurovisPoster_6years_global() {
-    SmallMultiplesMain sm = new SmallMultiplesMain(
+  public static final FlowMapToImageRenderer createSM_eurovisPoster_6years_global() {
+    FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples_eurovisPoster_6years_global.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
@@ -721,7 +736,7 @@ public class SmallMultiplesMain extends JFrame {
 
   public static void main(String[] args) throws IOException, InterruptedException, InvocationTargetException {
 //    SmallMultiplesMain sm = createSM_eurovisPoster_6years_global();
-    SmallMultiplesMain sm = createSM_TLBS_all();
+    FlowMapToImageRenderer sm = createSM_TLBS_all();
     sm.setVisible(true);
     sm.start();
   }

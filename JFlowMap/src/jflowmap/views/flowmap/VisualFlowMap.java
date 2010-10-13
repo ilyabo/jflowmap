@@ -20,7 +20,6 @@ package jflowmap.views.flowmap;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
-import java.awt.Insets;
 import java.awt.LinearGradientPaint;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -86,7 +85,6 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
-  private static final Insets FIT_IN_VIEW_INSETS = new Insets(30, 30, 30, 30);
   private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(VisualFlowMap.class);
 
@@ -387,7 +385,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   public void fitInCameraView() {
     PBounds boundRect = getVisualNodesBounds();
     boundRect = (PBounds)getCamera().globalToLocal(boundRect);
-    getCamera().animateViewToCenterBounds(GeomUtils.growRect(boundRect, .1, .1, .1, .1), true, 0);
+    getCamera().animateViewToCenterBounds(GeomUtils.growRect(boundRect, .05, .05, .05, .05), true, 0);
   }
 
   public String getLabelAttr() {
@@ -492,6 +490,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           updateNodeVisibility();
         } else if (prop.equals(VisualFlowMapModel.PROPERTY_NODE_SIZE)) {
           updateNodeSizes();
+        } else if (prop.equals(VisualFlowMapModel.PROPERTY_AUTO_VISUAL_LEGEND_SCALE)) {
+          visualLegend.update();
         }
       }
     });

@@ -41,7 +41,7 @@ public class VisualLegend extends PPath {
 
   private static final long serialVersionUID = -8907313603307434727L;
 
-  private static final Font LABEL_FONT = new Font("Dialog", Font.BOLD, 13);
+  private static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 13);
   private static final int NUM_LEGEND_WEIGHT_VALUES = 5;
 
   private final VisualFlowMap visualFlowMap;
@@ -63,6 +63,7 @@ public class VisualLegend extends PPath {
   public void update() {
     removeAllChildren();
 
+    setScale(visualFlowMap.getModel().getVisualLegendScale());
 
     double posX = startX + paddingX;
     double posY = startY + paddingY;

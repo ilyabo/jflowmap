@@ -33,7 +33,8 @@ public enum MapProjections implements MapProjection {
   },
 
   MERCATOR {
-    private final static double SCALE = 25;
+    // if the scale is smaller than 100 short edges will not be visible
+    private final static double SCALE = 100;
     private final static boolean INVERT_Y = true;
 
     @Override
