@@ -20,7 +20,6 @@ package jflowmap.views.flowtimaps;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -89,7 +88,6 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  */
 public class FlowtimapsView extends AbstractCanvasView {
 
-  private static final Insets FIT_IN_VIEW_CAMERA_PADDING = new Insets(50,50,50,50);
   private static final double CENTROID_DOT_SIZE = 2.0;
 
   enum Properties {
