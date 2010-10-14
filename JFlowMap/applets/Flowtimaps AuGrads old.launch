@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.jdt.launching.javaApplet">
 <stringAttribute key="bad_container_name" value="\JFlowMap\launch"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/JFlowMap/src/jflowmap/FlowMapApplet.java"/>
+<listEntry value="/JFlowMap/src/jflowmap/FlowtimapsApplet.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -10,18 +10,16 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="768"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
-<mapEntry key="colorScheme" value="Light Blue"/>
+<mapEntry key="areaMapSrc" value="data/refugees/countries-areas-ll.xml.gz"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="shapefile" value="data/shapefiles/aus/australia.shp.gz"/>
 <mapEntry key="src" value="data/au-grads/au-graduates.xml.gz"/>
-<mapEntry key="weightAttr" value="os2006"/>
+<mapEntry key="weightAttr" value="((au|os)[0-9]{4}|-[0-9]+-)"/>
 <mapEntry key="xNodeAttr" value="lon"/>
 <mapEntry key="yNodeAttr" value="lat"/>
 </mapAttribute>
-<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1024"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowMapApplet"/>
+<intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1900"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowtimapsApplet"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="JFlowMap"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024M"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx256M"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:JFlowMap}"/>
 </launchConfiguration>

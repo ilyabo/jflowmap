@@ -13,7 +13,6 @@
 <mapEntry key="colorScheme" value="Light Blue"/>
 <mapEntry key="labelAttr" value="name"/>
 <mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="shapefile" value="data/shapefiles/aus/australia.shp.gz"/>
 <mapEntry key="src" value="data/au-grads/au-graduates.xml.gz"/>
 <mapEntry key="weightAttr" value="os2006"/>
 <mapEntry key="xNodeAttr" value="lon"/>

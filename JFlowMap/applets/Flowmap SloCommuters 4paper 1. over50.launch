@@ -10,13 +10,14 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="900"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="colorScheme" value="Dark"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="yNodeAttr" value="lat"/>
+<mapEntry key="mapProjection" value="MERCATOR"/>
+<mapEntry key="shapefile" value="data/shapefiles/slo/SVN_adm2.shp.gz"/>
+<mapEntry key="src" value="data/commuters/slo/4paper/CommutersBetweenAllMunicaipalities_Over50Commuters.xml"/>
 <mapEntry key="weightAttr" value="value"/>
 <mapEntry key="xNodeAttr" value="lon"/>
-<mapEntry key="mapProjection" value="MERCATOR"/>
-<mapEntry key="src" value="data/commuters/slo/4paper/CommutersBetweenAllMunicaipalities_Over50Commuters.xml"/>
-<mapEntry key="colorScheme" value="Dark"/>
+<mapEntry key="yNodeAttr" value="lat"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1200"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowMapApplet"/>

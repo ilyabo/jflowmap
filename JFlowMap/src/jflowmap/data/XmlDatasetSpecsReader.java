@@ -61,6 +61,7 @@ public class XmlDatasetSpecsReader {
               datasetNode.getAttributeValue(null, "yNodeAttr"),
               datasetNode.getAttributeValue(null, "labelAttr"),
               datasetNode.getAttributeValue(null, "areaMapSrc"),
+              null,
               (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
 //              valueFilterMin != null ? Double.parseDouble(valueFilterMin) : Double.NaN
           )

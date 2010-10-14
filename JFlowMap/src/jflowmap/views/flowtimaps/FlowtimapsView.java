@@ -46,6 +46,7 @@ import jflowmap.NodeEdgePos;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjections;
+import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.Lasso;
 import jflowmap.util.CollectionUtils;
@@ -53,7 +54,6 @@ import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
-import jflowmap.util.piccolo.PiccoloUtils;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.ColorSchemeAware;
@@ -1142,21 +1142,18 @@ public class FlowtimapsView extends AbstractCanvasView {
     fitCamera(targetsCamera, +1, 0, .3, .9);
 
     if (!fitInViewOnce) {
-//      sourcesCamera.setViewBounds(sourcesLayer.getFullBounds());
-//      sourcesCamera.setViewBounds(centroidsBounds(NodeEdgePos.SOURCE));
-      PiccoloUtils.setViewPaddedBounds(sourcesCamera, centroidsBounds(NodeEdgePos.SOURCE),
-          FIT_IN_VIEW_CAMERA_PADDING);
+      fintInCameraView(NodeEdgePos.SOURCE);
 
       PBounds heatmapBounds = heatmapLayer.getFullBounds();
-      heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height
-          / heatmapCamera.getWidth();
+      if (heatmapBounds.height > heatmapBounds.width * 15) {
+        heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height
+            / heatmapCamera.getWidth();
+      }
 
-      heatmapCamera.setViewBounds(heatmapBounds);
+      heatmapCamera.setViewBounds(GeomUtils.growRect(heatmapBounds, .025, .1, .025, .1));
 
-//      targetsCamera.setViewBounds(targetsLayer.getFullBounds());
-//      targetsCamera.setViewBounds(centroidsBounds(NodeEdgePos.TARGET));
-      PiccoloUtils.setViewPaddedBounds(targetsCamera, centroidsBounds(NodeEdgePos.TARGET),
-          FIT_IN_VIEW_CAMERA_PADDING);
+      fintInCameraView(NodeEdgePos.TARGET);
+
       fitInViewOnce = true;
     }
     updateFlowLinePositions();
@@ -1166,12 +1163,18 @@ public class FlowtimapsView extends AbstractCanvasView {
      */
   }
 
+  private void fintInCameraView(NodeEdgePos s) {
+    getVisualAreaMapCamera(s).setViewBounds(GeomUtils.growRect(
+        centroidsBounds(s), .2, .2, .2, .2));
+  }
+
   private void fitCamera(PCamera camera, double halign, double valign, double hsizeProportion,
       double vsizeProportion) {
     PBounds globalViewBounds = getCamera().getViewBounds();
     PBounds viewBounds = camera.getViewBounds();
-    PNodes.alignNodeInBounds_bySetBounds(camera, globalViewBounds, halign, valign, hsizeProportion,
-        vsizeProportion);
+
+    PNodes.alignNodeInBounds_bySetBounds(
+        camera, globalViewBounds, halign, valign, hsizeProportion, vsizeProportion);
     camera.setViewBounds(viewBounds);
   }
 

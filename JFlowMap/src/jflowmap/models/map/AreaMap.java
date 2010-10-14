@@ -20,12 +20,18 @@ package jflowmap.models.map;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
+import jflowmap.DatasetSpec;
+import jflowmap.data.ShapefileReader;
 import jflowmap.data.XmlAreaMapModelReader2;
 
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 
 
 /**
@@ -41,7 +47,7 @@ public class AreaMap {
 
   public AreaMap(String name, List<Area> areas) {
     this.name = name;
-    this.areas = areas;
+    this.areas = ImmutableList.copyOf(areas);
   }
 
   public String getName() {
@@ -49,11 +55,32 @@ public class AreaMap {
   }
 
   public Collection<Area> getAreas() {
-    return Collections.unmodifiableCollection(areas);
+    return areas;
+  }
+
+  public static AreaMap loadFor(DatasetSpec dataset) throws IOException {
+    AreaMap areaMap = null;
+    if (dataset.getAreaMapFilename() != null) {
+      areaMap = load(dataset.getAreaMapFilename());
+    } else if (dataset.getShapefileName() != null) {
+      areaMap = asAreaMap(ShapefileReader.loadShapefile(
+          dataset.getShapefileName(), null, null));
+    }
+    return areaMap;
   }
 
   public static final AreaMap load(String filename) throws IOException {
     logger.info("Loading area map \"" + filename + "\"");
     return XmlAreaMapModelReader2.readMap(filename);
+  }
+
+  public static AreaMap asAreaMap(GeometryCollection geoms) {
+    List<Area> list = Lists.newArrayList();
+    for (int i = 0; i < geoms.getNumGeometries(); i++) {
+      Geometry g = geoms.getGeometryN(i);
+      String name = (g.getUserData() != null ? g.getUserData().toString() : null);
+      list.add(Area.asArea(name, name, g));
+    }
+    return new AreaMap(null, list);
   }
 }

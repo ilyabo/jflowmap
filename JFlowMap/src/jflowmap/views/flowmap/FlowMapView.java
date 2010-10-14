@@ -91,10 +91,11 @@ public class FlowMapView extends AbstractCanvasView {
       FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset, stats);
 
       VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph, dataset.getMapProjection());
-      if (dataset.getAreaMapFilename() != null) {
-        AreaMap areaMap = AreaMap.load(dataset.getAreaMapFilename());
-        visualFlowMap.setAreaMap(
-            new VisualAreaMap(visualFlowMap, areaMap, dataset.getMapProjection()));
+
+      AreaMap areaMap = AreaMap.loadFor(dataset);
+
+      if (areaMap != null) {
+        visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap, dataset.getMapProjection()));
       }
       setVisualFlowMap(visualFlowMap);
 

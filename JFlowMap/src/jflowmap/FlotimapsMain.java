@@ -36,8 +36,7 @@ public class FlotimapsMain extends JFrame {
   public FlotimapsMain(DatasetSpec ds) throws IOException {
     super("DuoTimeline");
     final FlowtimapsView view = new FlowtimapsView(
-        FlowMapGraph.loadGraphML(ds), AreaMap.load(ds.getAreaMapFilename())
-    );
+        FlowMapGraph.loadGraphML(ds), AreaMap.loadFor(ds));
     add(view.getViewComponent());
     addWindowListener(new WindowAdapter() {
       @Override
@@ -58,6 +57,7 @@ public class FlotimapsMain extends JFrame {
         "lon", "lat",
         "name",
         "data/refugees/countries-areas-ll.xml.gz",
+        null,
         MapProjections.MERCATOR));
   }
 

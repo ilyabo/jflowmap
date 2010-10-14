@@ -19,11 +19,9 @@
 package jflowmap;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import javax.swing.UIManager;
 
-import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.flowtimaps.FlowtimapsView;
 
@@ -60,13 +58,7 @@ public class FlowtimapsApplet extends BaseApplet {
 
   @Override
   protected IView createView() throws IOException {
-    String areaMapSrc = getParameter("areaMapSrc");
-    AreaMap areaMap;
-    if (areaMapSrc == null) {
-      areaMap = new AreaMap(null, Collections.<Area>emptyList());
-    } else {
-      areaMap = AreaMap.load(areaMapSrc);
-    }
+    AreaMap areaMap = AreaMap.loadFor(getDatasetSpec());
     String maxVisibleTuples = getParameter("maxVisibleTuples");
     return new FlowtimapsView(
         FlowMapGraph.loadGraphML(getDatasetSpec()),

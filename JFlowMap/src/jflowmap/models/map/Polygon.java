@@ -19,7 +19,8 @@
 package jflowmap.models.map;
 
 import java.awt.geom.Point2D;
-import java.util.Arrays;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * @author Ilya Boyandin
@@ -36,5 +37,15 @@ public class Polygon {
   public Point2D[] getPoints() {
     return points.clone();
   }
-  
+
+  public static Polygon convert(com.vividsolutions.jts.geom.Polygon poly) {
+    Coordinate[] coords = poly.getCoordinates();
+    Point2D[] points = new Point2D[coords.length];
+    for (int i = 0; i < coords.length; i++) {
+      Coordinate c = coords[i];
+      points[i] = new Point2D.Double(c.x, c.y);
+    }
+    return new Polygon(points);
+  }
+
 }

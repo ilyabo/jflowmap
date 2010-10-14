@@ -21,16 +21,23 @@ package jflowmap.models.map;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 import jflowmap.geo.MapProjection;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @author Ilya Boyandin
  *     Date: 25-Sep-2009
  */
 public class Area {
+
+  private static Logger logger = Logger.getLogger(Area.class);
 
   private final String id;
   private final String name;
@@ -72,5 +79,21 @@ public class Area {
       }
     }
     return path;
+  }
+
+  public static Area asArea(String id, String name, Geometry g) {
+    List<Polygon> list = Lists.newArrayList();
+
+    if (g.getGeometryType().equals("Polygon")) {
+      list.add(Polygon.convert((com.vividsolutions.jts.geom.Polygon)g));
+    } else if (g.getGeometryType().equals("MultiPolygon")) {
+      for (int i = 0; i < g.getNumGeometries(); i++) {
+        list.add(Polygon.convert((com.vividsolutions.jts.geom.Polygon)g.getGeometryN(i)));
+      }
+    } else {
+      logger.warn("Skipping unsupported geometry type: " + g.getGeometryType());
+    }
+
+    return new Area(id, name, list);
   }
 }

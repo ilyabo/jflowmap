@@ -88,6 +88,7 @@ public abstract class BaseApplet extends JApplet {
         getParameter("yNodeAttr"),
         getParameter("labelAttr"),
         getParameter("areaMapSrc"),
+        getParameter("shapefile"),
         (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
         );
   }
