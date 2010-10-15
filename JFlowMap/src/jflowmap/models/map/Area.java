@@ -81,7 +81,7 @@ public class Area {
     return path;
   }
 
-  public static Area asArea(String id, String name, Geometry g) {
+  public static Area fromGeometry(String id, String name, Geometry g) {
     List<Polygon> list = Lists.newArrayList();
 
     if (g.getGeometryType().equals("Polygon")) {

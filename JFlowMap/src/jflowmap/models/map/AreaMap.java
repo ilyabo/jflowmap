@@ -79,7 +79,7 @@ public class AreaMap {
     for (int i = 0; i < geoms.getNumGeometries(); i++) {
       Geometry g = geoms.getGeometryN(i);
       String name = (g.getUserData() != null ? g.getUserData().toString() : null);
-      list.add(Area.asArea(name, name, g));
+      list.add(Area.fromGeometry(name, name, g));
     }
     return new AreaMap(null, list);
   }
