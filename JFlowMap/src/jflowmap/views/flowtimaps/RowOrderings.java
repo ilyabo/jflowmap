@@ -6,7 +6,6 @@ import java.util.Comparator;
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
 import prefuse.data.Edge;
-import prefuse.data.Node;
 
 /**
  * @author Ilya Boyandin
@@ -60,20 +59,16 @@ enum RowOrderings {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
-            Node n1 = NodeEdgePos.SOURCE.nodeOf(e1);
-            Node n2 = NodeEdgePos.SOURCE.nodeOf(e2);
-
-            String yattr = fmg.getAttrSpec().getYNodeAttr();
-
-            int c = (int)Math.signum(n1.getDouble(yattr) - n2.getDouble(yattr));
+            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.SOURCE);
             if (c == 0) {
-              c = SRC_TARGET_NAMES.getComparator(fmg).compare(e1, e2);
+              c = compareNodeLabels(fmg, e1, e2, NodeEdgePos.SOURCE);
             }
             if (c == 0) {
-              c = TARGET_VPOS.getComparator(fmg).compare(e1, e2);
+              c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.TARGET);
             }
-            return -c;
+            return c;
           }
+
         };
       }
     },
@@ -83,19 +78,14 @@ enum RowOrderings {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
-            Node n1 = NodeEdgePos.TARGET.nodeOf(e1);
-            Node n2 = NodeEdgePos.TARGET.nodeOf(e2);
-
-            String yattr = fmg.getAttrSpec().getYNodeAttr();
-
-            int c = (int)Math.signum(n1.getDouble(yattr) - n2.getDouble(yattr));
+            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.TARGET);
             if (c == 0) {
-              c = TARGET_SRC_NAMES.getComparator(fmg).compare(e1, e2);
+              c = compareNodeLabels(fmg, e1, e2, NodeEdgePos.TARGET);
             }
             if (c == 0) {
-              c = SRC_VPOS.getComparator(fmg).compare(e1, e2);
+              c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.SOURCE);
             }
-            return -c;
+            return c;
           }
         };
       }
@@ -114,5 +104,14 @@ enum RowOrderings {
     }
 
     public abstract Comparator<Edge> getComparator(FlowMapGraph fmg);
+
+    private static int compareNodeVPos(FlowMapGraph fmg, Edge e1, Edge e2, NodeEdgePos s) {
+      String yattr = fmg.getAttrSpec().getYNodeAttr();
+      return -(int)Math.signum(s.nodeOf(e1).getDouble(yattr) - s.nodeOf(e2).getDouble(yattr));
+    }
+
+    private static int compareNodeLabels(FlowMapGraph fmg, Edge e1, Edge e2, NodeEdgePos s) {
+      return fmg.getNodeLabel(s.nodeOf(e1)).compareTo(fmg.getNodeLabel(s.nodeOf(e2)));
+    }
 
   }
