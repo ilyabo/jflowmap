@@ -43,7 +43,7 @@ public class Tooltip extends PPath {
   private static final Color DEFAULT_TEXT_PAINT = Color.white;
   private static final Color DEFAULT_STROKE_PAINT = new Color(0, 0, 0, 100);
   private static final BasicStroke DEFAULT_STROKE = new BasicStroke(.5f);
-  private static Font HEADER_FONT = new Font("Helvetica", Font.PLAIN, 12);
+  private static Font HEADER_FONT = new Font("Arial", Font.PLAIN, 12);
   private static Font LABELS_FONT = HEADER_FONT;
   private static Font VALUES_FONT = HEADER_FONT;
   private final Point padding;

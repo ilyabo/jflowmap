@@ -89,6 +89,7 @@ public abstract class BaseApplet extends JApplet {
         getParameter("labelAttr"),
         getParameter("areaMapSrc"),
         getParameter("shapefile"),
+        getParameter("dbfAreaIdField"),
         (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
         );
   }

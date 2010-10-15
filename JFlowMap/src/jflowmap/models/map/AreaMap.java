@@ -64,7 +64,7 @@ public class AreaMap {
       areaMap = load(dataset.getAreaMapFilename());
     } else if (dataset.getShapefileName() != null) {
       areaMap = asAreaMap(ShapefileReader.loadShapefile(
-          dataset.getShapefileName(), null, null));
+          dataset.getShapefileName(), dataset.getDbfAreaIdField()));
     }
     return areaMap;
   }

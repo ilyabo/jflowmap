@@ -10,6 +10,7 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="1100"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
+<mapEntry key="dbfAreaIdField" value="GMI_ADMIN"/>
 <mapEntry key="labelAttr" value="name"/>
 <mapEntry key="shapefile" value="data/shapefiles/aus/australia.shp.gz"/>
 <mapEntry key="src" value="data/au-grads/au-graduates.xml.gz"/>

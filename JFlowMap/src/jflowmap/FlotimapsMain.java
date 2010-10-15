@@ -58,7 +58,7 @@ public class FlotimapsMain extends JFrame {
         "name",
         "data/refugees/countries-areas-ll.xml.gz",
         null,
-        MapProjections.MERCATOR));
+        null, MapProjections.MERCATOR));
   }
 
 }

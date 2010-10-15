@@ -22,18 +22,19 @@ public class DatasetSpec {
   private final String xNodeAttr, yNodeAttr;
   private final String weightAttrNamePattern;
   private final MapProjection mapProjection;
-
+  private final String dbfAreaIdField;
 
   public DatasetSpec(String filename, String weightAttrNamePattern,
   		String xNodeAttr, String yNodeAttr,
   		String labelNodeAttr,
   		String areaMapFilename, String shapefileName,
-  		MapProjection proj) {
+  		String dbfAreaIdField, MapProjection proj) {
     this.weightAttrNamePattern = weightAttrNamePattern;
     this.filename = filename;
     this.name = FileUtils.getFilenameOnly(filename);
     this.areaMapFilename = areaMapFilename;
     this.shapefileName = shapefileName;
+    this.dbfAreaIdField = dbfAreaIdField;
     this.xNodeAttr = xNodeAttr;
     this.yNodeAttr = yNodeAttr;
     this.labelNodeAttr = labelNodeAttr;
@@ -49,7 +50,8 @@ public class DatasetSpec {
 
   public DatasetSpec withFilename(String filename) {
     return new DatasetSpec(filename, weightAttrNamePattern,
-        xNodeAttr, yNodeAttr, labelNodeAttr, areaMapFilename, shapefileName, mapProjection);
+        xNodeAttr, yNodeAttr, labelNodeAttr, areaMapFilename, shapefileName,
+        dbfAreaIdField, mapProjection);
   }
 
   public FlowMapAttrSpec createFlowMapAttrsSpecFor(Graph graph) {
@@ -82,5 +84,9 @@ public class DatasetSpec {
   @Override
   public String toString() {
     return getName();
+  }
+
+  public String getDbfAreaIdField() {
+    return dbfAreaIdField;
   }
 }

@@ -58,6 +58,7 @@ import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.VisualArea;
 import jflowmap.views.flowmap.VisualAreaMap;
+import jflowmap.views.flowtimaps.HeatMapCell.ValueType;
 
 import org.apache.log4j.Logger;
 
@@ -94,10 +95,6 @@ public class FlowtimapsView extends AbstractCanvasView {
     CUSTOM_EDGE_FILTER, NODE_SELECTION
   }
 
-  enum FlowLinesColoringMode {
-    SAME_COLOR, SOURCE, TARGET
-  }
-
   enum GroupBy {
     SOURCE
   }
@@ -116,7 +113,7 @@ public class FlowtimapsView extends AbstractCanvasView {
   // private final PScrollPane scrollPane;
 
   private final JPanel controlPanel;
-  private boolean useWeightDifferences = false;
+  private HeatMapCell.ValueType heatMapCellValueType = HeatMapCell.ValueType.VALUE;
   private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.SOURCE;
   private int maxVisibleTuples;
 
@@ -369,15 +366,15 @@ public class FlowtimapsView extends AbstractCanvasView {
     return visibleEdges;
   }
 
-  public void setUseWeightDifferences(boolean value) {
-    if (useWeightDifferences != value) {
-      useWeightDifferences = value;
+  public void setHeatMapCellValueType(ValueType valueType) {
+    if (heatMapCellValueType != valueType) {
+      heatMapCellValueType = valueType;
       updateHeatmapColors();
     }
   }
 
-  public boolean getUseWeightDifferences() {
-    return useWeightDifferences;
+  public ValueType getHeatMapCellValueType() {
+    return heatMapCellValueType;
   }
 
   public void setDivergingColorScheme(ColorSchemes divergingColorScheme) {
@@ -1101,7 +1098,7 @@ public class FlowtimapsView extends AbstractCanvasView {
   }
 
   private boolean fitInViewOnce = false;
-  private RowOrderings rowOrdering = RowOrderings.MAX_MAGNITUDE_IN_ROW;
+  private RowOrderings rowOrdering = RowOrderings.SRC_VPOS;
 
   private Rectangle2D centroidsBounds(NodeEdgePos s) {
     Rectangle2D.Double b = new Rectangle2D.Double();
@@ -1176,10 +1173,14 @@ public class FlowtimapsView extends AbstractCanvasView {
     camera.setViewBounds(viewBounds);
   }
 
-  public void setRowOrder(RowOrderings rowOrder) {
+  public void setRowOrdering(RowOrderings rowOrder) {
     if (this.rowOrdering != rowOrder) {
       this.rowOrdering = rowOrder;
       updateVisibleEdges();
     }
+  }
+
+  public RowOrderings getRowOrdering() {
+    return rowOrdering;
   }
 }

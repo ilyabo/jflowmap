@@ -4,25 +4,27 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import jflowmap.FlowMapGraph;
+import jflowmap.NodeEdgePos;
 import prefuse.data.Edge;
+import prefuse.data.Node;
 
 /**
  * @author Ilya Boyandin
  */
 enum RowOrderings {
-    MAX_MAGNITUDE_IN_ROW("max magnitude in row") {
+    MAX_MAGNITUDE_IN_ROW("max in row") {
       @Override
       public Comparator<Edge> getComparator(FlowMapGraph fmg) {
         return Collections.reverseOrder(fmg.createMaxEdgeWeightComparator());
       }
     },
-    AVG_MAGNITUDE_IN_ROW("avg magnitude in row") {
+    AVG_MAGNITUDE_IN_ROW("avg in row") {
       @Override
       public Comparator<Edge> getComparator(FlowMapGraph fmg) {
         return Collections.reverseOrder(fmg.createAvgEdgeWeightComparator());
       }
     },
-    SRC_TARGET_NAMES("src,target node names") {
+    SRC_TARGET_NAMES("origin name") {
       @Override
       public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
         return new Comparator<Edge>() {
@@ -37,38 +39,63 @@ enum RowOrderings {
         };
       }
     },
-    SRC_NODE_VERTICAL_POS("src,target node vertical pos") {
+    TARGET_SRC_NAMES("dest name") {
       @Override
       public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
-            String yattr = fmg.getAttrSpec().getYNodeAttr();
-            if (e1.getSourceNode() != e2.getSourceNode()) {
-              return -(int)Math.signum(
-                  e1.getSourceNode().getDouble(yattr) - e2.getSourceNode().getDouble(yattr));
-            } else {
-              return -(int)Math.signum(
-                  e1.getTargetNode().getDouble(yattr) - e2.getTargetNode().getDouble(yattr));
+            int c = fmg.getNodeLabel(e1.getTargetNode()).compareTo(fmg.getNodeLabel(e2.getTargetNode()));
+            if (c == 0) {
+              c = fmg.getNodeLabel(e1.getSourceNode()).compareTo(fmg.getNodeLabel(e2.getSourceNode()));
             }
+            return c;
           }
         };
       }
     },
-    TARGET_NODE_VERTICAL_POS("target,src node vertical pos") {
+    SRC_VPOS("origin vpos") {
       @Override
       public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
+            Node n1 = NodeEdgePos.SOURCE.nodeOf(e1);
+            Node n2 = NodeEdgePos.SOURCE.nodeOf(e2);
+
             String yattr = fmg.getAttrSpec().getYNodeAttr();
-            if (e1.getTargetNode() != e2.getTargetNode()) {
-              return -(int)Math.signum(
-                  e1.getTargetNode().getDouble(yattr) - e2.getTargetNode().getDouble(yattr));
-            } else {
-              return -(int)Math.signum(
-                  e1.getSourceNode().getDouble(yattr) - e2.getSourceNode().getDouble(yattr));
+
+            int c = (int)Math.signum(n1.getDouble(yattr) - n2.getDouble(yattr));
+            if (c == 0) {
+              c = SRC_TARGET_NAMES.getComparator(fmg).compare(e1, e2);
             }
+            if (c == 0) {
+              c = TARGET_VPOS.getComparator(fmg).compare(e1, e2);
+            }
+            return -c;
+          }
+        };
+      }
+    },
+    TARGET_VPOS("dest vpos") {
+      @Override
+      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
+        return new Comparator<Edge>() {
+          @Override
+          public int compare(Edge e1, Edge e2) {
+            Node n1 = NodeEdgePos.TARGET.nodeOf(e1);
+            Node n2 = NodeEdgePos.TARGET.nodeOf(e2);
+
+            String yattr = fmg.getAttrSpec().getYNodeAttr();
+
+            int c = (int)Math.signum(n1.getDouble(yattr) - n2.getDouble(yattr));
+            if (c == 0) {
+              c = TARGET_SRC_NAMES.getComparator(fmg).compare(e1, e2);
+            }
+            if (c == 0) {
+              c = SRC_VPOS.getComparator(fmg).compare(e1, e2);
+            }
+            return -c;
           }
         };
       }

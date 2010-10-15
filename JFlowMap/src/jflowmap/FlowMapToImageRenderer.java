@@ -459,7 +459,7 @@ public class FlowMapToImageRenderer extends JFrame {
 //            "r",
             "x", "y", "name", "data/refugees/countries-areas.xml.gz",
             null,
-            MapProjections.MERCATOR
+            null, MapProjections.MERCATOR
         ),
 //        "1994", "1996", "2000", "2007", "2008"
 //        "1994", "2000", "2007"
@@ -530,7 +530,7 @@ public class FlowMapToImageRenderer extends JFrame {
         "refugees-small-multiples.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz", null, MapProjections.MERCATOR),
+          "data/refugees/countries-areas.xml.gz", null, null, MapProjections.MERCATOR),
 //          eachYear(1993, 2008, +1));
         eachYear(1992, 2008, +2));
 //    eachYear(1991, 2007, +2));
@@ -567,7 +567,7 @@ public class FlowMapToImageRenderer extends JFrame {
         "refugees-small-multiples_TLBS_3years_global.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz", null, MapProjections.MERCATOR),
+          "data/refugees/countries-areas.xml.gz", null, null, MapProjections.MERCATOR),
         "1996", "2000", "2008");
     sm.setSize(800, 600);
     sm.setZoom(1.3);
@@ -596,7 +596,7 @@ public class FlowMapToImageRenderer extends JFrame {
         "refugees-eu_global.png",
         new DatasetSpec(
           "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name",
-          "data/refugees-eu/countries-areas.xml", null,  MapProjections.MERCATOR),
+          "data/refugees-eu/countries-areas.xml", null,  null, MapProjections.MERCATOR),
         "1996", "2000", "2008");
     sm.setSize(800, 600);
     sm.setZoom(1.3);
@@ -626,7 +626,7 @@ public class FlowMapToImageRenderer extends JFrame {
         "bundled.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz", null,  MapProjections.MERCATOR),
+          "data/refugees/countries-areas.xml.gz", null,  null, MapProjections.MERCATOR),
 //        "1996", "2000", "2008"
           "2000"
         );
@@ -664,7 +664,7 @@ public class FlowMapToImageRenderer extends JFrame {
         "clustered.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz", null,  MapProjections.MERCATOR),
+          "data/refugees/countries-areas.xml.gz", null,  null, MapProjections.MERCATOR),
 //          "1996", "2000", "2008"
           "2000"
           );
@@ -711,7 +711,7 @@ public class FlowMapToImageRenderer extends JFrame {
         "refugees-small-multiples_eurovisPoster_6years_global.png",
         new DatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
-          "data/refugees/countries-areas.xml.gz", null,  MapProjections.MERCATOR),
+          "data/refugees/countries-areas.xml.gz", null,  null, MapProjections.MERCATOR),
         "1996", "1998", "2003", "2004", "2005", "2008");
     sm.setSize(1150, 900);
     sm.setZoom(1.3);

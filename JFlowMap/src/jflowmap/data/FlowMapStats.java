@@ -140,7 +140,7 @@ public class FlowMapStats {
 
 
   public MinMax getEdgeWeightRelativeDiffStats() {
-    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF",
+    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF_REL",
         new Function<FlowMapGraph, List<String>>() {
           @Override
           public List<String> apply(FlowMapGraph fmg) {

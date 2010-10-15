@@ -37,7 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
-import jflowmap.views.flowtimaps.FlowtimapsView.FlowLinesColoringMode;
+import jflowmap.views.flowtimaps.HeatMapCell.ValueType;
 import net.miginfocom.swing.MigLayout;
 
 
@@ -100,13 +100,13 @@ public class FlowtimapsControlPanel extends JPanel {
 
 
 
-    final JCheckBox differencesChk = new JCheckBox("Differences",
-        flowtimapsView.getUseWeightDifferences());
-    panel.add(differencesChk, "al right");
-    differencesChk.addActionListener(new ActionListener() {
+    final JComboBox differencesCombo = new JComboBox(HeatMapCell.ValueType.values());
+    differencesCombo.setSelectedItem(flowtimapsView.getHeatMapCellValueType());
+    panel.add(differencesCombo, "al right");
+    differencesCombo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setUseWeightDifferences(differencesChk.isSelected());
+        flowtimapsView.setHeatMapCellValueType((ValueType) differencesCombo.getSelectedItem());
       }
     });
 
@@ -135,11 +135,12 @@ public class FlowtimapsControlPanel extends JPanel {
 
     panel.add(new JLabel("Order:"), "gapleft 10, al right");
     JComboBox orderByCombo = new JComboBox(RowOrderings.values());
+    orderByCombo.setSelectedItem(flowtimapsView.getRowOrdering());
     panel.add(orderByCombo, "");
     orderByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        flowtimapsView.setRowOrder((RowOrderings)e.getItem());
+        flowtimapsView.setRowOrdering((RowOrderings)e.getItem());
       }
     });
 //    orderByCombo.setEnabled(false);
