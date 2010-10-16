@@ -2,6 +2,7 @@ package jflowmap.data;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import java.util.Set;
 
 import jflowmap.FlowMapAttrSpec;
@@ -51,6 +52,19 @@ public class FlowMapGraphEdgeAggregatorTest {
     assertEquals(
         ImmutableSet.of("2","1","2,3,4","1,4"),
         serializeNodes(aggregated));
+
+
+    List<Edge> aggList = FlowMapGraphEdgeAggregator.getAggregateList(
+        aggregated.edges().iterator().next());
+    Edge e1 = aggList.get(0);
+    Edge e2 = aggList.get(1);
+    assertEquals(fmg.getGraph(), e1.getGraph());
+    assertEquals(fmg.getGraph(), e2.getGraph());
+
+    assertEquals("2", fmg.getSourceNodeId(e1));
+    assertEquals("1", fmg.getTargetNodeId(e1));
+    assertEquals("2", fmg.getSourceNodeId(e2));
+    assertEquals("4", fmg.getTargetNodeId(e2));
   }
 
   private Set<String> serializeNodes(FlowMapGraph fmg) {

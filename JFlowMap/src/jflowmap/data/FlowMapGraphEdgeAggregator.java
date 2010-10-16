@@ -15,6 +15,7 @@ import prefuse.data.Tuple;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -25,6 +26,7 @@ import com.google.common.collect.Sets;
  */
 public class FlowMapGraphEdgeAggregator {
 
+  private static final String AGGREGATE_LIST_EDGE_COLUMN = "_:agg-list";
   private Map<List<String>, Node> nodesByIds;
   private final FlowMapGraph flowMapGraph;
   private final Function<Edge, Object> groupFunction;
@@ -72,6 +74,10 @@ public class FlowMapGraphEdgeAggregator {
     return this;
   }
 
+  @SuppressWarnings("unchecked")
+  public static List<Edge> getAggregateList(Edge edge) {
+    return (List<Edge>) edge.get(AGGREGATE_LIST_EDGE_COLUMN);
+  }
 
   public FlowMapGraph aggregate() {
     Multimap<Object, Edge> groups = ArrayListMultimap.create();
@@ -86,6 +92,8 @@ public class FlowMapGraphEdgeAggregator {
         graph.getEdgeTable().getSchema().instantiate(),
         graph.isDirected());
 
+    aggGraph.getEdgeTable().addColumn(AGGREGATE_LIST_EDGE_COLUMN, List.class);
+
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
       Edge newEdge = aggGraph.addEdge(
@@ -93,6 +101,8 @@ public class FlowMapGraphEdgeAggregator {
           aggregateNodes(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.TARGET)));
 
       aggregateEdges(edges, newEdge);
+
+      newEdge.set(AGGREGATE_LIST_EDGE_COLUMN, ImmutableList.copyOf(edges));
     }
 
     return new FlowMapGraph(aggGraph, flowMapGraph.getAttrSpec());
@@ -139,7 +149,10 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   private ValueAggregator getAggregator(String columnName, Class<?> columnType) {
-    ValueAggregator agg = customValueAggregators.get(columnName);
+    ValueAggregator agg = null;
+    if (customValueAggregators != null) {
+      agg = customValueAggregators.get(columnName);
+    }
     if (agg == null) {
       agg = AttrDataTypes.getByType(columnType);
     }

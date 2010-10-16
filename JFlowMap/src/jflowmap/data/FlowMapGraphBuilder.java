@@ -28,6 +28,7 @@ import jflowmap.util.ArrayUtils;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Table;
 
 /**
  * @author Ilya Boyandin
@@ -44,18 +45,25 @@ public class FlowMapGraphBuilder {
     graph = new Graph();
     FlowMapGraph.setGraphId(graph, graphId);
     graph.addColumn(nodeIdAttr, String.class);
+    Table nodeTable = graph.getNodeTable();
+    Table edgeTable = graph.getEdgeTable();
     if (attrSpec.hasNodePositions()) {
-      graph.addColumn(attrSpec.getXNodeAttr(), double.class);
-      graph.addColumn(attrSpec.getYNodeAttr(), double.class);
+      nodeTable.addColumn(attrSpec.getXNodeAttr(), double.class);
+      nodeTable.addColumn(attrSpec.getYNodeAttr(), double.class);
     }
     for (String attr : attrSpec.getEdgeWeightAttrs()) {
-      graph.addColumn(attr, FlowMapGraph.WEIGHT_COLUMNS_DATA_TYPE);
+      edgeTable.addColumn(attr, FlowMapGraph.WEIGHT_COLUMNS_DATA_TYPE);
     }
-    graph.addColumn(attrSpec.getNodeLabelAttr(), String.class);
+    nodeTable.addColumn(attrSpec.getNodeLabelAttr(), String.class);
   }
 
   public FlowMapGraphBuilder addNodeAttr(String name, Class<?> type) {
-    graph.addColumn(name, type);
+    graph.getNodeTable().addColumn(name, type);
+    return this;
+  }
+
+  public FlowMapGraphBuilder addEdgeAttr(String name, Class<?> type) {
+    graph.getEdgeTable().addColumn(name, type);
     return this;
   }
 
