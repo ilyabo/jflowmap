@@ -38,13 +38,13 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.aggregation.EdgeSegment;
-import jflowmap.aggregation.EdgeSegmentAggregator;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MinMax;
+import jflowmap.es_agg.EdgeSegment;
+import jflowmap.es_agg.EdgeSegmentAggregator;
 import jflowmap.geo.MapProjection;
 import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;

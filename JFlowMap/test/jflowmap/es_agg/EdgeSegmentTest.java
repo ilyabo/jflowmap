@@ -1,7 +1,9 @@
-package jflowmap.aggregation;
+package jflowmap.es_agg;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import jflowmap.es_agg.EdgeSegment;
+import jflowmap.es_agg.SegmentedEdge;
 import jflowmap.geom.FPoint;
 
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package jflowmap.aggregation.data;
+package jflowmap.es_agg.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

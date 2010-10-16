@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.aggregation;
+package jflowmap.es_agg;
 
 import java.util.List;
 
