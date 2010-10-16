@@ -119,7 +119,7 @@ public enum ColorSchemes {
   RdBu3(                                // for the geomaps
       Type.DIVERGING,
       new int[] {
-          ColorLib.rgb(239, 138, 98), ColorLib.rgb(247, 247, 247), ColorLib.rgb(103, 169, 207)
+          ColorLib.rgb(103, 169, 207), ColorLib.rgb(247, 247, 247), ColorLib.rgb(239, 138, 98)
       });
 
 
