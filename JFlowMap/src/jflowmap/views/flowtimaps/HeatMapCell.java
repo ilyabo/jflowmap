@@ -128,18 +128,23 @@ class HeatMapCell extends PPath {
     Node src = edge.getSourceNode();
     Node target = edge.getTargetNode();
     String nodeLabelAttr = flowMapGraph.getNodeLabelAttr();
-    return FlowMapGraph.getGraphId(edge.getGraph()) + ": " + src.getString(nodeLabelAttr) + " -> "
-        + target.getString(nodeLabelAttr);
+    return
+      FlowMapGraph.getGraphId(edge.getGraph()) + ": " + src.getString(nodeLabelAttr) + " -> " +
+        target.getString(nodeLabelAttr);
   }
 
   public String getTooltipLabels() {
-    return weightAttr + ":" + "\n" +
-    flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr) + ":";
+    return
+      weightAttr + ":" + "\n" +
+      flowMapGraph.getEdgeWeightDiffAttr(weightAttr) + ":" + "\n" +
+      flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr) + ":";
   }
 
   public String getTooltipValues() {
-    return Double.toString(edge.getDouble(weightAttr)) + "\n"
-        + Double.toString(edge.getDouble(flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr)));
+    return
+      Double.toString(edge.getDouble(weightAttr)) + "\n" +
+      Double.toString(edge.getDouble(flowMapGraph.getEdgeWeightDiffAttr(weightAttr))) + "\n" +
+      Double.toString(edge.getDouble(flowMapGraph.getEdgeWeightRelativeDiffAttr(weightAttr)));
   }
 
   public void updateColor() {

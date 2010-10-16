@@ -1132,15 +1132,15 @@ public class FlowtimapsView extends AbstractCanvasView {
 
   @Override
   public void fitInView() {
-    fitCamera(sourcesCamera, -1, 0, .3, .9);
-    fitCamera(heatmapCamera, 0, 0, .4, 1.0);
-    fitCamera(targetsCamera, +1, 0, .3, .9);
+    fitCamera(sourcesCamera, -1, 0, .30, .9);
+    fitCamera(heatmapCamera, 0, 0, .40, 1.0);
+    fitCamera(targetsCamera, +1, 0, .30, .9);
 
     if (!fitInViewOnce) {
       fintInCameraView(NodeEdgePos.SOURCE);
 
       PBounds heatmapBounds = heatmapLayer.getFullBounds();
-      if (heatmapBounds.height > heatmapBounds.width * 15) {
+      if (heatmapBounds.height > heatmapBounds.width * 10) {
         heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height
             / heatmapCamera.getWidth();
       }

@@ -17,6 +17,18 @@ enum RowOrderings {
         return Collections.reverseOrder(fmg.createMaxEdgeWeightComparator());
       }
     },
+    MAX_DIFF_IN_ROW("max diff in row") {
+      @Override
+      public Comparator<Edge> getComparator(FlowMapGraph fmg) {
+        return Collections.reverseOrder(fmg.createMaxEdgeWeightDiffComparator());
+      }
+    },
+    MAX_DIFF_REL_IN_ROW("max rdiff in row") {
+      @Override
+      public Comparator<Edge> getComparator(FlowMapGraph fmg) {
+        return Collections.reverseOrder(fmg.createMaxEdgeWeightRelativeDiffComparator());
+      }
+    },
     AVG_MAGNITUDE_IN_ROW("avg in row") {
       @Override
       public Comparator<Edge> getComparator(FlowMapGraph fmg) {
