@@ -8,9 +8,13 @@ import java.util.Set;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
+
+import org.apache.log4j.Logger;
+
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Table;
 import prefuse.data.Tuple;
 
 import com.google.common.base.Function;
@@ -25,6 +29,8 @@ import com.google.common.collect.Sets;
  * @author Ilya Boyandin
  */
 public class FlowMapGraphEdgeAggregator {
+
+  private static Logger logger = Logger.getLogger(FlowMapGraphEdgeAggregator.class);
 
   private static final String AGGREGATE_LIST_EDGE_COLUMN = "_:agg-list";
   private Map<List<String>, Node> nodesByIds;
@@ -50,6 +56,12 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   public enum GroupFunctions implements Function<Edge, Object> {
+    MERGE_ALL {
+      @Override
+      public Object apply(Edge edge) {
+        return true;
+      }
+    },
     SRC_NODE {
       @Override
       public Object apply(Edge edge) {
@@ -80,6 +92,7 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   public FlowMapGraph aggregate() {
+    logger.info("Aggregating flowMapGraph id='" + flowMapGraph.getId() + "'");
     Multimap<Object, Edge> groups = ArrayListMultimap.create();
     for (Edge e : flowMapGraph.edges()) {
       groups.put(groupFunction.apply(e), e);
@@ -92,7 +105,7 @@ public class FlowMapGraphEdgeAggregator {
         graph.getEdgeTable().getSchema().instantiate(),
         graph.isDirected());
 
-    aggGraph.getEdgeTable().addColumn(AGGREGATE_LIST_EDGE_COLUMN, List.class);
+    addAggListEdgeColumn(aggGraph);
 
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
@@ -106,6 +119,13 @@ public class FlowMapGraphEdgeAggregator {
     }
 
     return new FlowMapGraph(aggGraph, flowMapGraph.getAttrSpec());
+  }
+
+  private void addAggListEdgeColumn(Graph graph) {
+    Table et = graph.getEdgeTable();
+    if (!et.canGet(AGGREGATE_LIST_EDGE_COLUMN, List.class)) {
+      et.addColumn(AGGREGATE_LIST_EDGE_COLUMN, List.class);
+    }
   }
 
   private void aggregateEdges(Collection<Edge> edges, Edge newEdge) {
@@ -135,6 +155,9 @@ public class FlowMapGraphEdgeAggregator {
 
   private <T extends Tuple> T aggregateColumns(Iterable<T> tuples, T newTuple,
       Iterable<String> columns) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Aggregating columns: " + Iterables.toString(columns));
+    }
     for (final String column : columns) {
       ValueAggregator agg = getAggregator(column, newTuple.getColumnType(column));
       Object aggValue = agg.aggregate(Iterables.transform(tuples, new Function<Tuple, Object>() {
