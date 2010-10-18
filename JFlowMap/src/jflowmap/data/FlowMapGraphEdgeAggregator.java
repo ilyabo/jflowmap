@@ -32,7 +32,7 @@ public class FlowMapGraphEdgeAggregator {
 
   private static Logger logger = Logger.getLogger(FlowMapGraphEdgeAggregator.class);
 
-  private static final String AGGREGATE_LIST_EDGE_COLUMN = "_:agg-list";
+  private static final String AGGREGATE_LIST_COLUMN = "_:agg-list";
   private Map<List<String>, Node> nodesByIds;
   private final FlowMapGraph flowMapGraph;
   private final Function<Edge, Object> groupFunction;
@@ -86,9 +86,24 @@ public class FlowMapGraphEdgeAggregator {
     return this;
   }
 
+  public static boolean isAggregate(Edge edge) {
+    return edge.canGet(AGGREGATE_LIST_COLUMN, List.class);
+  }
+
   @SuppressWarnings("unchecked")
   public static List<Edge> getAggregateList(Edge edge) {
-    return (List<Edge>) edge.get(AGGREGATE_LIST_EDGE_COLUMN);
+    if (!isAggregate(edge)) {
+      throw new IllegalArgumentException("Edge does not have aggregate list: " + edge);
+    }
+    return (List<Edge>) edge.get(AGGREGATE_LIST_COLUMN);
+  }
+
+  @SuppressWarnings("unchecked")
+  public static List<Node> getAggregateList(Node node) {
+    if (!node.canGet(AGGREGATE_LIST_COLUMN, List.class)) {
+      throw new IllegalArgumentException("Node does not have aggregate list: " + node);
+    }
+    return (List<Node>) node.get(AGGREGATE_LIST_COLUMN);
   }
 
   public FlowMapGraph aggregate() {
@@ -105,7 +120,8 @@ public class FlowMapGraphEdgeAggregator {
         graph.getEdgeTable().getSchema().instantiate(),
         graph.isDirected());
 
-    addAggListEdgeColumn(aggGraph);
+    addAggListColumn(aggGraph.getNodeTable());
+    addAggListColumn(aggGraph.getEdgeTable());
 
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
@@ -115,16 +131,15 @@ public class FlowMapGraphEdgeAggregator {
 
       aggregateEdges(edges, newEdge);
 
-      newEdge.set(AGGREGATE_LIST_EDGE_COLUMN, ImmutableList.copyOf(edges));
+      newEdge.set(AGGREGATE_LIST_COLUMN, ImmutableList.copyOf(edges));
     }
 
     return new FlowMapGraph(aggGraph, flowMapGraph.getAttrSpec());
   }
 
-  private void addAggListEdgeColumn(Graph graph) {
-    Table et = graph.getEdgeTable();
-    if (!et.canGet(AGGREGATE_LIST_EDGE_COLUMN, List.class)) {
-      et.addColumn(AGGREGATE_LIST_EDGE_COLUMN, List.class);
+  private void addAggListColumn(Table et) {
+    if (!et.canGet(AGGREGATE_LIST_COLUMN, List.class)) {
+      et.addColumn(AGGREGATE_LIST_COLUMN, List.class);
     }
   }
 
@@ -135,12 +150,14 @@ public class FlowMapGraphEdgeAggregator {
   private Node aggregateNodes(Iterable<Node> nodes) {
     nodes = unique(nodes);
     List<String> nodeIds = nodeIdsOf(nodes);
-    Node newNode = nodesByIds.get(nodeIds);
+    Node newNode = nodesByIds.get(nodeIds);  // if a node has degree > 1, we mustn't recreate it
+                                             // for each edge
     if (newNode == null) {
       newNode = aggregateColumns(nodes, aggGraph.addNode(),
           flowMapGraph.getAggregatableNodeColumns());
-
       nodesByIds.put(nodeIds, newNode);
+
+      newNode.set(AGGREGATE_LIST_COLUMN, ImmutableList.copyOf(nodes));
     }
     return newNode;
   }
