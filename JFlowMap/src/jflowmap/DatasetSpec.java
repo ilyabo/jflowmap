@@ -1,6 +1,7 @@
 package jflowmap;
 
 import jflowmap.geo.MapProjection;
+import jflowmap.geo.MapProjections;
 
 import org.apache.log4j.Logger;
 
@@ -38,7 +39,7 @@ public class DatasetSpec {
     this.xNodeAttr = xNodeAttr;
     this.yNodeAttr = yNodeAttr;
     this.labelNodeAttr = labelNodeAttr;
-    this.mapProjection = proj;
+    this.mapProjection = proj == null ?  MapProjections.NONE : proj;
   }
 
 //  public DatasetSpec(String filename, String areaMapFilename, FlowMapAttrSpec attrsSpec) {

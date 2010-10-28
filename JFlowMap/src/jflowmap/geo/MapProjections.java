@@ -28,7 +28,7 @@ public enum MapProjections implements MapProjection {
   NONE {
     @Override
     public Point2D project(double lon, double lat) {
-      return new Point2D.Double(lat, lon);
+      return new Point2D.Double(lon, lat);
     }
   },
 
