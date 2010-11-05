@@ -24,6 +24,7 @@ import java.util.Map;
 
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.GraphMLReader3;
+import jflowmap.data.MultiFlowMapStats;
 
 import org.apache.log4j.Logger;
 
@@ -52,7 +53,7 @@ public class FlowMapGraphSet {
   public FlowMapGraphSet(Iterable<Graph> graphs, FlowMapAttrSpec attrSpec) {
     this.graphs = ImmutableList.copyOf(graphs);
     this.attrSpec = attrSpec;
-    this.stats = FlowMapStats.createFor(graphs, attrSpec);
+    this.stats = MultiFlowMapStats.createFor(graphs, attrSpec);
   }
 
   public FlowMapAttrSpec getAttrSpec() {

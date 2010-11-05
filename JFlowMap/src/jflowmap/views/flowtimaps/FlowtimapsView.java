@@ -148,6 +148,7 @@ public class FlowtimapsView extends AbstractCanvasView {
   private Map<String, Color> flowLinesPalette;
 
   private boolean showLinesForHighligtedOnly = false;
+  private boolean focusOnVisibleRows = false;
 
   private List<String> selSrcNodes, selTargetNodes;
 
@@ -191,8 +192,8 @@ public class FlowtimapsView extends AbstractCanvasView {
             (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
-    // canvas.setMinZoomScale(1e-2);
-    // canvas.setMaxZoomScale(1.0);
+     canvas.setMinZoomScale(1e-1);
+     canvas.setMaxZoomScale(1e+2);
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
@@ -269,6 +270,17 @@ public class FlowtimapsView extends AbstractCanvasView {
 
   public int getMaxVisibleTuples() {
     return maxVisibleTuples;
+  }
+
+  public boolean getFocusOnVisibleRows() {
+    return focusOnVisibleRows;
+  }
+
+  public void setFocusOnVisibleRows(boolean focusOnVisibleRows) {
+    if (this.focusOnVisibleRows != focusOnVisibleRows) {
+      this.focusOnVisibleRows = focusOnVisibleRows;
+      updateHeatmapColors();
+    }
   }
 
   public void setCustomEdgeFilter(Predicate<Edge> edgeFilter) {

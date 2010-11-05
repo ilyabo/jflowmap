@@ -21,6 +21,7 @@ package jflowmap.data;
 import java.util.Iterator;
 import java.util.List;
 
+import prefuse.data.Edge;
 import prefuse.data.Tuple;
 import prefuse.data.tuple.TupleSet;
 
@@ -36,29 +37,40 @@ public class TupleStats {
   private TupleStats() {
   }
 
-  public static MinMax createFor(TupleSet tupleSet, Iterable<String> attrNames) {
-    return MinMax.createFor(attrValuesIterator(tupleSet, attrNames));
+  @SuppressWarnings("unchecked")
+  public static MinMax createFor(final TupleSet tupleSet, Iterable<String> attrNames) {
+    Iterable it = new Iterable<Tuple>() {@Override
+      public Iterator<Tuple> iterator() {
+        return tupleSet.tuples();
+      } };
+    return createFor(it, attrNames);
   }
 
+  @SuppressWarnings("unchecked")
   public static MinMax createFor(TupleSet tupleSet, String attrName) {
-    return MinMax.createFor(attrValuesIterator(tupleSet, attrName));
+    return MinMax.createFor(attrValuesIterator(tupleSet.tuples(), attrName));
   }
 
+  @SuppressWarnings("unchecked")
+  public static MinMax createFor(Iterable<Edge> edges, Iterable<String> attrNames) {
+    return MinMax.createFor(attrValuesIterator((Iterable)edges, attrNames));
+  };
 
-  public static MinMax createFor(Iterator<TupleSet> tupleSetIt, Iterator<String> attrNameIt) {
+
+  @SuppressWarnings("unchecked")
+  public static MinMax createFor(Iterator<TupleSet> it, Iterator<String> attrNameIt) {
     List<Iterator<Double>> iterators = Lists.newArrayList();
-    while (tupleSetIt.hasNext()) {
+    while (it.hasNext()) {
       assert attrNameIt.hasNext();
-      iterators.add(attrValuesIterator(tupleSetIt.next(), attrNameIt.next()));
+      iterators.add(attrValuesIterator(it.next().tuples(), attrNameIt.next()));
     }
     assert !attrNameIt.hasNext();
     return MinMax.createFor(Iterators.concat(iterators.iterator()));
   }
 
-  @SuppressWarnings("unchecked")
-  private static Iterator<Double> attrValuesIterator(TupleSet tupleSet, final String attrName) {
+  private static Iterator<Double> attrValuesIterator(Iterator<Tuple> it, final String attrName) {
     return Iterators.transform(
-        tupleSet.tuples(),
+        it,
         new Function<Tuple, Double>() {
           public Double apply(Tuple from) {
             return from.getDouble(attrName);
@@ -70,12 +82,13 @@ public class TupleStats {
   /**
    * Returns a concatenated iterator over tuple entries' values of the given set of attrNames
    */
-  private static Iterator<Double> attrValuesIterator(TupleSet tupleSet, Iterable<String> attrNames) {
+  @SuppressWarnings("unchecked")
+  private static Iterator<Double> attrValuesIterator(Iterable<Tuple> it, Iterable<String> attrNames) {
     List<Iterator<Double>> attrValueIterators = Lists.newArrayList();
     for (String attrName : attrNames) {
-      attrValueIterators.add(attrValuesIterator(tupleSet, attrName));
+      attrValueIterators.add(attrValuesIterator(it.iterator(), attrName));
     }
     return Iterators.concat(attrValueIterators.iterator());
-  };
+  }
 
 }

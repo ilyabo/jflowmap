@@ -41,6 +41,7 @@ import javax.swing.SwingWorker;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.MultiFlowMapStats;
 import jflowmap.geo.MapProjections;
 import jflowmap.views.IColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
@@ -271,7 +272,7 @@ public class FlowMapToImageRenderer extends JFrame {
           progress.setNote("Gathering stats for " + name);
           gs.add(FlowMapGraph.loadGraphML(entry.getValue()));
         }
-        stats = FlowMapStats.createFor(gs);
+        stats = MultiFlowMapStats.createFor(gs);
       } else {
         stats = null;
       }

@@ -10,8 +10,8 @@
 <intAttribute key="org.eclipse.jdt.launching.APPLET_HEIGHT" value="950"/>
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
-<mapEntry key="labelAttr" value="name"/>
 <mapEntry key="yNodeAttr" value="lat"/>
+<mapEntry key="labelAttr" value="name"/>
 <mapEntry key="weightAttr" value="[0-9]{4}"/>
 <mapEntry key="xNodeAttr" value="lon"/>
 <mapEntry key="maxVisibleTuples" value="250"/>

@@ -32,6 +32,7 @@ import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.GraphMLReader3;
 import jflowmap.data.MinMax;
+import jflowmap.data.MultiFlowMapStats;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.util.MathUtils;
@@ -107,7 +108,8 @@ public class FlowMapGraph {
     this.edgeWeightAttrNames = ImmutableList.copyOf(weightAttrs);
     logger.info("Creating a FlowMapGraph with edge weight attrs: " + edgeWeightAttrNames);
     if (stats == null) {
-      stats = FlowMapStats.createFor(this);
+      //stats = EdgeListFlowMapStats.createFor(edges(), attrSpec);
+      stats = MultiFlowMapStats.createFor(this);
       logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
     }
     this.stats = stats;

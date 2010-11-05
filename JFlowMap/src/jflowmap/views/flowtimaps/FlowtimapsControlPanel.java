@@ -255,10 +255,16 @@ public class FlowtimapsControlPanel extends JPanel {
     });
 
 
-    final JCheckBox focusChk = new JCheckBox("Focus on visible rows"/*,
-        duoTimelineView.get...()*/);
+    final JCheckBox focusChk = new JCheckBox("Focus on visible rows",
+        flowtimapsView.getFocusOnVisibleRows());
     panel.add(focusChk, "gapleft 15");
-    focusChk.setEnabled(false);
+    focusChk.setEnabled(true);
+    focusChk.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        flowtimapsView.setFocusOnVisibleRows(focusChk.isSelected());
+      }
+    });
 
     return panel;
   }
@@ -297,7 +303,7 @@ public class FlowtimapsControlPanel extends JPanel {
 //  }
 
   private enum MaxRowNumValues {
-    _25(25), _50(50), _100(100), _250(250), _500(500), _1000(1000), INFINITY(-1, "\u221e");
+    _25(25), _50(50), _100(100), _200(200), _500(500), _1000(1000), INFINITY(-1, "\u221e");
     final int num;
     final String str;
 
