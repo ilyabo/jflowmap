@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.AreaMap;
-import jflowmap.views.flowtimaps.FlowtimapsView;
+import jflowmap.views.flowstrates.FlowstratesView;
 
 /**
  * @author Ilya Boyandin
@@ -35,7 +35,7 @@ public class FlotimapsMain extends JFrame {
 
   public FlotimapsMain(DatasetSpec ds) throws IOException {
     super("DuoTimeline");
-    final FlowtimapsView view = new FlowtimapsView(
+    final FlowstratesView view = new FlowstratesView(
         FlowMapGraph.loadGraphML(ds), AreaMap.loadFor(ds));
     add(view.getViewComponent());
     addWindowListener(new WindowAdapter() {

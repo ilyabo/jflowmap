@@ -1,4 +1,4 @@
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.util.Collections;
 import java.util.Comparator;

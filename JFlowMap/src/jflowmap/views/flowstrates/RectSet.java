@@ -1,4 +1,4 @@
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.Font;
 import java.awt.Paint;
@@ -20,13 +20,13 @@ class Centroid extends PPath {
   private final PText labelText;
   private boolean isSelected;
   private boolean isHighlighted;
-  private final FlowtimapsView view;
+  private final FlowstratesView view;
   private final String nodeId;
   private final double origX;
   private final double origY;
 
   public Centroid(String nodeId, String nodeLabel, double origX, double origY,
-      double size, Paint paint, FlowtimapsView view) {
+      double size, Paint paint, FlowstratesView view) {
 //    super(new Ellipse2D.Double(origX - size/2, origY - size/2, size, size));
     super(new Ellipse2D.Double(origX, origY, size, size));
     this.origX = origX;
@@ -77,7 +77,7 @@ class Centroid extends PPath {
   }
 
   private void updateColors() {
-    FlowtimapsStyle style = view.getStyle();
+    FlowstratesStyle style = view.getStyle();
     if (isHighlighted) {
       setPaint(style.getMapAreaHighlightedCentroidColor());
       labelText.setPaint(style.getMapAreaHighlightedCentroidLabelColor());

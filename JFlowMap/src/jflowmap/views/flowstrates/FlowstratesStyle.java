@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.Color;
 import java.awt.Stroke;
@@ -26,7 +26,7 @@ import jflowmap.NodeEdgePos;
 /**
  * @author Ilya Boyandin
  */
-public interface FlowtimapsStyle {
+public interface FlowstratesStyle {
 
   Color getBackgroundColor();
 

@@ -1,4 +1,4 @@
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ import com.google.common.collect.Iterables;
 /**
  * @author Ilya Boyandin
  */
-public class FlowtimapsHeatmapRowFilters {
+public class FlowstratesHeatmapRowFilters {
 
-  private FlowtimapsHeatmapRowFilters() {
+  private FlowstratesHeatmapRowFilters() {
   }
 
   public static Predicate<Edge> createEdgeFilter_bySrcAndTargetNodeIds( final FlowMapGraph fmg,

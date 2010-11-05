@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -58,7 +58,7 @@ import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.VisualArea;
 import jflowmap.views.flowmap.VisualAreaMap;
-import jflowmap.views.flowtimaps.HeatMapCell.ValueType;
+import jflowmap.views.flowstrates.HeatMapCell.ValueType;
 
 import org.apache.log4j.Logger;
 
@@ -87,7 +87,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 /**
  * @author Ilya Boyandin
  */
-public class FlowtimapsView extends AbstractCanvasView {
+public class FlowstratesView extends AbstractCanvasView {
 
   private static final double CENTROID_DOT_SIZE = 2.0;
 
@@ -102,13 +102,13 @@ public class FlowtimapsView extends AbstractCanvasView {
   private static final Font HEATMAP_NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
   private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 19);
 
-  public static Logger logger = Logger.getLogger(FlowtimapsView.class);
+  public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
   private static final double cellWidth = 40;
   private static final double cellHeight = 40;
   private boolean interpolateColors = true;
 
-  private final FlowtimapsStyle style = new DefaultFlowtimapsStyle();
+  private final FlowstratesStyle style = new DefaultFlowstratesStyle();
   private final FlowMapGraph flowMapGraph;
   // private final PScrollPane scrollPane;
 
@@ -152,11 +152,11 @@ public class FlowtimapsView extends AbstractCanvasView {
 
   private List<String> selSrcNodes, selTargetNodes;
 
-  public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
+  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
   }
 
-  public FlowtimapsView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
+  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
 //    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
@@ -192,8 +192,8 @@ public class FlowtimapsView extends AbstractCanvasView {
             (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
-     canvas.setMinZoomScale(1e-1);
-     canvas.setMaxZoomScale(1e+2);
+//     canvas.setMinZoomScale(1e-1);
+//     canvas.setMaxZoomScale(1e+2);
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
@@ -207,7 +207,7 @@ public class FlowtimapsView extends AbstractCanvasView {
     canvasLayer.addChild(heatmapCamera);
     canvasLayer.addChild(targetsCamera);
 
-    controlPanel = new FlowtimapsControlPanel(this);
+    controlPanel = new FlowstratesControlPanel(this);
 
     // scrollPane = new PScrollPane(canvas);
     // scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -920,7 +920,7 @@ public class FlowtimapsView extends AbstractCanvasView {
   // }
 
   public Color getColorForWeight(double weight, MinMax wstats) {
-    FlowtimapsStyle style = getStyle();
+    FlowstratesStyle style = getStyle();
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();
     }
@@ -1074,7 +1074,7 @@ public class FlowtimapsView extends AbstractCanvasView {
     };
   }
 
-  public FlowtimapsStyle getStyle() {
+  public FlowstratesStyle getStyle() {
     return style;
   }
 

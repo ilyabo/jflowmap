@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,21 +37,21 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
-import jflowmap.views.flowtimaps.HeatMapCell.ValueType;
+import jflowmap.views.flowstrates.HeatMapCell.ValueType;
 import net.miginfocom.swing.MigLayout;
 
 
 /**
  * @author Ilya Boyandin
  */
-public class FlowtimapsControlPanel extends JPanel {
+public class FlowstratesControlPanel extends JPanel {
 
-  private final FlowtimapsView flowtimapsView;
+  private final FlowstratesView flowstratesView;
 
 //  private final JTabbedPane tabbedPane;
 
-  public FlowtimapsControlPanel(FlowtimapsView view) {
-    this.flowtimapsView = view;
+  public FlowstratesControlPanel(FlowstratesView view) {
+    this.flowstratesView = view;
 
     setLayout(new MigLayout("insets 0 0 0 0,btt,nogrid", "", ""));
 //    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -101,24 +101,24 @@ public class FlowtimapsControlPanel extends JPanel {
 
 
     final JComboBox differencesCombo = new JComboBox(HeatMapCell.ValueType.values());
-    differencesCombo.setSelectedItem(flowtimapsView.getHeatMapCellValueType());
+    differencesCombo.setSelectedItem(flowstratesView.getHeatMapCellValueType());
     panel.add(differencesCombo, "al right");
     differencesCombo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setHeatMapCellValueType((ValueType) differencesCombo.getSelectedItem());
+        flowstratesView.setHeatMapCellValueType((ValueType) differencesCombo.getSelectedItem());
       }
     });
 
 
     panel.add(new JLabel("Max rows:"), "gapleft 5, al right");  //
     JComboBox maxRowsCombo = new JComboBox(MaxRowNumValues.values());
-    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(flowtimapsView.getMaxVisibleTuples()));
+    maxRowsCombo.setSelectedItem(MaxRowNumValues.valueOf(flowstratesView.getMaxVisibleTuples()));
     panel.add(maxRowsCombo, "height min, width min");
     maxRowsCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        flowtimapsView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
+        flowstratesView.setMaxVisibleTuples(((MaxRowNumValues)e.getItem()).num);
       }
     });
 
@@ -135,12 +135,12 @@ public class FlowtimapsControlPanel extends JPanel {
 
     panel.add(new JLabel("Order:"), "gapleft 10, al right");
     JComboBox orderByCombo = new JComboBox(RowOrderings.values());
-    orderByCombo.setSelectedItem(flowtimapsView.getRowOrdering());
+    orderByCombo.setSelectedItem(flowstratesView.getRowOrdering());
     panel.add(orderByCombo, "");
     orderByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        flowtimapsView.setRowOrdering((RowOrderings)e.getItem());
+        flowstratesView.setRowOrdering((RowOrderings)e.getItem());
       }
     });
 //    orderByCombo.setEnabled(false);
@@ -179,11 +179,11 @@ public class FlowtimapsControlPanel extends JPanel {
     srcField.getDocument().addDocumentListener(docListener);
     targetField.getDocument().addDocumentListener(docListener);
 
-    flowtimapsView.addPropertyChangeListener(FlowtimapsView.Properties.NODE_SELECTION,
+    flowstratesView.addPropertyChangeListener(FlowstratesView.Properties.NODE_SELECTION,
         new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-//        flowtimapsView.setCustomEdgeFilter(null);
+//        flowstratesView.setCustomEdgeFilter(null);
         srcField.getDocument().removeDocumentListener(docListener);
         targetField.getDocument().removeDocumentListener(docListener);
 
@@ -200,7 +200,7 @@ public class FlowtimapsControlPanel extends JPanel {
     clearBut.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setCustomEdgeFilter(null);
+        flowstratesView.setCustomEdgeFilter(null);
         srcField.setText("");
         targetField.setText("");
       }
@@ -213,8 +213,8 @@ public class FlowtimapsControlPanel extends JPanel {
   }
 
   private void doFilterBySrcDest(JTextField srcField, JTextField targetField) {
-    flowtimapsView.setCustomEdgeFilter(FlowtimapsHeatmapRowFilters.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
-        flowtimapsView.getFlowMapGraph(), srcField.getText(), targetField.getText()
+    flowstratesView.setCustomEdgeFilter(FlowstratesHeatmapRowFilters.createEdgeFilter_bySrcTargetNamesAsBagOfWords(
+        flowstratesView.getFlowMapGraph(), srcField.getText(), targetField.getText()
         ));
   }
 
@@ -226,10 +226,10 @@ public class FlowtimapsControlPanel extends JPanel {
     panel.add(new JLabel("Sequential:"), "al right");
     final JComboBox sequentialCombo =
       new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.SEQUENTIAL).toArray());
-    sequentialCombo.setSelectedItem(flowtimapsView.getSequentialColorScheme());
+    sequentialCombo.setSelectedItem(flowstratesView.getSequentialColorScheme());
     sequentialCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
+        flowstratesView.setSequentialColorScheme((ColorSchemes)sequentialCombo.getSelectedItem());
       }
     });
     panel.add(sequentialCombo, "");
@@ -237,32 +237,32 @@ public class FlowtimapsControlPanel extends JPanel {
     panel.add(new JLabel("Diverging:"), "gapleft 15, al right");
     final JComboBox divergingCombo =
       new JComboBox(ColorSchemes.ofType(ColorSchemes.Type.DIVERGING).toArray());
-    divergingCombo.setSelectedItem(flowtimapsView.getDivergingColorScheme());
+    divergingCombo.setSelectedItem(flowstratesView.getDivergingColorScheme());
     panel.add(divergingCombo, "");
     divergingCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setDivergingColorScheme((ColorSchemes) divergingCombo.getSelectedItem());
+        flowstratesView.setDivergingColorScheme((ColorSchemes) divergingCombo.getSelectedItem());
       }
     });
 
     final JCheckBox interpolateChk = new JCheckBox("Interpolate",
-        flowtimapsView.getInterpolateColors());
+        flowstratesView.getInterpolateColors());
     panel.add(interpolateChk, "gapleft 15");
     interpolateChk.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setInterpolateColors(interpolateChk.isSelected());
+        flowstratesView.setInterpolateColors(interpolateChk.isSelected());
       }
     });
 
 
     final JCheckBox focusChk = new JCheckBox("Focus on visible rows",
-        flowtimapsView.getFocusOnVisibleRows());
+        flowstratesView.getFocusOnVisibleRows());
     panel.add(focusChk, "gapleft 15");
     focusChk.setEnabled(true);
     focusChk.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setFocusOnVisibleRows(focusChk.isSelected());
+        flowstratesView.setFocusOnVisibleRows(focusChk.isSelected());
       }
     });
 
@@ -277,10 +277,10 @@ public class FlowtimapsControlPanel extends JPanel {
 
     panel.add(new JLabel("Coloring:"), "al right");
     final JComboBox coloringCombo = new JComboBox(FlowLinesColoringMode.values());
-    coloringCombo.setSelectedItem(flowtimapsView.getFlowLinesColoringMode());
+    coloringCombo.setSelectedItem(flowstratesView.getFlowLinesColoringMode());
     coloringCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        flowtimapsView.setFlowLinesColoringMode(
+        flowstratesView.setFlowLinesColoringMode(
             (FlowLinesColoringMode)coloringCombo.getSelectedItem());
       }
     });

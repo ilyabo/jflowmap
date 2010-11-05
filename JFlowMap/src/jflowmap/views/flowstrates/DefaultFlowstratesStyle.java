@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -28,7 +28,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 /**
  * @author Ilya Boyandin
  */
-public class DefaultFlowtimapsStyle implements FlowtimapsStyle {
+public class DefaultFlowstratesStyle implements FlowstratesStyle {
 
 
   @Override

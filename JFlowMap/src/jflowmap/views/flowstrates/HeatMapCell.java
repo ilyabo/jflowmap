@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.flowtimaps;
+package jflowmap.views.flowstrates;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -86,12 +86,12 @@ class HeatMapCell extends PPath {
     }
   }
 
-  private final FlowtimapsView view;
+  private final FlowstratesView view;
   private final String weightAttr;
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public HeatMapCell(FlowtimapsView view, double x, double y,
+  public HeatMapCell(FlowstratesView view, double x, double y,
       double cellWidth, double cellHeight, String weightAttr, FlowMapGraph fmg, Edge edge) {
     super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
     this.view = view;
@@ -101,7 +101,7 @@ class HeatMapCell extends PPath {
     updateColor();
   }
 
-  public FlowtimapsView getView() {
+  public FlowstratesView getView() {
     return view;
   }
 

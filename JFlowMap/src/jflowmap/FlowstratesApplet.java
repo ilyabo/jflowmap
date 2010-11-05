@@ -23,12 +23,12 @@ import java.io.IOException;
 import javax.swing.UIManager;
 
 import jflowmap.models.map.AreaMap;
-import jflowmap.views.flowtimaps.FlowtimapsView;
+import jflowmap.views.flowstrates.FlowstratesView;
 
 /**
  * @author Ilya Boyandin
  */
-public class FlowtimapsApplet extends BaseApplet {
+public class FlowstratesApplet extends BaseApplet {
 
 //  static {
 //    // The statements below cause the objects to go straight for the default implementations
@@ -40,8 +40,8 @@ public class FlowtimapsApplet extends BaseApplet {
 //                                       "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
 //  }
 
-  public FlowtimapsApplet() {
-    super("Flowtimaps");
+  public FlowstratesApplet() {
+    super("Flowstrates");
   }
 
 
@@ -60,7 +60,7 @@ public class FlowtimapsApplet extends BaseApplet {
   protected IView createView() throws IOException {
     AreaMap areaMap = AreaMap.loadFor(getDatasetSpec());
     String maxVisibleTuples = getParameter("maxVisibleTuples");
-    return new FlowtimapsView(
+    return new FlowstratesView(
         FlowMapGraph.loadGraphML(getDatasetSpec()),
         areaMap,
         maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)
