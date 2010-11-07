@@ -42,6 +42,8 @@ import jflowmap.EdgeDirection;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
+import jflowmap.data.EdgeListFlowMapStats;
+import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjections;
@@ -371,6 +373,7 @@ public class FlowstratesView extends AbstractCanvasView {
       Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
 
       visibleEdges = edges;
+      visibleEdgesStats = null;
 
       updateFlowLinesPalette();
     }
@@ -1111,6 +1114,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private boolean fitInViewOnce = false;
   private RowOrderings rowOrdering = RowOrderings.SRC_VPOS;
+  private FlowMapStats visibleEdgesStats;
 
   private Rectangle2D centroidsBounds(NodeEdgePos s) {
     Rectangle2D.Double b = new Rectangle2D.Double();
@@ -1194,5 +1198,21 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public RowOrderings getRowOrdering() {
     return rowOrdering;
+  }
+
+  public FlowMapStats getStats() {
+    if (focusOnVisibleRows) {
+      return getVisibleEdgesStats();
+    } else {
+      return flowMapGraph.getStats();
+    }
+  }
+
+  private FlowMapStats getVisibleEdgesStats() {
+    List<Edge> edges = getVisibleEdges();
+    if (visibleEdgesStats == null) {
+      visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
+    }
+    return visibleEdgesStats;
   }
 }

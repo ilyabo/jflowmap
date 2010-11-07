@@ -21,7 +21,6 @@ package jflowmap.data;
 import java.util.Iterator;
 import java.util.List;
 
-import prefuse.data.Edge;
 import prefuse.data.Tuple;
 import prefuse.data.tuple.TupleSet;
 
@@ -51,9 +50,8 @@ public class TupleStats {
     return MinMax.createFor(attrValuesIterator(tupleSet.tuples(), attrName));
   }
 
-  @SuppressWarnings("unchecked")
-  public static MinMax createFor(Iterable<Edge> edges, Iterable<String> attrNames) {
-    return MinMax.createFor(attrValuesIterator((Iterable)edges, attrNames));
+  public static MinMax createFor(Iterable<Tuple> edges, Iterable<String> attrNames) {
+    return MinMax.createFor(attrValuesIterator(edges, attrNames));
   };
 
 

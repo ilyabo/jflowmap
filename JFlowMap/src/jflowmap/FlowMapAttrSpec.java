@@ -24,12 +24,17 @@ import java.util.List;
 import prefuse.data.Graph;
 import prefuse.data.Table;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Ilya Boyandin
  */
 public class FlowMapAttrSpec {
+
+  private static final String EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX = ":diff";
+  private static final String EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX = ":rdiff";
 
   private final List<String> edgeWeightAttrs;
   private final String nodeLabelAttr;
@@ -63,9 +68,36 @@ public class FlowMapAttrSpec {
   /**
    * @return An immutable list which can thus be reused without defensive copying.
    */
-  public List<String> getEdgeWeightAttrs() {
+  public List<String> getEdgeWeightAttrNames() {
     return edgeWeightAttrs;
   }
+
+  public String getEdgeWeightDiffAttr(String weightAttr) {
+    return weightAttr + EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX;
+  }
+
+  public String getEdgeWeightRelativeDiffAttr(String weightAttr) {
+    return weightAttr + EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX;
+  }
+
+  public List<String> getEdgeWeightDiffAttrNames() {
+    return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrs,
+        new Function<String, String>() {
+          public String apply(String weightAttr) {
+            return getEdgeWeightDiffAttr(weightAttr);
+          }
+        }));
+  }
+
+  public List<String> getEdgeWeightRelativeDiffAttrNames() {
+    return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrs,
+        new Function<String, String>() {
+          public String apply(String weightAttr) {
+            return getEdgeWeightRelativeDiffAttr(weightAttr);
+          }
+        }));
+  }
+
 
   public String getNodeLabelAttr() {
     return nodeLabelAttr;

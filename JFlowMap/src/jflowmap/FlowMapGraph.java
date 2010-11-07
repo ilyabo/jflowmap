@@ -64,9 +64,6 @@ public class FlowMapGraph {
 
 //  private static final String EDGE_GROUPING_COLUMN = "_GROUPING";
 
-  private static final String EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX = ":diff";
-  private static final String EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX = ":rdiff";
-
   private static Logger logger = Logger.getLogger(FlowMapGraph.class);
 
   public static final Class<Double> WEIGHT_COLUMNS_DATA_TYPE = double.class;
@@ -99,7 +96,7 @@ public class FlowMapGraph {
 //    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrs());
 //    Collections.sort(weightAttrs);
 
-    List<String> weightAttrs = attrSpec.getEdgeWeightAttrs();
+    List<String> weightAttrs = attrSpec.getEdgeWeightAttrNames();
     if (weightAttrs.size() == 0) {
       throw new IllegalArgumentException("FlowMapGraph must have at least one weight attr. " +
       		"Available columns: " + Iterables.toString(Tables.columns(graph.getEdgeTable())));
@@ -184,7 +181,7 @@ public class FlowMapGraph {
    * @return An immutable list which can thus be reused without defensive copying.
    */
   public List<String> getEdgeWeightAttrs() {
-    return attrSpec.getEdgeWeightAttrs();
+    return attrSpec.getEdgeWeightAttrNames();
   }
 
   public int getEdgeWeightAttrsCount() {
@@ -193,24 +190,6 @@ public class FlowMapGraph {
 
   public List<String> getEdgeWeightAttrNames() {
     return edgeWeightAttrNames;
-  }
-
-  public List<String> getEdgeWeightDiffAttrNames() {
-    return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrNames,
-        new Function<String, String>() {
-          public String apply(String weightAttr) {
-            return getEdgeWeightDiffAttr(weightAttr);
-          }
-        }));
-  }
-
-  public List<String> getEdgeWeightRelativeDiffAttrNames() {
-    return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrNames,
-        new Function<String, String>() {
-          public String apply(String weightAttr) {
-            return getEdgeWeightRelativeDiffAttr(weightAttr);
-          }
-        }));
   }
 
   public String getNodeLabelAttr() {
@@ -669,20 +648,12 @@ public class FlowMapGraph {
     };
   }
 
-  public String getEdgeWeightDiffAttr(String weightAttr) {
-    return weightAttr + EDGE_WEIGHT_DIFF_COLUMNS_SUFFIX;
-  }
-
-  public String getEdgeWeightRelativeDiffAttr(String weightAttr) {
-    return weightAttr + EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX;
-  }
-
   public void addEdgeWeightDifferenceColumns() {
     Iterable<Edge> edges = edges();
 
     String prevAttr = null;
     for (String attr : getEdgeWeightAttrNames()) {
-      String diffAttr = getEdgeWeightDiffAttr(attr);
+      String diffAttr = getAttrSpec().getEdgeWeightDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
 
@@ -706,7 +677,7 @@ public class FlowMapGraph {
 
     String prevAttr = null;
     for (String attr : getEdgeWeightAttrNames()) {
-      String diffAttr = getEdgeWeightRelativeDiffAttr(attr);
+      String diffAttr = getAttrSpec().getEdgeWeightRelativeDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
 
@@ -802,6 +773,14 @@ public class FlowMapGraph {
     });
 
     return list;
+  }
+
+  public List<String> getEdgeWeightDiffAttrNames() {
+    return getAttrSpec().getEdgeWeightDiffAttrNames();
+  }
+
+  public List<String> getEdgeWeightRelativeDiffAttrNames() {
+    return getAttrSpec().getEdgeWeightRelativeDiffAttrNames();
   }
 
 }

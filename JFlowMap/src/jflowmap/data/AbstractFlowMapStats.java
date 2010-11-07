@@ -1,6 +1,5 @@
 package jflowmap.data;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,21 +8,40 @@ import prefuse.data.Edge;
 import prefuse.data.Node;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author Ilya Boyandin
  */
 public abstract class AbstractFlowMapStats implements FlowMapStats {
 
-  protected static final String NODE_ATTR_KEY_PREFIX = "NODE_";
-  protected static final String EDGE_ATTR_KEY_PREFIX = "EDGE_";
+  protected enum AttrKeys {
+    NODE_X, NODE_Y,
+    EDGE_LENGTH, EDGE_WEIGHT, EDGE_WEIGHT_DIFF, EDGE_WEIGHT_DIFF_REL
+    ;
 
-  private final Map<String, MinMax> statsCache = new HashMap<String, MinMax>();
+    public static String nodeAttr(String attrName) {
+      return NODE_ATTR_KEY_PREFIX + attrName;
+    }
+
+    public static String edgeAttr(String attrName) {
+      return EDGE_ATTR_KEY_PREFIX + attrName;
+    }
+  }
+
+  private static final String NODE_ATTR_KEY_PREFIX = ":node:";
+  private static final String EDGE_ATTR_KEY_PREFIX = ":edge:";
+
+  private final Map<String, MinMax> statsCache = Maps.newHashMap();
 
   private final FlowMapAttrSpec attrSpec;
 
   public AbstractFlowMapStats(FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
+  }
+
+  public FlowMapAttrSpec getAttrSpec() {
+    return attrSpec;
   }
 
   protected synchronized MinMax getCachedOrCalc(String key, AttrStatsCalculator calc) {
@@ -43,7 +61,7 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
 
   public MinMax getEdgeLengthStats() {
     return getCachedOrCalc(
-        EDGE_ATTR_KEY_PREFIX + "LENGTH",
+        AttrKeys.EDGE_LENGTH.name(),
         new AttrStatsCalculator() {
           @Override
           public MinMax calc() {
@@ -60,19 +78,6 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
             return MinMax.createFor(edgeLengths.iterator());
           }
         });
-  }
-
-
-  protected MinMax getEdgeAttrsStats(String key, final List<String> edgeAttrs) {
-    return getCachedOrCalc(
-        key,
-        new AttrStatsCalculator() {
-          @Override
-          public MinMax calc() {
-            return TupleStats.createFor(edges(), edgeAttrs);
-          }
-        }
-    );
   }
 
 }

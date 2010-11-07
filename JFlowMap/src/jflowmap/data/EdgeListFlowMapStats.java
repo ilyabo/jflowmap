@@ -4,6 +4,8 @@ import java.util.List;
 
 import jflowmap.FlowMapAttrSpec;
 import prefuse.data.Edge;
+import prefuse.data.Node;
+import prefuse.data.Tuple;
 
 import com.google.common.collect.ImmutableList;
 
@@ -13,10 +15,12 @@ import com.google.common.collect.ImmutableList;
 public class EdgeListFlowMapStats extends AbstractFlowMapStats {
 
   private final List<Edge> edges;
+  private final Iterable<Node> nodes;
 
   private EdgeListFlowMapStats(Iterable<Edge> edges, FlowMapAttrSpec attrSpec) {
     super(attrSpec);
     this.edges = ImmutableList.copyOf(edges);
+    this.nodes = Nodes.unique(Nodes.nodesOfEdges(edges));
   }
 
   @Override
@@ -24,38 +28,67 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
     return edges;
   }
 
+  @SuppressWarnings("unchecked")
+  protected Iterable<Tuple> edgesAsTuples() {
+    return (Iterable)edges;
+  }
+
+  @SuppressWarnings("unchecked")
+  protected Iterable<Tuple> nodesAsTuples() {
+    return (Iterable)nodes;
+  }
+
   public static FlowMapStats createFor(Iterable<Edge> edges, FlowMapAttrSpec attrSpec) {
     return new EdgeListFlowMapStats(edges, attrSpec);
   }
 
-  @Override
-  public MinMax getEdgeWeightDiffStats() {
-    return null;
-  }
-
-  @Override
-  public MinMax getEdgeWeightRelativeDiffStats() {
-    return null;
+  protected MinMax getAttrStats(String key, final Iterable<Tuple> tuples, final List<String> edgeAttrs) {
+    return getCachedOrCalc(
+        key,
+        new AttrStatsCalculator() {
+          @Override public MinMax calc() {
+            return TupleStats.createFor(tuples, edgeAttrs);
+          }
+        }
+    );
   }
 
   @Override
   public MinMax getEdgeWeightStats() {
-    return null;
+    return getAttrStats(AttrKeys.EDGE_WEIGHT.name(),
+        edgesAsTuples(),
+        getAttrSpec().getEdgeWeightAttrNames());
   }
 
   @Override
-  public MinMax getNodeAttrStats(String attr) {
-    return null;
+  public MinMax getEdgeWeightDiffStats() {
+    return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
+        edgesAsTuples(),
+        getAttrSpec().getEdgeWeightDiffAttrNames());
+  }
+
+  @Override
+  public MinMax getEdgeWeightRelativeDiffStats() {
+    return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
+        edgesAsTuples(),
+        getAttrSpec().getEdgeWeightRelativeDiffAttrNames());
+  }
+
+  @Override
+  public MinMax getNodeAttrStats(String attrName) {
+    return getAttrStats(AttrKeys.nodeAttr(attrName),
+        nodesAsTuples(),
+        getAttrSpec().getEdgeWeightRelativeDiffAttrNames());
   }
 
   @Override
   public MinMax getNodeXStats() {
-    return null;
+    return getNodeAttrStats(AttrKeys.NODE_X.name());
   }
 
   @Override
   public MinMax getNodeYStats() {
-    return null;
+    return getNodeAttrStats(AttrKeys.NODE_Y.name());
   }
 
 }

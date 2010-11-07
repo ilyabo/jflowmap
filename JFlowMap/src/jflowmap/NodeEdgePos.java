@@ -1,12 +1,9 @@
 package jflowmap;
 
-import java.util.Collection;
 
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 /**
  * End of the edge on which a node is placed.
@@ -29,12 +26,4 @@ public enum NodeEdgePos {
    * Edge direction towards the node
    */
   public abstract EdgeDirection dir();
-
-  public static Iterable<Node> getNodesOfEdges(Collection<Edge> edges, final NodeEdgePos nodePos) {
-    return Iterables.transform(edges, new Function<Edge, Node>() {
-      public Node apply(Edge e) {
-        return nodePos.nodeOf(e);
-      }
-    });
-  }
 }

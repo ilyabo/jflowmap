@@ -138,7 +138,7 @@ public class VisualTimeline extends PNode {
 
   private MinMax nodeSummaryMinMax(FlowMapStats stats) {
     FlowMapStats globalStats = flowMapGraphs.getStats();
-    String attr = flowMapGraphs.getAttrSpec().getEdgeWeightAttrs().get(0);
+    String attr = flowMapGraphs.getAttrSpec().getEdgeWeightAttrNames().get(0);
     return stats
       .getNodeAttrStats(
           FlowMapSummaries.getWeightSummaryNodeAttr(attr, EdgeDirection.INCOMING))
@@ -258,7 +258,7 @@ public class VisualTimeline extends PNode {
       double x = cellSpacingX + graphIndex * (cellWidth + cellSpacingX);
       double y = cellSpacingY + nodeIndex * (cellHeight + cellSpacingY);
       row.addChild(new VisualTimelineNodeCell(this, node,
-          graphs.getAttrSpec().getEdgeWeightAttrs().get(0),  // TODO: support for multiple attrs
+          graphs.getAttrSpec().getEdgeWeightAttrNames().get(0),  // TODO: support for multiple attrs
           x, y, cellWidth, cellHeight));
       row.setBounds(row.getFullBoundsReference());
       graphIndex++;

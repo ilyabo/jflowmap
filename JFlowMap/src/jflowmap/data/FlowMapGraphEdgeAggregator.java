@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
@@ -23,7 +22,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * @author Ilya Boyandin
@@ -126,8 +124,8 @@ public class FlowMapGraphEdgeAggregator {
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
       Edge newEdge = aggGraph.addEdge(
-          aggregateNodes(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.SOURCE)),
-          aggregateNodes(NodeEdgePos.getNodesOfEdges(edges, NodeEdgePos.TARGET)));
+          aggregateNodes(Nodes.nodesOfEdges(edges, NodeEdgePos.SOURCE)),
+          aggregateNodes(Nodes.nodesOfEdges(edges, NodeEdgePos.TARGET)));
 
       aggregateEdges(edges, newEdge);
 
@@ -148,7 +146,7 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   private Node aggregateNodes(Iterable<Node> nodes) {
-    nodes = unique(nodes);
+//    nodes = Nodes.unique(nodes);
     List<String> nodeIds = nodeIdsOf(nodes);
     Node newNode = nodesByIds.get(nodeIds);  // if a node has degree > 1, we mustn't recreate it
                                              // for each edge
@@ -160,14 +158,6 @@ public class FlowMapGraphEdgeAggregator {
       newNode.set(AGGREGATE_LIST_COLUMN, ImmutableList.copyOf(nodes));
     }
     return newNode;
-  }
-
-  private Set<Node> unique(Iterable<Node> nodes) {
-    Set<Node> unique = Sets.newTreeSet(FlowMapGraph.COMPARE_NODES_BY_IDS);
-    for (Node node : nodes) {
-      unique.add(node);
-    }
-    return unique;
   }
 
   private <T extends Tuple> T aggregateColumns(Iterable<T> tuples, T newTuple,

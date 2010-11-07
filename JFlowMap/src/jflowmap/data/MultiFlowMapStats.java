@@ -59,7 +59,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
 
   @Override
   public MinMax getEdgeWeightStats() {
-    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT",
+    return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT.name(),
         new Function<FlowMapGraph, List<String>>() {
           @Override
           public List<String> apply(FlowMapGraph fmg) {
@@ -90,7 +90,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
   }
 
   public MinMax getEdgeWeightDiffStats() {
-    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF",
+    return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
         new Function<FlowMapGraph, List<String>>() {
           @Override
           public List<String> apply(FlowMapGraph fmg) {
@@ -102,7 +102,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
 
 
   public MinMax getEdgeWeightRelativeDiffStats() {
-    return getEdgeAttrsStats(EDGE_ATTR_KEY_PREFIX + "WEIGHT_DIFF_REL",
+    return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
         new Function<FlowMapGraph, List<String>>() {
           @Override
           public List<String> apply(FlowMapGraph fmg) {
@@ -127,7 +127,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
    * has the attribute with <code>attrName</code>.
    */
   public MinMax getNodeAttrStats(final String attrName) {
-    return getCachedOrCalc(NODE_ATTR_KEY_PREFIX + attrName, new AttrStatsCalculator() {
+    return getCachedOrCalc(AttrKeys.nodeAttr(attrName), new AttrStatsCalculator() {
       @Override
       public MinMax calc() {
         return TupleStats.createFor(
