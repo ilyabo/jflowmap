@@ -1,5 +1,5 @@
 package jflowmap.views.flowstrates;
 
-enum FlowLinesColoringMode {
+enum FlowtiLinesColoringMode {
   SAME_COLOR, SOURCE, TARGET
 }

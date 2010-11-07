@@ -116,7 +116,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private final JPanel controlPanel;
   private HeatMapCell.ValueType heatMapCellValueType = HeatMapCell.ValueType.VALUE;
-  private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.SOURCE;
+  private FlowtiLinesColoringMode flowtiLinesColoringMode = FlowtiLinesColoringMode.SOURCE;
   private int maxVisibleTuples;
 
   private ColorSchemes sequentialColorScheme = ColorSchemes.OrRd;
@@ -149,10 +149,17 @@ public class FlowstratesView extends AbstractCanvasView {
   private final PLayer targetsLayer = new PLayer();
   private Map<String, Color> flowLinesPalette;
 
-  private boolean showLinesForHighligtedOnly = false;
+  private boolean showFlowtiLinesForHighligtedNodesOnly = false;
   private boolean focusOnVisibleRows = false;
 
   private List<String> selSrcNodes, selTargetNodes;
+
+  private final ColorSchemeAware mapColorScheme = new ColorSchemeAware() {
+    @Override
+    public Color getColor(ColorCodes code) {
+      return FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.get(code);
+    }
+  };
 
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -315,15 +322,15 @@ public class FlowstratesView extends AbstractCanvasView {
     };
   }
 
-  private void updateFlowLinesPalette() {
-    if (flowLinesColoringMode == FlowLinesColoringMode.SAME_COLOR) {
+  private void updateFlowtiLinesPalette() {
+    if (flowtiLinesColoringMode == FlowtiLinesColoringMode.SAME_COLOR) {
       if (flowLinesPalette != null)
         flowLinesPalette.clear();
       return;
     }
     Set<String> ids = Sets.newHashSet();
     for (Edge e : visibleEdges) {
-      switch (flowLinesColoringMode) {
+      switch (flowtiLinesColoringMode) {
       case SOURCE:
         ids.add(flowMapGraph.getSourceNodeId(e));
         break;
@@ -375,7 +382,7 @@ public class FlowstratesView extends AbstractCanvasView {
       visibleEdges = edges;
       visibleEdgesStats = null;
 
-      updateFlowLinesPalette();
+      updateFlowtiLinesPalette();
     }
 
     return visibleEdges;
@@ -432,13 +439,6 @@ public class FlowstratesView extends AbstractCanvasView {
   private PCamera getCamera() {
     return getVisualCanvas().getCamera();
   }
-
-  private final ColorSchemeAware mapColorScheme = new ColorSchemeAware() {
-    @Override
-    public Color getColor(ColorCodes code) {
-      return FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.get(code);
-    }
-  };
 
   private void createCentroids() {
     srcNodeIdsToCentroids = createCentroids(NodeEdgePos.SOURCE);
@@ -542,45 +542,50 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   public void setShowLinesForHighligtedOnly(boolean showLinesForHighligtedOnly) {
-    this.showLinesForHighligtedOnly = showLinesForHighligtedOnly;
-    renewFlowLines();
+    this.showFlowtiLinesForHighligtedNodesOnly = showLinesForHighligtedOnly;
+    renewFlowtiLines();
   }
 
-  private void renewFlowLines() {
+  private void renewFlowtiLines() {
     mapToMatrixLinesLayer.removeAllChildren();
 
     edgesToLines = Maps.newHashMap();
 
-    if (!showLinesForHighligtedOnly) {
+    // if (!showFlowtiLinesForHighligtedNodesOnly)
+    {
       for (Edge edge : getVisibleEdges()) {
-        edgesToLines.put(edge, Pair.of(createFlowLine(edge), createFlowLine(edge)));
+        FlowtiLine src = createFlowtiLine(edge);
+        FlowtiLine target = createFlowtiLine(edge);
+//        src.setVisible(!showFlowtiLinesForHighligtedNodesOnly  ||  src.isHighlighted());
+//        target.setVisible(!showFlowtiLinesForHighligtedNodesOnly  ||  target.isHighlighted());
+        edgesToLines.put(edge, Pair.of(src, target));
       }
     }
 
-    updateFlowLineColors();
+    updateFlowtiLineColors();
     updateFlowLinePositions();
   }
 
-  public FlowLinesColoringMode getFlowLinesColoringMode() {
-    return flowLinesColoringMode;
+  public FlowtiLinesColoringMode getFlowtiLinesColoringMode() {
+    return flowtiLinesColoringMode;
   }
 
-  public void setFlowLinesColoringMode(FlowLinesColoringMode flowLinesColoringMode) {
-    this.flowLinesColoringMode = flowLinesColoringMode;
-    updateFlowLinesPalette();
-    updateFlowLineColors();
+  public void setFlowtiLinesColoringMode(FlowtiLinesColoringMode flowLinesColoringMode) {
+    this.flowtiLinesColoringMode = flowLinesColoringMode;
+    updateFlowtiLinesPalette();
+    updateFlowtiLineColors();
   }
 
-  private FlowtiLine createFlowLine(Edge edge) {
+  private FlowtiLine createFlowtiLine(Edge edge) {
     FlowtiLine line = new FlowtiLine();
     mapToMatrixLinesLayer.addChild(line);
     return line;
   }
 
-  private void updateFlowLineColors() {
-    if (showLinesForHighligtedOnly) {
-      return;
-    }
+  private void updateFlowtiLineColors() {
+//    if (showFlowtiLinesForHighligtedNodesOnly) {
+//      return;
+//    }
 
     for (Map.Entry<Edge, Pair<FlowtiLine, FlowtiLine>> e : edgesToLines.entrySet()) {
       Pair<FlowtiLine, FlowtiLine> p = e.getValue();
@@ -598,7 +603,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private Pair<Color, Color> getFlowLineColors(Edge edge) {
     Color c;
-    switch (flowLinesColoringMode) {
+    switch (flowtiLinesColoringMode) {
     case SAME_COLOR:
       return Pair.of(style.getFlowLineColor(), style.getFlowLineHighlightedColor());
 
@@ -647,9 +652,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void updateFlowLinePositions() {
-    if (showLinesForHighligtedOnly) {
-      return;
-    }
+//    if (showFlowtiLinesForHighligtedNodesOnly) {
+//      return;
+//    }
     PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
@@ -860,6 +865,10 @@ public class FlowstratesView extends AbstractCanvasView {
       if (pair != null) {
         pair.first().setHighlighted(highlighted);
         pair.second().setHighlighted(highlighted);
+//        if (showFlowtiLinesForHighligtedNodesOnly) {
+//          pair.first().setVisible(highlighted);
+//          pair.second().setVisible(highlighted);
+//        }
       }
     }
 
@@ -1000,7 +1009,7 @@ public class FlowstratesView extends AbstractCanvasView {
     // heatmapCamera.setViewBounds(heatmapNode.getFullBounds());
 
     createColumnLabels();
-    renewFlowLines();
+    renewFlowtiLines();
 
     // layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight *
     // row)));

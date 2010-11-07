@@ -38,7 +38,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 public class Lasso extends PBasicInputEventHandler {
 
   private static final Stroke LINE_STROKE = new PFixedWidthStroke(2.0f);
-  private static final double MIN_DIST_BETWEEN_SUBSEQUENT_POINTS = 5.0;  // on screen
+  private static final double MIN_DIST_BETWEEN_SUBSEQUENT_POINTS = .0;  // on screen
 
   private final PCamera camera;
   private final PLine line;

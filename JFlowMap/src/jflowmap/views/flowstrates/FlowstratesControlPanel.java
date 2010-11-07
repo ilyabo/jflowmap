@@ -276,12 +276,12 @@ public class FlowstratesControlPanel extends JPanel {
     panel.setName("Flow lines");
 
     panel.add(new JLabel("Coloring:"), "al right");
-    final JComboBox coloringCombo = new JComboBox(FlowLinesColoringMode.values());
-    coloringCombo.setSelectedItem(flowstratesView.getFlowLinesColoringMode());
+    final JComboBox coloringCombo = new JComboBox(FlowtiLinesColoringMode.values());
+    coloringCombo.setSelectedItem(flowstratesView.getFlowtiLinesColoringMode());
     coloringCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        flowstratesView.setFlowLinesColoringMode(
-            (FlowLinesColoringMode)coloringCombo.getSelectedItem());
+        flowstratesView.setFlowtiLinesColoringMode(
+            (FlowtiLinesColoringMode)coloringCombo.getSelectedItem());
       }
     });
     panel.add(coloringCombo, "");
