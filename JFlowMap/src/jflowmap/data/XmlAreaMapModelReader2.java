@@ -86,7 +86,7 @@ public class XmlAreaMapModelReader2 {
                   x = Double.parseDouble(point);
                 } else {
                   y = Double.parseDouble(point);
-                  points[coordCnt / 2] = new Point2D.Double(y, x);
+                  points[coordCnt / 2] = new Point2D.Double(x, y);
                 }
                 coordCnt++;
               }
