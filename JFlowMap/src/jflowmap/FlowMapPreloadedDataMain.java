@@ -136,7 +136,7 @@ public class FlowMapPreloadedDataMain extends JFrame {
   public static void main(String[] args) throws IOException {
     logger.info(">>> Starting FlowMapView");
     final List<DatasetSpec> datasetSpecs =
-      XmlDatasetSpecsReader.readDatasetSpecs("/data/datasets.xml");
+      XmlDatasetSpecsReader.readDatasetSpecs("data/datasets.xml");
     initLookAndFeel();
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
