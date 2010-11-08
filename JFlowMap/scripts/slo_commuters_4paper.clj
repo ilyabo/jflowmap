@@ -19,7 +19,7 @@
               (str name ".png")
               (DatasetSpec.
                    (str "data/commuters/slo/4paper/" name ".xml") "value" "lon" "lat" "name" 
-                   nil "data/shapefiles/slo/SVN_adm2.shp.gz" (MapProjections/MERCATOR))
+                   nil "data/shapefiles/slo/SVN_adm2.shp.gz" nil (MapProjections/MERCATOR))
                    (into-array String [name]))
         ;model-init (proxy [jflowmap.FlowMapToImageRenderer$FlowMapModelInitializer] []
         ;  (setupFlowMapModel [model]
