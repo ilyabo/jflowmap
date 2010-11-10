@@ -12,7 +12,7 @@
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
 <mapEntry key="areaMapSrc" value="data/refugees/countries-areas-ll.xml.gz"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="maxVisibleTuples" value="250"/>
+<mapEntry key="maxVisibleTuples" value="200"/>
 <mapEntry key="src" value="data/refugees/refugees.xml.gz"/>
 <mapEntry key="weightAttr" value="[0-9]{4}"/>
 <mapEntry key="xNodeAttr" value="lon"/>
