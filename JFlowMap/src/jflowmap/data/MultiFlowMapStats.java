@@ -17,7 +17,9 @@ import com.google.common.collect.Iterators;
 
 /**
  * @author Ilya Boyandin
+ * @deprecated
  */
+@Deprecated
 public class MultiFlowMapStats extends AbstractFlowMapStats {
 
   private final List<FlowMapGraph> flowMapGraphs;

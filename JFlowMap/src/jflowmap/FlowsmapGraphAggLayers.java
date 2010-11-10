@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 /**
  * @author Ilya Boyandin
  */
-public class FlowtiGraph {
+public class FlowsmapGraphAggLayers {
 
   public static class Builder {
 
@@ -57,8 +57,8 @@ public class FlowtiGraph {
       return this;
     }
 
-    public FlowtiGraph build(String initialLayer) {
-      return new FlowtiGraph(baseLayer, layersByName.values(), layersByName.get(initialLayer));
+    public FlowsmapGraphAggLayers build(String initialLayer) {
+      return new FlowsmapGraphAggLayers(baseLayer, layersByName.values(), layersByName.get(initialLayer));
     }
   }
 
@@ -67,7 +67,7 @@ public class FlowtiGraph {
   private List<Edge> visibleEdges;  // possibly of different graphs
   private final AggLayer baseLayer;
 
-  private FlowtiGraph(AggLayer base, Iterable<AggLayer> layers, AggLayer initialLayer) {
+  private FlowsmapGraphAggLayers(AggLayer base, Iterable<AggLayer> layers, AggLayer initialLayer) {
     baseLayer = base;
     aggLayers = ImmutableList.copyOf(Iterables.concat(ImmutableList.of(base), layers));
     visibleEdges = Lists.newArrayList(initialLayer.getFlowMapGraph().edges());

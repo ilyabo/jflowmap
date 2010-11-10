@@ -46,7 +46,9 @@ import com.google.common.collect.Maps;
 
 /**
  * @author Ilya Boyandin
+ * @deprecated
  */
+@Deprecated
 class GraphMLReader2 {
 
   private static final String DEFAULT_CHARSET = "utf-8";

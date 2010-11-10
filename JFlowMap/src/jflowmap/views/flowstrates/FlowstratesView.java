@@ -43,6 +43,8 @@ import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
 import jflowmap.data.EdgeListFlowMapStats;
+import jflowmap.data.FlowMapGraphEdgeAggregator;
+import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregators;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
@@ -168,13 +170,13 @@ public class FlowstratesView extends AbstractCanvasView {
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
-//    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
-////        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
-//        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
-//        .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
-//        .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
-//        .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
-//        .aggregate();
+    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
+//        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
+        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
+        .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
+        .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
+        .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
+        .aggregate();
 
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
