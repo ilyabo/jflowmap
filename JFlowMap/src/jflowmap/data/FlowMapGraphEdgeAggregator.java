@@ -142,8 +142,8 @@ public class FlowMapGraphEdgeAggregator {
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
       Edge newEdge = aggGraph.addEdge(
-          aggregateNodes(Nodes.nodesOfEdges(edges, NodeEdgePos.SOURCE)),
-          aggregateNodes(Nodes.nodesOfEdges(edges, NodeEdgePos.TARGET)));
+          aggregateNodes(Nodes.nodesOfEdges(edges, NodeEdgePos.SOURCE), AggEntity.SOURCE_NODE),
+          aggregateNodes(Nodes.nodesOfEdges(edges, NodeEdgePos.TARGET), AggEntity.TARGET_NODE));
 
       aggregateEdges(edges, newEdge);
 
@@ -160,17 +160,21 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   private void aggregateEdges(Collection<Edge> edges, Edge newEdge) {
-    aggregateColumns(edges, newEdge, flowMapGraph.getAggregatableEdgeColumns());
+    aggregateColumns(edges, newEdge, flowMapGraph.getAggregatableEdgeColumns(), AggEntity.EDGE);
   }
 
-  private Node aggregateNodes(Iterable<Node> nodes) {
+  public enum AggEntity {
+    SOURCE_NODE, TARGET_NODE, EDGE;
+  }
+
+  private Node aggregateNodes(Iterable<Node> nodes, AggEntity entity) {
 //    nodes = Nodes.unique(nodes);
     List<String> nodeIds = nodeIdsOf(nodes);
     Node newNode = nodesByIds.get(nodeIds);  // if a node has degree > 1, we mustn't recreate it
                                              // for each edge
     if (newNode == null) {
       newNode = aggregateColumns(nodes, aggGraph.addNode(),
-          flowMapGraph.getAggregatableNodeColumns());
+          flowMapGraph.getAggregatableNodeColumns(), entity);
       nodesByIds.put(nodeIds, newNode);
 
       newNode.set(AGGREGATE_LIST_COLUMN, ImmutableList.copyOf(nodes));
@@ -178,11 +182,12 @@ public class FlowMapGraphEdgeAggregator {
     return newNode;
   }
 
+  @SuppressWarnings("unchecked")
   private <T extends Tuple> T aggregateColumns(Iterable<T> tuples, T newTuple,
-      Iterable<String> columns) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Aggregating columns: " + Iterables.toString(columns));
-    }
+      Iterable<String> columns, AggEntity entity) {
+//    if (logger.isDebugEnabled()) {
+//      logger.debug("Aggregating columns: " + Iterables.toString(columns));
+//    }
     for (final String column : columns) {
       ValueAggregator agg = getAggregator(column, newTuple.getColumnType(column));
       Object aggValue = agg.aggregate(Iterables.transform(tuples, new Function<Tuple, Object>() {
@@ -190,7 +195,7 @@ public class FlowMapGraphEdgeAggregator {
         public Object apply(Tuple t) {
           return t.get(column);
         }
-      }));
+      }), (Iterable<Tuple>)tuples, entity);
       newTuple.set(column, aggValue);
     }
     return newTuple;
@@ -210,7 +215,7 @@ public class FlowMapGraphEdgeAggregator {
   public enum ValueAggregators implements ValueAggregator {
     DOUBLE_AVERAGE {
       @Override
-      public Object aggregate(Iterable<Object> values) {
+      public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
         double sum = 0;
         int count = 0;
         for (Object obj : values) {
@@ -228,7 +233,7 @@ public class FlowMapGraphEdgeAggregator {
     },
     STRING_ONE_OR_NONE {
       @Override
-      public Object aggregate(Iterable<Object> values) {
+      public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
         if (Iterables.size(values) == 1) {
           return Iterables.get(values, 0);
         }
@@ -238,7 +243,7 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   public interface ValueAggregator {
-    Object aggregate(Iterable<Object> values);
+    Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity);
   }
 
   private List<String> nodeIdsOf(Iterable<Node> nodes) {

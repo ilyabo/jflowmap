@@ -45,11 +45,12 @@ import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.NodeEdgePos;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
-import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.data.Nodes;
+import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
+import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
@@ -70,8 +71,10 @@ import org.apache.log4j.Logger;
 
 import prefuse.data.Edge;
 import prefuse.data.Node;
+import prefuse.data.Tuple;
 import prefuse.util.ColorLib;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -187,10 +190,29 @@ public class FlowstratesView extends AbstractCanvasView {
 
     ValueAggregator labelForAll = new ValueAggregator() {
       @Override
-      public Object aggregate(Iterable<Object> values) {
+      public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
         return "ALL";
       }
     };
+    builder.addAggregationLayer("src-region2", null,
+        builder.edgeAggregatorFor(new Function<Edge, Object>() {
+          @Override
+          public Object apply(Edge edge) {
+            return edge.getSourceNode().getString("region2");
+          }
+        }, null)
+            .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), new ValueAggregator() {
+              @Override
+              public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
+                if (entity == AggEntity.SOURCE_NODE) {
+                  return tuples.iterator().next().get("region2");
+                } else {
+                  return "ALL"; // Iterables.toString(values);
+                }
+              }
+            })
+            );
+
     builder.addAggregationLayer("src-to-all", "src-node",
         builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "src-node")
             .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), labelForAll));
@@ -198,8 +220,9 @@ public class FlowstratesView extends AbstractCanvasView {
         builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "target-node")
             .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), labelForAll));
 
-    FlowMapGraphAggLayers layers = builder.build("src-to-all");
-//    FlowMapGraphAggLayers layers = builder.build(null);
+    FlowMapGraphAggLayers layers =
+//      builder.build("src-to-all");
+      builder.build("src-region2");
 
 
     for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {

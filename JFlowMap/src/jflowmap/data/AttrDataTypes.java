@@ -21,6 +21,9 @@ package jflowmap.data;
 import java.util.Date;
 import java.util.Iterator;
 
+import prefuse.data.Tuple;
+
+import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
 import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 
 /**
@@ -29,7 +32,7 @@ import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 public enum AttrDataTypes implements ValueAggregator {
   INT(int.class, null, "int", "integer") {
     @Override
-    public Object aggregate(Iterable<Object> values) {
+    public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
       int sum = 0;
       for (Object obj : values) {
         sum += ((Integer)obj).intValue();
@@ -39,7 +42,7 @@ public enum AttrDataTypes implements ValueAggregator {
   },
   LONG(long.class, null, "long") {
     @Override
-    public Object aggregate(Iterable<Object> values) {
+    public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
       long sum = 0;
       for (Object obj : values) {
         sum += ((Long)obj).longValue();
@@ -49,7 +52,7 @@ public enum AttrDataTypes implements ValueAggregator {
   },
   FLOAT(float.class, Float.NaN, "float") {
     @Override
-    public Object aggregate(Iterable<Object> values) {
+    public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
       float sum = 0;
       for (Object obj : values) {
         sum += ((Float)obj).floatValue();
@@ -59,7 +62,7 @@ public enum AttrDataTypes implements ValueAggregator {
   },
   DOUBLE(double.class, Double.NaN, "double", "real") {
     @Override
-    public Object aggregate(Iterable<Object> values) {
+    public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
       double sum = 0;
       int cnt = 0;
       for (Object obj : values) {
@@ -78,7 +81,7 @@ public enum AttrDataTypes implements ValueAggregator {
   BOOLEAN(boolean.class, null, "boolean"),
   STRING(String.class, "", "string") {
     @Override
-    public Object aggregate(Iterable<Object> values) {
+    public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
       StringBuilder sb = new StringBuilder();
       for (Iterator<Object> it = values.iterator(); it.hasNext(); ) {
         Object obj = it.next();
@@ -125,7 +128,7 @@ public enum AttrDataTypes implements ValueAggregator {
   }
 
   @Override
-  public Object aggregate(Iterable<Object> values) {
+  public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
     return null;
   }
 
