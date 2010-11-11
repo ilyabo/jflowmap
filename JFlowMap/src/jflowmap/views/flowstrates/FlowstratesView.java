@@ -41,10 +41,10 @@ import jflowmap.ColorSchemes;
 import jflowmap.EdgeDirection;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
+import jflowmap.FlowsmapGraphAggLayers;
 import jflowmap.NodeEdgePos;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
-import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregators;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
@@ -162,6 +162,7 @@ public class FlowstratesView extends AbstractCanvasView {
       return FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.get(code);
     }
   };
+  private final FlowsmapGraphAggLayers layers;
 
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -170,13 +171,33 @@ public class FlowstratesView extends AbstractCanvasView {
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
-    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
-//        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
-        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
-        .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
-        .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
-        .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
-        .aggregate();
+//    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
+////        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
+//        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
+//        .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
+//        .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
+//        .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
+//        .aggregate();
+
+
+    FlowsmapGraphAggLayers.Builder builder = new FlowsmapGraphAggLayers.Builder(flowMapGraph);
+    builder.addAggregationLayer(
+        "src-node", null,
+        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
+    builder.addAggregationLayer(
+        "target-node", null,
+        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE);
+
+    builder.addAggregationLayer(
+        "src-to-all", "src-node",
+        FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL);
+    builder.addAggregationLayer(
+        "target-to-all", "target-node",
+        FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL);
+
+    FlowsmapGraphAggLayers layers = builder.build("src-to-all");
+
+    this.layers = layers;
 
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
@@ -377,7 +398,10 @@ public class FlowstratesView extends AbstractCanvasView {
   private List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
       List<Edge> edges = Lists.newArrayList(getTopEdges(Iterables.filter(
-          removeEdgesWithNaNs(flowMapGraph.edges()), getEdgePredicate())));
+          removeEdgesWithNaNs(
+              //flowMapGraph.edges()
+              layers.getVisibleEdges()
+              ), getEdgePredicate())));
 
       Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
 
@@ -1215,7 +1239,8 @@ public class FlowstratesView extends AbstractCanvasView {
     if (focusOnVisibleRows) {
       return getVisibleEdgesStats();
     } else {
-      return flowMapGraph.getStats();
+//      return flowMapGraph.getStats();
+      return layers.getStatsForVisibleEdges();
     }
   }
 

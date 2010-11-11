@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
-import jflowmap.data.MinMax;
+import jflowmap.data.FlowMapStats;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -262,8 +263,8 @@ public class FlowsmapGraphAggLayers {
     return getFlowMapGraphOf(node).getNodeLabel(node);
   }
 
-  public MinMax getStatsForVisibleEdges() {
-    return null;
+  public FlowMapStats getStatsForVisibleEdges() {
+    return EdgeListFlowMapStats.createFor(getVisibleEdges(), baseLayer.getFlowMapGraph().getAttrSpec());
   }
 
   private static class AggLayer {
