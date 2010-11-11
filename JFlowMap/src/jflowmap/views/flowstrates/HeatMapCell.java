@@ -20,6 +20,8 @@ package jflowmap.views.flowstrates;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.data.MinMax;
@@ -32,35 +34,37 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 class HeatMapCell extends PPath {
 
+  private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance();
+
   public enum ValueType {
     VALUE("original value") {
       @Override
-      protected MinMax getMinMax(HeatMapCell cell) {
+      public MinMax getMinMax(HeatMapCell cell) {
         return cell.getView().getStats().getEdgeWeightStats();
       }
 
       @Override
-      protected String getAttr(HeatMapCell cell) {
+      public String getAttr(HeatMapCell cell) {
         return cell.getWeightAttr();
       }
     }, DIFF("difference") {
       @Override
-      protected MinMax getMinMax(HeatMapCell cell) {
+      public MinMax getMinMax(HeatMapCell cell) {
         return cell.getView().getStats().getEdgeWeightDiffStats();
       }
 
       @Override
-      protected String getAttr(HeatMapCell cell) {
+      public String getAttr(HeatMapCell cell) {
         return cell.getFlowMapGraph().getAttrSpec().getEdgeWeightDiffAttr(cell.getWeightAttr());
       }
     }, DIFF_REL("relative diff") {
       @Override
-      protected MinMax getMinMax(HeatMapCell cell) {
+      public MinMax getMinMax(HeatMapCell cell) {
         return cell.getView().getStats().getEdgeWeightRelativeDiffStats();
       }
 
       @Override
-      protected String getAttr(HeatMapCell cell) {
+      public String getAttr(HeatMapCell cell) {
         return cell.getFlowMapGraph().getAttrSpec().getEdgeWeightRelativeDiffAttr(cell.getWeightAttr());
       }
     };
@@ -71,13 +75,16 @@ class HeatMapCell extends PPath {
       this.name = name;
     }
 
-    protected abstract MinMax getMinMax(HeatMapCell cell);
+    public abstract MinMax getMinMax(HeatMapCell cell);
 
-    protected abstract String getAttr(HeatMapCell cell);
+    public abstract String getAttr(HeatMapCell cell);
 
     public Color getColorFor(HeatMapCell cell) {
-      double diff = cell.getEdge().getDouble(getAttr(cell));
-      return cell.getView().getColorForWeight(diff, getMinMax(cell));
+      return getColorFor(cell, cell.getEdge().getDouble(getAttr(cell)));
+    }
+
+    public Color getColorFor(HeatMapCell cell, double value) {
+      return cell.getView().getColorForWeight(value, getMinMax(cell));
     }
 
     @Override
@@ -129,7 +136,8 @@ class HeatMapCell extends PPath {
     Node target = edge.getTargetNode();
     String nodeLabelAttr = flowMapGraph.getNodeLabelAttr();
     return
-      FlowMapGraph.getGraphId(edge.getGraph()) + ": " + src.getString(nodeLabelAttr) + " -> " +
+      //FlowMapGraph.getGraphId(edge.getGraph()) + ": " +
+      src.getString(nodeLabelAttr) + " -> " +
         target.getString(nodeLabelAttr);
   }
 
@@ -141,10 +149,14 @@ class HeatMapCell extends PPath {
   }
 
   public String getTooltipValues() {
+    double weight = edge.getDouble(weightAttr);
+    double weightDiff = edge.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightDiffAttr(weightAttr));
+    double weightRelDiff = edge.getDouble(
+        flowMapGraph.getAttrSpec().getEdgeWeightRelativeDiffAttr(weightAttr));
     return
-      Double.toString(edge.getDouble(weightAttr)) + "\n" +
-      Double.toString(edge.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightDiffAttr(weightAttr))) + "\n" +
-      Double.toString(edge.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightRelativeDiffAttr(weightAttr)));
+      NUMBER_FORMAT.format(weight) + "\n" +
+      NUMBER_FORMAT.format(weightDiff) + "\n" +
+      NUMBER_FORMAT.format(weightRelDiff);
   }
 
   public void updateColor() {

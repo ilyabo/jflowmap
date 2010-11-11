@@ -27,6 +27,9 @@ import jflowmap.EdgeDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
+
+import org.apache.log4j.Logger;
+
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -40,27 +43,33 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapSummaries {
 
+  private static Logger logger = Logger.getLogger(FlowMapSummaries.class);
+
   // TODO: generalize FlowMapSummaries (shouldn't be only for regions)
 //  public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
 //  public static final String NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
 
-  public static final String NODE_COLUMN__SUM_OUTGOING_INTRAREG = "outIntra:stat";
-  public static final String NODE_COLUMN__SUM_INCOMING_INTRAREG = "inIntra:stat";
+  public static final String NODE_COLUMN__SUM_OUTGOING_INTRAREG = "outIntra:stat:";
+  public static final String NODE_COLUMN__SUM_INCOMING_INTRAREG = "inIntra:stat:";
 
-  private static final String NODE_COLUMN__SUM_OUTGOING_PREFIX = "sumOut:stat";
-  private static final String NODE_COLUMN__SUM_INCOMING_PREFIX= "sumIn:stat";
+  private static final String NODE_COLUMN__SUM_OUTGOING_PREFIX = "sumOut:stat:";
+  private static final String NODE_COLUMN__SUM_INCOMING_PREFIX= "sumIn:stat:";
 
 
   private FlowMapSummaries() {
   }
 
   public static double getWeightSummary(Node node, String weightAttrName, EdgeDirection dir) {
-    return node.getDouble(getWeightSummaryNodeAttr(weightAttrName, dir));
+    String attrName = getWeightSummaryNodeAttr(weightAttrName, dir);
+    if (!node.canGet(attrName, double.class)) {
+      throw new IllegalArgumentException("Cannot get summary attr: " + attrName);
+    }
+    return node.getDouble(attrName);
   }
 
   public static void supplyNodesWithWeightSummaries(FlowMapGraphSet flowMapGraphSet) {
     for (FlowMapGraph flowMapGraph : flowMapGraphSet.asList()) {
-      FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
+      supplyNodesWithWeightSummaries(flowMapGraph);
     }
   }
 
@@ -69,10 +78,15 @@ public class FlowMapSummaries {
    * the nodes with useful stats.
    */
   public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph) {
-    for (String weightAttrName : flowMapGraph.getEdgeWeightAttrNames()) {
+    supplyNodesWithWeightSummaries(flowMapGraph, flowMapGraph.getEdgeWeightAttrNames());
+  }
+
+  public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph, List<String> attrNames) {
+    for (String weightAttrName : attrNames) {
       supplyNodesWithWeightSummaries(flowMapGraph, weightAttrName);
     }
   }
+
 
   public static String getWeightSummaryNodeAttr(String weightAttrName, EdgeDirection dir) {
     switch (dir) {
@@ -86,6 +100,11 @@ public class FlowMapSummaries {
       String weightAttrName) {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Adding summary columns to graph '" + flowMapGraph.getId() + "'" +
+      		" for attr: " + weightAttrName);
+    }
 
     Map<Integer, Double> outsums = Maps.newHashMap();
     Map<Integer, Double> insums = Maps.newHashMap();

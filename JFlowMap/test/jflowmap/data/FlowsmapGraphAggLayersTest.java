@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowsmapGraphAggLayers;
+import jflowmap.FlowMapGraphAggLayers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +21,13 @@ import com.google.common.collect.Sets;
  */
 public class FlowsmapGraphAggLayersTest {
 
-  private FlowsmapGraphAggLayers flowti;
+  private FlowMapGraphAggLayers flowti;
 
   @Before
   public void setup() {
     FlowMapGraph fmg = FlowMapGraphBuilderTest.buildTestFlowMapGraph();
 
-    FlowsmapGraphAggLayers.Builder builder = new FlowsmapGraphAggLayers.Builder(fmg);
+    FlowMapGraphAggLayers.Builder builder = new FlowMapGraphAggLayers.Builder(fmg);
     builder.addAggregationLayer(
         "src-node", null,
         FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
@@ -203,7 +203,7 @@ public class FlowsmapGraphAggLayersTest {
     flowti.expandSource(e);  // not visible
   }
 
-  private static Set<String> serializeVisibleEdges(FlowsmapGraphAggLayers ft) {
+  private static Set<String> serializeVisibleEdges(FlowMapGraphAggLayers ft) {
     Set<String> set = Sets.newHashSet();
     for (Edge edge : ft.getVisibleEdges()) {
       set.add(

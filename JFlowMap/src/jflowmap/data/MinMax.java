@@ -194,10 +194,16 @@ public class MinMax {
    * In case if max == min the method always returns signum(max).
    */
   public double normalizeLogAroundZero(double value) {
+    return normalizeLogAroundZero(value, false);
+  }
+
+  public double normalizeLogAroundZero(double value, boolean omitIntervalCheck) {
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
-    checkInterval(value, min, max);
+    if (!omitIntervalCheck) {
+      checkInterval(value, min, max);
+    }
     if (max == min) return Math.signum(max);
     double radius = Math.max(Math.abs(max), Math.abs(min));
     double logOfRadius = Math.log10(1.0 + radius);

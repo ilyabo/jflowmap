@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
@@ -95,6 +96,23 @@ public class FlowMapGraphEdgeAggregator {
     }
     return (List<Edge>) edge.get(AGGREGATE_LIST_COLUMN);
   }
+
+  private static void recursivelyAddBaseAggregates(Edge edge, List<Edge> edges) {
+    if (isAggregate(edge)) {
+      for (Edge e : getAggregateList(edge)) {
+        recursivelyAddBaseAggregates(e, edges);
+      }
+    } else {
+      edges.add(edge);
+    }
+  }
+
+  public static List<Edge> getBaseAggregateList(Edge edge) {
+    List<Edge> list = Lists.newArrayList();
+    recursivelyAddBaseAggregates(edge, list);
+    return list;
+  }
+
 
   @SuppressWarnings("unchecked")
   public static List<Node> getAggregateList(Node node) {

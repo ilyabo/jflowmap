@@ -41,13 +41,15 @@ import jflowmap.ColorSchemes;
 import jflowmap.EdgeDirection;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowsmapGraphAggLayers;
+import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.NodeEdgePos;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
+import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
+import jflowmap.data.Nodes;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
@@ -124,8 +126,8 @@ public class FlowstratesView extends AbstractCanvasView {
   private ColorSchemes sequentialColorScheme = ColorSchemes.OrRd;
   private ColorSchemes divergingColorScheme = ColorSchemes.RdBu5;
 
-  private final PInputEventListener tooltipListener = createTooltipListener(HeatMapCell.class);
-  private final PInputEventListener highlightListener = createFlowLineHighlightListener();
+  private final PInputEventListener heatmapCellTooltipListener = createTooltipListener(HeatMapCell.class);
+  private final PInputEventListener heatmapCellHoverListener = createHeatMapCellHoverListener();
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
   private final PNode heatmapNode;
@@ -162,7 +164,7 @@ public class FlowstratesView extends AbstractCanvasView {
       return FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.get(code);
     }
   };
-  private final FlowsmapGraphAggLayers layers;
+  private final FlowMapGraphAggLayers layers;
 
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -171,39 +173,44 @@ public class FlowstratesView extends AbstractCanvasView {
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
 
     // aggregate by source node
-//    flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
-////        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
-//        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
-//        .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
-//        .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
-//        .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
-//        .aggregate();
+    // flowMapGraph = new FlowMapGraphEdgeAggregator(flowMapGraph,
+    // // FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE)
+    // FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE)
+    // .withCustomValueAggregator("lat", ValueAggregators.DOUBLE_AVERAGE)
+    // .withCustomValueAggregator("lon", ValueAggregators.DOUBLE_AVERAGE)
+    // .withCustomValueAggregator("name", ValueAggregators.STRING_ONE_OR_NONE)
+    // .aggregate();
+
+    FlowMapGraphAggLayers.Builder builder = new FlowMapGraphAggLayers.Builder(flowMapGraph);
+    builder.addAggregationLayer("src-node", null, FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
+    builder.addAggregationLayer("target-node", null, FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE);
+
+    ValueAggregator labelForAll = new ValueAggregator() {
+      @Override
+      public Object aggregate(Iterable<Object> values) {
+        return "ALL";
+      }
+    };
+    builder.addAggregationLayer("src-to-all", "src-node",
+        builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "src-node")
+            .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), labelForAll));
+    builder.addAggregationLayer("target-to-all", "target-node",
+        builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "target-node")
+            .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), labelForAll));
+
+    FlowMapGraphAggLayers layers = builder.build("src-to-all");
+//    FlowMapGraphAggLayers layers = builder.build(null);
 
 
-    FlowsmapGraphAggLayers.Builder builder = new FlowsmapGraphAggLayers.Builder(flowMapGraph);
-    builder.addAggregationLayer(
-        "src-node", null,
-        FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);
-    builder.addAggregationLayer(
-        "target-node", null,
-        FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE);
-
-    builder.addAggregationLayer(
-        "src-to-all", "src-node",
-        FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL);
-    builder.addAggregationLayer(
-        "target-to-all", "target-node",
-        FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL);
-
-    FlowsmapGraphAggLayers layers = builder.build("src-to-all");
+    for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
+      fmg.addEdgeWeightDifferenceColumns();
+      fmg.addEdgeWeightRelativeDifferenceColumns();
+    }
 
     this.layers = layers;
 
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
-
-    this.flowMapGraph.addEdgeWeightDifferenceColumns();
-    this.flowMapGraph.addEdgeWeightRelativeDifferenceColumns();
 
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
@@ -224,8 +231,8 @@ public class FlowstratesView extends AbstractCanvasView {
             (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
-//     canvas.setMinZoomScale(1e-1);
-//     canvas.setMaxZoomScale(1e+2);
+    // canvas.setMinZoomScale(1e-1);
+    // canvas.setMaxZoomScale(1e+2);
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
@@ -246,6 +253,10 @@ public class FlowstratesView extends AbstractCanvasView {
     // scrollPane.setVerticalScrollBarPolicy(PScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
+    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
+        flowMapGraph.getEdgeWeightDiffAttrNames());
+    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
+        flowMapGraph.getEdgeWeightRelativeDiffAttrNames());
 
     createAreaMaps(areaMap);
     heatmapNode = new PNode();
@@ -319,7 +330,7 @@ public class FlowstratesView extends AbstractCanvasView {
     if (customEdgeFilter != edgeFilter) {
       Predicate<Edge> oldValue = customEdgeFilter;
       this.customEdgeFilter = edgeFilter;
-      if (selSrcNodes != null  ||  selTargetNodes != null) {
+      if (selSrcNodes != null || selTargetNodes != null) {
         selSrcNodes = selTargetNodes = null;
         updateCentroidColors();
       }
@@ -397,11 +408,9 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
-      List<Edge> edges = Lists.newArrayList(getTopEdges(Iterables.filter(
-          removeEdgesWithNaNs(
-              //flowMapGraph.edges()
-              layers.getVisibleEdges()
-              ), getEdgePredicate())));
+      List<Edge> edges = Lists.newArrayList(getTopEdges(Iterables.filter(removeEdgesWithNaNs(
+      // flowMapGraph.edges()
+          layers.getVisibleEdges()), getEdgePredicate())));
 
       Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
 
@@ -477,8 +486,8 @@ public class FlowstratesView extends AbstractCanvasView {
     // sort centroids so that more important are shown first
     Iterable<Node> nodes = CollectionUtils.sort(
         flowMapGraph.nodesHavingEdges(s.dir()),
-        Collections.reverseOrder(FlowMapSummaries.createMaxNodeWeightSummariesComparator(
-            flowMapGraph, s.dir())));
+        Collections.reverseOrder(FlowMapSummaries.createMaxNodeWeightSummariesComparator(flowMapGraph,
+            s.dir())));
 
     PBasicInputEventHandler listener = createCentroidFlowtiLinesHighlightListener(s);
 
@@ -508,6 +517,7 @@ public class FlowstratesView extends AbstractCanvasView {
           setNodeHighlighted(c.getNodeId(), s, true);
         }
       }
+
       @Override
       public void mouseExited(PInputEvent event) {
         Centroid c = PNodes.getAncestorOfType(event.getPickedNode(), Centroid.class);
@@ -561,9 +571,9 @@ public class FlowstratesView extends AbstractCanvasView {
   private Centroid createCentroid(double x, double y, Node node) {
     String nodeId = flowMapGraph.getNodeId(node);
     String nodeLabel = flowMapGraph.getNodeLabel(node);
-    Centroid c = new Centroid(nodeId, nodeLabel, x, y, CENTROID_DOT_SIZE,
-        style.getMapAreaCentroidPaint(), this);
-//    c.setPickable(false);
+    Centroid c = new Centroid(nodeId, nodeLabel, x, y, CENTROID_DOT_SIZE, style.getMapAreaCentroidPaint(),
+        this);
+    // c.setPickable(false);
     return c;
   }
 
@@ -582,8 +592,8 @@ public class FlowstratesView extends AbstractCanvasView {
       for (Edge edge : getVisibleEdges()) {
         FlowtiLine src = createFlowtiLine(edge);
         FlowtiLine target = createFlowtiLine(edge);
-//        src.setVisible(!showFlowtiLinesForHighligtedNodesOnly  ||  src.isHighlighted());
-//        target.setVisible(!showFlowtiLinesForHighligtedNodesOnly  ||  target.isHighlighted());
+        // src.setVisible(!showFlowtiLinesForHighligtedNodesOnly || src.isHighlighted());
+        // target.setVisible(!showFlowtiLinesForHighligtedNodesOnly || target.isHighlighted());
         edgesToLines.put(edge, Pair.of(src, target));
       }
     }
@@ -609,9 +619,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void updateFlowtiLineColors() {
-//    if (showFlowtiLinesForHighligtedNodesOnly) {
-//      return;
-//    }
+    // if (showFlowtiLinesForHighligtedNodesOnly) {
+    // return;
+    // }
 
     for (Map.Entry<Edge, Pair<FlowtiLine, FlowtiLine>> e : edgesToLines.entrySet()) {
       Pair<FlowtiLine, FlowtiLine> p = e.getValue();
@@ -673,14 +683,19 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private Point2D getCentroidPoint(Edge edge, NodeEdgePos s) {
     Centroid centroid = getNodeIdsToCentroids(s).get(flowMapGraph.getNodeId(s.nodeOf(edge)));
-    Point2D point = centroid.getPoint();
+    Point2D point;
+    if (centroid == null) {
+      point = null;
+    } else {
+      point = centroid.getPoint();
+    }
     return point;
   }
 
   private void updateFlowLinePositions() {
-//    if (showFlowtiLinesForHighligtedNodesOnly) {
-//      return;
-//    }
+    // if (showFlowtiLinesForHighligtedNodesOnly) {
+    // return;
+    // }
     PBounds heatMapViewBounds = heatmapCamera.getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
@@ -688,10 +703,8 @@ public class FlowstratesView extends AbstractCanvasView {
       Pair<PText, PText> labels = edgesToLabels.get(edge);
 
       Point2D srcCentroidPoint = getCentroidPoint(edge, NodeEdgePos.SOURCE);
-      Point2D targetCentroidPoint = getCentroidPoint(edge, NodeEdgePos.TARGET);
-
+      boolean inVis = srcCentroidPoint != null && sourcesCamera.getViewBounds().contains(srcCentroidPoint);
       FlowtiLine lineIn = lines.first();
-      boolean inVis = sourcesCamera.getViewBounds().contains(srcCentroidPoint);
       if (inVis) {
         Point2D.Double matrixIn = getMatrixInPoint(row);
         inVis = inVis && heatMapViewBounds.contains(matrixIn);
@@ -708,8 +721,10 @@ public class FlowstratesView extends AbstractCanvasView {
       lineIn.setVisible(inVis);
       lineIn.setPickable(false);
 
+      Point2D targetCentroidPoint = getCentroidPoint(edge, NodeEdgePos.TARGET);
+      boolean outVis = targetCentroidPoint != null
+          && targetsCamera.getViewBounds().contains(targetCentroidPoint);
       FlowtiLine lineOut = lines.second();
-      boolean outVis = targetsCamera.getViewBounds().contains(targetCentroidPoint);
       if (outVis) {
         Point2D.Double matrixOut = getMatrixOutPoint(row);
         outVis = outVis && heatMapViewBounds.contains(matrixOut);
@@ -891,10 +906,10 @@ public class FlowstratesView extends AbstractCanvasView {
       if (pair != null) {
         pair.first().setHighlighted(highlighted);
         pair.second().setHighlighted(highlighted);
-//        if (showFlowtiLinesForHighligtedNodesOnly) {
-//          pair.first().setVisible(highlighted);
-//          pair.second().setVisible(highlighted);
-//        }
+        // if (showFlowtiLinesForHighligtedNodesOnly) {
+        // pair.first().setVisible(highlighted);
+        // pair.second().setVisible(highlighted);
+        // }
       }
     }
 
@@ -916,7 +931,8 @@ public class FlowstratesView extends AbstractCanvasView {
     PBasicInputEventHandler listener = new PBasicInputEventHandler() {
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (event.isControlDown()) return;
+        if (event.isControlDown())
+          return;
         VisualArea va = PNodes.getAncestorOfType(event.getPickedNode(), VisualArea.class);
         if (va != null) {
           setNodeHighlighted(va.getArea().getId(), s, true);
@@ -936,27 +952,6 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  // private void colorizeMap(VisualAreaMap visualAreaMap, FlowMapGraph fmg,
-  // String weightAttrName, EdgeDirection dir) {
-  // if (fmg == null) {
-  // for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
-  // va.setPaint(style.getMissingValueColor());
-  // }
-  // } else {
-  // String weightSumAttr = FlowMapSummaries.getWeightSummaryNodeAttr(weightAttrName, dir);
-  // MinMax mm = fmg.getStats().getNodeAttrStats(weightSumAttr);
-  //
-  // for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
-  // Node node = FlowMapGraph.findNodeById(fmg.getGraph(), va.getArea().getId());
-  // if (node != null) {
-  // Double w = node.getDouble(weightSumAttr);
-  // if (w == null) w = Double.NaN;
-  // va.setPaint(getColorForWeight(w, mm));
-  // }
-  // }
-  // }
-  // }
-
   public Color getColorForWeight(double weight, MinMax wstats) {
     FlowstratesStyle style = getStyle();
     if (Double.isNaN(weight)) {
@@ -965,11 +960,13 @@ public class FlowstratesView extends AbstractCanvasView {
     if (wstats.getMin() < 0 && wstats.getMax() > 0) {
       // use diverging color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(divergingColorScheme.getColors(),
-          wstats.normalizeLogAroundZero(weight), -1.0, 1.0, 255, interpolateColors));
+          wstats.normalizeLogAroundZero(weight, true), -1.0, 1.0, 255, interpolateColors));
     } else {
       // use sequential color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(sequentialColorScheme.getColors(),
-          wstats.normalizeLog(weight), 0.0, 1.0, 255, interpolateColors));
+//          wstats.normalizeLog(weight),
+          wstats.normalizeLogAroundZero(weight, true),
+          0.0, 1.0, 255, interpolateColors));
     }
   }
 
@@ -1007,11 +1004,12 @@ public class FlowstratesView extends AbstractCanvasView {
       for (String weightAttr : flowMapGraph.getEdgeWeightAttrNames()) {
         double x = col * cellWidth;
 
-        HeatMapCell cell = new HeatMapCell(this, x, y, cellWidth, cellHeight, weightAttr, flowMapGraph, edge);
+        HeatMapCell cell = new HeatMapCell(this, x, y, cellWidth, cellHeight, weightAttr,
+            layers.getFlowMapGraphOf(edge), edge);
 
-        cell.addInputEventListener(highlightListener);
+        cell.addInputEventListener(heatmapCellHoverListener);
         // if (!Double.isNaN(cell.getWeight())) {
-        cell.addInputEventListener(tooltipListener);
+        cell.addInputEventListener(heatmapCellTooltipListener);
         // }
         heatmapNode.addChild(cell);
 
@@ -1043,12 +1041,12 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void createColumnLabels() {
     List<String> attrNames = flowMapGraph.getEdgeWeightAttrNames();
-//    String cp = StringUtils.getCommonPrefix(attrNames.toArray(new String[attrNames.size()]));
+    // String cp = StringUtils.getCommonPrefix(attrNames.toArray(new String[attrNames.size()]));
     int col = 0;
     for (String attr : attrNames) {
-//      attr = attr.substring(cp.length());
+      // attr = attr.substring(cp.length());
       PText graphIdMark = new PText(attr);
-      graphIdMark.rotate(-Math.PI/2);
+      graphIdMark.rotate(-Math.PI / 2);
       graphIdMark.setFont(GRAPH_ID_MARK_FONT);
       PBounds b = graphIdMark.getFullBoundsReference();
       graphIdMark.setX(5);
@@ -1073,43 +1071,129 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  private PTypedBasicInputEventHandler<HeatMapCell> createFlowLineHighlightListener() {
+  private PTypedBasicInputEventHandler<HeatMapCell> createHeatMapCellHoverListener() {
     return new PTypedBasicInputEventHandler<HeatMapCell>(HeatMapCell.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        HeatMapCell node = node(event);
+        HeatMapCell cell = node(event);
         // updateMapColors(node.getFlowMapGraph());
-        node.moveToFront();
-        node.setStroke(style.getSelectedTimelineCellStroke());
-        node.setStrokePaint(style.getSelectedTimelineCellStrokeColor());
+
+        // highlight cell
+        cell.moveToFront();
+        cell.setStroke(style.getSelectedTimelineCellStroke());
+        cell.setStrokePaint(style.getSelectedTimelineCellStrokeColor());
+
+        // highlight flow lines
         Pair<FlowtiLine, FlowtiLine> lines = lines(event);
         if (lines != null) {
           lines.first().setHighlighted(true);
           lines.second().setHighlighted(true);
         }
-        setEdgeCentroidsHighlighted(node, NodeEdgePos.SOURCE, true);
-        setEdgeCentroidsHighlighted(node, NodeEdgePos.TARGET, true);
+        setEdgeCentroidsHighlighted(cell, NodeEdgePos.SOURCE, true);
+        setEdgeCentroidsHighlighted(cell, NodeEdgePos.TARGET, true);
+
+        updateMapAreaColorsOnHeatMapCellHover(cell, true);
       }
 
       @Override
       public void mouseExited(PInputEvent event) {
         // updateMapColors(null);
-        HeatMapCell node = node(event);
-        node.setStroke(style.getTimelineCellStroke());
-        node.setStrokePaint(style.getTimelineCellStrokeColor());
+        HeatMapCell cell = node(event);
+        cell.setStroke(style.getTimelineCellStroke());
+        cell.setStrokePaint(style.getTimelineCellStrokeColor());
+
         Pair<FlowtiLine, FlowtiLine> lines = lines(event);
         if (lines != null) {
           lines.first().setHighlighted(false);
           lines.second().setHighlighted(false);
         }
-        setEdgeCentroidsHighlighted(node, NodeEdgePos.SOURCE, false);
-        setEdgeCentroidsHighlighted(node, NodeEdgePos.TARGET, false);
+        setEdgeCentroidsHighlighted(cell, NodeEdgePos.SOURCE, false);
+        setEdgeCentroidsHighlighted(cell, NodeEdgePos.TARGET, false);
+
+        updateMapAreaColorsOnHeatMapCellHover(cell, false);
       }
 
       private Pair<FlowtiLine, FlowtiLine> lines(PInputEvent event) {
         return edgesToLines.get(node(event).getEdge());
       }
     };
+  }
+
+
+  // private void colorizeMap(VisualAreaMap visualAreaMap, FlowMapGraph fmg,
+  // String weightAttrName, EdgeDirection dir) {
+  // if (fmg == null) {
+  // for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+  // va.setPaint(style.getMissingValueColor());
+  // }
+  // } else {
+  // String weightSumAttr = FlowMapSummaries.getWeightSummaryNodeAttr(weightAttrName, dir);
+  // MinMax mm = fmg.getStats().getNodeAttrStats(weightSumAttr);
+  //
+  // for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+  // Node node = FlowMapGraph.findNodeById(fmg.getGraph(), va.getArea().getId());
+  // if (node != null) {
+  // Double w = node.getDouble(weightSumAttr);
+  // if (w == null) w = Double.NaN;
+  // va.setPaint(getColorForWeight(w, mm));
+  // }
+  // }
+  // }
+  // }
+
+
+  private void updateMapAreaColorsOnHeatMapCellHover(HeatMapCell cell, boolean hover) {
+    Edge edge = cell.getEdge();
+    if (FlowMapGraphEdgeAggregator.isAggregate(edge)) {
+      List<Edge> edges = FlowMapGraphEdgeAggregator.getBaseAggregateList(edge);
+      colorizeMapAreasWithBaseNodeSummaries(cell, hover, edges, NodeEdgePos.SOURCE);
+      colorizeMapAreasWithBaseNodeSummaries(cell, hover, edges, NodeEdgePos.TARGET);
+    } else {
+      double value = edge.getDouble(getHeatMapCellValueType().getAttr(cell));
+      colorizeMapArea(layers.getSourceNodeId(edge), value, hover, NodeEdgePos.SOURCE, cell);
+      colorizeMapArea(layers.getTargetNodeId(edge), value, hover, NodeEdgePos.TARGET, cell);
+    }
+
+//    for (Edge edge : edges) {
+//      Color color;
+//      if (hover) {
+//        color = cellType.getColorFor(cell, edge.getDouble(cellType.getAttr(cell)));
+//      } else {
+//        color = mapColorScheme.getColor(ColorCodes.AREA_PAINT);
+//      }
+//
+//      VisualArea srcArea = sourceVisualAreaMap.getVisualAreaBy(layers.getSourceNodeId(edge));
+//      if (srcArea != null) {
+//        srcArea.setPaint(color);
+//      }
+//
+//      VisualArea targetArea = targetVisualAreaMap.getVisualAreaBy(layers.getTargetNodeId(edge));
+//      if (targetArea != null) {
+//        targetArea.setPaint(color);
+//      }
+//    }
+  }
+
+  private void colorizeMapAreasWithBaseNodeSummaries(HeatMapCell cell, boolean hover, List<Edge> edges,
+      NodeEdgePos s) {
+    for (Node node : Nodes.nodesOfEdges(edges, s)) {
+      double value = FlowMapSummaries.getWeightSummary(node, getHeatMapCellValueType().getAttr(cell), s.dir());
+      String areaId = flowMapGraph.getNodeId(node);
+      colorizeMapArea(areaId, value, hover, s, cell);
+    }
+  }
+
+  private void colorizeMapArea(String areaId, double value, boolean hover, NodeEdgePos s, HeatMapCell cell) {
+    VisualArea area = getVisualAreaMap(s).getVisualAreaBy(areaId);
+    if (area != null) {
+      Color color;
+      if (hover) {
+        color = getHeatMapCellValueType().getColorFor(cell, value);
+      } else {
+        color = mapColorScheme.getColor(ColorCodes.AREA_PAINT);
+      }
+      area.setPaint(color);
+    }
   }
 
   public FlowstratesStyle getStyle() {
@@ -1176,16 +1260,16 @@ public class FlowstratesView extends AbstractCanvasView {
         }
       }
     }
-//    getVisualAreaMapCamera(s).localToView(b);
+    // getVisualAreaMapCamera(s).localToView(b);
 
     return b;
   }
 
   @Override
   public void fitInView() {
-    fitCamera(sourcesCamera, -1, 0, .30, .9);
-    fitCamera(heatmapCamera, 0, 0, .40, 1.0);
-    fitCamera(targetsCamera, +1, 0, .30, .9);
+    layoutCameraNode(sourcesCamera, -1, 0, .30, .9);
+    layoutCameraNode(heatmapCamera, 0, 0, .40, 1.0);
+    layoutCameraNode(targetsCamera, +1, 0, .30, .9);
 
     if (!fitInViewOnce) {
       fintInCameraView(NodeEdgePos.SOURCE);
@@ -1195,7 +1279,6 @@ public class FlowstratesView extends AbstractCanvasView {
         heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height
             / heatmapCamera.getWidth();
       }
-
       heatmapCamera.setViewBounds(GeomUtils.growRect(heatmapBounds, .025, .1, .025, .1));
 
       fintInCameraView(NodeEdgePos.TARGET);
@@ -1210,17 +1293,16 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fintInCameraView(NodeEdgePos s) {
-    getVisualAreaMapCamera(s).setViewBounds(GeomUtils.growRect(
-        centroidsBounds(s), .2, .2, .2, .2));
+    getVisualAreaMapCamera(s).setViewBounds(GeomUtils.growRect(centroidsBounds(s), .2, .2, .2, .2));
   }
 
-  private void fitCamera(PCamera camera, double halign, double valign, double hsizeProportion,
+  private void layoutCameraNode(PCamera camera, double halign, double valign, double hsizeProportion,
       double vsizeProportion) {
     PBounds globalViewBounds = getCamera().getViewBounds();
     PBounds viewBounds = camera.getViewBounds();
 
-    PNodes.alignNodeInBounds_bySetBounds(
-        camera, globalViewBounds, halign, valign, hsizeProportion, vsizeProportion);
+    PNodes.alignNodeInBounds_bySetBounds(camera, globalViewBounds, halign, valign, hsizeProportion,
+        vsizeProportion);
     camera.setViewBounds(viewBounds);
   }
 
@@ -1239,7 +1321,7 @@ public class FlowstratesView extends AbstractCanvasView {
     if (focusOnVisibleRows) {
       return getVisibleEdgesStats();
     } else {
-//      return flowMapGraph.getStats();
+      // return flowMapGraph.getStats();
       return layers.getStatsForVisibleEdges();
     }
   }
