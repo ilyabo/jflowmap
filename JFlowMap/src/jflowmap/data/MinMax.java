@@ -208,7 +208,10 @@ public class MinMax {
     double radius = Math.max(Math.abs(max), Math.abs(min));
     double logOfRadius = Math.log10(1.0 + radius);
     double rv = Math.signum(value) * Math.log10(1.0 + Math.abs(value)) / logOfRadius;
-    checkNormalized(value, rv, -1.0, 1.0);
+
+    if (!omitIntervalCheck) {  // TODO: remove this
+      checkNormalized(value, rv, -1.0, 1.0);
+    }
     return rv;
   }
 

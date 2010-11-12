@@ -136,6 +136,23 @@ public class FlowMapGraphAggLayers {
     expand(e.getTargetNode(), NodeEdgePos.TARGET);
   }
 
+  public void setActiveLayer(String layerName) {
+    AggLayer layer = getLayerByName(layerName);
+    if (layer == null) {
+      throw new IllegalArgumentException("Layer " + layerName + " not found");
+    }
+    setVisibleEdges(ImmutableList.copyOf(layer.getFlowMapGraph().edges()));
+  }
+
+  public Iterable<String> getLayerNames() {
+    return Iterables.transform(aggLayers, new Function<AggLayer, String>() {
+      @Override
+      public String apply(AggLayer from) {
+        return from.getName();
+      }
+    });
+  }
+
   private void expand(Node node, NodeEdgePos as) {
     AggLayer layer = requireAggLayer(node);
     Edge aggEdge = requireVisibleEdgeWith(node, as);
@@ -337,6 +354,18 @@ public class FlowMapGraphAggLayers {
   private AggLayer getLayerOf(Graph graph) {
     for (AggLayer layer : aggLayers) {
       if (graph == layer.getFlowMapGraph().getGraph()) {
+        return layer;
+      }
+    }
+    return null;
+  }
+
+  private AggLayer getLayerByName(String layerName) {
+    if (layerName == null) {
+      return baseLayer;
+    }
+    for (AggLayer layer : aggLayers) {
+      if (layerName.equals(layer.getName())) {
         return layer;
       }
     }

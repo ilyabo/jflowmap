@@ -45,12 +45,12 @@ import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.NodeEdgePos;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
+import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
+import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.data.Nodes;
-import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
-import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
@@ -201,17 +201,36 @@ public class FlowstratesView extends AbstractCanvasView {
             return edge.getSourceNode().getString("region2");
           }
         }, null)
-            .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), new ValueAggregator() {
-              @Override
-              public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
-                if (entity == AggEntity.SOURCE_NODE) {
-                  return tuples.iterator().next().get("region2");
-                } else {
-                  return "ALL"; // Iterables.toString(values);
-                }
-              }
-            })
-            );
+        .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), new ValueAggregator() {
+          @Override
+          public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
+            if (entity == AggEntity.SOURCE_NODE) {
+              return tuples.iterator().next().get("region2");
+            } else {
+              return "ALL"; // Iterables.toString(values);
+            }
+          }
+        })
+        );
+
+    builder.addAggregationLayer("src-region1", null,
+        builder.edgeAggregatorFor(new Function<Edge, Object>() {
+          @Override
+          public Object apply(Edge edge) {
+            return edge.getSourceNode().getString("region1");
+          }
+        }, null)
+        .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), new ValueAggregator() {
+          @Override
+          public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
+            if (entity == AggEntity.SOURCE_NODE) {
+              return tuples.iterator().next().get("region1");
+            } else {
+              return "ALL"; // Iterables.toString(values);
+            }
+          }
+        })
+        );
 
     builder.addAggregationLayer("src-to-all", "src-node",
         builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "src-node")
@@ -221,8 +240,9 @@ public class FlowstratesView extends AbstractCanvasView {
             .withCustomValueAggregator(flowMapGraph.getNodeLabelAttr(), labelForAll));
 
     FlowMapGraphAggLayers layers =
+      builder.build(null);
 //      builder.build("src-to-all");
-      builder.build("src-region2");
+//      builder.build("src-region2");
 
 
     for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
@@ -231,6 +251,7 @@ public class FlowstratesView extends AbstractCanvasView {
     }
 
     this.layers = layers;
+
 
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
@@ -320,6 +341,16 @@ public class FlowstratesView extends AbstractCanvasView {
   @Override
   public String getName() {
     return "DuoTimeline";
+  }
+
+  public Iterable<String> getAggLayerNames() {
+    return layers.getLayerNames();
+  }
+
+  public void setActiveAggLayer(String layerName) {
+    layers.setActiveLayer(layerName);
+    this.visibleEdges = null;
+    renewHeatmap();
   }
 
   // public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
@@ -919,6 +950,7 @@ public class FlowstratesView extends AbstractCanvasView {
     });
   }
 
+
   private void setNodeHighlighted(String nodeId, NodeEdgePos s, boolean highlighted) {
     Centroid c = getNodeIdsToCentroids(s).get(nodeId);
     if (c != null) {
@@ -980,15 +1012,19 @@ public class FlowstratesView extends AbstractCanvasView {
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();
     }
+    double val = wstats.normalizeLogAroundZero(weight, true);
+    if (val < -1.0 || val > 1.0) {
+      return Color.green;
+    }
     if (wstats.getMin() < 0 && wstats.getMax() > 0) {
       // use diverging color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(divergingColorScheme.getColors(),
-          wstats.normalizeLogAroundZero(weight, true), -1.0, 1.0, 255, interpolateColors));
+          val, -1.0, 1.0, 255, interpolateColors));
     } else {
       // use sequential color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(sequentialColorScheme.getColors(),
 //          wstats.normalizeLog(weight),
-          wstats.normalizeLogAroundZero(weight, true),
+          val,
           0.0, 1.0, 255, interpolateColors));
     }
   }
@@ -1024,7 +1060,7 @@ public class FlowstratesView extends AbstractCanvasView {
       heatmapNode.addChild(srcLabel);
 
       // "value" box node
-      for (String weightAttr : flowMapGraph.getEdgeWeightAttrNames()) {
+      for (String weightAttr : flowMapGraph.getEdgeWeightAttrs()) {
         double x = col * cellWidth;
 
         HeatMapCell cell = new HeatMapCell(this, x, y, cellWidth, cellHeight, weightAttr,
@@ -1058,12 +1094,13 @@ public class FlowstratesView extends AbstractCanvasView {
     createColumnLabels();
     renewFlowtiLines();
 
+    heatmapLayer.repaint();
     // layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight *
     // row)));
   }
 
   private void createColumnLabels() {
-    List<String> attrNames = flowMapGraph.getEdgeWeightAttrNames();
+    List<String> attrNames = flowMapGraph.getEdgeWeightAttrs();
     // String cp = StringUtils.getCommonPrefix(attrNames.toArray(new String[attrNames.size()]));
     int col = 0;
     for (String attr : attrNames) {
@@ -1208,7 +1245,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void colorizeMapArea(String areaId, double value, boolean hover, NodeEdgePos s, HeatMapCell cell) {
     VisualArea area = getVisualAreaMap(s).getVisualAreaBy(areaId);
-    if (area != null) {
+    if (area != null  &&  !area.isEmpty()) {
       Color color;
       if (hover) {
         color = getHeatMapCellValueType().getColorFor(cell, value);
@@ -1216,6 +1253,14 @@ public class FlowstratesView extends AbstractCanvasView {
         color = mapColorScheme.getColor(ColorCodes.AREA_PAINT);
       }
       area.setPaint(color);
+    } else {
+      Color color;
+      if (hover) {
+        color = getHeatMapCellValueType().getColorFor(cell, value);
+      } else {
+        color = style.getMapAreaCentroidLabelPaint();
+      }
+      getNodeIdsToCentroids(s).get(areaId).getLabelNode().setPaint(color);
     }
   }
 
@@ -1356,4 +1401,5 @@ public class FlowstratesView extends AbstractCanvasView {
     }
     return visibleEdgesStats;
   }
+
 }

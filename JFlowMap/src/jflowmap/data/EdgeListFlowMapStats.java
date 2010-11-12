@@ -57,28 +57,28 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
   public MinMax getEdgeWeightStats() {
     return getAttrStats(AttrKeys.EDGE_WEIGHT.name(),
         edgesAsTuples(),
-        getAttrSpec().getEdgeWeightAttrNames());
+        getAttrSpec().getEdgeWeightAttrs());
   }
 
   @Override
   public MinMax getEdgeWeightDiffStats() {
     return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
         edgesAsTuples(),
-        getAttrSpec().getEdgeWeightDiffAttrNames());
+        getAttrSpec().getEdgeWeightDiffAttrs());
   }
 
   @Override
   public MinMax getEdgeWeightRelativeDiffStats() {
     return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
         edgesAsTuples(),
-        getAttrSpec().getEdgeWeightRelativeDiffAttrNames());
+        getAttrSpec().getEdgeWeightRelativeDiffAttrs());
   }
 
   @Override
   public MinMax getNodeAttrStats(String attrName) {
     return getAttrStats(AttrKeys.nodeAttr(attrName),
         nodesAsTuples(),
-        getAttrSpec().getEdgeWeightRelativeDiffAttrNames());
+        getAttrSpec().getEdgeWeightRelativeDiffAttrs());
   }
 
   @Override

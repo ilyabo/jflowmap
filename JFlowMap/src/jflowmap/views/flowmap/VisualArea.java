@@ -76,4 +76,8 @@ public class VisualArea extends PPath {
       return false;
     }
   }
+
+  public boolean isEmpty() {
+    return getBoundsReference().isEmpty();
+  }
 }

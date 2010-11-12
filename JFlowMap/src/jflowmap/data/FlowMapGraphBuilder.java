@@ -51,7 +51,7 @@ public class FlowMapGraphBuilder {
       nodeTable.addColumn(attrSpec.getXNodeAttr(), double.class);
       nodeTable.addColumn(attrSpec.getYNodeAttr(), double.class);
     }
-    for (String attr : attrSpec.getEdgeWeightAttrNames()) {
+    for (String attr : attrSpec.getEdgeWeightAttrs()) {
       edgeTable.addColumn(attr, FlowMapGraph.WEIGHT_COLUMNS_DATA_TYPE);
     }
     nodeTable.addColumn(attrSpec.getNodeLabelAttr(), String.class);
@@ -101,7 +101,7 @@ public class FlowMapGraphBuilder {
   }
 
   public Edge addEdge(Node from, Node to, double ... weights) {
-    List<String> weightAttrs = attrSpec.getEdgeWeightAttrNames();
+    List<String> weightAttrs = attrSpec.getEdgeWeightAttrs();
     if (weights.length != weightAttrs.size()) {
       throw new IllegalArgumentException(
           "Number of supplied weights doesn't match the number of weight attrs");

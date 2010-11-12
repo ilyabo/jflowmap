@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import jflowmap.data.AttrDataTypes;
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.GraphMLReader3;
 import jflowmap.data.MinMax;
 import jflowmap.data.MultiFlowMapStats;
@@ -76,8 +77,6 @@ public class FlowMapGraph {
   private final FlowMapAttrSpec attrSpec;
   private final FlowMapStats stats;
 
-  private final List<String> edgeWeightAttrNames;
-
 
   public FlowMapGraph(Graph graph, FlowMapAttrSpec attrSpec) {
     this(graph, attrSpec, null);
@@ -93,17 +92,16 @@ public class FlowMapGraph {
     attrSpec.checkValidityFor(graph);
     this.graph = graph;
     this.attrSpec = attrSpec;
-//    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrs());
+//    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrNames());
 //    Collections.sort(weightAttrs);
 
-    List<String> weightAttrs = attrSpec.getEdgeWeightAttrNames();
+    List<String> weightAttrs = attrSpec.getEdgeWeightAttrs();
     if (weightAttrs.size() == 0) {
       throw new IllegalArgumentException("FlowMapGraph must have at least one weight attr. " +
       		"Available columns: " + Iterables.toString(Tables.columns(graph.getEdgeTable())));
     }
 
-    this.edgeWeightAttrNames = ImmutableList.copyOf(weightAttrs);
-    logger.info("Creating a FlowMapGraph with edge weight attrs: " + edgeWeightAttrNames);
+    logger.info("Creating a FlowMapGraph with edge weight attrs: " + weightAttrs);
     if (stats == null) {
       //stats = EdgeListFlowMapStats.createFor(edges(), attrSpec);
       stats = MultiFlowMapStats.createFor(this);
@@ -181,15 +179,11 @@ public class FlowMapGraph {
    * @return An immutable list which can thus be reused without defensive copying.
    */
   public List<String> getEdgeWeightAttrs() {
-    return attrSpec.getEdgeWeightAttrNames();
+    return attrSpec.getEdgeWeightAttrs();
   }
 
   public int getEdgeWeightAttrsCount() {
-    return edgeWeightAttrNames.size();
-  }
-
-  public List<String> getEdgeWeightAttrNames() {
-    return edgeWeightAttrNames;
+    return getEdgeWeightAttrs().size();
   }
 
   public String getNodeLabelAttr() {
@@ -617,7 +611,7 @@ public class FlowMapGraph {
   }
 
   public Comparator<Edge> createMaxEdgeWeightComparator() {
-    return createMaxEdgeWeightComparator(getEdgeWeightAttrNames());
+    return createMaxEdgeWeightComparator(getEdgeWeightAttrs());
   }
 
   public Comparator<Edge> createMaxEdgeWeightDiffComparator() {
@@ -638,12 +632,36 @@ public class FlowMapGraph {
     };
   }
 
+  public Comparator<Edge> createMaxNodeSummariesForWeightComparator(NodeEdgePos s) {
+    return createMaxNodeSummariesComparator(getEdgeWeightAttrs(), s);
+  }
+
+  private Comparator<Edge> createMaxNodeSummariesComparator(final List<String> attrs, final NodeEdgePos s) {
+    return new Comparator<Edge>() {
+      @Override
+      public int compare(Edge e1, Edge e2) {
+        int c = MathUtils.compareDoubles_smallestIsNaN(
+            getMaxAttrValue(s.nodeOf(e1), FlowMapSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())),
+            getMaxAttrValue(s.nodeOf(e2), FlowMapSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())));
+
+        if (c == 0) {
+          c = getNodeLabel(s.nodeOf(e1)).compareTo(getNodeLabel(s.nodeOf(e2)));
+        }
+        if (c == 0) {
+          c = MathUtils.compareDoubles_smallestIsNaN(
+              getMaxAttrValue(e1, attrs), getMaxAttrValue(e2, attrs));
+        }
+        return c;
+      }
+    };
+  }
+
   public Comparator<Edge> createAvgEdgeWeightComparator() {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {
         return MathUtils.compareDoubles_smallestIsNaN(
-            getAvgAttrValue(e1, getEdgeWeightAttrNames()), getAvgAttrValue(e2, getEdgeWeightAttrNames()));
+            getAvgAttrValue(e1, getEdgeWeightAttrs()), getAvgAttrValue(e2, getEdgeWeightAttrs()));
       }
     };
   }
@@ -652,7 +670,7 @@ public class FlowMapGraph {
     Iterable<Edge> edges = edges();
 
     String prevAttr = null;
-    for (String attr : getEdgeWeightAttrNames()) {
+    for (String attr : getEdgeWeightAttrs()) {
       String diffAttr = getAttrSpec().getEdgeWeightDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
@@ -676,7 +694,7 @@ public class FlowMapGraph {
     Iterable<Edge> edges = edges();
 
     String prevAttr = null;
-    for (String attr : getEdgeWeightAttrNames()) {
+    for (String attr : getEdgeWeightAttrs()) {
       String diffAttr = getAttrSpec().getEdgeWeightRelativeDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
@@ -749,11 +767,11 @@ public class FlowMapGraph {
   }
 
   public List<String> getAggregatableEdgeColumns() {
-    return getEdgeWeightAttrNames();
+    return getEdgeWeightAttrs();
   }
 
   public boolean hasNonZeroWeight(Edge edge) {
-    for (String attr : getEdgeWeightAttrNames()) {
+    for (String attr : getEdgeWeightAttrs()) {
       if (!Double.isNaN(getEdgeWeight(edge, attr))) {
         return true;
       }
@@ -776,11 +794,11 @@ public class FlowMapGraph {
   }
 
   public List<String> getEdgeWeightDiffAttrNames() {
-    return getAttrSpec().getEdgeWeightDiffAttrNames();
+    return getAttrSpec().getEdgeWeightDiffAttrs();
   }
 
   public List<String> getEdgeWeightRelativeDiffAttrNames() {
-    return getAttrSpec().getEdgeWeightRelativeDiffAttrNames();
+    return getAttrSpec().getEdgeWeightRelativeDiffAttrs();
   }
 
 }

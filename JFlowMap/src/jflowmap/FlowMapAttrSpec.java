@@ -68,7 +68,7 @@ public class FlowMapAttrSpec {
   /**
    * @return An immutable list which can thus be reused without defensive copying.
    */
-  public List<String> getEdgeWeightAttrNames() {
+  public List<String> getEdgeWeightAttrs() {
     return edgeWeightAttrs;
   }
 
@@ -80,7 +80,7 @@ public class FlowMapAttrSpec {
     return weightAttr + EDGE_WEIGHT_REL_DIFF_COLUMNS_SUFFIX;
   }
 
-  public List<String> getEdgeWeightDiffAttrNames() {
+  public List<String> getEdgeWeightDiffAttrs() {
     return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrs,
         new Function<String, String>() {
           public String apply(String weightAttr) {
@@ -89,7 +89,7 @@ public class FlowMapAttrSpec {
         }));
   }
 
-  public List<String> getEdgeWeightRelativeDiffAttrNames() {
+  public List<String> getEdgeWeightRelativeDiffAttrs() {
     return ImmutableList.copyOf(Iterables.transform(edgeWeightAttrs,
         new Function<String, String>() {
           public String apply(String weightAttr) {

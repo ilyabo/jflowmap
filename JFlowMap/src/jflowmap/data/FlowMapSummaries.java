@@ -78,7 +78,7 @@ public class FlowMapSummaries {
    * the nodes with useful stats.
    */
   public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph) {
-    supplyNodesWithWeightSummaries(flowMapGraph, flowMapGraph.getEdgeWeightAttrNames());
+    supplyNodesWithWeightSummaries(flowMapGraph, flowMapGraph.getEdgeWeightAttrs());
   }
 
   public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph, List<String> attrNames) {
@@ -229,7 +229,7 @@ public class FlowMapSummaries {
 
   public static Comparator<Node> createMaxNodeWeightSummariesComparator(FlowMapGraph fmg,
       EdgeDirection dir) {
-    List<String> weightAttrs = fmg.getEdgeWeightAttrNames();
+    List<String> weightAttrs = fmg.getEdgeWeightAttrs();
     Comparator<Node> comp = fmg.createMaxNodeAttrValueComparator(
           getWeightSummaryNodeAttrs(weightAttrs, dir)
     );

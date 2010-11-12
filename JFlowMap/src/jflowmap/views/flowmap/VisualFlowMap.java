@@ -133,7 +133,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     this.jFlowMap = jFlowMap;
     this.mapProjection = proj;
 
-    edgeWeightAttr = flowMapGraph.getEdgeWeightAttrNames().get(0);
+    edgeWeightAttr = flowMapGraph.getEdgeWeightAttrs().get(0);
 
     visualFlowMapModel = new VisualFlowMapModel(flowMapGraph);
 //    double minWeight = flowMapGraph.getAttrSpec().getWeightFilterMin();
