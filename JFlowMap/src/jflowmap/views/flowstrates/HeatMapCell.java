@@ -18,13 +18,11 @@
 
 package jflowmap.views.flowstrates;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.data.MinMax;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -35,63 +33,6 @@ import edu.umd.cs.piccolo.nodes.PPath;
 class HeatMapCell extends PPath {
 
   private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance();
-
-  public enum ValueType {
-    VALUE("original value") {
-      @Override
-      public MinMax getMinMax(HeatMapCell cell) {
-        return cell.getView().getStats().getEdgeWeightStats();
-      }
-
-      @Override
-      public String getAttr(HeatMapCell cell) {
-        return cell.getWeightAttr();
-      }
-    }, DIFF("difference") {
-      @Override
-      public MinMax getMinMax(HeatMapCell cell) {
-        return cell.getView().getStats().getEdgeWeightDiffStats();
-      }
-
-      @Override
-      public String getAttr(HeatMapCell cell) {
-        return cell.getFlowMapGraph().getAttrSpec().getEdgeWeightDiffAttr(cell.getWeightAttr());
-      }
-    }, DIFF_REL("relative diff") {
-      @Override
-      public MinMax getMinMax(HeatMapCell cell) {
-        return cell.getView().getStats().getEdgeWeightRelativeDiffStats();
-      }
-
-      @Override
-      public String getAttr(HeatMapCell cell) {
-        return cell.getFlowMapGraph().getAttrSpec().getEdgeWeightRelativeDiffAttr(cell.getWeightAttr());
-      }
-    };
-
-    private String name;
-
-    private ValueType(String name) {
-      this.name = name;
-    }
-
-    public abstract MinMax getMinMax(HeatMapCell cell);
-
-    public abstract String getAttr(HeatMapCell cell);
-
-    public Color getColorFor(HeatMapCell cell) {
-      return getColorFor(cell, cell.getEdge().getDouble(getAttr(cell)));
-    }
-
-    public Color getColorFor(HeatMapCell cell, double value) {
-      return cell.getView().getColorForWeight(value, getMinMax(cell));
-    }
-
-    @Override
-    public String toString() {
-      return name;
-    }
-  }
 
   private final FlowstratesView view;
   private final String weightAttr;
@@ -166,7 +107,7 @@ class HeatMapCell extends PPath {
   }
 
   public void updateColor() {
-    setPaint(view.getHeatMapCellValueType().getColorFor(this));
+    setPaint(view.getColorFor(this));
   }
 
 }

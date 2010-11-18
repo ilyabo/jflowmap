@@ -37,7 +37,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import jflowmap.ColorSchemes;
-import jflowmap.views.flowstrates.HeatMapCell.ValueType;
 import net.miginfocom.swing.MigLayout;
 
 import com.google.common.collect.Iterables;
@@ -102,8 +101,8 @@ public class FlowstratesControlPanel extends JPanel {
 
 
 
-    final JComboBox differencesCombo = new JComboBox(HeatMapCell.ValueType.values());
-    differencesCombo.setSelectedItem(view.getHeatMapCellValueType());
+    final JComboBox differencesCombo = new JComboBox(ValueType.values());
+    differencesCombo.setSelectedItem(view.getValueType());
     panel.add(differencesCombo, "al right");
     differencesCombo.addActionListener(new ActionListener() {
       @Override
@@ -133,6 +132,7 @@ public class FlowstratesControlPanel extends JPanel {
     groupByCombo.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
+        view.clearFilters();
         view.setActiveAggLayer((String)e.getItem());
       }
     });

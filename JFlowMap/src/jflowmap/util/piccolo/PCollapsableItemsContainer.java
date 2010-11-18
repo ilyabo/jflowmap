@@ -1,14 +1,9 @@
 package jflowmap.util.piccolo;
 
-import java.awt.Color;
-import java.awt.Font;
-
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PAffineTransform;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolox.nodes.PClip;
@@ -17,12 +12,6 @@ import edu.umd.cs.piccolox.nodes.PClip;
  * @author Ilya Boyandin
  */
 public class PCollapsableItemsContainer extends PNode {
-
-  private static final Color NON_SEL_LABEL_BG = Color.white; // new Color(153, 153, 153);
-  private static final Color SEL_LABEL_BG = new Color(215, 48, 39);
-  private static final Color PRESSED_SEL_LABEL_BG = new Color(225, 58, 49);
-  private static final Color NON_SEL_LABEL_FG = Color.black;
-  private static final Color SEL_LABEL_FG = Color.white;
 
   private static final double itemLabelSpacing = 5;
   private static final double itemItemSpacing = 5;
@@ -231,62 +220,7 @@ public class PCollapsableItemsContainer extends PNode {
     return label;
   }
 
-  public static class PLabel extends PNode {
-    private static final Font FONT = new Font("Arial", Font.BOLD, 13);
-    private final PText textNode;
-    private final PPath rectNode;
-    public PLabel(String text) {
-      this.textNode = new PText(text);
-      textNode.setFont(FONT);
-      final int pad = 5;
-      this.rectNode = PPath.createRoundRectangle(-pad, -pad, (float)textNode.getWidth() + 2*pad, (float)textNode.getHeight() + 2*pad, 5, 5);
-
-      rectNode.setPaint(NON_SEL_LABEL_BG);
-      rectNode.setStroke(null);
-      addChild(rectNode);
-
-      textNode.setTextPaint(NON_SEL_LABEL_FG);
-      addChild(textNode);
-    }
-    public PText getTextNode() {
-      return textNode;
-    }
-    public PPath getRectNode() {
-      return rectNode;
-    }
-  }
-
   public class CollapseHandler extends PBasicInputEventHandler {
-    @Override
-    public void mouseEntered(PInputEvent event) {
-      PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-      if (label != null) {
-        label.getTextNode().setTextPaint(SEL_LABEL_FG);
-        label.getRectNode().setPaint(SEL_LABEL_BG);
-      }
-    }
-    @Override
-    public void mouseExited(PInputEvent event) {
-      PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-      if (label != null) {
-        label.getTextNode().setTextPaint(NON_SEL_LABEL_FG);
-        label.getRectNode().setPaint(NON_SEL_LABEL_BG);
-      }
-    }
-    @Override
-    public void mousePressed(PInputEvent event) {
-      PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-      if (label != null) {
-        label.getRectNode().setPaint(PRESSED_SEL_LABEL_BG);
-      }
-    }
-    @Override
-    public void mouseReleased(PInputEvent event) {
-      PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-      if (label != null) {
-        label.getRectNode().setPaint(SEL_LABEL_BG);
-      }
-    }
     @Override
     public void mouseClicked(PInputEvent event) {
       PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);

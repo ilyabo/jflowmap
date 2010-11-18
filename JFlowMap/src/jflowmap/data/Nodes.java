@@ -1,6 +1,5 @@
 package jflowmap.data;
 
-import java.util.Collection;
 import java.util.Set;
 
 import jflowmap.FlowMapGraph;
@@ -31,7 +30,7 @@ public class Nodes {
   /**
    * @return List of distinct nodes of the specified side for the given list of edges
    */
-  public static Iterable<Node> nodesOfEdges(Collection<Edge> edges, final NodeEdgePos nodePos) {
+  public static Iterable<Node> nodesOfEdges(Iterable<Edge> edges, final NodeEdgePos nodePos) {
     return unique(Iterables.transform(edges, new Function<Edge, Node>() {
       public Node apply(Edge e) {
         return nodePos.nodeOf(e);
