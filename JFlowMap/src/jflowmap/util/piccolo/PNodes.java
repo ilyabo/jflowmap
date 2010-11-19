@@ -159,6 +159,20 @@ public class PNodes {
   }
 
   public static void setPosition(PNode node, double x, double y) {
+    setPosition(node, x, y, false);
+  }
+
+  /**
+   * @param deep Offset all children recursively
+   */
+  public static void setPosition(PNode node, double x, double y, boolean deep) {
+    if (deep) {
+      double dx = x - node.getX();
+      double dy = y - node.getY();
+      for (PNode child : PNodes.childrenOf(node)) {
+        setPosition(child, child.getX() + dx, child.getY() + dy, true);
+      }
+    }
     node.setBounds(x, y, node.getWidth(), node.getHeight());
   }
 

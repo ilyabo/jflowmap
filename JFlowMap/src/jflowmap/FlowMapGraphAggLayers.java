@@ -29,8 +29,8 @@ public class FlowMapGraphAggLayers {
     private final Map<String, AggLayer> layersByName = Maps.newLinkedHashMap();
     private final AggLayer baseLayer;
 
-    public Builder(FlowMapGraph fmg) {
-      baseLayer = new AggLayer(null, null, fmg);
+    public Builder(String baseLayerName, FlowMapGraph fmg) {
+      baseLayer = new AggLayer(baseLayerName, null, fmg);
     }
 
     public Builder addAggregationLayer(String layerName, String prevLayerName,
@@ -138,6 +138,8 @@ public class FlowMapGraphAggLayers {
 
   public void setActiveLayer(String layerName) {
     AggLayer layer = getLayerByName(layerName);
+    System.out.println("FlowMapGraphAggLayers.setActiveLayer(): " + layerName + " : " + layer);
+
     if (layer == null) {
       throw new IllegalArgumentException("Layer " + layerName + " not found");
     }

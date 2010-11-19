@@ -27,7 +27,7 @@ public class FlowsmapGraphAggLayersTest {
   public void setup() {
     FlowMapGraph fmg = FlowMapGraphBuilderTest.buildTestFlowMapGraph();
 
-    FlowMapGraphAggLayers.Builder builder = new FlowMapGraphAggLayers.Builder(fmg);
+    FlowMapGraphAggLayers.Builder builder = new FlowMapGraphAggLayers.Builder("base", fmg);
     builder.addAggregationLayer(
         "src-node", null,
         FlowMapGraphEdgeAggregator.GroupFunctions.SRC_NODE);

@@ -24,6 +24,7 @@ class Centroid extends PPath {
   private final String nodeId;
   private final double origX;
   private final double origY;
+  private CentroidTimeSlider timeSlider;
 
   public Centroid(String nodeId, String nodeLabel, double origX, double origY,
       double size, Paint paint, FlowstratesView view) {
@@ -35,11 +36,17 @@ class Centroid extends PPath {
     this.point = new Point2D.Double(origX, origY);
     this.size = size;
     this.nodeId = nodeId;
+
     this.labelText = new PText(nodeLabel);
-    addChild(labelText);
     labelText.setFont(LABEL_FONT);
+    addChild(labelText);
+
     setStroke(null);
     updateColors();
+  }
+
+  public FlowstratesView getView() {
+    return view;
   }
 
   public String getNodeId() {
@@ -73,6 +80,20 @@ class Centroid extends PPath {
     if (this.isHighlighted != highlighted) {
       this.isHighlighted = highlighted;
       updateColors();
+    }
+  }
+
+  public void setTimeSliderVisible(boolean visible) {
+    if (visible) {
+      if (timeSlider == null) {
+        timeSlider = new CentroidTimeSlider(this);
+        addChild(timeSlider);
+      }
+    } else {
+      if (timeSlider != null) {
+        removeChild(timeSlider);
+        timeSlider = null;
+      }
     }
   }
 
@@ -120,6 +141,10 @@ class Centroid extends PPath {
 //      PNodes.setPosition(labelNode, x + size*1.5, y - labelNode.getFont().getSize2D()/2.0);
       PNodes.setPosition(labelText, x - labelText.getWidth()/2, y + size /*- labelNode.getFont().getSize2D()/2.0*/);
     }
+    if (timeSlider != null) {
+      PNodes.setPosition(timeSlider,
+          timeSlider.getX() + (x - getX()), timeSlider.getY() + (y - getY()), true);
+    }
     return super.setBounds(x, y, width, height);
   }
 
@@ -135,4 +160,5 @@ class Centroid extends PPath {
     p.setLocation(p.getX() - size/2, p.getY() - size/2);
     PNodes.setPosition(this, p);
   }
+
 }
