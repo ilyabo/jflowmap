@@ -60,8 +60,11 @@ import jflowmap.util.piccolo.PLabel;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
+import jflowmap.views.Legend;
 import jflowmap.views.VisualCanvas;
+import jflowmap.views.flowmap.AbstractLegendItemProducer;
 import jflowmap.views.flowmap.ColorSchemeAware;
+import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualArea;
 import jflowmap.views.flowmap.VisualAreaMap;
 
@@ -85,6 +88,7 @@ import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
+import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -164,6 +168,7 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   };
   private final FlowMapGraphAggLayers layers;
+  private Legend legend;
 
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
     this(flowMapGraph, areaMap, -1);
@@ -253,6 +258,37 @@ public class FlowstratesView extends AbstractCanvasView {
     sourcesCamera.addPropertyChangeListener(linesUpdater);
     targetsCamera.addPropertyChangeListener(linesUpdater);
     heatmapCamera.addPropertyChangeListener(linesUpdater);
+
+    createLegend();
+  }
+
+  private void createLegend() {
+    legend = new Legend(new Color(200,200,200,150), new Color(60,60,60,200),
+      new AbstractLegendItemProducer(4) {
+
+        @Override
+        public PNode createItem(double value) {
+          PPath item = new PPath(new Rectangle2D.Double(0, 0, 10, 10));
+          item.setPaint(getColorFor(value));
+          item.setName(FlowMapView.NUMBER_FORMAT.format(value));
+          item.setStroke(null);
+          return item;
+        }
+
+        @Override
+        public PNode createHeader() {
+          return new PText(getFlowMapGraph().getId() + "\n" + getValueType());
+        }
+
+        @Override
+        public MinMax getMinMax() {
+          return getValueType().getMinMax(getStats());
+        }
+
+      });
+    heatmapCamera.addChild(legend);
+//    PBounds b = heatmapCamera.getViewBounds();
+//    legend.offset(b.x, b.y);
   }
 
   public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
@@ -1063,6 +1099,7 @@ public class FlowstratesView extends AbstractCanvasView {
     for (HeatMapCell cell : PNodes.childrenOfType(heatmapNode, HeatMapCell.class)) {
       cell.updateColor();
     }
+    legend.update();
     getVisualCanvas().repaint();
   }
 

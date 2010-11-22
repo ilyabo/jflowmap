@@ -77,7 +77,8 @@ public class Legend extends PPath {
 
     PNodes.setPosition(header, posX, posY);
     addChild(header);
-    posY += header.getFullBoundsReference().getHeight() + paddingY + gapAfterHeader;
+    PBounds headerBounds = header.getFullBoundsReference();
+    posY += headerBounds.getHeight() + paddingY + gapAfterHeader;
 
 
     double maxItemWidth = Double.NaN;
@@ -131,10 +132,9 @@ public class Legend extends PPath {
       for (PNode itemNode : itemNodes) {
         itemNode.setX(posX + (maxItemWidth - itemNode.getWidth())/2);
       }
-
-      setWidth(rightMost - getY() + paddingY * 2);
-      setHeight(posY - gapBetweenLines + paddingX * 2);
     }
+    setWidth(Math.max(headerBounds.getWidth(), rightMost - getY()) + paddingY * 2);
+    setHeight(Math.max(headerBounds.getHeight(), posY - gapBetweenLines) + paddingX * 2);
   }
 
 

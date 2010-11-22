@@ -34,7 +34,7 @@ public class LegendValuesGenerator {
   private LegendValuesGenerator() {
   }
 
-  public static List<Double> generateLegendValues(double min, double max, int numValues) {
+  public static List<Double> generate(double min, double max, int numValues) {
     List<Double> legendValues = Lists.newArrayList();
     double ord = AxisMarks.ordAlpha(max);
     double w = Math.floor(max / ord) * ord;

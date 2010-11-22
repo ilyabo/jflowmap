@@ -3,15 +3,10 @@ package jflowmap.views.flowmap;
 import java.awt.BasicStroke;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
-import java.util.List;
 
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.Legend.ItemProducer;
-
-import com.google.common.collect.Lists;
-
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
@@ -19,16 +14,15 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 /**
  * @author Ilya Boyandin
  */
-public class FlowMapLegendItemProducer implements ItemProducer {
+public class FlowMapLegendItemProducer extends AbstractLegendItemProducer {
 
   private final double lineWidth = 50;
   private final double spaceForHeader = 10;
   private final VisualFlowMap visualFlowMap;
-  private final int numLegendValues;
 
   public FlowMapLegendItemProducer(VisualFlowMap visualFlowMap, int numLegendValues) {
+    super(numLegendValues);
     this.visualFlowMap = visualFlowMap;
-    this.numLegendValues = numLegendValues;
   }
 
   @Override
@@ -42,20 +36,12 @@ public class FlowMapLegendItemProducer implements ItemProducer {
   }
 
   @Override
-  public Iterable<PNode> createItems() {
-    List<PNode> items = Lists.newArrayList();
-
-    MinMax stats = visualFlowMap.getFlowMapGraph().getStats().getEdgeWeightStats();
-    List<Double> values = LegendValuesGenerator.generateLegendValues(
-        stats.getMin(), stats.getMax(), numLegendValues);
-    for (Double value : values) {
-      items.add(createItem(value));
-    }
-
-    return items;
+  public MinMax getMinMax() {
+    return visualFlowMap.getStats().getEdgeWeightStats();
   }
 
-  private PNode createItem(final double value) {
+  @Override
+  public PNode createItem(final double value) {
     double x = 0, y =0;
 
     VisualFlowMapModel fmm = visualFlowMap.getModel();
