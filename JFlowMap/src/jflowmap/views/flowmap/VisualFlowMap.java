@@ -50,7 +50,7 @@ import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Tooltip;
-import jflowmap.views.VisualLegend;
+import jflowmap.views.Legend;
 
 import org.apache.log4j.Logger;
 
@@ -124,7 +124,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   private final VisualEdgePaintFactory visualEdgePaintFactory;
   private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
-  private final VisualLegend visualLegend;
+  private final Legend visualLegend;
 
   private final String edgeWeightAttr;
   private final MapProjection mapProjection;
@@ -158,7 +158,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     tooltipBox.setVisible(false);
     tooltipBox.setPickable(false);
 
-    visualLegend = new VisualLegend(
+    visualLegend = new Legend(
         getColor(ColorCodes.LEDGEND_BOX_PAINT),
         getColor(ColorCodes.LEDGEND_TEXT), new FlowMapLegendItemProducer(this, 5));
     setLegendVisible(showLegend);

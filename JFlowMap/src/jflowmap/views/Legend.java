@@ -32,7 +32,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 /**
  * @author Ilya Boyandin
  */
-public class VisualLegend extends PPath {
+public class Legend extends PPath {
 
   private static final long serialVersionUID = -8907313603307434727L;
 
@@ -48,7 +48,7 @@ public class VisualLegend extends PPath {
 
   private final Paint textPaint;
 
-  public VisualLegend(Paint paint, Paint textPaint, ItemProducer itemsProducer) {
+  public Legend(Paint paint, Paint textPaint, ItemProducer itemsProducer) {
     super(new RoundRectangle2D.Double(4, 4, 140, 120, 10, 20));
     this.itemsProducer = itemsProducer;
     this.textPaint = textPaint;
@@ -141,8 +141,8 @@ public class VisualLegend extends PPath {
   private PText createLabel(String itemText, double leftX, double middleY) {
     PText ptext = new PText(itemText);
     ptext.setX(leftX);
-    ptext.setY(middleY - VisualLegend.LABEL_FONT.getSize2D()/2 - 1);
-    ptext.setFont(VisualLegend.LABEL_FONT);
+    ptext.setY(middleY - Legend.LABEL_FONT.getSize2D()/2 - 1);
+    ptext.setFont(Legend.LABEL_FONT);
     ptext.setTextPaint(textPaint);
 //    ptext.setPaint(Color.black);
 //    ptext.setTextPaint(Color.white);

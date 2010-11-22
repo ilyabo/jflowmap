@@ -8,7 +8,7 @@ import java.util.List;
 import jflowmap.data.MinMax;
 import jflowmap.geom.ArrowQuadPath;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.VisualLegend.ItemProducer;
+import jflowmap.views.Legend.ItemProducer;
 
 import com.google.common.collect.Lists;
 
@@ -57,7 +57,6 @@ public class FlowMapLegendItemProducer implements ItemProducer {
 
   private PNode createItem(final double value) {
     double x = 0, y =0;
-
 
     VisualFlowMapModel fmm = visualFlowMap.getModel();
 
