@@ -31,20 +31,6 @@ public class FlowMapLegendItemProducer implements ItemProducer {
     this.numLegendValues = numLegendValues;
   }
 
-//  @Override
-//  public Iterable<String> getLegendItemLabels() {
-//    MinMax stats = visualFlowMap.getFlowMapGraph().getStats().getEdgeWeightStats();
-//    List<Double> legendValues = LegendValuesGenerator.generateLegendValues(
-//        stats.getMin(), stats.getMax(), numLegendValues);
-//
-//    return Iterables.transform(legendValues, new Function<Double, String>() {
-//      @Override
-//      public String apply(Double from) {
-//        return FlowMapView.NUMBER_FORMAT.format(from);
-//      }
-//    });
-//  }
-
   @Override
   public PNode createHeader() {
     double posX = 0, posY = 0;
@@ -71,28 +57,15 @@ public class FlowMapLegendItemProducer implements ItemProducer {
 
   private PNode createItem(final double value) {
     double x = 0, y =0;
-//    final double value;
-//    try {
-//      value = FlowMapView.NUMBER_FORMAT.parse(itemText).doubleValue();
-//    } catch (ParseException e) {
-//      throw new RuntimeException(e);
-//    }
 
 
     VisualFlowMapModel fmm = visualFlowMap.getModel();
-//    Paint paint = visualFlowMap.getVisualEdgePaintFactory().createPaint(
-//        fmm.normalizeEdgeWeightForColorScale(value), x, y, x + lineWidth, y);
 
     Stroke stroke = visualFlowMap.getVisualEdgeStrokeFactory().createStroke(
         fmm.normalizeEdgeWeightForWidthScale(value));
 
     double sw = getStrokeWidth(stroke);
-    double height = sw;
-//    if (height < minVSpace) {
-//      height = minVSpace;
-//    }
-
-    double yp = y + height/2;
+    double yp = y + sw/2;
     PPath ppath = new PPath(new Line2D.Double(x, yp, x + lineWidth, yp)) {
       @Override
       public boolean setBounds(double x, double y, double width, double height) {
@@ -100,15 +73,12 @@ public class FlowMapLegendItemProducer implements ItemProducer {
         if (rv) {
           VisualFlowMapModel fmm = visualFlowMap.getModel();
           setStrokePaint(visualFlowMap.getVisualEdgePaintFactory().createPaint(
-              fmm.normalizeEdgeWeightForColorScale(value), x, y, x + width /*lineWidth*/, y));
+              fmm.normalizeEdgeWeightForColorScale(value), x, y, x + width, y));
         }
         return rv;
       }
     };
     ppath.setStroke(stroke);
-//    ppath.setStrokePaint(paint);
-
-//      ppath.setHeight(getStrokeWidth(ppath.getStroke())/2);
 
     ppath.setName(FlowMapView.NUMBER_FORMAT.format(value));
     return ppath;
