@@ -35,6 +35,34 @@ public class LegendValuesGenerator {
   }
 
   public static List<Double> generate(double min, double max, int numValues) {
+    if (max < min) {
+      throw new IllegalArgumentException();
+    }
+
+    List<Double> legendValues = Lists.newArrayList();
+    if (min >= 0  &&  max >= 0) {
+      legendValues.addAll(genPositive(min, max, numValues));
+    } else if (min < 0  &&  max > 0) {
+      List<Double> positive = genPositive(0, Math.max(max, -min), numValues/2);
+      legendValues.addAll(positive);
+      addAsNegative(legendValues, positive);
+    } else if (min < 0  &&  max < 0) {
+      addAsNegative(legendValues, genPositive(-max, -min, numValues/2));
+    }
+
+    return legendValues;
+  }
+
+  private static void addAsNegative(List<Double> legendValues, List<Double> positive) {
+    for (int i = positive.size() - 1; i >= 0; i--) {
+      Double v = positive.get(i);
+      if (v != 0) {
+        legendValues.add(-v);
+      }
+    }
+  }
+
+  private static List<Double> genPositive(double min, double max, int numValues) {
     List<Double> legendValues = Lists.newArrayList();
     double ord = AxisMarks.ordAlpha(max);
     double w = Math.floor(max / ord) * ord;
@@ -69,7 +97,6 @@ public class LegendValuesGenerator {
     if (legendValues.size() == 0  || Iterables.getLast(legendValues) > min) {
       legendValues.add(min);
     }
-
     return legendValues;
   }
 

@@ -21,8 +21,12 @@ package jflowmap.views;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.RoundRectangle2D;
+import java.util.List;
 
 import jflowmap.util.piccolo.PNodes;
+
+import com.google.common.collect.Lists;
+
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
@@ -36,11 +40,11 @@ public class Legend extends PPath {
 
   private static final long serialVersionUID = -8907313603307434727L;
 
-  static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 13);
+  static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 12);
 
   private final double gapBetweenLines = 3, gapBeforeText = 7;
   private final double gapAfterHeader = 5;
-  private final double paddingX = 2, paddingY = 2;
+  private final double paddingX = 6, paddingY = 4;
   private final double startY = 10;
   private final double startX = 10;
 
@@ -75,8 +79,8 @@ public class Legend extends PPath {
     final double posX = startX + paddingX;
     double posY = startY + paddingY;
 
-    PNodes.setPosition(header, posX, posY);
     addChild(header);
+    PNodes.setPosition(header, posX, posY);
     PBounds headerBounds = header.getFullBoundsReference();
     posY += headerBounds.getHeight() + paddingY + gapAfterHeader;
 
@@ -89,6 +93,7 @@ public class Legend extends PPath {
 
     Iterable<PNode> itemNodes = itemsProducer.createItems();
 
+    List<PText> labelNodes = Lists.newArrayList();
     for (PNode item: itemNodes) {
       addChild(item);
       PNodes.setPosition(item, posX, posY);
@@ -106,6 +111,7 @@ public class Legend extends PPath {
         maxLabelX = labelX;
       }
       labelNode = createLabel(item.getName(), labelX, 0);
+      labelNodes.add(labelNode);
       addChild(labelNode);
 
 
@@ -125,7 +131,7 @@ public class Legend extends PPath {
     }
 
     if (count > 0) {
-      for (PText label : PNodes.childrenOfType(this, PText.class)) {
+      for (PText label : labelNodes) {
         label.setX(maxLabelX);
       }
 
@@ -133,7 +139,7 @@ public class Legend extends PPath {
         itemNode.setX(posX + (maxItemWidth - itemNode.getWidth())/2);
       }
     }
-    setWidth(Math.max(headerBounds.getWidth(), rightMost - getY()) + paddingY * 2);
+    setWidth(Math.max(headerBounds.getWidth(), rightMost - getY()) + paddingX * 2);
     setHeight(Math.max(headerBounds.getHeight(), posY - gapBetweenLines) + paddingX * 2);
   }
 
