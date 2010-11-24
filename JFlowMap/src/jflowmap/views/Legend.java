@@ -75,14 +75,20 @@ public class Legend extends PPath {
 
     PNode header = itemsProducer.createHeader();
 
-
     final double posX = startX + paddingX;
     double posY = startY + paddingY;
 
-    addChild(header);
-    PNodes.setPosition(header, posX, posY);
-    PBounds headerBounds = header.getFullBoundsReference();
-    posY += headerBounds.getHeight() + paddingY + gapAfterHeader;
+    double headerWidth, headerHeight;
+    if (header != null) {
+      addChild(header);
+      PNodes.setPosition(header, posX, posY);
+      PBounds headerBounds = header.getFullBoundsReference();
+      headerWidth = headerBounds.getWidth();
+      headerHeight = headerBounds.getHeight();
+      posY += headerHeight + paddingY + gapAfterHeader;
+    } else {
+      headerWidth = headerHeight = 0;
+    }
 
 
     double maxItemWidth = Double.NaN;
@@ -125,12 +131,13 @@ public class Legend extends PPath {
         rightMost = r;
       }
 
-      posY += height + gapBetweenLines;
+      posY += height;
 
       count++;
     }
 
     if (count > 0) {
+      posY -= gapBetweenLines;
       for (PText label : labelNodes) {
         label.setX(maxLabelX);
       }
@@ -139,8 +146,8 @@ public class Legend extends PPath {
         itemNode.setX(posX + (maxItemWidth - itemNode.getWidth())/2);
       }
     }
-    setWidth(Math.max(headerBounds.getWidth(), rightMost - getY()) + paddingX * 2);
-    setHeight(Math.max(headerBounds.getHeight(), posY - gapBetweenLines) + paddingX * 2);
+    setWidth(Math.max(headerWidth, rightMost - getY()) + paddingX * 2);
+    setHeight(posY - gapBetweenLines + paddingY * 2);
   }
 
 

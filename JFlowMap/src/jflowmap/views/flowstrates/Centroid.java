@@ -84,6 +84,7 @@ class Centroid extends PPath {
   }
 
   public void setTimeSliderVisible(boolean visible) {
+    if (1==1) return;
     if (visible) {
       if (timeSlider == null) {
         timeSlider = new CentroidTimeSlider(this);

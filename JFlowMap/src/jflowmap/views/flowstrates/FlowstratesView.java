@@ -263,7 +263,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void createLegend() {
-    legend = new Legend(new Color(200,200,200,150), new Color(60,60,60,200),
+    legend = new Legend(new Color(220,220,220,200), new Color(60,60,60,200),
       new AbstractLegendItemProducer(4) {
 
         @Override
@@ -277,7 +277,8 @@ public class FlowstratesView extends AbstractCanvasView {
 
         @Override
         public PNode createHeader() {
-          return new PText(getFlowMapGraph().getId() + "\n" + getValueType());
+//          return new PText(getFlowMapGraph().getId() + "\n" + getValueType());
+          return null;
         }
 
         @Override
@@ -286,6 +287,8 @@ public class FlowstratesView extends AbstractCanvasView {
         }
 
       });
+    legend.setOffset(0, 29);
+    legend.setScale(1.4);
     heatmapCamera.addChild(legend);
 //    PBounds b = heatmapCamera.getViewBounds();
 //    legend.offset(b.x, b.y);
