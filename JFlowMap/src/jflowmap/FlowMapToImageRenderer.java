@@ -20,10 +20,7 @@ package jflowmap;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +40,7 @@ import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.MultiFlowMapStats;
 import jflowmap.geo.MapProjections;
+import jflowmap.util.SwingUtils;
 import jflowmap.views.IColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMap;
@@ -114,18 +112,12 @@ public class FlowMapToImageRenderer extends JFrame {
     setSize(1024, 768);
 
     setBackground(new Color(0x60, 0x60, 0x60));
-    setUndecorated(true);
-    setResizable(false);
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
   public void makeFullscreen() {
-    Toolkit toolkit = Toolkit.getDefaultToolkit();
-    setSize((int)toolkit.getScreenSize().getWidth(), (int)toolkit.getScreenSize().getHeight());
-    setExtendedState(MAXIMIZED_BOTH);
-    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-    gd.setFullScreenWindow(this);
+    SwingUtils.makeFullscreen(this);
   }
 
   public void setPaddingX(int paddingX) {

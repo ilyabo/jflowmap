@@ -76,4 +76,8 @@ public interface FlowstratesStyle {
 
   Color getMapAreaHighlightedCentroidLabelTextColor();
 
+  Stroke getMapAreaHighlightedStroke();
+
+  Stroke getMapAreaStroke();
+
 }

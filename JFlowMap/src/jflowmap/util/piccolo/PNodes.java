@@ -141,6 +141,7 @@ public class PNodes {
 
 
   /**
+   * @param bounds Bounds to align the node within.
    * @param halign -1 - stick to left side, 0 - center, 1 - stick to right side
    * @param valign -1 - stick to top side, 0 - middle, 1 - stick to bottom side
    * @param hsizePropoption 0..1 Proportion of the width of the bounds which the node should take

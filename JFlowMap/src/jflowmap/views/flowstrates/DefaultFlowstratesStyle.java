@@ -166,15 +166,16 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return MAP_AREA_SELECTED_CENTROID_PAINT;
   }
 
-  private static final Color MAP_AREA_HIGHLIGHTED_PAINT = new Color(255, 208, 144);
+  private static final Color MAP_AREA_HIGHLIGHTED_PAINT = new Color(255, 255, 255);
   @Override
   public Color getMapAreaHighlightedPaint() {
     return MAP_AREA_HIGHLIGHTED_PAINT;
   }
 
+  private static final Color MAP_AREA_HIGHLIGHTED_STROKE_PAINT = new Color(255, 208, 144);
   @Override
   public Color getMapAreaHighlightedStrokePaint() {
-    return MAP_AREA_HIGHLIGHTED_PAINT;
+    return MAP_AREA_HIGHLIGHTED_STROKE_PAINT;
   }
 
   private static final Color MAP_AREA_CENTROID_LABEL_TEXT_PAINT = new Color(0, 0, 200);
@@ -182,6 +183,18 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
   @Override
   public Color getMapAreaCentroidLabelTextPaint() {
     return MAP_AREA_CENTROID_LABEL_TEXT_PAINT;
+  }
+
+  private static final PFixedWidthStroke MAP_AREA_HIGHLIGHTED_STROKE = new PFixedWidthStroke(3);
+  @Override
+  public Stroke getMapAreaHighlightedStroke() {
+    return MAP_AREA_HIGHLIGHTED_STROKE;
+  }
+
+  private static final PFixedWidthStroke MAP_AREA_STROKE = new PFixedWidthStroke(1);
+  @Override
+  public Stroke getMapAreaStroke() {
+    return MAP_AREA_STROKE;
   }
 
   private static final Color MAP_AREA_CENTROID_LABEL_PAINT = new Color(255, 255, 255, 100);

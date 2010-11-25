@@ -98,6 +98,8 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  */
 public class FlowstratesView extends AbstractCanvasView {
 
+  private static final String CAPTION_NODE_ATTR = "captionNode";
+  private static final int CAPTION_HEADER_HEIGHT = 50;
   private static final double CENTROID_DOT_SIZE = 2.0;
 
   enum Properties {
@@ -108,8 +110,9 @@ public class FlowstratesView extends AbstractCanvasView {
     SOURCE
   }
 
-  private static final Font HEATMAP_NODE_MARK_FONT = new Font("Arial", Font.PLAIN, 18);
-  private static final Font GRAPH_ID_MARK_FONT = new Font("Arial", Font.PLAIN, 19);
+  private static final Font HEATMAP_ROW_LABELS_FONT = new Font("Arial", Font.PLAIN, 22 /*18*/);
+  private static final Font HEATMAP_COLUMN_LABELS_FONT = new Font("Arial", Font.PLAIN, 25 /*19*/);
+  private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 23);
 
   public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
@@ -211,6 +214,10 @@ public class FlowstratesView extends AbstractCanvasView {
     heatmapCamera.addLayer(heatmapLayer);
     targetsCamera.addLayer(targetsLayer);
 
+    addCaption(sourcesCamera, "Origins");
+    addCaption(heatmapCamera, "Time");
+    addCaption(targetsCamera, "Destinations");
+
     PLayer canvasLayer = canvas.getLayer();
     canvasLayer.addChild(sourcesCamera);
     canvasLayer.addChild(heatmapCamera);
@@ -235,6 +242,7 @@ public class FlowstratesView extends AbstractCanvasView {
     mapToMatrixLinesLayer = new PNode();
     getCamera().addChild(mapToMatrixLinesLayer);
 
+    createLegend();
     renewHeatmap();
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
@@ -259,7 +267,13 @@ public class FlowstratesView extends AbstractCanvasView {
     targetsCamera.addPropertyChangeListener(linesUpdater);
     heatmapCamera.addPropertyChangeListener(linesUpdater);
 
-    createLegend();
+  }
+
+  private void addCaption(PCamera camera, String caption) {
+    PText textNode = new PText(caption);
+    textNode.setFont(CAPTION_FONT);
+    camera.addAttribute(CAPTION_NODE_ATTR, textNode);
+    camera.addChild(textNode);
   }
 
   private void createLegend() {
@@ -287,7 +301,7 @@ public class FlowstratesView extends AbstractCanvasView {
         }
 
       });
-    legend.setOffset(0, 29);
+    legend.setOffset(5, 12);
     legend.setScale(1.4);
     heatmapCamera.addChild(legend);
 //    PBounds b = heatmapCamera.getViewBounds();
@@ -958,9 +972,11 @@ public class FlowstratesView extends AbstractCanvasView {
     if (va != null) {
       va.moveToFront();
       if (highlighted) {
+        va.setStroke(style.getMapAreaHighlightedStroke());
         va.setStrokePaint(style.getMapAreaHighlightedStrokePaint());
         va.setPaint(style.getMapAreaHighlightedPaint());
       } else {
+        va.setStroke(style.getMapAreaStroke());
         va.setStrokePaint(mapColorScheme.getColor(ColorCodes.AREA_STROKE));
         va.setPaint(mapColorScheme.getColor(ColorCodes.AREA_PAINT));
       }
@@ -1021,7 +1037,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
       // "from" label
       PText srcLabel = new PText(flowMapGraph.getNodeLabel(edge.getSourceNode()));
-      srcLabel.setFont(HEATMAP_NODE_MARK_FONT);
+      srcLabel.setFont(HEATMAP_ROW_LABELS_FONT);
       srcLabel.setX(-srcLabel.getFullBoundsReference().getWidth() - 6);
       srcLabel.setY(y + (cellHeight - srcLabel.getFullBoundsReference().getHeight()) / 2);
       heatmapNode.addChild(srcLabel);
@@ -1046,7 +1062,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
       // "to" label
       PText targetLabel = new PText(flowMapGraph.getNodeLabel(edge.getTargetNode()));
-      targetLabel.setFont(HEATMAP_NODE_MARK_FONT);
+      targetLabel.setFont(HEATMAP_ROW_LABELS_FONT);
       targetLabel.setX(cellWidth * maxCol + 6);
       targetLabel.setY(y + (cellHeight - targetLabel.getFullBoundsReference().getHeight()) / 2);
       heatmapNode.addChild(targetLabel);
@@ -1060,6 +1076,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
     createColumnLabels();
     renewFlowtiLines();
+    legend.update();
 
     heatmapLayer.repaint();
     // layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight *
@@ -1074,16 +1091,24 @@ public class FlowstratesView extends AbstractCanvasView {
       // attr = attr.substring(cp.length());
       PLabel label = new PLabel(attr);
       label.setName(attr);
-      label.rotate(-Math.PI / 2);
-      label.setFont(GRAPH_ID_MARK_FONT);
+      label.setFont(HEATMAP_COLUMN_LABELS_FONT);
       PBounds b = label.getFullBoundsReference();
+      double x = col * cellWidth; // + (cellWidth - b.getWidth()) / 2;
+      double y = -b.getHeight() / 1.5;
       label.setPaint(Color.white);
-      label.setX(5);
-      label.setY(col * cellWidth + (cellWidth - b.getWidth()) / 2);
+      label.rotateAboutPoint(-Math.PI * .65 / 2, x, y);
+      label.setX(x);
+      label.setY(y);
+//      label.setX(5 + col * 6.3);
+//      label.setY(col * cellWidth + (cellWidth - b.getWidth()) / 2);
+//      label.translate(5, col * cellWidth + (cellWidth - b.getWidth()) / 2);
+      heatmapNode.addChild(label);
+
       label.addInputEventListener(new PBasicInputEventHandler() {
         @Override
         public void mouseEntered(PInputEvent event) {
           PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
+          label.moveToFront();
           updateMapAreaColorsOnHeatMapColumnLabelHover(label.getName(), true);
         }
 
@@ -1093,7 +1118,6 @@ public class FlowstratesView extends AbstractCanvasView {
           updateMapAreaColorsOnHeatMapColumnLabelHover(label.getName(), false);
         }
       });
-      heatmapNode.addChild(label);
       col++;
     }
   }
@@ -1325,9 +1349,9 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   public void fitInView() {
-    layoutCameraNode(sourcesCamera, -1, 0, .30, .9);
+    layoutCameraNode(sourcesCamera, -1, 0, .30, 1.0);
     layoutCameraNode(heatmapCamera, 0, 0, .40, 1.0);
-    layoutCameraNode(targetsCamera, +1, 0, .30, .9);
+    layoutCameraNode(targetsCamera, +1, 0, .30, 1.0);
 
     if (!fitInViewOnce) {
       fitHeatMap();
@@ -1360,12 +1384,30 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void layoutCameraNode(PCamera camera, double halign, double valign, double hsizeProportion,
       double vsizeProportion) {
-    PBounds globalViewBounds = getCamera().getViewBounds();
-    PBounds viewBounds = camera.getViewBounds();
 
+    PBounds globalViewBounds = getCamera().getViewBounds();
+
+    // reserve space for the caption header
+    PText caption = (PText)camera.getAttribute(CAPTION_NODE_ATTR);
+    if (caption != null) {
+      globalViewBounds.y += CAPTION_HEADER_HEIGHT;
+      globalViewBounds.height -= CAPTION_HEADER_HEIGHT;
+    }
+
+    // align the camera node
+    PBounds viewBounds = camera.getViewBounds();
     PNodes.alignNodeInBounds_bySetBounds(camera, globalViewBounds, halign, valign, hsizeProportion,
         vsizeProportion);
     camera.setViewBounds(viewBounds);
+
+    // align caption
+    if (caption != null) {
+      PBounds capb = caption.getFullBoundsReference();
+      PBounds camb = camera.getBoundsReference();
+      PNodes.setPosition(caption,
+          camb.x + (camb.width - capb.width)/2,
+          (CAPTION_HEADER_HEIGHT - capb.height)/2);
+    }
   }
 
   public void setRowOrdering(RowOrderings rowOrder) {

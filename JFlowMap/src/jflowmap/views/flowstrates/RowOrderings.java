@@ -11,12 +11,12 @@ import prefuse.data.Edge;
  * @author Ilya Boyandin
  */
 enum RowOrderings {
-//    MAX_NODE_SUMMARIES("origin totals max") {
-//      @Override
-//      public Comparator<Edge> getComparator(FlowMapGraph fmg) {
-//        return Collections.reverseOrder(fmg.createMaxNodeSummariesForWeightComparator(NodeEdgePos.SOURCE));
-//      }
-//    },
+    MAX_NODE_SUMMARIES("origin totals max") {
+      @Override
+      public Comparator<Edge> getComparator(FlowMapGraph fmg) {
+        return Collections.reverseOrder(fmg.createMaxNodeSummariesForWeightComparator(NodeEdgePos.SOURCE));
+      }
+    },
     SRC_VPOS("origin vpos") {
       @Override
       public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
