@@ -55,6 +55,57 @@ public final class GeomUtils {
     return Math.sqrt(dx * dx + dy * dy);
   }
 
+  public static double distance(Iterable<Double> v1, Iterable<Double> v2) {
+    return distance(v1, v2, Double.NaN);
+  }
+
+  public static double distance(Iterable<Double> v1, Iterable<Double> v2, double maxForNaNs) {
+    Iterator<Double> it1 = v1.iterator();
+    Iterator<Double> it2 = v2.iterator();
+    double sum = 0;
+    while (it1.hasNext()) {
+      if (!it2.hasNext()) {
+        throw new IllegalArgumentException("Vectors not of the same size");
+      }
+      double c1 = it1.next();
+      double c2 = it2.next();
+      double d;
+      if (Double.isNaN(maxForNaNs)) {
+        d = c1 - c2;
+      } else {
+        if (Double.isNaN(c1)) {
+          if (Double.isNaN(c2)) {
+            d = maxForNaNs;
+          } else {
+            d = Math.max(c2, maxForNaNs - c2);
+          }
+        } else if (Double.isNaN(c2)) {
+          d = Math.max(c1, maxForNaNs - c1);
+        } else {
+          d = c1 - c2;
+        }
+
+//        if (Double.isNaN(c1)) {
+//          if (Double.isNaN(c2)) {
+//            c1 = c2 = maxForNaNs;
+//          } else {
+//            c1 = Math.max(c2, maxForNaNs - c2);
+//          }
+//        } else if (Double.isNaN(c2)) {
+//          c2 = Math.max(c1, maxForNaNs - c1);
+//        }
+//        d = c1 - c2;
+
+      }
+      sum += d * d;
+    }
+    if (it2.hasNext()) {
+      throw new IllegalArgumentException("Vectors not of the same size");
+    }
+    return Math.sqrt(sum);
+  }
+
+
   public static Point2D projectPointToLine(Point2D line1, Point2D line2, Point2D point) {
     return projectPointToLine(
         line1.getX(), line1.getY(), line2.getX(), line2.getY(),

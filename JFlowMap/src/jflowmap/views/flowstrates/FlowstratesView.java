@@ -231,7 +231,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
-        flowMapGraph.getEdgeWeightDiffAttrNames());
+        flowMapGraph.getEdgeWeightDiffAttr());
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
         flowMapGraph.getEdgeWeightRelativeDiffAttrNames());
 
@@ -1183,7 +1183,21 @@ public class FlowstratesView extends AbstractCanvasView {
       private Pair<FlowtiLine, FlowtiLine> lines(PInputEvent event) {
         return edgesToLines.get(node(event).getEdge());
       }
+
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (event.isControlDown()) {
+          setEgdeForSimilaritySorting(node(event).getEdge());
+        }
+      }
     };
+  }
+
+  private void setEgdeForSimilaritySorting(Edge edge) {
+    flowMapGraph.setEgdeForSimilaritySorting(edge);
+    if (rowOrdering == RowOrderings.SIMILARITY) {
+      updateVisibleEdges();
+    }
   }
 
   private String getColumnValueAttrName(String columnAttr) {

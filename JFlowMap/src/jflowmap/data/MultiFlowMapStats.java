@@ -96,7 +96,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
         new Function<FlowMapGraph, List<String>>() {
           @Override
           public List<String> apply(FlowMapGraph fmg) {
-            return fmg.getEdgeWeightDiffAttrNames();
+            return fmg.getEdgeWeightDiffAttr();
           }
         }
     );

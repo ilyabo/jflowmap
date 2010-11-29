@@ -615,7 +615,7 @@ public class FlowMapGraph {
   }
 
   public Comparator<Edge> createMaxEdgeWeightDiffComparator() {
-    return createMaxEdgeWeightComparator(getEdgeWeightDiffAttrNames());
+    return createMaxEdgeWeightComparator(getEdgeWeightDiffAttr());
   }
 
   public Comparator<Edge> createMaxEdgeWeightRelativeDiffComparator() {
@@ -657,11 +657,19 @@ public class FlowMapGraph {
   }
 
   public Comparator<Edge> createAvgEdgeWeightComparator() {
+    return createAvgEdgeWeightComparator(getEdgeWeightAttrs());
+  }
+
+  public Comparator<Edge> createAvgEdgeWeightDiffComparator() {
+    return createAvgEdgeWeightComparator(getEdgeWeightDiffAttr());
+  }
+
+  public Comparator<Edge> createAvgEdgeWeightComparator(final Iterable<String> attrNames) {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {
         return MathUtils.compareDoubles_smallestIsNaN(
-            getAvgAttrValue(e1, getEdgeWeightAttrs()), getAvgAttrValue(e2, getEdgeWeightAttrs()));
+            getAvgAttrValue(e1, attrNames), getAvgAttrValue(e2, attrNames));
       }
     };
   }
@@ -682,7 +690,9 @@ public class FlowMapGraph {
         }
                                              // if there is no prev value, we'll assume it's zero,
                                              // so that we can at least see the absolute value
-        double diff = edge.getDouble(attr) - (Double.isNaN(prevVal) ? 0 : prevVal);
+//        double diff = edge.getDouble(attr) - (Double.isNaN(prevVal) ? 0 : prevVal);
+
+        double diff = edge.getDouble(attr) - prevVal;
         edge.setDouble(diffAttr, diff);
       }
 
@@ -793,12 +803,27 @@ public class FlowMapGraph {
     return list;
   }
 
-  public List<String> getEdgeWeightDiffAttrNames() {
+  public List<String> getEdgeWeightDiffAttr() {
     return getAttrSpec().getEdgeWeightDiffAttrs();
   }
 
   public List<String> getEdgeWeightRelativeDiffAttrNames() {
     return getAttrSpec().getEdgeWeightRelativeDiffAttrs();
+  }
+
+  private Edge eddeForSimilaritySorting;
+
+  public Edge getEgdeForSimilaritySorting() {
+    if (eddeForSimilaritySorting == null) {
+      List<Edge> edges = Lists.newArrayList(edges());
+      Collections.sort(edges, createAvgEdgeWeightDiffComparator());
+      return edges.get(0);
+    }
+    return eddeForSimilaritySorting;
+  }
+
+  public void setEgdeForSimilaritySorting(Edge edge) {
+    eddeForSimilaritySorting = edge;
   }
 
 }
