@@ -18,12 +18,28 @@
 
 package jflowmap.clustering;
 
+import com.google.common.collect.Iterables;
+
 /**
  * @author Ilya Boyandin
  */
 public class Cosine {
 
   private Cosine() {
+  }
+
+  public static double cosine(Iterable<Double> v1, Iterable<Double> v2) {
+    return cosine(toArray(v1), toArray(v2));
+  }
+
+  private static double[] toArray(Iterable<Double> v) {
+    int size = Iterables.size(v);
+    double[] a = new double[size];
+    int count = 0;
+    for (Double d : v) {
+      a[count++] = d;
+    }
+    return a;
   }
 
   public static double cosine(double[] v1, double[] v2) {

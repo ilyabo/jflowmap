@@ -70,6 +70,11 @@ public final class GeomUtils {
       double c1 = it1.next();
       double c2 = it2.next();
       double d;
+
+//      if (Double.isNaN(c1)) c1 = 0;
+//      if (Double.isNaN(c2)) c2 = 0;
+
+      d = c1 - c2;
       if (Double.isNaN(maxForNaNs)) {
         d = c1 - c2;
       } else {

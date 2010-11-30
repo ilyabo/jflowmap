@@ -109,7 +109,7 @@ enum RowOrderings {
         };
       }
     },
-    SIMILARITY("similarity to max") {
+    EUCLIDEAN_DISTANCE("Eucl. dist") {
       @Override
       public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
         return new Comparator<Edge>() {
@@ -131,7 +131,41 @@ enum RowOrderings {
           }
         };
       }
-    };
+    }
+//    ,
+//    COSINE_SIMILARITY("Cosine similarity") {
+//      @Override
+//      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
+//        return new Comparator<Edge>() {
+//          Edge sortBy = fmg.getEgdeForSimilaritySorting();
+//          Iterable<Double> wlist = nansToZeros(fmg.getEdgeWeights(sortBy));
+//
+//          double distTo(Edge e) {
+//            if (e == sortBy) {
+//              return 0;
+//            } else {
+//              return Cosine.cosine(wlist, nansToZeros(fmg.getEdgeWeights(e)));
+//            }
+//          }
+//
+//          @Override
+//          public int compare(Edge e1, Edge e2) {
+//            return Double.compare(distTo(e1), distTo(e2));
+//          }
+//
+//          Iterable<Double> nansToZeros(Iterable<Double> v) {
+//            return Iterables.transform(v, new Function<Double, Double>() {
+//              public Double apply(Double from) {
+//                if (Double.isNaN(from))
+//                  return 0.0;
+//                return from;
+//              }
+//            });
+//          }
+//        };
+//      }
+//    }
+    ;
 
 
 //    EUCLIDEAN_DIST_FROM_MAX("Euclidean distance from max");

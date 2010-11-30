@@ -1195,7 +1195,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void setEgdeForSimilaritySorting(Edge edge) {
     flowMapGraph.setEgdeForSimilaritySorting(edge);
-    if (rowOrdering == RowOrderings.SIMILARITY) {
+    if (rowOrdering == RowOrderings.EUCLIDEAN_DISTANCE) {
       updateVisibleEdges();
     }
   }
@@ -1427,6 +1427,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setRowOrdering(RowOrderings rowOrder) {
     if (this.rowOrdering != rowOrder) {
       this.rowOrdering = rowOrder;
+      flowMapGraph.setEgdeForSimilaritySorting(null);
       updateVisibleEdges();
     }
   }
