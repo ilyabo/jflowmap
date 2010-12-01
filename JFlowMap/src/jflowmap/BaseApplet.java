@@ -19,7 +19,6 @@
 package jflowmap;
 
 import java.awt.BorderLayout;
-import java.io.IOException;
 
 import javax.swing.JApplet;
 import javax.swing.JComponent;
@@ -37,7 +36,7 @@ public abstract class BaseApplet extends JApplet {
 
   protected IView view;
 
-  protected abstract IView createView() throws IOException;
+  protected abstract IView createView() throws Exception;
 
   public BaseApplet(String name) {
     super();
@@ -52,7 +51,7 @@ public abstract class BaseApplet extends JApplet {
       add(view.getViewComponent());
 
       initControls();
-    } catch (IOException ex) {
+    } catch (Exception ex) {
       JMsgPane.showProblemDialog(this, "Error: " + ex.getMessage());
       Logger.getLogger(getClass()).error("Exception: ", ex);
     }

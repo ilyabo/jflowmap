@@ -18,17 +18,19 @@
 
 package jflowmap;
 
-import java.io.IOException;
-
 import javax.swing.UIManager;
 
 import jflowmap.models.map.AreaMap;
+import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Ilya Boyandin
  */
 public class FlowstratesApplet extends BaseApplet {
+  public static Logger logger = Logger.getLogger(FlowstratesApplet.class);
 
 //  static {
 //    // The statements below cause the objects to go straight for the default implementations
@@ -57,12 +59,23 @@ public class FlowstratesApplet extends BaseApplet {
 
 
   @Override
-  protected IView createView() throws IOException {
+  protected IView createView() throws Exception {
     AreaMap areaMap = AreaMap.loadFor(getDatasetSpec());
     String maxVisibleTuples = getParameter("maxVisibleTuples");
+    String aggName = getParameter("aggLayersBuilder");
+    AggLayersBuilder aggBuilder = null;
+    if (aggName != null) {
+      try {
+        aggBuilder = (AggLayersBuilder)Class.forName(aggName).newInstance();
+      } catch (Exception e) {
+        logger.error(e);
+        throw e;
+      }
+    }
     return new FlowstratesView(
         FlowMapGraph.loadGraphML(getDatasetSpec()),
         areaMap,
+        aggBuilder,
         maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)
     );
   }

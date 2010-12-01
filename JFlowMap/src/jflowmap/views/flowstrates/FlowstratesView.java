@@ -174,12 +174,17 @@ public class FlowstratesView extends AbstractCanvasView {
   private Legend legend;
 
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
-    this(flowMapGraph, areaMap, -1);
+    this(flowMapGraph, areaMap, null, -1);
   }
 
-  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap, int maxVisibleTuples) {
+  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap,
+      AggLayersBuilder aggLayersBuilder, int maxVisibleTuples) {
 
-    this.layers = RefugeeAggLayers.createAggLayers(flowMapGraph);
+    if (aggLayersBuilder == null) {
+      aggLayersBuilder = new DefaultAggLayersBuilder();
+    }
+    this.layers = aggLayersBuilder.build(flowMapGraph);
+//    this.layers = RefugeeAggLayers.createAggLayers(flowMapGraph);
 
 
     this.flowMapGraph = flowMapGraph;
@@ -228,6 +233,11 @@ public class FlowstratesView extends AbstractCanvasView {
     // scrollPane = new PScrollPane(canvas);
     // scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     // scrollPane.setVerticalScrollBarPolicy(PScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+    for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
+      fmg.addEdgeWeightDifferenceColumns();
+      fmg.addEdgeWeightRelativeDifferenceColumns();
+    }
 
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
