@@ -1195,9 +1195,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void setEgdeForSimilaritySorting(Edge edge) {
     flowMapGraph.setEgdeForSimilaritySorting(edge);
-    if (rowOrdering == RowOrderings.EUCLIDEAN_DISTANCE) {
-      updateVisibleEdges();
-    }
+    updateVisibleEdges();
   }
 
   private String getColumnValueAttrName(String columnAttr) {
@@ -1275,7 +1273,10 @@ public class FlowstratesView extends AbstractCanvasView {
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();
     }
-    double val = wstats.normalizeLogAroundZero(weight, true);
+    double val =
+//      wstats.normalizeAroundZero(
+      wstats.normalizeLogAroundZero(
+        weight, true);
     if (val < -1.0 || val > 1.0) {
       return Color.green;
     }

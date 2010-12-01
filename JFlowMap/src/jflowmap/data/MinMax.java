@@ -137,14 +137,22 @@ public class MinMax {
    * Returns a value between -1.0 and 1.0. Zero stays zero.
    */
   public double normalizeAroundZero(double value) {
+    return normalizeAroundZero(value, false);
+  }
+
+  public double normalizeAroundZero(double value, boolean omitIntervalCheck) {
     if (Double.isNaN(value)) {
       return Double.NaN;
     }
-    checkInterval(value, min, max);
+    if (!omitIntervalCheck) {
+      checkInterval(value, min, max);
+    }
     if (getMax() == getMin()) return 0.0;
     double r = Math.max(Math.abs(getMin()), Math.abs(getMax()));
     double rv = value / r;
-    checkNormalized(value, rv, -1.0, 1.0);
+    if (!omitIntervalCheck) {
+      checkNormalized(value, rv, -1.0, 1.0);
+    }
     return rv;
   }
 

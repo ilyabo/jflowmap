@@ -138,7 +138,6 @@ public class FlowMapGraphAggLayers {
 
   public void setActiveLayer(String layerName) {
     AggLayer layer = getLayerByName(layerName);
-    System.out.println("FlowMapGraphAggLayers.setActiveLayer(): " + layerName + " : " + layer);
 
     if (layer == null) {
       throw new IllegalArgumentException("Layer " + layerName + " not found");

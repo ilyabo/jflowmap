@@ -40,10 +40,16 @@ public class RefugeeAggLayers {
       builder.addAggregationLayer("Origin", null,
           builder.edgeAggregatorFor(GroupFunctions.SRC_NODE, null)
             .withCustomValueAggregator(
-                labelAttr, oneSideNodeLabelsAggregator(NodeEdgePos.SOURCE, labelAttr, "ALL")));
+                labelAttr,
+                oneSideNodeLabelsAggregator(NodeEdgePos.SOURCE, labelAttr, "ALL"))
+            );
 
       builder.addAggregationLayer("Dest", null,
-          builder.edgeAggregatorFor(GroupFunctions.TARGET_NODE, null));
+          builder.edgeAggregatorFor(GroupFunctions.TARGET_NODE, null)
+            .withCustomValueAggregator(
+                labelAttr,
+                oneSideNodeLabelsAggregator(NodeEdgePos.TARGET, labelAttr, "ALL"))
+            );
 
 
 
@@ -70,6 +76,33 @@ public class RefugeeAggLayers {
               labelAttr,
               oneSideNodeLabelsAggregator(NodeEdgePos.SOURCE, "region1", "ALL"))
           );
+
+
+      builder.addAggregationLayer("Dest/Subregion", null,
+          builder.edgeAggregatorFor(new Function<Edge, Object>() {
+            @Override
+            public Object apply(Edge edge) {
+              return edge.getTargetNode().getString("region2");
+            }
+          }, null)
+          .withCustomValueAggregator(
+              labelAttr,
+              oneSideNodeLabelsAggregator(NodeEdgePos.TARGET, "region2", "ALL"))
+          );
+
+
+      builder.addAggregationLayer("Dest/Region", null,
+          builder.edgeAggregatorFor(new Function<Edge, Object>() {
+            @Override
+            public Object apply(Edge edge) {
+              return edge.getTargetNode().getString("region1");
+            }
+          }, null)
+          .withCustomValueAggregator(
+              labelAttr,
+              oneSideNodeLabelsAggregator(NodeEdgePos.TARGET, "region1", "ALL"))
+          );
+
 
       builder.addAggregationLayer("Origin/All", "Origin",
           builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "Origin")

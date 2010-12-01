@@ -73,41 +73,46 @@ public final class GeomUtils {
 
 //      if (Double.isNaN(c1)) c1 = 0;
 //      if (Double.isNaN(c2)) c2 = 0;
+//      d = c1 - c2;
 
-      d = c1 - c2;
-      if (Double.isNaN(maxForNaNs)) {
-        d = c1 - c2;
-      } else {
-        if (Double.isNaN(c1)) {
-          if (Double.isNaN(c2)) {
-            d = maxForNaNs;
-          } else {
-            d = Math.max(c2, maxForNaNs - c2);
-          }
-        } else if (Double.isNaN(c2)) {
-          d = Math.max(c1, maxForNaNs - c1);
-        } else {
-          d = c1 - c2;
-        }
+      d = distance(c1, c2, maxForNaNs);
 
-//        if (Double.isNaN(c1)) {
-//          if (Double.isNaN(c2)) {
-//            c1 = c2 = maxForNaNs;
-//          } else {
-//            c1 = Math.max(c2, maxForNaNs - c2);
-//          }
-//        } else if (Double.isNaN(c2)) {
-//          c2 = Math.max(c1, maxForNaNs - c1);
-//        }
-//        d = c1 - c2;
-
-      }
+//    if (Double.isNaN(c1)) {
+//    if (Double.isNaN(c2)) {
+//      c1 = c2 = maxForNaNs;
+//    } else {
+//      c1 = Math.max(c2, maxForNaNs - c2);
+//    }
+//  } else if (Double.isNaN(c2)) {
+//    c2 = Math.max(c1, maxForNaNs - c1);
+//  }
+//  d = c1 - c2;
       sum += d * d;
     }
     if (it2.hasNext()) {
       throw new IllegalArgumentException("Vectors not of the same size");
     }
     return Math.sqrt(sum);
+  }
+
+  public static double distance(double c1, double c2, double maxForNaNs) {
+    double d;
+    if (Double.isNaN(maxForNaNs)) {
+      d = c1 - c2;
+    } else {
+      if (Double.isNaN(c1)) {
+        if (Double.isNaN(c2)) {
+          d = maxForNaNs;
+        } else {
+          d = Math.max(c2, maxForNaNs - c2);
+        }
+      } else if (Double.isNaN(c2)) {
+        d = Math.max(c1, maxForNaNs - c1);
+      } else {
+        d = c1 - c2;
+      }
+    }
+    return d;
   }
 
 

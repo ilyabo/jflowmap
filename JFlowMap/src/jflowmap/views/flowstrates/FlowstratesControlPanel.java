@@ -312,7 +312,7 @@ public class FlowstratesControlPanel extends JPanel {
 //  }
 
   private enum MaxRowNumValues {
-    _25(25), _50(50), _100(100), _200(200), _500(500), _1000(1000), INFINITY(-1, "\u221e");
+    _3(3), _5(5), _25(25), _50(50), _100(100), _200(200), _250(250), _500(500), _1000(1000), INFINITY(-1, "\u221e");
     final int num;
     final String str;
 

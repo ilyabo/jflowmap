@@ -816,7 +816,7 @@ public class FlowMapGraph {
   public Edge getEgdeForSimilaritySorting() {
     if (eddeForSimilaritySorting == null) {
       List<Edge> edges = Lists.newArrayList(edges());
-      Collections.sort(edges, createAvgEdgeWeightDiffComparator());
+      Collections.sort(edges, createAvgEdgeWeightComparator()); //createAvgEdgeWeightDiffComparator());
       return edges.get(0);
     }
     return eddeForSimilaritySorting;

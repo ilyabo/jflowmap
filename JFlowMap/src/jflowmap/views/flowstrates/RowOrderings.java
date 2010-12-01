@@ -5,8 +5,12 @@ import java.util.Comparator;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.NodeEdgePos;
+import jflowmap.clustering.Cosine;
 import jflowmap.geom.GeomUtils;
 import prefuse.data.Edge;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Ilya Boyandin
@@ -131,40 +135,40 @@ enum RowOrderings {
           }
         };
       }
+    },
+    COSINE_SIMILARITY("Cosine similarity") {
+      @Override
+      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
+        return new Comparator<Edge>() {
+          Edge sortBy = fmg.getEgdeForSimilaritySorting();
+          Iterable<Double> wlist = fmg.getEdgeWeights(sortBy);
+          double max = fmg.getStats().getEdgeWeightStats().getMax();
+
+          double distTo(Edge e) {
+            if (e == sortBy) {
+              return 0;
+            } else {
+              return Cosine.cosine(wlist, fmg.getEdgeWeights(e));
+            }
+          }
+
+          @Override
+          public int compare(Edge e1, Edge e2) {
+            return Double.compare(distTo(e1), distTo(e2));
+          }
+
+          Iterable<Double> nansToZeros(Iterable<Double> v) {
+            return Iterables.transform(v, new Function<Double, Double>() {
+              public Double apply(Double from) {
+                if (Double.isNaN(from))
+                  return 0.0;
+                return from;
+              }
+            });
+          }
+        };
+      }
     }
-//    ,
-//    COSINE_SIMILARITY("Cosine similarity") {
-//      @Override
-//      public Comparator<Edge> getComparator(final FlowMapGraph fmg) {
-//        return new Comparator<Edge>() {
-//          Edge sortBy = fmg.getEgdeForSimilaritySorting();
-//          Iterable<Double> wlist = nansToZeros(fmg.getEdgeWeights(sortBy));
-//
-//          double distTo(Edge e) {
-//            if (e == sortBy) {
-//              return 0;
-//            } else {
-//              return Cosine.cosine(wlist, nansToZeros(fmg.getEdgeWeights(e)));
-//            }
-//          }
-//
-//          @Override
-//          public int compare(Edge e1, Edge e2) {
-//            return Double.compare(distTo(e1), distTo(e2));
-//          }
-//
-//          Iterable<Double> nansToZeros(Iterable<Double> v) {
-//            return Iterables.transform(v, new Function<Double, Double>() {
-//              public Double apply(Double from) {
-//                if (Double.isNaN(from))
-//                  return 0.0;
-//                return from;
-//              }
-//            });
-//          }
-//        };
-//      }
-//    }
     ;
 
 
