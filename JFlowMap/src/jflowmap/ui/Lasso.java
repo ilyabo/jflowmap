@@ -131,7 +131,9 @@ public class Lasso extends PBasicInputEventHandler {
   private void stop(PInputEvent event) {
     Area area = asArea(line.getLineReference());
     if (event.isShiftDown()) {
-      area.add(prevSelectionArea);
+      if (prevSelectionArea != null) {
+        area.add(prevSelectionArea);
+      }
     } else if (event.isAltDown()) {
       if (prevSelectionArea != null) {
         prevSelectionArea.subtract(area);
