@@ -2,8 +2,8 @@ package jflowmap.views.flowstrates;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
-import jflowmap.NodeEdgePos;
 import jflowmap.FlowMapGraphAggLayers.Builder;
+import jflowmap.NodeEdgePos;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
 import prefuse.data.Edge;
 
@@ -14,7 +14,7 @@ import com.google.common.base.Function;
  */
 public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
 
-  private RefugeeAggLayersBuilder() {
+  public RefugeeAggLayersBuilder() {
   }
 
   @Override

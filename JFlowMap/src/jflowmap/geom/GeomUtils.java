@@ -167,7 +167,20 @@ public final class GeomUtils {
     );
   }
 
+  public static Rectangle2D growRect(Rectangle2D rect, double d) {
+    return growRect(rect, d, d, d, d);
+  }
+
   public static Rectangle2D growRect(Rectangle2D rect, double top, double right, double bottom, double left) {
+    return new Rectangle2D.Double(
+        rect.getX() - left,
+        rect.getY() - top,
+        rect.getWidth() + left + right,
+        rect.getHeight() + top + bottom
+    );
+  }
+
+  public static Rectangle2D growRectByPercent(Rectangle2D rect, double top, double right, double bottom, double left) {
     return new Rectangle2D.Double(
         rect.getX() - rect.getWidth() * left,
         rect.getY() - rect.getHeight() * top,

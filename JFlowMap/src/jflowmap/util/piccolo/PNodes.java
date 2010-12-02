@@ -181,4 +181,16 @@ public class PNodes {
     node.setBounds(pos.getX(), pos.getY(), node.getWidth(), node.getHeight());
   }
 
+  public static <T extends PNode> Rectangle2D fullBoundsOf(Iterable<T> nodes) {
+    Iterator<T> it = nodes.iterator();
+    if (!it.hasNext()) {
+      return new Rectangle2D.Double();  // empty
+    }
+    Rectangle2D union = it.next().getFullBoundsReference();
+    while (it.hasNext()) {
+      union.add(it.next().getFullBoundsReference());
+    }
+    return union;
+  }
+
 }

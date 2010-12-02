@@ -44,7 +44,7 @@ public interface FlowstratesStyle {
 
   Stroke getSelectedTimelineCellStroke();
 
-  Color getSelectedTimelineCellStrokeColor();
+  Color getHeatmapSelectedCellStrokeColor();
 
   Stroke getTimelineCellStroke();
 

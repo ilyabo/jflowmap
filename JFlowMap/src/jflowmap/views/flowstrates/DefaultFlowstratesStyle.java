@@ -149,7 +149,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
 
   private static final Color SELECTED_TIMELINE_CELL_STROKE_COLOR = new Color(255, 128, 64);
   @Override
-  public Color getSelectedTimelineCellStrokeColor() {
+  public Color getHeatmapSelectedCellStrokeColor() {
     return SELECTED_TIMELINE_CELL_STROKE_COLOR;
   }
 
