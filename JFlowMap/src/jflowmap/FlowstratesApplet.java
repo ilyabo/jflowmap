@@ -18,8 +18,11 @@
 
 package jflowmap;
 
+import java.util.Collections;
+
 import javax.swing.UIManager;
 
+import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
@@ -71,6 +74,9 @@ public class FlowstratesApplet extends BaseApplet {
         logger.error(e);
         throw e;
       }
+    }
+    if (areaMap == null) {
+      areaMap = new AreaMap("<Empty>", Collections.<Area>emptyList());
     }
     return new FlowstratesView(
         FlowMapGraph.loadGraphML(getDatasetSpec()),

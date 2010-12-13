@@ -214,18 +214,19 @@ public class GraphMLReader3 {
       switch (eventType) {
         case XMLStreamReader.START_ELEMENT:
           if (tag.equals("data")) {
-            String key = attrIdToName.get(in.getAttributeValue(NAMESPACE, "key"));
+            String attrId = in.getAttributeValue(NAMESPACE, "key");
+            String attrName = attrIdToName.get(attrId);
             String valueStr = in.getElementText();
             Object value;
             if (valueStr == null) {
               value = null;
             } else {
-              Class<?> columnType = table.getColumnType(key);
+              Class<?> columnType = table.getColumnType(attrName);
               if (columnType == null) {
-                throw new IOException("Column type for " + key + " not found");
+                throw new IOException("Type of column '" + attrId + "' not found");
               }
               value = parseData(valueStr, columnType);
-              table.set(tableRowIdx, key, value);
+              table.set(tableRowIdx, attrName, value);
             }
           }
           break;

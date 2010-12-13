@@ -2,8 +2,8 @@ package jflowmap.views.flowstrates;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
-import jflowmap.NodeEdgePos;
 import jflowmap.FlowMapGraphAggLayers.Builder;
+import jflowmap.NodeEdgePos;
 import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
 import jflowmap.data.FlowMapGraphEdgeAggregator.GroupFunctions;
 import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;

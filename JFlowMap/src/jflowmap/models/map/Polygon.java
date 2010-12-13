@@ -19,6 +19,7 @@
 package jflowmap.models.map;
 
 import java.awt.geom.Point2D;
+import java.util.Arrays;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -46,6 +47,11 @@ public class Polygon {
       points[i] = new Point2D.Double(c.x, c.y);
     }
     return new Polygon(points);
+  }
+
+  @Override
+  public String toString() {
+    return "Polygon [points=" + Arrays.toString(points) + "]";
   }
 
 }

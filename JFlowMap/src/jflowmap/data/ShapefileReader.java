@@ -28,6 +28,8 @@ public class ShapefileReader {
   public static GeometryCollection loadShapefile(String location, String dbfAreaIdField)
       throws IOException {
 
+    logger.info("Loading shapefile '" + location + "'");
+
     GeometryCollection geomColl = loadShapefile(location);
 
     if (dbfAreaIdField != null) {

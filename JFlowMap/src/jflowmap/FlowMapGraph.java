@@ -246,7 +246,10 @@ public class FlowMapGraph {
     for (int i = 0; i < et.getColumnCount(); i++) {
       String cname = et.getColumnName(i);
       if (re.matcher(cname).matches()) {
-        attrs.add(cname);
+        if (!cname.equals(Graph.DEFAULT_SOURCE_KEY) &&
+            !cname.equals(Graph.DEFAULT_TARGET_KEY)) {
+          attrs.add(cname);
+        }
       }
     }
     return attrs;

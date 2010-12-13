@@ -100,6 +100,8 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class FlowstratesView extends AbstractCanvasView {
 
+  public static Logger logger = Logger.getLogger(FlowstratesView.class);
+
   private static final int LEGEND_MARGIN_BOTTOM = 10;
   private static final String CAPTION_NODE_ATTR = "captionNode";
   private static final int CAPTION_HEADER_HEIGHT = 50;
@@ -117,10 +119,11 @@ public class FlowstratesView extends AbstractCanvasView {
   private static final Font HEATMAP_COLUMN_LABELS_FONT = new Font("Arial", Font.PLAIN, 25 /*19*/);
   private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 23);
 
-  public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
   private static final double cellWidth = 40;
   private static final double cellHeight = 40;
+
+  private static final boolean SHOW_TIME_CAPTION = false;
   private boolean interpolateColors = true;
 
   private final FlowstratesStyle style = new DefaultFlowstratesStyle();
@@ -185,6 +188,8 @@ public class FlowstratesView extends AbstractCanvasView {
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap,
       AggLayersBuilder aggLayersBuilder, int maxVisibleTuples) {
 
+    logger.info("Opening flowstrates view");
+
     if (aggLayersBuilder == null) {
       aggLayersBuilder = new DefaultAggLayersBuilder();
     }
@@ -225,7 +230,9 @@ public class FlowstratesView extends AbstractCanvasView {
     targetsCamera.addLayer(targetsLayer);
 
     addCaption(sourcesCamera, "Origins");
-    addCaption(heatmapCamera, "Time");
+    if (SHOW_TIME_CAPTION) {
+      addCaption(heatmapCamera, "Time");
+    }
     addCaption(targetsCamera, "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();
@@ -250,15 +257,19 @@ public class FlowstratesView extends AbstractCanvasView {
     FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
         flowMapGraph.getEdgeWeightRelativeDiffAttrNames());
 
+    logger.info("Creating area maps");
     createAreaMaps(areaMap);
     heatmapNode = new PNode();
     heatmapLayer.addChild(heatmapNode);
+    logger.info("Finished creating area maps");
 
     mapToMatrixLinesLayer = new PNode();
     getCamera().addChild(mapToMatrixLinesLayer);
 
     createLegend();
+    logger.info("Creating heatmap");
     renewHeatmap();
+    logger.info("Finished creating heatmap");
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
@@ -1447,16 +1458,20 @@ public class FlowstratesView extends AbstractCanvasView {
     getVisualAreaMapCamera(s).setViewBounds(GeomUtils.growRectByPercent(centroidsBounds(s), .2, .2, .2, .2));
   }
 
-  private void layoutCameraNode(PCamera camera, double halign, double valign, double hsizeProportion,
-      double vsizeProportion) {
+  private void layoutCameraNode(PCamera camera,
+      double halign, double valign, double hsizeProportion, double vsizeProportion) {
 
     PBounds globalViewBounds = getCamera().getViewBounds();
+
+    double topMargin4Caption = 0;
 
     // reserve space for the caption header
     PText caption = (PText)camera.getAttribute(CAPTION_NODE_ATTR);
     if (caption != null) {
-      globalViewBounds.y += CAPTION_HEADER_HEIGHT;
-      globalViewBounds.height -= CAPTION_HEADER_HEIGHT;
+      PBounds capb = caption.getFullBoundsReference();
+      topMargin4Caption = capb.getMaxY() + capb.getHeight() * .25;
+      globalViewBounds.y += topMargin4Caption;
+      globalViewBounds.height -= topMargin4Caption;
     }
 
     // align the camera node
@@ -1471,7 +1486,7 @@ public class FlowstratesView extends AbstractCanvasView {
       PBounds camb = camera.getBoundsReference();
       PNodes.setPosition(caption,
           camb.x + (camb.width - capb.width)/2,
-          (CAPTION_HEADER_HEIGHT - capb.height)/2);
+          (topMargin4Caption - capb.height)/2);
     }
   }
 
