@@ -406,6 +406,14 @@ public class ControlPanel {
                 getFlowMapModel().setEdgeWeightFilterMin((Double) minWeightFilterSpinner.getValue());
             }
         });
+
+        visualFlowMap.getModel().addPropertyChangeListener(
+            VisualFlowMapModel.PROPERTY_VALUE_FILTER_MIN, new PropertyChangeListener() {
+              @Override
+              public void propertyChange(PropertyChangeEvent evt) {
+                minWeightFilterSpinner.setValue(visualFlowMap.getModel().getEdgeWeightFilterMin());
+              }
+            });
 //    minWeightFilterSlider.addChangeListener(new ChangeListener() {
 //      public void stateChanged(ChangeEvent e) {
 //        if (initializing) return;

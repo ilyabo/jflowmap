@@ -18,7 +18,10 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
 import java.util.Arrays;
+
+import javax.swing.JComponent;
 
 import jflowmap.views.flowmap.FlowMapView;
 
@@ -37,6 +40,11 @@ public class FlowMapApplet extends BaseApplet {
   protected IView createView() {
     FlowMapView jFlowMap = new FlowMapView(Arrays.asList(getDatasetSpec()), true);
 
+    String minw = getParameter("weightFilterMin");
+    if (minw != null) {
+      jFlowMap.getVisualFlowMap().getModel().setEdgeWeightFilterMin(Double.parseDouble(minw));
+    }
+
     String colorScheme = getParameter("colorScheme");
     if (colorScheme != null  &&  !colorScheme.isEmpty()) {
       jFlowMap.setColorScheme(FlowMapColorSchemes.findByName(colorScheme));
@@ -44,4 +52,11 @@ public class FlowMapApplet extends BaseApplet {
     return jFlowMap;
   }
 
+  @Override
+  protected void initControls() {
+    JComponent controls = view.getControls();
+    if (controls != null) {
+        add(controls, BorderLayout.SOUTH);
+    }
+  }
 }
