@@ -58,7 +58,7 @@ public class FlowTimelineApplet extends BaseApplet {
 
 
 
-  public static FlowTimelineView loadGraphsWithRegions(String filename) throws IOException {
+  public FlowTimelineView loadGraphsWithRegions(String filename) throws IOException {
 
     List<Graph> graphs = Lists.newArrayList(new GraphMLReader3().readFromLocation(filename));
 
@@ -74,12 +74,17 @@ public class FlowTimelineApplet extends BaseApplet {
 
 
 
-  public static void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws IOException {
+  private void addRegionsAsNodeColumn(String regionColumn, List<Graph> graphs) throws IOException {
     // TODO: introduce regions as node attrs in GraphML
     Map<String, String> nodeIdToRegion;
     try {
+      String regions = getParameter("regions");
+      if (regions == null) {
+        throw new IOException("Applet parameter 'regions' must be specified " +
+        		"(with the name of the regions file)");
+      }
       nodeIdToRegion =
-              XmlRegionsReader.readFrom("data/refugees/regions.xml");
+              XmlRegionsReader.readFrom(regions);
 //      XmlRegionsReader.readFrom("http://jflowmap.googlecode.com/svn/trunk/FlowMapView/data/refugees/regions.xml");
     } catch (XMLStreamException ex) {
       throw new IOException(ex);
