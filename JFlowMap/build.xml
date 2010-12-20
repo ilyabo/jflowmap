@@ -9,7 +9,7 @@
 	<property name="path.src" value="src"/>
 	<property name="path.classes" value="bin"/>
 	<property name="path.lib" value="lib"/>
-	<property name="path.build" value="dist"/>
+	<property name="path.build" value="demo"/>
 	<property name="mainclass" value="jflowmap.FlowMapMain"/>
 
     <!--
