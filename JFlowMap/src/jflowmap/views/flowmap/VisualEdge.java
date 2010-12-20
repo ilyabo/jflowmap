@@ -22,11 +22,11 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.Stroke;
-import java.util.Arrays;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 
-import jflowmap.geom.BSplinePath;
 import jflowmap.geom.GeomUtils;
-import jflowmap.geom.Point;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 
@@ -43,6 +43,8 @@ import edu.umd.cs.piccolo.nodes.PPath;
  * @author Ilya Boyandin
  */
 public abstract class VisualEdge extends PNode {
+
+  private static final int MAX_EDGE_WIDTH = 100;
 
   private static final long serialVersionUID = 1L;
 
@@ -73,9 +75,18 @@ public abstract class VisualEdge extends PNode {
       final double y2 = targetNode.getValueY();
       this.edgeLength = GeomUtils.distance(x1, y1, x2, y2);
     }
+  }
 
+  /** Must be called by subclasses */
+  protected void init() {
+    PPath ppath = createEdgePPath();
+    setEdgePPath(ppath);
+    addChild(ppath);
+    updateEdgeWidth();
     addInputEventListener(visualEdgeListener);
   }
+
+  protected abstract PPath createEdgePPath();
 
   public boolean isSelfLoop() {
     return isSelfLoop;
@@ -83,27 +94,24 @@ public abstract class VisualEdge extends PNode {
 
   protected Shape createSelfLoopShape() {
     Shape shape;
-    final double x1 = sourceNode.getValueX();
-    final double y1 = sourceNode.getValueY();
 
-//    shape = new Ellipse2D.Double(
-//        x1 - SELF_LOOP_CIRCLE_SIZE/2, y1,
-//        SELF_LOOP_CIRCLE_SIZE, SELF_LOOP_CIRCLE_SIZE);
+    Double b = getSelfLoopBounds();
+    shape = new Ellipse2D.Double(b.x, b.y, b.width, b.height);
 
-//    final double size = SELF_LOOP_CIRCLE_SIZE;
-    final double size = visualFlowMap.getStats().getEdgeLengthStats().getAvg() / 8;
-//    MinMax xstats = visualFlowMap.getGraphStats().getNodeXStats();
-//    MinMax ystats = visualFlowMap.getGraphStats().getNodeYStats();
-//
-//    final double xsize = (xstats.getMax() - xstats.getMin()) / 20;
-//    final double ysize = (ystats.getMax() - ystats.getMin()) / 20;
-    shape = new BSplinePath(Arrays.asList(new Point[] {
-        new Point(x1, y1),
-        new Point(x1 - size/2, y1 + size/2),
-        new Point(x1, y1 + size),
-        new Point(x1 + size/2, y1 + size/2),
-        new Point(x1, y1)
-    }));
+////    final double size = SELF_LOOP_CIRCLE_SIZE;
+////    MinMax xstats = visualFlowMap.getGraphStats().getNodeXStats();
+////    MinMax ystats = visualFlowMap.getGraphStats().getNodeYStats();
+//    final double size = visualFlowMap.getStats().getEdgeLengthStats().getAvg() / 15;
+////
+////    final double xsize = (xstats.getMax() - xstats.getMin()) / 20;
+////    final double ysize = (ystats.getMax() - ystats.getMin()) / 20;
+//    shape = new BSplinePath(Arrays.asList(new Point[] {
+//        new Point(x1, y1),
+//        new Point(x1 - size/2, y1 + size/2),
+//        new Point(x1, y1 + size),
+//        new Point(x1 + size/2, y1 + size/2),
+//        new Point(x1, y1)
+//    }));
     return shape;
   }
 
@@ -136,8 +144,25 @@ public abstract class VisualEdge extends PNode {
   public void updateEdgeWidth() {
     PPath ppath = getEdgePPath();
     if (ppath != null) {
-      ppath.setStroke(createStroke());
+      if (isSelfLoop) {
+        ppath.setBounds(getSelfLoopBounds());
+        ppath.setStroke(null);
+      } else {
+        ppath.setStroke(createStroke());
+      }
     }
+  }
+
+  private Rectangle2D.Double getSelfLoopBounds() {
+    double size =  getSelfLoopSize(Math.max(1, visualFlowMap.getModel().getMaxEdgeWidth()));
+    return new Rectangle2D.Double(getSourceX() - size/2, getSourceY() - size/2, size, size);
+  }
+
+  private double getSelfLoopSize(double edgeWidth) {
+    double avgLen = visualFlowMap.getStats().getEdgeLengthStats().getAvg();
+    return
+      avgLen / MAX_EDGE_WIDTH *
+      edgeWidth * getValueNormalizedForWidthScale();
   }
 
 //  public abstract void updateEdgeMarkerColors();
@@ -234,20 +259,30 @@ public abstract class VisualEdge extends PNode {
   public void updateEdgeColors() {
     PPath ppath = getEdgePPath();
     if (ppath != null) {
-      ppath.setStrokePaint(createPaint());
+      if (isSelfLoop) {
+        ppath.setPaint(createPaint());
+      } else {
+        ppath.setStrokePaint(createPaint());
+      }
     }
   }
 
+  private double getValueNormalizedForWidthScale() {
+    return visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(getEdgeWeight());
+  }
+
+  private double getValueNormalizedForColorScale() {
+    return visualFlowMap.getModel().normalizeEdgeWeightForColorScale(getEdgeWeight());
+  }
+
   private Paint createPaint() {
-    double normalizedValue = visualFlowMap.getModel().normalizeEdgeWeightForColorScale(getEdgeWeight());
     return visualFlowMap.getVisualEdgePaintFactory().createPaint(
-        normalizedValue, getSourceX(), getSourceY(), getTargetX(), getTargetY(),
+        getValueNormalizedForColorScale(), getSourceX(), getSourceY(), getTargetX(), getTargetY(),
         edgeLength, isSelfLoop);
   }
 
   protected Stroke createStroke() {
-    double normalizedValue = visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(getEdgeWeight());
-    return visualFlowMap.getVisualEdgeStrokeFactory().createStroke(normalizedValue);
+    return visualFlowMap.getVisualEdgeStrokeFactory().createStroke(getValueNormalizedForWidthScale());
   }
 
   public void setHighlighted(boolean value, boolean showDirection, boolean asOutgoing) {

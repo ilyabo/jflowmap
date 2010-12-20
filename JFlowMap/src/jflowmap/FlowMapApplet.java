@@ -38,18 +38,18 @@ public class FlowMapApplet extends BaseApplet {
 
   @Override
   protected IView createView() {
-    FlowMapView jFlowMap = new FlowMapView(Arrays.asList(getDatasetSpec()), true);
+    FlowMapView view = new FlowMapView(Arrays.asList(getDatasetSpec()), true);
 
     String minw = getParameter("weightFilterMin");
     if (minw != null) {
-      jFlowMap.getVisualFlowMap().getModel().setEdgeWeightFilterMin(Double.parseDouble(minw));
+      view.getVisualFlowMap().getModel().setEdgeWeightFilterMin(Double.parseDouble(minw));
     }
 
     String colorScheme = getParameter("colorScheme");
     if (colorScheme != null  &&  !colorScheme.isEmpty()) {
-      jFlowMap.setColorScheme(FlowMapColorSchemes.findByName(colorScheme));
+      view.setColorScheme(FlowMapColorSchemes.findByName(colorScheme));
     }
-    return jFlowMap;
+    return view;
   }
 
   @Override

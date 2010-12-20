@@ -49,8 +49,8 @@ import jflowmap.geo.MapProjection;
 import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.Tooltip;
 import jflowmap.views.Legend;
+import jflowmap.views.Tooltip;
 
 import org.apache.log4j.Logger;
 

@@ -37,10 +37,15 @@ public class LineVisualEdge extends VisualEdge {
     targetNode.addIncomingEdge(this);
     sourceNode.addOutgoingEdge(this);
 
-    final double x1 = sourceNode.getValueX();
-    final double y1 = sourceNode.getValueY();
-    final double x2 = targetNode.getValueX();
-    final double y2 = targetNode.getValueY();
+    init();
+  }
+
+  @Override
+  protected PPath createEdgePPath() {
+    final double x1 = getSourceX();
+    final double y1 = getSourceY();
+    final double x2 = getTargetX();
+    final double y2 = getTargetY();
 
     Shape shape;
     if (isSelfLoop()) {
@@ -51,7 +56,6 @@ public class LineVisualEdge extends VisualEdge {
     }
 
     PPath ppath = new PPath(shape);
-    setEdgePPath(ppath);
-    addChild(ppath);
+    return ppath;
   }
 }

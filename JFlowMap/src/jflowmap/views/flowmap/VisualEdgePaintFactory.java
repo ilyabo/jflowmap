@@ -62,11 +62,14 @@ public class VisualEdgePaintFactory {
     VisualFlowMapModel model = visualFlowMap.getModel();
     int alpha = model.getEdgeAlpha();
     if (isSelfLoop) {
+
       return ColorUtils.colorBetween(
           visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT),
           visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT),
           normalizedValue, alpha);
+
     } else {
+
       if (!model.getShowDirectionMarkers()  &&  !model.getFillEdgesWithGradient()) {
         return ColorUtils.colorBetween(
             visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
@@ -143,10 +146,19 @@ public class VisualEdgePaintFactory {
           fractions = DEFAULT_GRADIENT_FRACTIONS;
           colors = new Color[] { startEdgeColor, endEdgeColor };
         }
-        return new LinearGradientPaint(
-            (float)srcX, (float)srcY, (float)targetX, (float)targetY,
-            fractions, colors
-        );
+
+//        if (isSelfLoop) {
+//          return new RadialGradientPaint(
+//              (float)srcX, (float)srcY,
+//              (float)(normalizedValue * model.getMaxEdgeWidth()),
+//              fractions, ArrayUtils.reverse(colors)
+//          );
+//        } else {
+          return new LinearGradientPaint(
+              (float)srcX, (float)srcY, (float)targetX, (float)targetY,
+              fractions, colors
+          );
+//        }
       }
 
     }

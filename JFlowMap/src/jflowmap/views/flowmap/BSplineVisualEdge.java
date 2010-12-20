@@ -38,23 +38,36 @@ public class BSplineVisualEdge extends VisualEdge {
 
   private static final long serialVersionUID = 1L;
 
+  private final List<Point> points;
+  private final boolean showSplinePoints;
+
 //  private List<Point> subdivisionPoints;
 
   public BSplineVisualEdge(VisualFlowMap visualFlowMap, Edge edge,
       VisualNode sourceNode, VisualNode targetNode, List<Point> points,
       boolean showSplinePoints) {
+
     super(visualFlowMap, edge, sourceNode, targetNode);
 
+    this.points = points;
+    this.showSplinePoints = showSplinePoints;
+
+    init();
+  }
+
+  @Override
+  protected PPath createEdgePPath() {
     int numPoints = points.size();
     assert numPoints >= 2;
 
-//    subdivisionPoints = ImmutableList.copyOf(Arrays.asList(points));
+    VisualFlowMap visualFlowMap = getVisualFlowMap();
+
     Point start = points.get(0);
     Point end = points.get(numPoints - 1);
-    assert(start.x() == sourceNode.getValueX());
-    assert(start.y() == sourceNode.getValueY());
-    assert(end.x() == targetNode.getValueX());
-    assert(end.y() == targetNode.getValueY());
+    assert(start.x() == getSourceX());
+    assert(start.y() == getSourceY());
+    assert(end.x() == getTargetX());
+    assert(end.y() == getTargetY());
 
     Shape shape;
     if (isSelfLoop()) {
@@ -89,11 +102,7 @@ public class BSplineVisualEdge extends VisualEdge {
       shape = path;
     }
 
-    PPath ppath = new PPath(shape);
-    setEdgePPath(ppath);
-    addChild(ppath);
-
-//    update();
+    return new PPath(shape);
   }
 
 }

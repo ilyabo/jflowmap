@@ -23,7 +23,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.DatasetSpec;
@@ -61,6 +60,9 @@ public class FlowMapView extends AbstractCanvasView {
   }
 
   public FlowMapView(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
+//    if (visualFlowMap == null) {
+//      return;  // an exception occured during the initialization
+//    }
     if (datasetSpecs != null) {
       load(datasetSpecs.get(0));
       getVisualCanvas().getLayer().addChild(visualFlowMap);
@@ -101,12 +103,7 @@ public class FlowMapView extends AbstractCanvasView {
 
     } catch (Exception ex) {
       logger.error("Couldn't load flow map " + dataset.getFilename(), ex);
-      JOptionPane.showMessageDialog(this.getViewComponent(),
-          "Couldn't load flow map '"  + dataset.getFilename() + "': [" +
-          ex.getClass().getSimpleName()+ "] " + ex.getMessage());
-    } catch (Error err) {
-      logger.error(err);
-      System.exit(1);
+      throw new RuntimeException("Couldn't load flow map '" + dataset.getFilename() + "':\n" + ex.getMessage());
     }
   }
 

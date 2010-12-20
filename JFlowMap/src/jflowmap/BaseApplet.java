@@ -48,7 +48,9 @@ public abstract class BaseApplet extends JApplet {
   public void init() {
     try {
       view = createView();
-      add(view.getViewComponent());
+      if (view != null) {
+        add(view.getViewComponent());
+      }
 
       initControls();
     } catch (Exception ex) {
