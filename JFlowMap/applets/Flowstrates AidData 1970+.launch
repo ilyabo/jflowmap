@@ -14,7 +14,7 @@
 <mapEntry key="labelAttr" value="name"/>
 <mapEntry key="maxVisibleTuples" value="200"/>
 <mapEntry key="src" value="demo/data/aid-data-agg.xml.gz"/>
-<mapEntry key="weightAttr" value="([12][0-9]{3})"/>
+<mapEntry key="weightAttr" value="19[789][0-9]|[2][0-9]{3}"/>
 <mapEntry key="xNodeAttr" value="lon"/>
 <mapEntry key="yNodeAttr" value="lat"/>
 </mapAttribute>
