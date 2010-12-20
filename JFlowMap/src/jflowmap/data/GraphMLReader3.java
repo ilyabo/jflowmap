@@ -89,6 +89,7 @@ public class GraphMLReader3 {
     }
     Iterable<Graph> graphs = readFromStream(is);
     logger.info("Finished loading file. Number of graphs loaded: " + Iterables.size(graphs));
+
     return graphs;
   }
 
@@ -237,7 +238,6 @@ public class GraphMLReader3 {
           }
           break;
       }
-
     }
   }
 

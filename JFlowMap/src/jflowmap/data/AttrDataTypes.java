@@ -18,18 +18,19 @@
 
 package jflowmap.data;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 
-import prefuse.data.Tuple;
-
 import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
 import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
+import prefuse.data.Tuple;
 
 /**
  * @author Ilya Boyandin
  */
 public enum AttrDataTypes implements ValueAggregator {
+  /*
   INT(int.class, null, "int", "integer") {
     @Override
     public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
@@ -60,6 +61,7 @@ public enum AttrDataTypes implements ValueAggregator {
       return sum;
     }
   },
+  */
   DOUBLE(double.class, Double.NaN, "double", "real") {
     @Override
     public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
@@ -120,7 +122,8 @@ public enum AttrDataTypes implements ValueAggregator {
         }
       }
     }
-    throw new IllegalArgumentException("Type " + typeName + " is not supported");
+    throw new IllegalArgumentException("Type " + typeName + " is not supported. " +
+    		"List of supported types:\n" +  Arrays.toString(values()));
   }
 
   public Object getDefaultValue() {
