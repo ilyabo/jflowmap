@@ -122,7 +122,7 @@ public class Legend extends PPath {
 
 
       double labelHeight = labelNode.getFullBoundsReference().getHeight();
-      double height = Math.max(itemHeight, labelHeight);
+      double height = Math.max(itemHeight, labelHeight) + gapBetweenLines;
 
       labelNode.setY(item.getY() + (itemHeight - labelHeight)/2);
 
