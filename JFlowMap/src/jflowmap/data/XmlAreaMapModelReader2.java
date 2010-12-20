@@ -26,7 +26,6 @@ import java.io.LineNumberReader;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import jflowmap.models.map.Area;
@@ -53,8 +52,9 @@ public class XmlAreaMapModelReader2 {
   private static AreaMap loadFrom(String name, InputStream is) throws IOException {
     XMLInputFactory inputFactory = XMLInputFactory.newInstance();
     XMLStreamReader in;
-    LineNumberReader lineNumberReader = new LineNumberReader(new InputStreamReader(is, charset));
+    LineNumberReader lineNumberReader = null;
     try {
+      lineNumberReader = new LineNumberReader(new InputStreamReader(is, charset));
       in = inputFactory.createXMLStreamReader(lineNumberReader);
 
       List<Area> areas = Lists.newArrayList();
@@ -107,8 +107,10 @@ public class XmlAreaMapModelReader2 {
       }
 
       return new AreaMap(name, areas);
-    } catch (XMLStreamException e) {
-      throw new IOException("Parse error in line " + lineNumberReader.getLineNumber() + ": " + e.getMessage(), e);
+    } catch (Exception e) {
+      throw new IOException("Cannot load '" + name + "': " + e.getMessage() +
+          (lineNumberReader != null ?
+              " (in line " + lineNumberReader.getLineNumber() + ")" : ""), e);
     }
 
 
