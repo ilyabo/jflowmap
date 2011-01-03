@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nodes>
+	<node code="NRU" lat="-0.528315" lon="166.923192"             name="Nauru" x="685.1733042000001" y="356.9231219766742"/>                                       
+	<node code="SMR" lat="43.947449" lon="12.460984"			    name="San Marino" x="380.1104434" y="228.90466844694893"/>                                      
+	<node code="MTQ" lat="14.641797" lon="-61.013505"			    name="Martinique" x="234.99832762499997" y="315.78211338652915"/>                               
+	<node code="ABW" lat="12.51586" lon="-69.97472"			    name="Aruba" x="217.299928" y="321.61341768916174"/>                                            
+	<node code="AFG" lat="34.427919" lon="67.297715"			    name="Afghanistan" x="488.412987125" y="258.9695095086407"/>                                    
+	<node code="AGO" lat="-11.553455" lon="17.442383"			    name="Angola" x="389.948706425" y="386.75711969805525"/>                                        
+	<node code="AIA" lat="18.218432" lon="-63.067826"			    name="Anguilla" x="230.94104365" y="305.88748262660226"/>                                       
+	<node code="ALB" lat="41.115789" lon="20.036435"			    name="Albania" x="395.07195912500003" y="238.1090711297232"/>                                   
+	<node code="AND" lat="42.549993" lon="1.587428"			    name="Andorra" x="358.6351703" y="233.47786317319483"/>                                         
+	<node code="ANT" lat="12.188472" lon="-68.686672"			    name="Netherlands Antilles" x="219.8438228" y="322.50857596178804"/>                            
+	<node code="ARE" lat="24.154436" lon="54.363366"			    name="United Arab Emirates" x="462.86764785" y="289.1660720051569"/>                            
+	<node code="ARG" lat="-34.069346" lon="-64.554019"		    name="Argentina" x="228.00581247500003" y="450.9425714896889"/>                                 
+	<node code="ARM" lat="40.143019" lon="45.185632"			    name="Armenia" x="444.7416232" y="241.2161285922206"/>                                          
+	<node code="ASM" lat="-14.299927" lon="-170.694484"		    name="American Samoa" x="18.378394100000023" y="394.27787623450916"/>                           
+	<node code="ATA" lat="-77.691352" lon="-21.220357"		    name="Antartica" x="313.58979492500004" y="624.5642510083842"/>                                 
+	<node code="ATF" lat="-49.009785" lon="67.981723"			    name="French Southern Territories" x="489.763902925" y="499.2187435539675"/>                    
+	<node code="ATG" lat="17.326884" lon="-61.79147"			    name="Antigua &amp; Barbuda" x="233.46184675000003" y="308.36493090918844"/>                    
+	<node code="AUS" lat="-25.457025" lon="135.343151"		    name="Australia" x="622.802723225" y="425.5642594360657"/>                                      
+	<node code="AUT" lat="47.559579" lon="13.460688"			    name="Austria" x="382.0848588" y="216.78182573178387"/>                                         
+	<node code="AZE" lat="40.217768" lon="47.780519"			    name="Azerbaijan" x="449.866525025" y="240.97832651818138"/>                                    
+	<node code="BDI" lat="-3.241797" lon="29.899848"			    name="Burundi" x="414.5521998" y="364.23533191119617"/>                                         
+	<node code="BEL" lat="50.653901" lon="4.625375"			    name="Belgium" x="364.635115625" y="206.01102820425842"/>                                       
+	<node code="BEN" lat="9.398571" lon="2.331568"			    name="Benin" x="360.1048468" y="330.11032382229206"/>                                           
+	<node code="BFA" lat="12.146713" lon="-1.747007"			    name="Burkina Faso" x="352.04966117500004" y="322.62270424484956"/>                             
+	<node code="BGD" lat="23.784454" lon="89.963937"			    name="Bangladesh" x="533.1787755749999" y="290.2212284379362"/>                                 
+	<node code="BGR" lat="42.808479" lon="25.268387"			    name="Bulgaria" x="405.40506432500007" y="232.63657730634688"/>                                 
+	<node code="BHR" lat="25.980963" lon="50.601739"			    name="Bahrain" x="455.438434525" y="283.92825803311905"/>                                       
+	<node code="BHS" lat="24.367406" lon="-76.261706"			    name="Bahamas" x="204.88313065" y="288.55783480576514"/>                                        
+	<node code="BIH" lat="44.133901" lon="17.883773"			    name="Bosnia And Herzegovina" x="390.820451675" y="228.2897924221837"/>                         
+	<node code="BLR" lat="53.460297" lon="27.984375"			    name="Belarus" x="410.76914062500003" y="195.89315467141637"/>                                  
+	<node code="BLZ" lat="17.299323" lon="-88.550048"			    name="Belize" x="180.6136552" y="308.44139457272473"/>                                          
+	<node code="BMU" lat="32.31284" lon="-64.744856"			    name="Bermuda" x="227.6289094" y="265.34699492103715"/>                                         
+	<node code="BOL" lat="-16.733626" lon="-64.475512"		    name="Bolivia" x="228.16086380000002" y="400.9907510489304"/>                                   
+	<node code="BRA" lat="-9.872666" lon="-53.169127"			    name="Brazil" x="250.490974175" y="382.17838220887865"/>                                        
+	<node code="BRB" lat="13.184835" lon="-59.561554"			    name="Barbados" x="237.86593085" y="319.78200879309946"/>                                       
+	<node code="BRN" lat="4.581283" lon="114.819152"			    name="Brunei Darussalam" x="582.2678252" y="343.1510867912315"/>                                
+	<node code="BTN" lat="27.394079" lon="90.504295"			    name="Bhutan" x="534.245982625" y="279.8412240017597"/>                                         
+	<node code="BVT" lat="-54.422969" lon="3.411867"			    name="Bouvet Island" x="362.238437325" y="518.6614529844827"/>                                  
+	<node code="BWA" lat="-22.285449" lon="23.925844"			    name="Botswana" x="402.7535419" y="416.52260017360555"/>                                        
+	<node code="CAF" lat="6.342249" lon="20.686201"			    name="Central African Republic" x="396.355246975" y="338.3936681513379"/>                       
+	<node code="CAN" lat="58.622302" lon="-102.046052"		    name="Canada" x="153.9590473" y="176.27325006126225"/>                                          
+	<node code="CCK" lat="-12.168561" lon="96.836589"			    name="Cocos (Keeling) Islands" x="546.752263275" y="388.43700540500186"/>                       
+	<node code="CHE" lat="46.757811" lon="8.328122"			    name="Switzerland" x="371.94804095" y="219.5124235960347"/>                                     
+	<node code="CHL" lat="-37.616333" lon="-72.198999"		    name="Chile" x="212.90697697500002" y="461.83430761972033"/>                                    
+	<node code="CHN" lat="35.703649" lon="107.400296"			    name="China" x="567.6155846" y="255.075559002308"/>                                             
+	<node code="CIV" lat="7.369096" lon="-5.551019"			    name="Cote D'ivoire (Ivory Coast)" x="344.536737475" y="335.6149306302374"/>                    
+	<node code="CMR" lat="6.626626" lon="13.030155"			    name="Cameroon" x="381.23455612500004" y="337.62449786851187"/>                                 
+	<node code="COD" lat="-4.015587" lon="23.376716"			    name="Democratic Republic of the Congo" x="401.6690141" y="366.3223592996971"/>                 
+	<node code="COG" lat="-0.924188" lon="14.768154"			    name="Congo" x="384.66710415" y="357.98953148699115"/>                                          
+	<node code="COK" lat="-20.185403" lon="-159.250086"		    name="Cook Islands" x="40.98108014999995" y="410.6074034629839"/>                               
+	<node code="COL" lat="4.25306" lon="-72.868391"			    name="Colombia" x="211.584927775" y="344.03689797313035"/>                                      
+	<node code="COM" lat="-11.98023" lon="43.784626"			    name="Comoros" x="441.97463635" y="387.9224068481606"/>                                         
+	<node code="CPV" lat="16.067023" lon="-23.958685"			    name="Cape Verde" x="308.181597125" y="311.85299783511044"/>                                    
+	<node code="CRI" lat="9.746003" lon="-84.100237"			    name="Costa Rica" x="189.402031925" y="329.16603225185816"/>                                    
+	<node code="CUB" lat="21.721155" lon="-79.477337"			    name="Cuba" x="198.532259425" y="296.0720983702675"/>                                           
+	<node code="CXR" lat="-10.445179" lon="105.702386"		    name="Christmas Island" x="564.26221235" y="383.7361960352407"/>                                
+	<node code="CYM" lat="19.307918" lon="-81.251874"			    name="Cayman Islands" x="195.02754885" y="302.84905199653963"/>                                 
+	<node code="CYP" lat="35.145334" lon="33.440153"			    name="Cyprus" x="421.54430217500004" y="256.78427473281397"/>                                   
+	<node code="CZE" lat="49.811836" lon="15.49225"			    name="Czech Republic" x="386.09719375" y="208.98017568178565"/>                                 
+	<node code="DEU" lat="51.77387" lon="10.574742"			    name="Germany" x="376.38511545" y="202.0153342961783"/>                                         
+	<node code="DJI" lat="11.73873" lon="42.638766"			    name="Djibouti" x="439.71156285" y="323.7371377474846"/>                                        
+	<node code="DMA" lat="15.426026" lon="-61.359058"			    name="Dominica" x="234.31586045000003" y="313.62223212844"/>                                    
+	<node code="DNK" lat="55.890028" lon="10.392256"			    name="Denmark" x="376.0247056" y="186.83301805705693"/>                                         
+	<node code="DOM" lat="18.81433" lon="-70.277471"			    name="Dominican Republic" x="216.701994775" y="304.22714003025266"/>                            
+	<node code="DZA" lat="28.648929" lon="2.550384"			    name="Algeria" x="360.53700840000005" y="276.18468899672644"/>                                  
+	<node code="ECU" lat="-1.147179" lon="-78.247751"			    name="Ecuador" x="200.96069177500002" y="358.5902598902782"/>                                   
+	<node code="EGY" lat="27.185703" lon="30.479459"			    name="Egypt" x="415.696931525" y="280.4458888125066"/>                                          
+	<node code="ERI" lat="14.971691" lon="39.582445"			    name="Eritrea" x="433.67532887500005" y="314.8741501883265"/>                                   
+	<node code="ESH" lat="24.558661" lon="-13.13169"			    name="Western Sahara" x="329.56491224999996" y="288.0110693605782"/>                            
+	<node code="ESP" lat="38.632397" lon="-5.0852"			    name="Spain" x="345.45673000000005" y="245.98918533991153"/>                                    
+	<node code="EST" lat="58.663435" lon="24.607346"			    name="Estonia" x="404.09950835" y="176.11104787031445"/>                                        
+	<node code="ETH" lat="8.842762" lon="39.863899"			    name="Ethiopia" x="434.231200525" y="331.61971957341996"/>                                      
+	<node code="FIN" lat="64.500053" lon="27.218937"			    name="Finland" x="409.257400575" y="151.99347952804624"/>                                       
+	<node code="FJI" lat="-17.341633" lon="158.940593"		    name="Fiji" x="669.4076711749999" y="402.67599085547965"/>                                      
+	<node code="FLK" lat="-51.714916" lon="-59.460289"		    name="Falkland Islands (Malvinas)" x="238.065929225" y="508.7729744056629"/>                    
+	<node code="FRA" lat="46.336883" lon="2.270183"			    name="France" x="359.983611425" y="220.9366216612865"/>                                         
+	<node code="FRO" lat="62.021881" lon="-6.874353"			    name="Faroe Islands" x="341.92315282500005" y="162.51441216316306"/>                            
+	<node code="FSM" lat="6.293391" lon="160.009199"			    name="Micronesia, (Federated States of)" x="671.518168025" y="338.52578946680813"/>             
+	<node code="GAB" lat="-0.812692" lon="11.46462"			    name="Gabon" x="378.1426245" y="357.6891753537435"/>                                            
+	<node code="GBR" lat="52.597352" lon="-1.534873"			    name="United Kingdom" x="352.46862582500006" y="199.04214125274885"/>                           
+	<node code="GEO" lat="42.238473" lon="43.427589"			    name="Georgia" x="441.269488275" y="234.48903672926266"/>                                       
+	<node code="GHA" lat="7.824267" lon="-1.081164"			    name="Ghana" x="353.3647011" y="334.3819159502806"/>                                            
+	<node code="GIB" lat="36.140863" lon="-5.344939"			    name="Gibraltar" x="344.943745475" y="253.73240619472554"/>                                     
+	<node code="GIN" lat="10.273416" lon="-11.031226"			    name="Guinea" x="333.71332865000005" y="327.73136032918626"/>                                   
+	<node code="GLP" lat="16.193134" lon="-61.493939"			    name="Guadeloupe" x="234.04947047500002" y="311.50449437083097"/>                               
+	<node code="GMB" lat="13.436223" lon="-15.54618"			    name="Gambia" x="324.7962945" y="319.09298546910617"/>                                          
+	<node code="GNB" lat="11.837281" lon="-15.316298"			    name="Guinea Bissau" x="325.25031144999997" y="323.4680365220042"/>                             
+	<node code="GNQ" lat="1.98389" lon="10.036472"			    name="Equatorial Guinea" x="375.3220322" y="350.1553609530642"/>                                
+	<node code="GRC" lat="38.481022" lon="23.758809"			    name="Greece" x="402.423647775" y="246.46411777494902"/>                                        
+	<node code="GRD" lat="12.109965" lon="-61.683315"			    name="Grenada" x="233.67545287500005" y="322.7231279254023"/>                                   
+	<node code="GRL" lat="73.790535" lon="-40.404318"			    name="Greenland" x="275.70147195" y="107.85474605232575"/>                                      
+	<node code="GTM" lat="15.852383" lon="-90.272178"			    name="Guatemala" x="177.21244845" y="312.44582691976365"/>                                      
+	<node code="GUF" lat="3.838813" lon="-53.252645"			    name="French Guiana" x="250.32602612500003" y="345.15452934919983"/>                            
+	<node code="GUM" lat="13.449585" lon="144.782295"			    name="Guam" x="641.445032625" y="319.05634911034514"/>                                          
+	<node code="GUY" lat="4.847704" lon="-58.932876"			    name="Guyana" x="239.10756990000002" y="342.4318770416703"/>                                    
+	<node code="HKG" lat="22.346283" lon="114.11677"			    name="Hong Kong" x="580.88062075" y="294.3052430589108"/>                                       
+	<node code="HMD" lat="-53.082097" lon="73.495546"			    name="Heard and McDonald Islands" x="500.65370335" y="513.7224782594756"/>                      
+	<node code="HND" lat="14.845997" lon="-86.188591"			    name="Honduras" x="185.277532775" y="315.2201997741431"/>                                       
+	<node code="HRV" lat="44.444795" lon="16.343293"			    name="Croatia" x="387.778003675" y="227.26200752037508"/>                                       
+	<node code="HTI" lat="18.880726" lon="-72.854611"			    name="Haiti" x="211.612143275" y="304.04191388109757"/>                                         
+	<node code="HUN" lat="47.260378" lon="19.359526"			    name="Hungary" x="393.73506385" y="217.80359045473594"/>                                        
+	<node code="IDN" lat="-2.974959" lon="119.267292"			    name="Indonesia" x="591.0529017" y="363.51587906654646"/>                                       
+	<node code="IMY" lat="54.221349" lon="-4.542128"			    name="--Unknown--" x="346.52929720000003" y="193.086739264411"/>                                
+	<node code="IND" lat="22.606858" lon="79.627816"			    name="India" x="512.7649366" y="293.5672949585589"/>                                            
+	<node code="IOT" lat="-7.338329" lon="72.441138"			    name="British Indian Ocean Territory" x="498.57124755" y="375.30175426745944"/>                 
+	<node code="IRL" lat="53.332306" lon="-8.629055"			    name="Ireland" x="338.457616375" y="196.36240781599187"/>                                       
+	<node code="IRN" lat="32.673635" lon="53.738655"			    name="Iran" x="461.63384362500005" y="264.265744603356"/>                                       
+	<node code="IRQ" lat="33.156784" lon="44.021816"			    name="Iraq" x="442.4430866" y="262.81361817871436"/>                                            
+	<node code="ISL" lat="65.232709" lon="-19.976364"			    name="Iceland" x="316.0466811" y="148.7954951032917"/>                                          
+	<node code="ISR" lat="31.545732" lon="35.035337"			    name="Israel" x="424.694790575" y="267.63719644329433"/>                                        
+	<node code="ITA" lat="42.051185" lon="12.461401"			    name="Italy" x="380.11126697500004" y="235.09554435818913"/>                                    
+	<node code="JAM" lat="18.126146" lon="-77.290223"			    name="Jamaica" x="202.851809575" y="306.14429371504855"/>                                       
+	<node code="JOR" lat="31.384543" lon="36.995909"			    name="Jordan" x="428.56692027500003" y="268.11694732992515"/>                                   
+	<node code="JPN" lat="35.992619" lon="137.776432"			    name="Japan" x="627.6084532000001" y="254.18832668330867"/>                                     
+	<node code="KAZ" lat="48.286181" lon="66.197373"			    name="Kazakhstan" x="486.23981167500006" y="214.28648668656717"/>                               
+	<node code="KEN" lat="0.638006" lon="38.025679"			    name="Kenya" x="430.600716025" y="353.78139626119224"/>                                         
+	<node code="KGZ" lat="41.22812" lon="73.842561"			    name="Kyrgyzstan" x="501.33905797500006" y="237.74853683839956"/>                               
+	<node code="KHM" lat="12.637796" lon="105.047609"			    name="Cambodia" x="562.9690277750001" y="321.2798314012783"/>                                   
+	<node code="KIR" lat="1.843581" lon="-142.355756"			    name="Kiribati" x="74.34738189999997" y="350.5334428696101"/>                                   
+	<node code="KNA" lat="17.313103" lon="-62.736679"			    name="St.Kitts &amp; Nevis" x="231.59505897500003" y="308.4031650350012"/>                      
+	<node code="KOR" lat="35.861497" lon="127.355541"			    name="Korea, Republic of" x="607.027193475" y="254.5911567837926"/>                             
+	<node code="KWT" lat="29.356321" lon="47.687397"			    name="Kuwait" x="449.682609075" y="274.11151782297236"/>                                        
+	<node code="LAO" lat="19.540096" lon="102.491139"			    name="Laos, Peoples Democratic Republic of" x="557.9199995250001" y="302.19991174843466"/>      
+	<node code="LBN" lat="33.878374" lon="35.881368"			    name="Lebanon" x="426.3657018" y="260.6356957529154"/>                                          
+	<node code="LBR" lat="6.515548" lon="-9.225161"			    name="Liberia" x="337.280307025" y="337.92496976473177"/>                                       
+	<node code="LBY" lat="27.224538" lon="18.02617"			    name="Liby An Arab Jamahiriya" x="391.10168575" y="280.33325091592565"/>                        
+	<node code="LCA" lat="13.903085" lon="-60.9659"			    name="Saint Lucia" x="235.09234750000002" y="317.8121492473685"/>                               
+	<node code="LIE" lat="47.147629" lon="9.547895"			    name="Liechtenstein" x="374.357092625" y="218.18776584011724"/>                                 
+	<node code="LKA" lat="8.173787" lon="80.549014"			    name="Sri Lanka" x="514.58430265" y="333.4345187779015"/>                                       
+	<node code="LSO" lat="-29.595733" lon="28.244114"			    name="Lesotho" x="411.28212515" y="437.59213841228575"/>                                        
+	<node code="LTU" lat="55.294758" lon="23.833139"			    name="Lithuania" x="402.570449525" y="189.0801399529511"/>                                      
+	<node code="LUX" lat="49.768616" lon="6.098623"			    name="Luxembourg" x="367.544780425" y="209.13178009775902"/>                                    
+	<node code="LVA" lat="56.851106" lon="24.580203"			    name="Latvia" x="404.045900925" y="183.16559478329847"/>                                        
+	<node code="MAC" lat="22.179248" lon="113.552192"			    name="Macao" x="579.7655792" y="294.77783001870887"/>                                           
+	<node code="MAR" lat="31.416697" lon="-6.735714"			    name="Morocco" x="342.19696485000003" y="268.0212870570022"/>                                   
+	<node code="MCO" lat="43.747842" lon="7.412771"			    name="Monaco" x="370.14022272500006" y="229.56167844068412"/>                                   
+	<node code="MDA" lat="47.089793" lon="28.503436"			    name="Moldova, Republic of" x="411.7942861" y="218.38465184759028"/>                            
+	<node code="MDG" lat="-18.054455" lon="47.108621"			    name="Madagascar" x="448.539526475" y="404.656265511246"/>                                      
+	<node code="MDV" lat="3.353159" lon="73.260862"			    name="Maldives" x="500.1902024500001" y="346.4643767636559"/>                                   
+	<node code="MEX" lat="24.127293" lon="-103.578389"		    name="Mexico" x="150.932681725" y="289.24354607756675"/>                                        
+	<node code="MHL" lat="8.385086" lon="168.401451"			    name="Marshall Islands" x="688.092865725" y="332.8615231743156"/>                               
+	<node code="MKD" lat="41.589333" lon="21.697598"			    name="Macedonia, The Former Republic of Yugoslavia" x="398.35275605" y="236.58670134313795"/>   
+	<node code="MLI" lat="16.515929" lon="-4.506424"			    name="Mali" x="346.5998126" y="310.6118153138726"/>                                             
+	<node code="MLT" lat="35.891981" lon="14.442436"			    name="Malta" x="384.02381110000005" y="254.49754058380375"/>                                    
+	<node code="MMR" lat="21.395854" lon="96.297484"			    name="Myanmar" x="545.6875309" y="296.98960904354004"/>                                         
+	<node code="MNE" lat="42.751687" lon="19.296053"			    name="Montenegro" x="393.60970467500005" y="232.82159302980324"/>                               
+	<node code="MNG" lat="47.224048" lon="103.803616"			    name="Mongolia" x="560.5121416000001" y="217.92743067926926"/>                                  
+	<node code="MNP" lat="15.09822" lon="145.687207"			    name="Northern Mariana Islands" x="643.2322338250001" y="314.5256716011007"/>                   
+	<node code="MOZ" lat="-17.646889" lon="35.189844"			    name="Mozambique" x="424.9999419" y="403.5234075780951"/>                                       
+	<node code="MRT" lat="20.452525" lon="-10.808026"			    name="Mauritania" x="334.15414865" y="299.6430944644256"/>                                      
+	<node code="MSR" lat="16.737668" lon="-62.186716"			    name="Montserrat" x="232.68123590000002" y="309.9980569424483"/>                                
+	<node code="MUS" lat="-20.163688" lon="58.765571"			    name="Mauritius" x="471.56200272499996" y="410.54651032725496"/>                                
+	<node code="MWI" lat="-13.116067" lon="34.265306"			    name="Malawi" x="423.17397935" y="391.0295854511506"/>                                          
+	<node code="MYS" lat="3.948639" lon="110.52886"			    name="Malaysia" x="573.7944984999999" y="344.8582559908132"/>                                   
+	<node code="MYT" lat="-12.822921" lon="45.147631"			    name="Mayotte" x="444.666571225" y="390.2268180882765"/>                                        
+	<node code="NAM" lat="-21.547573" lon="18.124303"			    name="Namibia" x="391.295498425" y="414.4381530667044"/>                                        
+	<node code="NCL" lat="-21.256932" lon="166.060457"		    name="New Caledonia" x="683.469402575" y="413.6189539025719"/>                                  
+	<node code="NER" lat="16.750195" lon="8.214956"			    name="Niger" x="371.7245381" y="309.9633696209775"/>                                            
+	<node code="NFK" lat="-29.037419" lon="167.952962"		    name="Norfolk Island" x="687.20709995" y="435.952781113764"/>                                   
+	<node code="NGA" lat="8.976808" lon="7.987788"			    name="Nigeria" x="371.2758813" y="331.2558309103785"/>                                          
+	<node code="NIC" lat="12.905887" lon="-84.953159"			    name="Nicaragua" x="187.71751097499998" y="320.5460441221174"/>                                 
+	<node code="NIU" lat="-19.052071" lon="-169.868496"		    name="Niue" x="20.0097204" y="407.4363050400167"/>                                              
+	<node code="NLD" lat="52.160556" lon="5.208745"			    name="Netherlands" x="365.78727137500005" y="200.62299762062668"/>                              
+	<node code="NOR" lat="61.518479" lon="9.50363"			    name="Norway" x="374.26966925" y="164.59878778704478"/>                                         
+	<node code="NPL" lat="28.195011" lon="84.219606"			    name="Nepal" x="521.83372185" y="277.5104296657639"/>                                           
+	<node code="NZL" lat="-44.818879" lon="169.429133"		    name="New Zealand" x="690.122537675" y="484.9789144549456"/>                                    
+	<node code="OMN" lat="21.073477" lon="56.133518"			    name="Oman" x="466.36369805" y="297.8976072612338"/>                                            
+	<node code="PAK" lat="29.656567" lon="68.682852"			    name="Pakistan" x="491.1486327" y="273.2289002468011"/>                                         
+	<node code="PAN" lat="8.458999" lon="-80.108938"			    name="Panama" x="197.28484745" y="332.6610409723792"/>                                          
+	<node code="PCN" lat="-24.582597" lon="-128.857872"		    name="Pitcairn" x="101.00570280000004" y="423.0573962015591"/>                                  
+	<node code="PER" lat="-9.667213" lon="-75.326728"			    name="Peru" x="206.7297122" y="381.6197688306862"/>                                             
+	<node code="PHL" lat="11.244724" lon="122.731179"			    name="Philippines" x="597.894078525" y="325.08514784549493"/>                                   
+	<node code="PLW" lat="7.506065" lon="134.568944"			    name="Palau" x="621.2736644" y="335.24398211844243"/>                                           
+	<node code="PNG" lat="-6.664343" lon="148.160159"			    name="Papua New Guinea" x="648.116314025" y="373.4775384200963"/>                               
+	<node code="POL" lat="52.096874" lon="19.183304"			    name="Poland" x="393.38702539999997" y="200.8527562613826"/>                                    
+	<node code="PRI" lat="18.215092" lon="-66.344216"			    name="Puerto Rico" x="224.47017340000002" y="305.8967785899994"/>                               
+	<node code="PRK" lat="40.076414" lon="127.206462"			    name="Korea, Democratic People's Republic of" x="606.73276245" y="241.42789060814735"/>         
+	<node code="PRT" lat="39.638365" lon="-7.970937"			    name="Portugal" x="339.757399425" y="242.81755356346426"/>                                      
+	<node code="PRY" lat="-23.520255" lon="-58.175581"		    name="Paraguay" x="240.603227525" y="420.0264504936752"/>                                       
+	<node code="PYF" lat="-14.220586" lon="-145.715872"		    name="French Polynesia" x="67.71115279999998" y="394.0598497500231"/>                           
+	<node code="QAT" lat="25.306142" lon="51.178845"			    name="Qatar" x="456.57821887500006" y="285.8691007565045"/>                                     
+	<node code="REU" lat="-21.122886" lon="55.54472"			    name="Reunion" x="465.200822" y="413.24147591857775"/>                                          
+	<node code="ROU" lat="45.645985" lon="25.17443"			    name="Romania" x="405.21949925" y="223.26062662501982"/>                                        
+	<node code="RUS" lat="62.844319" lon="90.124708"			    name="Russian Federation" x="533.4962983" y="159.07164977332405"/>                              
+	<node code="RWA" lat="-2.032464" lon="29.893166"			    name="Rwanda" x="414.53900285000003" y="360.9755330855736"/>                                    
+	<node code="SAU" lat="23.996171" lon="44.504129"			    name="Saudi Arabia" x="443.395654775" y="289.6176621034569"/>                                   
+	<node code="SDN" lat="13.197363" lon="30.439371"			    name="Sudan" x="415.617757725" y="319.7476818329209"/>                                          
+	<node code="SEN" lat="13.848381" lon="-14.866348"			    name="Senegal" x="326.1389627" y="317.96231353491515"/>                                         
+	<node code="SGP" lat="1.351663" lon="103.813638"			    name="Singapore" x="560.53193505" y="351.85884259431094"/>                                      
+	<node code="SJM" lat="78.791143" lon="18.581561"			    name="Svalbard and the Jan Mayen Islands" x="392.198582975" y="79.99935479849525"/>             
+	<node code="SLB" lat="-8.910545" lon="159.537743"			    name="Solomon Islands" x="670.587042425" y="379.5642772511516"/>                                
+	<node code="SLE" lat="8.423922" lon="-11.939061"			    name="Sierra Leone" x="331.920354525" y="332.75618715050314"/>                                  
+	<node code="SLV" lat="13.726028" lon="-88.822732"			    name="El Salvador" x="180.0751043" y="318.2980954190857"/>                                      
+	<node code="SOM" lat="6.402382" lon="45.804496"			    name="Somalia" x="445.9638796" y="338.2310461009268"/>                                          
+	<node code="SRB" lat="44.092352" lon="20.720026"			    name="Serbia" x="396.42205135000006" y="228.42690947882863"/>                                   
+	<node code="STP" lat="0.650952" lon="6.848193"			    name="Sao Tome and Principe" x="369.02518117500006" y="353.74652252867025"/>                    
+	<node code="SUR" lat="4.167872" lon="-55.867785"			    name="Suriname" x="245.16112462499999" y="344.26676391227244"/>                                 
+	<node code="SVK" lat="48.724856" lon="19.669794"			    name="Slovakia" x="394.34784315" y="212.7701670428189"/>                                        
+	<node code="SVN" lat="46.131639" lon="14.872133"			    name="Slovenia" x="384.872462675" y="221.62876415518312"/>                                      
+	<node code="SWE" lat="64.545152" lon="16.738748"			    name="Sweden" x="388.5590273" y="151.797824852101"/>                                            
+	<node code="SWZ" lat="-26.574906" lon="31.520087"			    name="Swaziland" x="417.752171825" y="428.7857188067791"/>                                      
+	<node code="SYC" lat="-7.291142" lon="50.434704"			    name="Seychelles" x="455.1085404" y="375.1739819818732"/>                                       
+	<node code="SYR" lat="35.104411" lon="38.475003"			    name="Syrian Arab Republic" x="431.488130925" y="256.90923767910095"/>                          
+	<node code="TCA" lat="21.792145" lon="-71.733806"			    name="Turks and Caicos Islands" x="213.82573315" y="295.8716985559565"/>                        
+	<node code="TCD" lat="14.949141" lon="18.460461"			    name="Chad" x="391.95941047499997" y="314.9362423025926"/>                                      
+	<node code="TGO" lat="8.747135" lon="0.88087"				    name="Togo" x="357.23971825" y="331.8792621748337"/>                                            
+	<node code="THA" lat="15.502027" lon="101.199542"			    name="Thailand" x="555.36909545" y="313.41264345468096"/>                                       
+	<node code="TJK" lat="38.775212" lon="70.833845"			    name="Tajikistan" x="495.396843875" y="245.54055834242834"/>                                    
+	<node code="TKL" lat="-9.194922" lon="-171.852454"		    name="Tokelau" x="16.091403349999986" y="380.336457411221"/>                                    
+	<node code="TKM" lat="39.191547" lon="58.766406"			    name="Turkmenistan" x="471.56365185" y="244.22963557742"/>                                      
+	<node code="TLS" lat="-8.839555" lon="125.7115"			    name="Timor-Leste" x="603.7802125000001" y="379.37157556790345"/>                               
+	<node code="TON" lat="-20.313602" lon="-174.796027"		    name="Tonga" x="10.277846674999985" y="410.96700786616583"/>                                    
+	<node code="TTO" lat="10.563222" lon="-61.241299"			    name="Trinidad &amp; Tobago" x="234.54843447500005" y="326.9423835674811"/>                     
+	<node code="TUN" lat="34.219543" lon="9.819744"			    name="Tunisia" x="374.8939944" y="259.6020707186576"/>                                          
+	<node code="TUR" lat="39.136216" lon="33.36457"			    name="Turkey" x="421.39502575" y="244.40412378491075"/>                                         
+	<node code="TUV" lat="-7.540024" lon="178.283237"			    name="Tuvalu" x="707.6093930750002" y="375.8479993848716"/>                                     
+	<node code="TWN" lat="23.736014" lon="120.84953"			    name="Taiwan, Province of China" x="594.17782175" y="290.35923530524485"/>                      
+	<node code="TZA" lat="-6.42256" lon="35.381934"			    name="Tanzania, United Republic of" x="425.37931965" y="372.8235254703957"/>                    
+	<node code="UGA" lat="1.324938" lon="32.233743"			    name="Uganda" x="419.161642425" y="351.93084363740206"/>                                        
+	<node code="UKR" lat="48.074673" lon="31.752265"			    name="Ukraine" x="418.21072337500004" y="215.01492971811106"/>                                  
+	<node code="URY" lat="-32.721374" lon="-56.024798"		    name="Uruguay" x="244.85102395" y="446.87752186817886"/>                                        
+	<node code="USA" lat="40.252636" lon="-100.999161"		    name="United States" x="156.026657025" y="240.86734611933494"/>                                 
+	<node code="UZB" lat="41.447353" lon="64.79929"			    name="Uzbekistan" x="483.47859775000006" y="237.04383395640428"/>                               
+	<node code="VAT" lat="41.903359" lon="12.452214"			    name="Vatican City State (Holy See)" x="380.09312265" y="235.57351447223965"/>                  
+	<node code="VCT" lat="13.256242" lon="-61.192859"			    name="St.Vincent" x="234.644103475" y="319.5863372353302"/>                                     
+	<node code="VEN" lat="7.80464" lon="-65.891969"			    name="Venezuela" x="225.363361225" y="334.4351009875315"/>                                      
+	<node code="VGB" lat="18.448106" lon="-64.513513"			    name="Virgin Islands (British)" x="228.085811825" y="305.2479771422224"/>                       
+	<node code="VIR" lat="17.944913" lon="-64.807077"			    name="Virgin Islands (U.S)" x="227.506022925" y="306.64837562918274"/>                          
+	<node code="VNM" lat="12.344649" lon="108.343625"			    name="Viet Nam" x="569.4786593750001" y="322.08163902351544"/>                                  
+	<node code="VUT" lat="-16.308522" lon="167.89617"			    name="Vanuatu" x="687.09493575" y="399.814500110244"/>                                          
+	<node code="WSM" lat="-13.780031" lon="-172.115116"		    name="Samoa" x="15.572645899999985" y="392.8500950039047"/>                                     
+	<node code="YEM" lat="15.563412" lon="47.950477"			    name="Yemen" x="450.202192075" y="313.2433257668417"/>                                          
+	<node code="ZAF" lat="-28.695832" lon="25.029527"			    name="South Africa" x="404.933315825" y="434.95250032390675"/>                                  
+	<node code="ZMB" lat="-13.047165" lon="28.051606"			    name="Zambia" x="410.90192185" y="390.8408461716854"/>                                          
+	<node code="ZWE" lat="-18.931388" lon="29.676439"			    name="Zimbabwe" x="414.11096702500004" y="407.09945000562055"/>                                 
+	<node code="*ST" lat="-60" lon="10"						    name="Stateless" x="375.25" y="540.2147785774083"/>                                             
+	<node code="*VA" lat="-60" lon="60"						    name="Various" x="474" y="540.2147785774083"/>                                                  
+	<node code="*TB" lat="32" lon="90"						    name="Tibetans" x="535.520153875" y="272.75364899433873"/>                                      
+	<node code="*PA" lat="31.92157" lon="35.20329"			    name="Occupied Palestinian Territory" x="425.0271179" y="266.57497964869435"/>                  
+</nodes>
