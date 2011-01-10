@@ -36,7 +36,7 @@ object Countries {
   def load() {
     println("Loading countries")
     loadRegions(countriesPath + "regions.xml")
-    loadPopulation(countriesPath + "population/population_1975-2010.txt.fixed")
+    loadPopulation(countriesPath + "population.csv")
 
     val countriesXml = XML.load(resourceURL(countriesPath + "country-names.xml"))
     for (country <- countriesXml \ "country") {

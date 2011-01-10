@@ -1,0 +1,6 @@
+oddata-tools provide a set of utilities for working with Origin-Destination data (i.e. data representing flows entitites, e.g. flows of people, animals, money,
+material, or network traffic, between pairs of geographical locations).
+
+Here is the list of currently supported tasks:
+- Convert CSV to GraphML
+- Augment the geographical locations with lat/lon coordinates (by querying geonames.org)
