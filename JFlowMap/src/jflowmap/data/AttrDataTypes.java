@@ -19,7 +19,6 @@
 package jflowmap.data;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 
 import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
@@ -92,8 +91,8 @@ public enum AttrDataTypes implements ValueAggregator {
       }
       return sb.toString();
     }
-  },
-  DATE(Date.class, null, "date");
+  }/*,
+  DATE(Date.class, null, "date")*/;
 
   final Class<?> klass;
   private final String[] names;
