@@ -1,8 +1,10 @@
 package jflowmap.util;
 
+import java.awt.Dimension;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
+import java.awt.Window;
 
 import javax.swing.JFrame;
 
@@ -22,6 +24,14 @@ public class SwingUtils {
     frame.setResizable(false);
     GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     gd.setFullScreenWindow(frame);
+  }
+
+  public static void center(Window window) {
+    final Dimension size = window.getSize();
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    final int locX = (screen.width - size.width) / 2;
+    final int locY = (screen.height - size.height) / 2;
+    window.setLocation(locX, locY);
   }
 
 }

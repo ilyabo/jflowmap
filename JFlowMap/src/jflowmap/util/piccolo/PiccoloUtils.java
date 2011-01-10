@@ -24,7 +24,7 @@ import java.awt.Stroke;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
-import jflowmap.FlowMapMain;
+import jflowmap.JFlowMapMain;
 
 
 import edu.umd.cs.piccolo.PCamera;
@@ -112,7 +112,7 @@ public class PiccoloUtils {
     }
 
     // use the existing stroke on platforms other than MacOSX
-    if (!FlowMapMain.IS_OS_MAC) {
+    if (!JFlowMapMain.IS_OS_MAC) {
       return stroke;
     }
 

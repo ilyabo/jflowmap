@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +96,22 @@ public class GraphMLReader3 {
 
   public static Iterable<Graph> loadGraphs(String filename) throws IOException {
     return new GraphMLReader3().readFromLocation(filename);
+  }
+
+  public static Graph loadFirstGraph(String filename) throws IOException {
+    Iterator<Graph> it = loadGraphs(filename).iterator();
+    if (!it.hasNext()) {
+      throw new IOException("No graphs found in " + filename);
+    }
+    return it.next();
+  }
+
+  public static boolean isNodeSelfAttr(String attrName) {
+    return !attrName.equals(FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID);
+  }
+
+  public static boolean isEdgeSelfAttr(String attrName) {
+    return !attrName.equals(SRCID)  &&  !attrName.equals(TRGID);
   }
 
   public Iterable<Graph> readFromStream(InputStream is) throws IOException {

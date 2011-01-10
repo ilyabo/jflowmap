@@ -31,7 +31,7 @@ public enum AppPreferences {
     FILE_OPEN_LAST_VISITED_DIR;
   }
 
-  private static Preferences prefs = Preferences.userNodeForPackage(FlowMapMain.class);
+  private static Preferences prefs = Preferences.userNodeForPackage(JFlowMapMain.class);
 
   public String getFileOpenLastVisitedDir() {
     return prefs.get(Names.FILE_OPEN_LAST_VISITED_DIR.name(), "");

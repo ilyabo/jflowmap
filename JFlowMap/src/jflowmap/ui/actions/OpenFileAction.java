@@ -18,22 +18,40 @@
 
 package jflowmap.ui.actions;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import jflowmap.AppPreferences;
-import jflowmap.FlowMapMain;
+import jflowmap.FlowMapColorSchemes;
+import jflowmap.FlowMapGraph;
+import jflowmap.IView;
+import jflowmap.JFlowMapMain;
+import jflowmap.data.GraphMLReader3;
+import jflowmap.geo.MapProjections;
+import jflowmap.ui.PropertiesDialog;
+import net.miginfocom.swing.MigLayout;
 
 import org.apache.log4j.Logger;
 
+import prefuse.data.Graph;
 import at.fhj.utils.misc.StringUtils;
 import at.fhj.utils.swing.JMsgPane;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author Ilya Boyandin
@@ -45,17 +63,17 @@ public class OpenFileAction extends AbstractAction {
   private static final ImageIcon ICON = new ImageIcon(
       OpenFileAction.class.getResource("images/Open16-2.gif"));
 
-  private final FlowMapMain app;
+  private final JFlowMapMain app;
   private final As target;
 
-  public OpenFileAction(FlowMapMain app, As target) {
+  public OpenFileAction(JFlowMapMain app, As target) {
     this.app = app;
     this.target = target;
 
     String name = target.getName();
     String capitalizedName = StringUtils.firstUpper(name);
 
-    putValue(Action.NAME, "Open As " + capitalizedName + "...");
+    putValue(Action.NAME, "Open in " + capitalizedName + " View...");
     putValue(Action.SMALL_ICON, ICON);
     putValue(Action.SHORT_DESCRIPTION, "Open File As " + capitalizedName);
     putValue(Action.LONG_DESCRIPTION, "Open file " + name);
@@ -63,17 +81,80 @@ public class OpenFileAction extends AbstractAction {
   }
 
   public enum As {
-    MAP("map") {
+    FLOWMAP("flowmap") {
       @Override
-      public void open(FlowMapMain app, String filename) throws Exception {
-//        app.showFlowMaps(filename);
+      public JComponent createPropertiesPanel(String fileName) throws IOException {
+
+        Graph graph = GraphMLReader3.loadFirstGraph(fileName);
+        String[] doubleNodeAttrs = Iterables.toArray(FlowMapGraph.nodeAttrsOf(graph, double.class), String.class);
+        String[] doubleEdgeAttrs = Iterables.toArray(FlowMapGraph.edgeAttrsOf(graph, double.class), String.class);
+        String[] stringNodeAttrs = Iterables.toArray(FlowMapGraph.nodeAttrsOf(graph, String.class), String.class);
+        String[] stringEdgeAttrs = Iterables.toArray(FlowMapGraph.edgeAttrsOf(graph, String.class), String.class);
+
+
+        JPanel panel = new JPanel(new MigLayout("","[para]0[][100lp, fill][60lp][95lp, fill]", ""));
+
+        //panel.add(new JLabel("Properties for \"" + new File(fileName).getName() + "\""), "wrap");
+
+        addSeparator(panel, "Node attributes");
+
+        panel.add(new JLabel("Label"), "skip");
+        panel.add(new JComboBox(stringNodeAttrs), "wrap para");
+
+        panel.add(new JLabel("Latitude"), "skip");
+        panel.add(new JComboBox(doubleNodeAttrs), "wrap para");
+
+        panel.add(new JLabel("Longitude"), "skip");
+        panel.add(new JComboBox(doubleNodeAttrs), "wrap para");
+
+
+        addSeparator(panel, "Edge attributes");
+
+        panel.add(new JLabel("Weight"), "skip");
+        panel.add(new JComboBox(doubleEdgeAttrs), "wrap para");
+
+
+        addSeparator(panel, "Map properties");
+
+        panel.add(new JLabel("Map shapefile"), "skip");
+        panel.add(new JTextField(), "span, growx");
+
+
+        panel.add(new JLabel("Map projection"), "skip");
+        panel.add(new JComboBox(MapProjections.values()), "wrap para");
+
+        addSeparator(panel, "Aesthetics");
+
+        panel.add(new JLabel("Color scheme"), "skip");
+        panel.add(new JComboBox(FlowMapColorSchemes.values()), "wrap para");
+
+        return panel;
       }
-    }
-    ,
+
+      @Override
+      public IView createView(JComponent propertiesPanel) {
+
+        return null;
+      }
+    },
+    FLOWSTRATES("flowstrates") {
+      @Override
+      public JComponent createPropertiesPanel(String fileName) {
+        return new JLabel("Hello flowstrates");
+      }
+      @Override
+      public IView createView(JComponent propertiesPanel) {
+        return null;
+      }
+    },
     TIMELINE("timeline") {
       @Override
-      public void open(FlowMapMain app, String filename) throws Exception {
-//        app.showFlowTimeline(filename);
+      public JComponent createPropertiesPanel(String fileName) {
+        return null;
+      }
+      @Override
+      public IView createView(JComponent propertiesPanel) {
+        return null;
       }
     };
 
@@ -84,11 +165,17 @@ public class OpenFileAction extends AbstractAction {
     public String getName() {
       return name;
     }
-    public abstract void open(FlowMapMain app, String filename) throws Exception;
+
+    public abstract JComponent createPropertiesPanel(String fileName) throws IOException;
+
+    public abstract IView createView(JComponent propertiesPanel);
+
+//    public abstract void open(JFlowMapMain app, String filename) throws Exception;
   }
 
   public void actionPerformed(ActionEvent e) {
     try {
+
       final JFileChooser fc = new JFileChooser();
       fc.setAcceptAllFileFilterUsed(false);
       fc.setMultiSelectionEnabled(false);
@@ -108,16 +195,27 @@ public class OpenFileAction extends AbstractAction {
       fc.setAcceptAllFileFilterUsed(false);
 
       int confirm = fc.showDialog(app, (String) getValue(Action.NAME));
+
+
       if (confirm == JFileChooser.APPROVE_OPTION) {
-        target.open(app, fc.getSelectedFile().getAbsolutePath());
         AppPreferences.INSTANCE.setFileOpenLastVisitedDir(fc.getSelectedFile().getParent());
+
+        JComponent propertiesPanel = target.createPropertiesPanel(
+            fc.getSelectedFile().getAbsolutePath());
+        if (propertiesPanel != null) {
+          if (PropertiesDialog.showFor(app,
+              StringUtils.firstUpper(target.getName()) + " properties", propertiesPanel)) {
+
+          }
+        }
+
+//        app.showFlowMaps
+//        target.open(app, fc.getSelectedFile().getAbsolutePath());
       }
+
     } catch (Exception ex) {
       JMsgPane.showProblemDialog(app, "File couldn't be loaded: " + ex.getMessage());
       logger.error("Exception: ", ex);
-    } catch (Error err) {
-      logger.error(err);
-      System.exit(1);
     }
   }
 
@@ -157,6 +255,15 @@ public class OpenFileAction extends AbstractAction {
       return description;
     }
 
+  }
+
+  private static final Color LABEL_COLOR = new Color(0, 70, 213);
+
+  private static void addSeparator(JPanel panel, String text) {
+    JLabel l = new JLabel(text);
+    l.setForeground(LABEL_COLOR);
+    panel.add(l, "gapbottom 1, span, split 2, aligny center");
+    panel.add(new JSeparator(), "gapleft rel, growx");
   }
 
 }

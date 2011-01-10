@@ -11,13 +11,13 @@
 <stringAttribute key="org.eclipse.jdt.launching.APPLET_NAME" value=""/>
 <mapAttribute key="org.eclipse.jdt.launching.APPLET_PARAMETERS">
 <mapEntry key="aggLayersBuilder" value="jflowmap.views.flowstrates.RefugeeAggLayersBuilder"/>
+<mapEntry key="areaMapSrc" value="demo/data/maps/countries-areas-ll.xml.gz"/>
 <mapEntry key="labelAttr" value="name"/>
-<mapEntry key="yNodeAttr" value="lat"/>
+<mapEntry key="maxVisibleTuples" value="200"/>
+<mapEntry key="src" value="demo/data/refugees.xml.gz"/>
 <mapEntry key="weightAttr" value="[0-9]{4}"/>
 <mapEntry key="xNodeAttr" value="lon"/>
-<mapEntry key="maxVisibleTuples" value="200"/>
-<mapEntry key="src" value="data/refugees/refugees.xml.gz"/>
-<mapEntry key="areaMapSrc" value="data/refugees/countries-areas-ll.xml.gz"/>
+<mapEntry key="yNodeAttr" value="lat"/>
 </mapAttribute>
 <intAttribute key="org.eclipse.jdt.launching.APPLET_WIDTH" value="1920"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jflowmap.FlowstratesApplet"/>

@@ -19,6 +19,7 @@
 package jflowmap;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -827,6 +828,41 @@ public class FlowMapGraph {
 
   public void setEgdeForSimilaritySorting(Edge edge) {
     eddeForSimilaritySorting = edge;
+  }
+
+  public static Iterable<String> nodeAttrsOf(final Graph graph, final Class<?> ofType) {
+    return attrsOf(graph.getNodeTable(), new Predicate<String>() {
+      @Override
+      public boolean apply(String attr) {
+
+        return
+          GraphMLReader3.isNodeSelfAttr(attr)  &&
+          (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);
+      }
+    });
+  }
+
+  public static Iterable<String> edgeAttrsOf(final Graph graph, final Class<?> ofType) {
+    return attrsOf(graph.getEdgeTable(), new Predicate<String>() {
+      @Override
+      public boolean apply(String attr) {
+        return
+          GraphMLReader3.isEdgeSelfAttr(attr) &&
+          (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);
+      }
+    });
+  }
+
+  private static Iterable<String> attrsOf(Table table, Predicate<String> isValid) {
+    int cnt = table.getColumnCount();
+    List<String> nodeAttrs = new ArrayList<String>(cnt);
+    for (int i = 0; i < cnt; i++) {
+      String attr = table.getColumnName(i);
+      if (isValid.apply(attr)) {
+        nodeAttrs.add(attr);
+      }
+    }
+    return nodeAttrs;
   }
 
 }

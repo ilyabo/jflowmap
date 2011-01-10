@@ -55,12 +55,12 @@ import at.fhj.utils.swing.JMemoryIndicator;
 /**
  * @author Ilya Boyandin
  */
-public class FlowMapMain extends JFrame {
+public class JFlowMapMain extends JFrame {
 
   public static final String APP_NAME = "FlowMapView";
 //  private static final String PREFERENCES_FILE_NAME = ".preferences";
 
-  private static Logger logger = Logger.getLogger(FlowMapMain.class);
+  private static Logger logger = Logger.getLogger(JFlowMapMain.class);
 
   private static final long serialVersionUID = 1L;
   public static final String OS_NAME = System.getProperty("os.name");
@@ -76,15 +76,18 @@ public class FlowMapMain extends JFrame {
 
   private final JDesktopPane desktopPane;
 //  private String appStartDir;
-  private OpenFileAction openAsMapAction;
+
+  private OpenFileAction openInFlowmapAction;
   private JComponent activeView;
   private AbstractAction tileViewsAction;
 
   private OpenFileAction openAsTimelineAction;
 
+  private OpenFileAction openInFlowstratesAction;
 
-  public FlowMapMain() {
-    setTitle("FlowMapView");
+
+  public JFlowMapMain() {
+    setTitle("JFlowMap");
 
     initActions();
 
@@ -148,7 +151,8 @@ public class FlowMapMain extends JFrame {
   }
 
   private void initActions() {
-    openAsMapAction = new OpenFileAction(this, OpenFileAction.As.MAP);
+    openInFlowmapAction = new OpenFileAction(this, OpenFileAction.As.FLOWMAP);
+    openInFlowstratesAction = new OpenFileAction(this, OpenFileAction.As.FLOWSTRATES);
 //    openAsTimelineAction = new OpenFileAction(this, OpenFileAction.As.TIMELINE);
     tileViewsAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
@@ -273,8 +277,9 @@ public class FlowMapMain extends JFrame {
     menu = new JMenu("File");
     mb.add(menu);
 
-    menu.add(openAsMapAction);
+    menu.add(openInFlowmapAction);
 //    menu.add(openAsTimelineAction);
+    menu.add(openInFlowstratesAction);
 
     // TODO: recent files
     menu.addSeparator();
@@ -431,7 +436,7 @@ public class FlowMapMain extends JFrame {
     initLookAndFeel();
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        new FlowMapMain().setVisible(true);
+        new JFlowMapMain().setVisible(true);
       }
     });
   }
