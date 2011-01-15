@@ -23,6 +23,9 @@ import java.awt.BorderLayout;
 import javax.swing.JApplet;
 import javax.swing.JComponent;
 
+import jflowmap.data.CsvDatasetSpec;
+import jflowmap.data.DatasetSpec;
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.geo.MapProjections;
 
 import org.apache.log4j.Logger;
@@ -82,17 +85,42 @@ public abstract class BaseApplet extends JApplet {
 
   protected DatasetSpec getDatasetSpec() {
     String projName = getParameter("mapProjection");
-    return new DatasetSpec(
-        getParameter("src"),
-        getParameter("weightAttr"),
-        getParameter("xNodeAttr"),
-        getParameter("yNodeAttr"),
-        getParameter("labelAttr"),
-        getParameter("areaMapSrc"),
-        getParameter("shapefile"),
-        getParameter("dbfAreaIdField"),
-        (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
-        );
+
+    String src = getParameter("src");
+    if (src == null) {
+      String flowsCsv = getParameter("flowsCsv");
+      if (flowsCsv == null) {
+
+      }
+      return new CsvDatasetSpec(
+          getParameter("nodesCsv"),
+          getParameter("flowsCsv"),
+          getParameter("nodeIdAttr"),
+          getParameter("originNodeAttr"),
+          getParameter("destNodeAttr"),
+
+          getParameter("weightAttr"),
+          getParameter("xNodeAttr"),
+          getParameter("yNodeAttr"),
+          getParameter("labelAttr"),
+          getParameter("areaMapSrc"),
+          getParameter("shapefile"),
+          getParameter("dbfAreaIdField"),
+          (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
+      );
+    } else {
+      return new GraphMLDatasetSpec(
+          src,
+          getParameter("weightAttr"),
+          getParameter("xNodeAttr"),
+          getParameter("yNodeAttr"),
+          getParameter("labelAttr"),
+          getParameter("areaMapSrc"),
+          getParameter("shapefile"),
+          getParameter("dbfAreaIdField"),
+          (projName != null ? MapProjections.valueOf(projName) : MapProjections.NONE)
+          );
+    }
   }
 
   protected double getDoubleParameter(String name) {

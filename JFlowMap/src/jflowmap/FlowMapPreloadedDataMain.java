@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.XmlDatasetSpecsReader;
 import jflowmap.views.flowmap.FlowMapView;
 
@@ -59,7 +60,7 @@ public class FlowMapPreloadedDataMain extends JFrame {
 
   private final FlowMapView flowMap;
 
-  public FlowMapPreloadedDataMain(List<DatasetSpec> datasetSpecs) {
+  public FlowMapPreloadedDataMain(List<GraphMLDatasetSpec> datasetSpecs) {
     setTitle("FlowMapView");
     flowMap = new FlowMapView(datasetSpecs, true);
 
@@ -135,7 +136,7 @@ public class FlowMapPreloadedDataMain extends JFrame {
 
   public static void main(String[] args) throws IOException {
     logger.info(">>> Starting FlowMapView");
-    final List<DatasetSpec> datasetSpecs =
+    final List<GraphMLDatasetSpec> datasetSpecs =
       XmlDatasetSpecsReader.readDatasetSpecs("data/datasets.xml");
     initLookAndFeel();
     SwingUtilities.invokeLater(new Runnable() {

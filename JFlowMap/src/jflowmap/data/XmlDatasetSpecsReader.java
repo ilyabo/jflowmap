@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import jflowmap.DatasetSpec;
 import jflowmap.geo.MapProjections;
 
 import org.apache.log4j.Logger;
@@ -29,7 +28,7 @@ public class XmlDatasetSpecsReader {
   private XmlDatasetSpecsReader() {
   }
 
-  public static List<DatasetSpec> readDatasetSpecs(String location) throws IOException {
+  public static List<GraphMLDatasetSpec> readDatasetSpecs(String location) throws IOException {
     logger.info("Loading dataset specs from '" + location + "'");
     XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
     try {
@@ -43,9 +42,9 @@ public class XmlDatasetSpecsReader {
     }
   }
 
-  private static List<DatasetSpec> loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
+  private static List<GraphMLDatasetSpec> loadFrom(String name, XmlDocument doc) throws XmlPullParserException, IOException {
 
-    List<DatasetSpec> listOfDatasetSpecs = Lists.newArrayList();
+    List<GraphMLDatasetSpec> listOfDatasetSpecs = Lists.newArrayList();
 
     @SuppressWarnings("unchecked")
     List<XmlElement> listOfDatasetXmlNodes = new Xb1XPath("/datasets/dataset").selectNodes(doc);
@@ -54,7 +53,7 @@ public class XmlDatasetSpecsReader {
 //      String valueFilterMin = datasetNode.getAttributeValue(null, "valueFilterMin");
       String projName = datasetNode.getAttributeValue(null, "mapProjection");
       listOfDatasetSpecs.add(
-          new DatasetSpec(
+          new GraphMLDatasetSpec(
               datasetNode.getAttributeValue(null, "src"),
               datasetNode.getAttributeValue(null, "weightAttr"),
               datasetNode.getAttributeValue(null, "xNodeAttr"),

@@ -20,6 +20,7 @@ package jflowmap.data;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
@@ -30,6 +31,8 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
 
+import com.google.common.collect.Maps;
+
 /**
  * @author Ilya Boyandin
  */
@@ -39,6 +42,7 @@ public class FlowMapGraphBuilder {
   private final Graph graph;
   private final FlowMapAttrSpec attrSpec;
   private HashMap<EdgeKey, Edge> cumulatedEdges;
+  private final Map<String, Node> nodesById = Maps.newHashMap();
 
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
@@ -93,7 +97,12 @@ public class FlowMapGraphBuilder {
       node.setDouble(attrSpec.getYNodeAttr(), position.y());
     }
     node.set(attrSpec.getNodeLabelAttr(), label);
+    nodesById.put(id, node);
     return node;
+  }
+
+  public Edge addEdge(String srcId, String targetId, Iterable<Double> weights) {
+    return addEdge(nodesById.get(srcId), nodesById.get(targetId), weights);
   }
 
   public Edge addEdge(Node from, Node to, Iterable<Double> weights) {

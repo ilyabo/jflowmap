@@ -25,10 +25,10 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jflowmap.AbstractCanvasView;
-import jflowmap.DatasetSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
@@ -59,7 +59,7 @@ public class FlowMapView extends AbstractCanvasView {
     }
   }
 
-  public FlowMapView(List<DatasetSpec> datasetSpecs, boolean showControlPanel) {
+  public FlowMapView(List<GraphMLDatasetSpec> datasetSpecs, boolean showControlPanel) {
 //    if (visualFlowMap == null) {
 //      return;  // an exception occured during the initialization
 //    }
@@ -78,16 +78,16 @@ public class FlowMapView extends AbstractCanvasView {
     return controlPanel.getPanel();
   }
 
-  public void load(DatasetSpec dataset) {
+  public void load(GraphMLDatasetSpec dataset) {
     load(dataset, null);
   }
 
   /**
    * Use when the stats have to be induced and not calculated (e.g. when a global mapping over
    * a number of flow maps for small multiples must be used).
-   * Otherwise, use {@link #load(DatasetSpec)}.
+   * Otherwise, use {@link #load(GraphMLDatasetSpec)}.
    */
-  public void load(DatasetSpec dataset, FlowMapStats stats) {
+  public void load(GraphMLDatasetSpec dataset, FlowMapStats stats) {
     logger.info("> Loading flow map '" + dataset + "'");
     try {
       FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset, stats);

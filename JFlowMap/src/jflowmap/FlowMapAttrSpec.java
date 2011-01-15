@@ -40,7 +40,7 @@ public class FlowMapAttrSpec {
   private final String nodeLabelAttr;
   private final String xNodeAttr, yNodeAttr;
 
-  public FlowMapAttrSpec(List<String> edgeWeightAttrs, String nodeLabelAttr,
+  public FlowMapAttrSpec(Iterable<String> edgeWeightAttrs, String nodeLabelAttr,
       String xNodeAttr, String yNodeAttr) {
     this.edgeWeightAttrs = ImmutableList.copyOf(edgeWeightAttrs);
     this.nodeLabelAttr = nodeLabelAttr;

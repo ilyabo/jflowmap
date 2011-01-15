@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import javax.swing.JComponent;
 
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.views.flowmap.FlowMapView;
 
 /**
@@ -38,7 +39,8 @@ public class FlowMapApplet extends BaseApplet {
 
   @Override
   protected IView createView() {
-    FlowMapView view = new FlowMapView(Arrays.asList(getDatasetSpec()), true);
+    FlowMapView view = new FlowMapView(Arrays.asList(
+        (GraphMLDatasetSpec)getDatasetSpec()), true);
 
     String minw = getParameter("weightFilterMin");
     if (minw != null) {

@@ -52,12 +52,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
-import jflowmap.DatasetSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.MinMax;
 import jflowmap.util.Pair;
 import jflowmap.views.flowmap.FlowMapView;
@@ -160,10 +160,10 @@ public class ControlPanel {
     private TableSorter flowsTableSorter;
     private ClustersTableModel clustersTableModel;
     private VisualFlowMap visualFlowMap;
-    private final List<DatasetSpec> datasetSpecs;
+    private final List<GraphMLDatasetSpec> datasetSpecs;
 
 
-    public ControlPanel(FlowMapView flowMap, List<DatasetSpec> datasetSpecs) {
+    public ControlPanel(FlowMapView flowMap, List<GraphMLDatasetSpec> datasetSpecs) {
         this.jFlowMap = flowMap;
         this.datasetSpecs = datasetSpecs;
         $$$setupUI$$$();
@@ -391,7 +391,7 @@ public class ControlPanel {
         datasetCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (initializing) return;
-                jFlowMap.load((DatasetSpec) datasetCombo.getSelectedItem(), null);
+                jFlowMap.load((GraphMLDatasetSpec) datasetCombo.getSelectedItem(), null);
                 jFlowMap.fitInView();
             }
         });

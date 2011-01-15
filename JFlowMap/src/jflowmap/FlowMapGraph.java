@@ -26,12 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import jflowmap.data.AttrDataTypes;
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.GraphMLReader3;
 import jflowmap.data.MinMax;
 import jflowmap.data.MultiFlowMapStats;
@@ -240,21 +240,34 @@ public class FlowMapGraph {
     return null;
   }
 
-  public static List<String> findEdgeAttrsByPattern(Graph graph, String pattern) {
-    Pattern re = Pattern.compile(pattern);
-    Table et = graph.getEdgeTable();
+  public static Iterable<String> listFlowAttrs(Graph graph) {
     List<String> attrs = Lists.newArrayList();
+    Table et = graph.getEdgeTable();
     for (int i = 0; i < et.getColumnCount(); i++) {
       String cname = et.getColumnName(i);
-      if (re.matcher(cname).matches()) {
-        if (!cname.equals(Graph.DEFAULT_SOURCE_KEY) &&
-            !cname.equals(Graph.DEFAULT_TARGET_KEY)) {
-          attrs.add(cname);
-        }
+      if (!cname.equals(Graph.DEFAULT_SOURCE_KEY) &&
+          !cname.equals(Graph.DEFAULT_TARGET_KEY)) {
+        attrs.add(cname);
       }
     }
     return attrs;
   }
+
+//  public static List<String> findEdgeAttrsByPattern(Graph graph, String pattern) {
+//    Pattern re = Pattern.compile(pattern);
+//    Table et = graph.getEdgeTable();
+//    List<String> attrs = Lists.newArrayList();
+//    for (int i = 0; i < et.getColumnCount(); i++) {
+//      String cname = et.getColumnName(i);
+//      if (re.matcher(cname).matches()) {
+//        if (!cname.equals(Graph.DEFAULT_SOURCE_KEY) &&
+//            !cname.equals(Graph.DEFAULT_TARGET_KEY)) {
+//          attrs.add(cname);
+//        }
+//      }
+//    }
+//    return attrs;
+//  }
 
   public static int findNodeIndexById(Graph graph, String nodeId) {
     for (int i = 0, len = graph.getNodeCount(); i < len; i++) {
@@ -550,11 +563,11 @@ public class FlowMapGraph {
     return loadGraphML(filename, attrSpec, null);
   }
 
-  public static FlowMapGraph loadGraphML(DatasetSpec dataset) throws IOException {
+  public static FlowMapGraph loadGraphML(GraphMLDatasetSpec dataset) throws IOException {
     return loadGraphML(dataset, null);
   }
 
-  public static FlowMapGraph loadGraphML(DatasetSpec dataset, FlowMapStats stats) throws IOException {
+  public static FlowMapGraph loadGraphML(GraphMLDatasetSpec dataset, FlowMapStats stats) throws IOException {
     Iterator<Graph> it = GraphMLReader3.loadGraphs(dataset.getFilename()).iterator();
     if (!it.hasNext()) {
       throw new IOException("No graphs found in '" + dataset.getFilename() + "'");

@@ -79,7 +79,7 @@ public class FlowstratesApplet extends BaseApplet {
       areaMap = new AreaMap("<Empty>", Collections.<Area>emptyList());
     }
     return new FlowstratesView(
-        FlowMapGraph.loadGraphML(getDatasetSpec()),
+        getDatasetSpec().load(),
         areaMap,
         aggBuilder,
         maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)

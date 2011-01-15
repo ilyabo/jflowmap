@@ -38,6 +38,7 @@ import javax.swing.SwingWorker;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.MultiFlowMapStats;
 import jflowmap.geo.MapProjections;
 import jflowmap.util.SwingUtils;
@@ -91,17 +92,17 @@ public class FlowMapToImageRenderer extends JFrame {
   private int paddingX = 5;
   private int paddingY = 5;
 
-  private final Map<String, DatasetSpec> datasets;
+  private final Map<String, GraphMLDatasetSpec> datasets;
 
   private final String outputFileName;
   private boolean showLegend = true;
   private final FlowMapView jFlowMap;
 
-  public FlowMapToImageRenderer(String outputFileName, DatasetSpec datasetSpec, String ... datasetNames) {
+  public FlowMapToImageRenderer(String outputFileName, GraphMLDatasetSpec datasetSpec, String ... datasetNames) {
     this(outputFileName, datasetsMap(datasetSpec, datasetNames));
   }
 
-  public FlowMapToImageRenderer(String outputFileName,  Map<String, DatasetSpec> datasets) {
+  public FlowMapToImageRenderer(String outputFileName,  Map<String, GraphMLDatasetSpec> datasets) {
     this.outputFileName = outputFileName;
     this.datasets = datasets;
 
@@ -207,8 +208,8 @@ public class FlowMapToImageRenderer extends JFrame {
     }
   }
 
-  private static Map<String, DatasetSpec> datasetsMap(DatasetSpec datasetSpec, String... datasetNames) {
-    Map<String, DatasetSpec> datasets = Maps.newLinkedHashMap();
+  private static Map<String, GraphMLDatasetSpec> datasetsMap(GraphMLDatasetSpec datasetSpec, String... datasetNames) {
+    Map<String, GraphMLDatasetSpec> datasets = Maps.newLinkedHashMap();
     for (String name : datasetNames) {
       datasets.put(name, datasetSpec.withFilename(datasetSpec.getFilename().replace("{name}", name)));
     }
@@ -259,7 +260,7 @@ public class FlowMapToImageRenderer extends JFrame {
       if (useGlobalVisualMappings) {
         // calc the global stats
         List<FlowMapGraph> gs = Lists.newArrayList();
-        for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
+        for (Map.Entry<String, GraphMLDatasetSpec> entry : datasets.entrySet()) {
           final String name = entry.getKey();
           progress.setNote("Gathering stats for " + name);
           gs.add(FlowMapGraph.loadGraphML(entry.getValue()));
@@ -278,9 +279,9 @@ public class FlowMapToImageRenderer extends JFrame {
 
 
       int cycle = 0;
-      for (Map.Entry<String, DatasetSpec> entry : datasets.entrySet()) {
+      for (Map.Entry<String, GraphMLDatasetSpec> entry : datasets.entrySet()) {
         final String name = entry.getKey();
-        final DatasetSpec ds = entry.getValue();
+        final GraphMLDatasetSpec ds = entry.getValue();
 
         if (progress.isCanceled()) {
           break;
@@ -445,7 +446,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_Experiment() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
 //            "data/refugees-one-region/refugees-{name}.xml", "ritypnv", "x", "y", "name", "data/refugees/countries-areas.xml"
             "data/refugees/refugees-{name}.xml.gz",
             "ritypnv",
@@ -521,7 +522,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_TLBS_all() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz", null, null, MapProjections.MERCATOR),
 //          eachYear(1993, 2008, +1));
@@ -558,7 +559,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_TLBS_3years() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples_TLBS_3years_global.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz", null, null, MapProjections.MERCATOR),
         "1996", "2000", "2008");
@@ -587,7 +588,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_TLBS_3years_OneRegion() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-eu_global.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
           "data/refugees-eu/refugees-{name}.xml", "ritypnv", "x", "y", "name",
           "data/refugees-eu/countries-areas.xml", null,  null, MapProjections.MERCATOR),
         "1996", "2000", "2008");
@@ -617,7 +618,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_TLBS_bundled() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "bundled.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz", null,  null, MapProjections.MERCATOR),
 //        "1996", "2000", "2008"
@@ -655,7 +656,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_TLBS_clustered() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "clustered.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz", null,  null, MapProjections.MERCATOR),
 //          "1996", "2000", "2008"
@@ -702,7 +703,7 @@ public class FlowMapToImageRenderer extends JFrame {
   public static final FlowMapToImageRenderer createSM_eurovisPoster_6years_global() {
     FlowMapToImageRenderer sm = new FlowMapToImageRenderer(
         "refugees-small-multiples_eurovisPoster_6years_global.png",
-        new DatasetSpec(
+        new GraphMLDatasetSpec(
           "data/refugees/refugees-{name}.xml.gz", "ritypnv", "x", "y", "name",
           "data/refugees/countries-areas.xml.gz", null,  null, MapProjections.MERCATOR),
         "1996", "1998", "2003", "2004", "2005", "2008");
