@@ -27,10 +27,10 @@ import java.util.Map;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.Point;
+import jflowmap.util.IOUtils;
 
 import org.apache.log4j.Logger;
 
-import prefuse.util.io.IOLib;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.collect.Maps;
@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
  */
 public class CsvFlowMapGraphReader {
 
-  public static Logger logger = Logger.getLogger(CsvFlowMapGraphReader.class);
+  private static Logger logger = Logger.getLogger(CsvFlowMapGraphReader.class);
 
   private final String nodeIdAttr, srcNodeAttr, targetNodeAttr;
   private final FlowMapAttrSpec attrSpec;
@@ -67,7 +67,7 @@ public class CsvFlowMapGraphReader {
     return reader.read(nodesLocation, edgesLocation);
   }
 
-  public FlowMapGraph read(String nodesLocation, String edgesLocation) throws IOException {
+  private FlowMapGraph read(String nodesLocation, String edgesLocation) throws IOException {
     builder = new FlowMapGraphBuilder(null, attrSpec);
     parseCsv(nodesLocation, new LineParser() {
       @Override
@@ -97,11 +97,12 @@ public class CsvFlowMapGraphReader {
   }
 
   private void parseCsv(String csvLocation, LineParser lp) throws IOException {
+    logger.info("Parsing CSV '" + csvLocation + "'");
     CSVReader csv = null;
     int lineNum = 1;
     try {
       Map<String, Integer> colsByName = null;
-      csv = new CSVReader(new InputStreamReader(IOLib.streamFromString(csvLocation)));
+      csv = new CSVReader(new InputStreamReader(IOUtils.asInputStream(csvLocation)));
       String[] csvLine;
       while ((csvLine = csv.readNext()) != null) {
         if (lineNum == 1) {
@@ -173,12 +174,15 @@ public class CsvFlowMapGraphReader {
     List<String> list = null;
     CSVReader csv = null;
     try {
-      csv = new CSVReader(new InputStreamReader(IOLib.streamFromString(location)));
+      csv = new CSVReader(new InputStreamReader(IOUtils.asInputStream(location)));
       String[] header = csv.readNext();
       list = new ArrayList<String>(header.length);
       for (String attr : header) {
         list.add(attr);
       }
+    } catch (Exception ioe) {
+      throw new IOException("Error reading from location '" + location + "': " + ioe.getMessage(),
+          ioe);
     } finally {
       try { if (csv != null) csv.close(); } catch (IOException ioe) {}
     }

@@ -39,7 +39,7 @@ import jflowmap.AppPreferences;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.IView;
-import jflowmap.JFlowMapMain;
+import jflowmap.JFlowMapMainFrame;
 import jflowmap.data.GraphMLReader3;
 import jflowmap.geo.MapProjections;
 import jflowmap.ui.PropertiesDialog;
@@ -63,10 +63,10 @@ public class OpenFileAction extends AbstractAction {
   private static final ImageIcon ICON = new ImageIcon(
       OpenFileAction.class.getResource("images/Open16-2.gif"));
 
-  private final JFlowMapMain app;
+  private final JFlowMapMainFrame app;
   private final As target;
 
-  public OpenFileAction(JFlowMapMain app, As target) {
+  public OpenFileAction(JFlowMapMainFrame app, As target) {
     this.app = app;
     this.target = target;
 

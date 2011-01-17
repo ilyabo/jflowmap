@@ -101,10 +101,10 @@ public class FlowMapSummaries {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Adding summary columns to graph '" + flowMapGraph.getId() + "'" +
-      		" for attr: " + weightAttrName);
-    }
+//    if (logger.isDebugEnabled()) {
+//      logger.debug("Adding summary columns to graph '" + flowMapGraph.getId() + "'" +
+//      		" for attr: " + weightAttrName);
+//    }
 
     Map<Integer, Double> outsums = Maps.newHashMap();
     Map<Integer, Double> insums = Maps.newHashMap();

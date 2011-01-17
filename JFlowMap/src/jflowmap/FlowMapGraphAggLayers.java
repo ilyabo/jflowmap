@@ -9,6 +9,7 @@ import java.util.Map;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
 import jflowmap.data.FlowMapStats;
+import jflowmap.views.flowstrates.AggLayersBuilder;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -392,6 +393,14 @@ public class FlowMapGraphAggLayers {
       }
     }
     return null;
+  }
+
+  public static AggLayersBuilder createBuilder(String aggName) {
+    try {
+      return (AggLayersBuilder)Class.forName(aggName).newInstance();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Cannot create aggregator '" + aggName + "'", e);
+    }
   }
 
 }

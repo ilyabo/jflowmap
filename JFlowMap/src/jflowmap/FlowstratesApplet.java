@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import javax.swing.UIManager;
 
+import jflowmap.geo.MapProjections;
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.flowstrates.AggLayersBuilder;
@@ -82,7 +83,7 @@ public class FlowstratesApplet extends BaseApplet {
         getDatasetSpec().load(),
         areaMap,
         aggBuilder,
-        maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples)
+        maxVisibleTuples == null ? -1 : Integer.parseInt(maxVisibleTuples), MapProjections.MERCATOR
     );
   }
 

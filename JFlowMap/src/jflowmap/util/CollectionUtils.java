@@ -22,7 +22,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -47,6 +50,19 @@ public class CollectionUtils {
     List<T> list = Lists.newArrayList(items);
     Collections.sort(list, comp);
     return list;
+  }
+
+  /**
+   * @param pattern Regular expression
+   */
+  public static Iterable<String> filterByPattern(Iterable<String> items, final String pattern) {
+    return Iterables.filter(items, new Predicate<String>() {
+      Pattern p = Pattern.compile(pattern);
+      @Override
+      public boolean apply(String attr) {
+        return p.matcher(attr).matches();
+      }
+    });
   }
 
 }

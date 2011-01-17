@@ -123,7 +123,8 @@ public class FlowMapGraphEdgeAggregator {
   }
 
   public FlowMapGraph aggregate() {
-    logger.info("Aggregating flowMapGraph id='" + flowMapGraph.getId() + "'");
+    logger.info("Aggregating FlowMapGraph id='" + flowMapGraph.getId() + "', group function: " +
+        groupFunction);
     Multimap<Object, Edge> groups = ArrayListMultimap.create();
     for (Edge e : flowMapGraph.edges()) {
       groups.put(groupFunction.apply(e), e);

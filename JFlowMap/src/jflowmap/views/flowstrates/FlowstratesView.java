@@ -49,7 +49,7 @@ import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.data.Nodes;
-import jflowmap.geo.MapProjections;
+import jflowmap.geo.MapProjection;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.Lasso;
@@ -102,6 +102,8 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
+  public static final String VIEW_CONFIG_PROP_MAX_VISIBLE_TUPLES = "view.flowstrates.maxVisibleTuples";
+
   private static final int LEGEND_MARGIN_BOTTOM = 10;
   private static final String CAPTION_NODE_ATTR = "captionNode";
   private static final int CAPTION_HEADER_HEIGHT = 50;
@@ -124,6 +126,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private static final double cellHeight = 40;
 
   private static final boolean SHOW_TIME_CAPTION = false;
+
   private boolean interpolateColors = true;
 
   private final FlowstratesStyle style = new DefaultFlowstratesStyle();
@@ -181,12 +184,14 @@ public class FlowstratesView extends AbstractCanvasView {
   private PPath columnHighlightRect;
   private final float flowtiLinesAlpha = .1f;
 
-  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
-    this(flowMapGraph, areaMap, null, -1);
-  }
+  private MapProjection mapProjection;
+
+//  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
+//    this(flowMapGraph, areaMap, null, -1, MapProjections.MERCATOR);
+//  }
 
   public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap,
-      AggLayersBuilder aggLayersBuilder, int maxVisibleTuples) {
+      AggLayersBuilder aggLayersBuilder, int maxVisibleTuples, MapProjection mapProjection) {
 
     logger.info("Opening flowstrates view");
 
@@ -199,6 +204,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
     this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
+    this.mapProjection = mapProjection;
 
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
@@ -864,8 +870,8 @@ public class FlowstratesView extends AbstractCanvasView {
   // }
 
   private void createAreaMaps(AreaMap areaMap) {
-    sourceVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
-    targetVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, MapProjections.MERCATOR);
+    sourceVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, mapProjection);
+    targetVisualAreaMap = new VisualAreaMap(mapColorScheme, areaMap, mapProjection);
 
     sourcesLayer.addChild(sourceVisualAreaMap);
     targetsLayer.addChild(targetVisualAreaMap);

@@ -1,19 +1,16 @@
 package jflowmap.data;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.geo.MapProjection;
 import jflowmap.geo.MapProjections;
+import jflowmap.util.CollectionUtils;
 
 import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Ilya Boyandin
@@ -67,15 +64,8 @@ public abstract class DatasetSpec {
   public FlowMapAttrSpec createFlowMapAttrsSpecFor(Iterable<String> flowAttrs) {
     logger.info("Creating FlowMapAttrsSpec with attrNamePattern: " + weightAttrNamePattern);
 
-    final Pattern p = Pattern.compile(weightAttrNamePattern);
     Iterable<String> weightAttrs =
-      Iterables.filter(flowAttrs,
-          new Predicate<String>() {
-            @Override
-            public boolean apply(String attr) {
-              return p.matcher(attr).matches();
-            }
-          });
+      CollectionUtils.filterByPattern(flowAttrs, weightAttrNamePattern);
 
     return new FlowMapAttrSpec(weightAttrs, labelNodeAttr, xNodeAttr,  yNodeAttr);
   }

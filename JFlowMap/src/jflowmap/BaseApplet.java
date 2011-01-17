@@ -37,6 +37,8 @@ import at.fhj.utils.swing.JMsgPane;
  */
 public abstract class BaseApplet extends JApplet {
 
+  public static Logger logger = Logger.getLogger(BaseApplet.class);
+
   protected IView view;
 
   protected abstract IView createView() throws Exception;
