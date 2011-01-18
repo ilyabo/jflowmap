@@ -26,13 +26,14 @@ import java.util.Map;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
-import jflowmap.geom.Point;
 import jflowmap.util.IOUtils;
 
 import org.apache.log4j.Logger;
 
+import at.fhj.utils.misc.FileUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 /**
@@ -42,55 +43,52 @@ public class CsvFlowMapGraphReader {
 
   private static Logger logger = Logger.getLogger(CsvFlowMapGraphReader.class);
 
-  private final String nodeIdAttr, srcNodeAttr, targetNodeAttr;
   private final FlowMapAttrSpec attrSpec;
 
   private FlowMapGraphBuilder builder;
 
-  private CsvFlowMapGraphReader(
-      String nodeIdAttr,
-      String srcNodeAttr, String targetNodeAttr,
-      FlowMapAttrSpec attrSpec) {
-    this.nodeIdAttr = nodeIdAttr;
-    this.srcNodeAttr = srcNodeAttr;
-    this.targetNodeAttr = targetNodeAttr;
+  private CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
   }
 
-  public static FlowMapGraph readGraph(
-      String nodesLocation, String edgesLocation,
-      String nodeIdAttr, String srcNodeAttr, String targetNodeAttr,
-      FlowMapAttrSpec attrSpec) throws IOException {
-
-    CsvFlowMapGraphReader reader = new CsvFlowMapGraphReader(
-        nodeIdAttr, srcNodeAttr, targetNodeAttr, attrSpec);
-    return reader.read(nodesLocation, edgesLocation);
+  /**
+   * Calling this method prior to readGraph() might be useful for
+   * initializing FlowMapAttrSpec which can then be passed to readGraph().
+   */
+  public static Iterable<String> readAttrNames(String location) throws IOException {
+    List<String> list = null;
+    CSVReader csv = null;
+    try {
+      csv = new CSVReader(new InputStreamReader(IOUtils.asInputStream(location)));
+      String[] header = csv.readNext();
+      list = new ArrayList<String>(header.length);
+      for (String attr : header) {
+        list.add(attr);
+      }
+    } catch (Exception ioe) {
+      throw new IOException(
+          "Error reading from location '" + location + "': " + ioe.getMessage(), ioe);
+    } finally {
+      try { if (csv != null) csv.close(); } catch (IOException ioe) {}
+    }
+    return list;
   }
 
-  private FlowMapGraph read(String nodesLocation, String edgesLocation) throws IOException {
-    builder = new FlowMapGraphBuilder(null, attrSpec);
+  public static FlowMapGraph readFlowMapGraph(String nodesLocation, String flowsLocation,
+      FlowMapAttrSpec attrSpec) throws IOException {
+    return new CsvFlowMapGraphReader(attrSpec).read(nodesLocation, flowsLocation);
+  }
+
+  private FlowMapGraph read(String nodesLocation, String flowsLocation) throws IOException {
+
+    builder = new FlowMapGraphBuilder(FileUtils.getFilenameOnly(flowsLocation), attrSpec);
+
     parseCsv(nodesLocation, new LineParser() {
-      @Override
-      public void apply(String[] csvLine, Map<String, Integer> colsByName) throws IOException {
-        builder.addNode(
-            attrValue(nodeIdAttr, csvLine, colsByName),
-            new Point(
-                parseDouble(attrValue(attrSpec.getXNodeAttr(), csvLine, colsByName)),
-                parseDouble(attrValue(attrSpec.getYNodeAttr(), csvLine, colsByName))),
-            attrValue(attrSpec.getNodeLabelAttr(), csvLine, colsByName)
-        );
-      }
+      public void apply(Map<String, String> attrs) { builder.addNode(attrs); }
     });
 
-    parseCsv(edgesLocation, new LineParser() {
-      @Override
-      public void apply(String[] csvLine, Map<String, Integer> colsByName) throws IOException {
-        builder.addEdge(
-            attrValue(srcNodeAttr, csvLine, colsByName),
-            attrValue(targetNodeAttr, csvLine, colsByName),
-            weightAttrValues(attrSpec.getEdgeWeightAttrs(), csvLine, colsByName)
-        );
-      }
+    parseCsv(flowsLocation, new LineParser() {
+      public void apply(Map<String, String> attrs) { builder.addEdge(attrs); }
     });
 
     return builder.build();
@@ -110,7 +108,7 @@ public class CsvFlowMapGraphReader {
           colsByName = createColsByNameMap(csvLine);
         } else {
           // parse the rest of the lines
-          lp.apply(csvLine, colsByName);
+          lp.apply(asAttrValuesMap(csvLine, colsByName));
         }
         lineNum++;
       }
@@ -126,40 +124,15 @@ public class CsvFlowMapGraphReader {
     }
   }
 
+  private Map<String, String> asAttrValuesMap(final String[] csvLine,
+      Map<String, Integer> colsByName) {
+    return Maps.transformValues(colsByName, new Function<Integer, String>() {
+      public String apply(Integer col) { return csvLine[col]; }
+    });
+  }
+
   private interface LineParser {
-    void apply(String[] csvLine, Map<String, Integer> colsByName) throws IOException;
-  }
-
-  private double parseDouble(String str) throws IOException {
-    try {
-      if (str.trim().length() == 0) {
-        return Double.NaN;
-      }
-      return Double.parseDouble(str);
-    } catch (NumberFormatException nfe) {
-      throw new IOException("Cannot parse number '" + str + "'");
-    }
-  }
-
-  private String attrValue(String attrName, String[] csvLine, Map<String, Integer> colsByName)
-    throws IOException {
-    Integer col = colsByName.get(attrName);
-    if (col == null) {
-      throw new IOException("Column '"+attrName+"' not found in CSV file");
-    }
-    if (col >= csvLine.length) {
-      throw new IOException("No value for column '"+attrName+"'");
-    }
-    return csvLine[col];
-  }
-
-  private Iterable<Double> weightAttrValues(List<String> attrs, String[] csvLine,
-      Map<String, Integer> colsByName) throws IOException {
-    List<Double> vals = new ArrayList<Double>(attrs.size());
-    for (String attr : attrs) {
-      vals.add(parseDouble(attrValue(attr, csvLine, colsByName)));
-    }
-    return vals;
+    void apply(Map<String, String> attrValues) throws IOException;
   }
 
   private Map<String, Integer> createColsByNameMap(String[] line) {
@@ -168,25 +141,6 @@ public class CsvFlowMapGraphReader {
       map.put(line[i], i);
     }
     return map;
-  }
-
-  public static Iterable<String> readAttrNames(String location) throws IOException {
-    List<String> list = null;
-    CSVReader csv = null;
-    try {
-      csv = new CSVReader(new InputStreamReader(IOUtils.asInputStream(location)));
-      String[] header = csv.readNext();
-      list = new ArrayList<String>(header.length);
-      for (String attr : header) {
-        list.add(attr);
-      }
-    } catch (Exception ioe) {
-      throw new IOException("Error reading from location '" + location + "': " + ioe.getMessage(),
-          ioe);
-    } finally {
-      try { if (csv != null) csv.close(); } catch (IOException ioe) {}
-    }
-    return list;
   }
 
 }

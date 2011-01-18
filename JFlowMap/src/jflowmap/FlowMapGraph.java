@@ -70,7 +70,9 @@ public class FlowMapGraph {
 
   public static final Class<Double> WEIGHT_COLUMNS_DATA_TYPE = double.class;
   public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
-  public static final String GRAPH_NODE_TABLE_COLUMN_NAME__ID = "_node_id";
+  public static final String GRAPH_NODE_ID_COLUMN = "_node_id";
+  public static final String GRAPH_EDGE_SOURCE_NODE_COLUMN = Graph.DEFAULT_SOURCE_KEY;
+  public static final String GRAPH_EDGE_TARGET_NODE_COLUMN = Graph.DEFAULT_TARGET_KEY;
 
   private static final String SUBDIVISION_POINTS_ATTR_NAME = "_subdivp";
 
@@ -96,17 +98,25 @@ public class FlowMapGraph {
 //    List<String> weightAttrs = Lists.newArrayList(attrSpec.getEdgeWeightAttrNames());
 //    Collections.sort(weightAttrs);
 
-    List<String> weightAttrs = attrSpec.getEdgeWeightAttrs();
+    List<String> weightAttrs = attrSpec.getFlowWeightAttrs();
     if (weightAttrs.size() == 0) {
       throw new IllegalArgumentException("FlowMapGraph must have at least one weight attr. " +
       		"Available columns: " + Iterables.toString(Tables.columns(graph.getEdgeTable())));
     }
 
-    logger.info("Creating a FlowMapGraph with edge weight attrs: " + weightAttrs);
+    logger.info("Creating FlowMapGraph '" + getGraphId(graph) + "' with " +
+                graph.getNodeTable().getRowCount() +  " nodes" +
+                ", " + graph.getEdgeTable().getRowCount() + " flows" +
+                ", and " + weightAttrs.size() + " flow weight attrs");
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("FlowMapGraph flow weight attrs: " + weightAttrs);
+    }
+
     if (stats == null) {
       //stats = EdgeListFlowMapStats.createFor(edges(), attrSpec);
       stats = MultiFlowMapStats.createFor(this);
-      logger.info("Creating edge weight stats: " + stats.getEdgeWeightStats());
+      logger.info("Flow weight stats: " + stats.getEdgeWeightStats());
     }
     this.stats = stats;
   }
@@ -169,18 +179,18 @@ public class FlowMapGraph {
   }
 
   public String getXNodeAttr() {
-    return attrSpec.getXNodeAttr();
+    return attrSpec.getNodeLonAttr();
   }
 
   public String getYNodeAttr() {
-    return attrSpec.getYNodeAttr();
+    return attrSpec.getNodeLatAttr();
   }
 
   /**
    * @return An immutable list which can thus be reused without defensive copying.
    */
   public List<String> getEdgeWeightAttrs() {
-    return attrSpec.getEdgeWeightAttrs();
+    return attrSpec.getFlowWeightAttrs();
   }
 
   public int getEdgeWeightAttrsCount() {
@@ -203,13 +213,20 @@ public class FlowMapGraph {
     return graph;
   }
 
-  // TODO: create class FlowMapGraph encapsulating Graph and move these methods there
   public static String getGraphId(Graph graph) {
     return (String) graph.getClientProperty(GRAPH_CLIENT_PROPERTY__ID);
   }
 
-  public static void setGraphId(Graph graph, String name) {
-    graph.putClientProperty(GRAPH_CLIENT_PROPERTY__ID, name);
+  public String getGraphId() {
+    return getGraphId(graph);
+  }
+
+  public void setGraphId(String id) {
+    setGraphId(graph, id);
+  }
+
+  public static void setGraphId(Graph graph, String id) {
+    graph.putClientProperty(GRAPH_CLIENT_PROPERTY__ID, id);
   }
 
   public String getNodeId(Node node) {
@@ -217,7 +234,7 @@ public class FlowMapGraph {
   }
 
   public static String getIdOfNode(Node node) {
-    return node.getString(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
+    return node.getString(GRAPH_NODE_ID_COLUMN);
   }
 
   public String getNodeLabel(Node node) {
@@ -321,8 +338,8 @@ public class FlowMapGraph {
       return true;
     }
     return GeomUtils.isSelfLoopEdge(
-        src.getDouble(attrSpec.getXNodeAttr()), target.getDouble(attrSpec.getXNodeAttr()),
-        src.getDouble(attrSpec.getYNodeAttr()), target.getDouble(attrSpec.getYNodeAttr())
+        src.getDouble(attrSpec.getNodeLonAttr()), target.getDouble(attrSpec.getNodeLonAttr()),
+        src.getDouble(attrSpec.getNodeLatAttr()), target.getDouble(attrSpec.getNodeLatAttr())
     );
   }
 
@@ -366,14 +383,14 @@ public class FlowMapGraph {
 
   public Point getEdgeSourcePoint(Edge edge) {
     Node src = edge.getSourceNode();
-    return new Point(src.getDouble(attrSpec.getXNodeAttr()),
-        src.getDouble(attrSpec.getYNodeAttr()));
+    return new Point(src.getDouble(attrSpec.getNodeLonAttr()),
+        src.getDouble(attrSpec.getNodeLatAttr()));
   }
 
   public Point getEdgeTargetPoint(Edge edge) {
     Node target = edge.getTargetNode();
-    return new Point(target.getDouble(attrSpec.getXNodeAttr()),
-        target.getDouble(attrSpec.getYNodeAttr()));
+    return new Point(target.getDouble(attrSpec.getNodeLonAttr()),
+        target.getDouble(attrSpec.getNodeLatAttr()));
   }
 
 
@@ -568,7 +585,7 @@ public class FlowMapGraph {
   }
 
   public static FlowMapGraph loadGraphML(GraphMLDatasetSpec dataset, FlowMapStats stats) throws IOException {
-    Iterator<Graph> it = GraphMLReader3.loadGraphs(dataset.getFilename()).iterator();
+    Iterator<Graph> it = GraphMLReader3.readGraphs(dataset.getFilename()).iterator();
     if (!it.hasNext()) {
       throw new IOException("No graphs found in '" + dataset.getFilename() + "'");
     }
@@ -696,7 +713,7 @@ public class FlowMapGraph {
 
     String prevAttr = null;
     for (String attr : getEdgeWeightAttrs()) {
-      String diffAttr = getAttrSpec().getEdgeWeightDiffAttr(attr);
+      String diffAttr = getAttrSpec().getFlowWeightDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
 
@@ -722,7 +739,7 @@ public class FlowMapGraph {
 
     String prevAttr = null;
     for (String attr : getEdgeWeightAttrs()) {
-      String diffAttr = getAttrSpec().getEdgeWeightRelativeDiffAttr(attr);
+      String diffAttr = getAttrSpec().getFlowWeightRelativeDiffAttr(attr);
 
       graph.getEdges().addColumn(diffAttr, double.class);
 
@@ -782,11 +799,11 @@ public class FlowMapGraph {
   public List<String> getAggregatableNodeColumns() {
     if (aggregatableNodeColumns == null) {
       List<String> columns = Lists.newArrayList();
-      columns.add(GRAPH_NODE_TABLE_COLUMN_NAME__ID);
+      columns.add(GRAPH_NODE_ID_COLUMN);
       columns.add(attrSpec.getNodeLabelAttr());
       if (attrSpec.hasNodePositions()) {
-        columns.add(attrSpec.getXNodeAttr());
-        columns.add(attrSpec.getYNodeAttr());
+        columns.add(attrSpec.getNodeLonAttr());
+        columns.add(attrSpec.getNodeLatAttr());
       }
       aggregatableNodeColumns = ImmutableList.copyOf(columns);
     }
@@ -821,11 +838,11 @@ public class FlowMapGraph {
   }
 
   public List<String> getEdgeWeightDiffAttr() {
-    return getAttrSpec().getEdgeWeightDiffAttrs();
+    return getAttrSpec().getFlowWeightDiffAttrs();
   }
 
   public List<String> getEdgeWeightRelativeDiffAttrNames() {
-    return getAttrSpec().getEdgeWeightRelativeDiffAttrs();
+    return getAttrSpec().getFlowWeightRelativeDiffAttrs();
   }
 
   private Edge eddeForSimilaritySorting;

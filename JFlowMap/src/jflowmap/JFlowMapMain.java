@@ -53,62 +53,81 @@ public class JFlowMapMain {
       JFlowMapMain.class.getResource("resources/loading.gif"));
 
   public static void main(String[] args) throws IOException {
-    logger.info(">>> Starting JFlowMap");
-
-    if (args.length >= 2  &&  args[0].equals("--fullscreen")) {
-
-      final String configLocation = args[1];
-
-      initSystemLF();
-
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          final JFrame frame = new JFrame("JFlowMap: " + configLocation);
-          SwingUtils.makeFullscreen(frame);
-          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-          frame.getContentPane().setBackground(Color.white);
-
-          JLabel loadingLabel = new JLabel(" Opening '" +
-              FileUtils.getFilename(configLocation) + "'...", LOADING_ICON, JLabel.CENTER);
-          frame.add(loadingLabel);
-
-          IView view = null;
-          try {
-            view = (IView) Worker.post(new Task() {
-              @Override
-              public Object run() throws Exception {
-                ViewConfig config = ViewConfig.load(configLocation);
-                return config.createView();
-              }
-            });
-          } catch (Exception ex) {
-            logger.error("Cannot open view", ex);
-            JMsgPane.showProblemDialog(frame, ex);
-            System.exit(0);
-          }
-
-          frame.remove(loadingLabel);
-          frame.add(view.getViewComponent(), BorderLayout.CENTER);
-          JComponent controls = view.getControls();
-          if (controls != null) {
-            frame.add(controls, BorderLayout.NORTH);
-          }
-          frame.setVisible(true);
-        }
-      });
-
-
-    } else {
-      if (!IS_OS_MAC) {
-        initNimbusLF();
-      }
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          new JFlowMapMainFrame().setVisible(true);
-        }
-      });
+    if (args.length == 0) {
+      System.out.println("Usage: java -jar jflowmap.jar [--fullscreen] <view-config.jfmv>");
+      System.exit(0);
     }
+
+    final String configLocation;
+    final boolean fullscreenMode;
+    if (args[0].equals("--fullscreen")) {
+      fullscreenMode = true;
+      configLocation = args[1];
+    } else {
+      fullscreenMode = false;
+      configLocation = args[0];
+    }
+
+
+    logger.info(">>> Starting JFlowMap");
+    initSystemLF();
+
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        final JFrame frame = new JFrame("JFlowMap: " + configLocation);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setBackground(Color.white);
+
+        if (fullscreenMode) {
+          SwingUtils.makeFullscreen(frame);
+        } else {
+          SwingUtils.maximize(frame);
+        }
+
+
+        JLabel loadingLabel = new JLabel(" Opening '" +
+            FileUtils.getFilename(configLocation) + "'...", LOADING_ICON, JLabel.CENTER);
+        frame.add(loadingLabel);
+
+        frame.setVisible(true);
+
+        IView view = null;
+        try {
+          view = (IView) Worker.post(new Task() {
+            @Override
+            public Object run() throws Exception {
+              ViewConfig config = ViewConfig.load(configLocation);
+              return config.createView();
+            }
+          });
+        } catch (Exception ex) {
+          logger.error("Cannot open view", ex);
+          JMsgPane.showProblemDialog(frame, ex);
+          System.exit(0);
+        }
+
+        frame.remove(loadingLabel);
+        frame.add(view.getViewComponent(), BorderLayout.CENTER);
+        JComponent controls = view.getControls();
+        if (controls != null) {
+          frame.add(controls, BorderLayout.NORTH);
+        }
+      }
+    });
+
+
+//    showMainFrame();
+  }
+
+  private static void showMainFrame() {
+    if (!IS_OS_MAC) {
+      initNimbusLF();
+    }
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        new JFlowMapMainFrame().setVisible(true);
+      }
+    });
   }
 
   private static void initSystemLF() {

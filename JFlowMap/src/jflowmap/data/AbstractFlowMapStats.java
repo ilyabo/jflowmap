@@ -69,10 +69,10 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
             for (Edge edge : edges()) {
               Node src = edge.getSourceNode();
               Node target = edge.getTargetNode();
-              double x1 = src.getDouble(attrSpec.getXNodeAttr());
-              double y1 = src.getDouble(attrSpec.getYNodeAttr());
-              double x2 = target.getDouble(attrSpec.getXNodeAttr());
-              double y2 = target.getDouble(attrSpec.getYNodeAttr());
+              double x1 = src.getDouble(attrSpec.getNodeLonAttr());
+              double y1 = src.getDouble(attrSpec.getNodeLatAttr());
+              double x2 = target.getDouble(attrSpec.getNodeLonAttr());
+              double y2 = target.getDouble(attrSpec.getNodeLatAttr());
               edgeLengths.add(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
             }
             return MinMax.createFor(edgeLengths.iterator());

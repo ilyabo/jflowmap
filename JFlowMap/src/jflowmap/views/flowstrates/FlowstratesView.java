@@ -267,7 +267,7 @@ public class FlowstratesView extends AbstractCanvasView {
     createAreaMaps(areaMap);
     heatmapNode = new PNode();
     heatmapLayer.addChild(heatmapNode);
-    logger.info("Finished creating area maps");
+    logger.info("Done (creating area maps)");
 
     mapToMatrixLinesLayer = new PNode();
     getCamera().addChild(mapToMatrixLinesLayer);
@@ -275,7 +275,7 @@ public class FlowstratesView extends AbstractCanvasView {
     createLegend();
     logger.info("Creating heatmap");
     renewHeatmap();
-    logger.info("Finished creating heatmap");
+    logger.info("Done (creating heatmap)");
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {

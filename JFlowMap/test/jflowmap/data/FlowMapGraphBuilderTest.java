@@ -1,6 +1,9 @@
 package jflowmap.data;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 
@@ -16,7 +19,8 @@ public class FlowMapGraphBuilderTest {
 
   public static FlowMapGraph buildTestFlowMapGraph() {
     FlowMapGraphBuilder builder =
-      new FlowMapGraphBuilder("testGraph", new FlowMapAttrSpec("value", "label"));
+      new FlowMapGraphBuilder("testGraph", new FlowMapAttrSpec(
+          Arrays.asList("value"), "label", null, null));
 
     Node node1 = builder.addNode("1", "Node1");
     Node node2 = builder.addNode("2", "Node2");

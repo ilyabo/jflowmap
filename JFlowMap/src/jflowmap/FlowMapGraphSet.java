@@ -120,7 +120,7 @@ public class FlowMapGraphSet {
 
   public static FlowMapGraphSet loadGraphML(String filename, FlowMapAttrSpec attrSpec)
       throws IOException {
-    return new FlowMapGraphSet(GraphMLReader3.loadGraphs(filename), attrSpec);
+    return new FlowMapGraphSet(GraphMLReader3.readGraphs(filename), attrSpec);
   }
 
   /**
@@ -133,7 +133,7 @@ public class FlowMapGraphSet {
       throws IOException {
     return ImmutableList.copyOf(
         Iterables.transform(
-            GraphMLReader3.loadGraphs(filename), FlowMapGraph.funcGraphToFlowMapGraph(attrSpec, stats)));
+            GraphMLReader3.readGraphs(filename), FlowMapGraph.funcGraphToFlowMapGraph(attrSpec, stats)));
   }
 
   /**

@@ -96,7 +96,7 @@ class GraphMLReader2 {
   private void readKeys(XmlElement root) throws IOException {
     // Read the attr definitions
     nodeSchema = new Schema();
-    nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
+    nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_ID_COLUMN, String.class);
     edgeSchema = new Schema();
     edgeSchema.addColumn(SRC, int.class);
     edgeSchema.addColumn(TRG, int.class);
@@ -156,7 +156,7 @@ class GraphMLReader2 {
         String nodeId = nodeElt.getAttributeValue(null, "id");
         nodeIdToIndex.put(nodeId, ri);
 
-        nodeTable.set(ri, FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID, nodeId);
+        nodeTable.set(ri, FlowMapGraph.GRAPH_NODE_ID_COLUMN, nodeId);
 
         readData(nodeElt, nodeTable, ri);
 

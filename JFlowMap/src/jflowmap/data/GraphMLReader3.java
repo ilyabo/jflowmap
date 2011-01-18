@@ -30,6 +30,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 
 import org.apache.log4j.Logger;
@@ -58,10 +59,10 @@ public class GraphMLReader3 {
 
   private static final String DEFAULT_CHARSET = "utf-8";
   public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
-  private static final String SRC = Graph.DEFAULT_SOURCE_KEY;
-  private static final String TRG = Graph.DEFAULT_TARGET_KEY;
-  private static final String SRCID = SRC + "_id";
-  private static final String TRGID = TRG + "_id";
+  private static final String SRC = FlowMapGraph.GRAPH_EDGE_SOURCE_NODE_COLUMN;
+  private static final String TRG = FlowMapGraph.GRAPH_EDGE_TARGET_NODE_COLUMN;
+  private static final String SRC_TEMP_ID = SRC + "_id";
+  private static final String TRG_TEMP_ID = TRG + "_id";
 
   private static final String NAMESPACE = null; //  "http://graphml.graphdrawing.org/xmlns"
 
@@ -94,24 +95,28 @@ public class GraphMLReader3 {
     return graphs;
   }
 
-  public static Iterable<Graph> loadGraphs(String filename) throws IOException {
+  public static Iterable<Graph> readGraphs(String filename) throws IOException {
     return new GraphMLReader3().readFromLocation(filename);
   }
 
-  public static Graph loadFirstGraph(String filename) throws IOException {
-    Iterator<Graph> it = loadGraphs(filename).iterator();
+  public static Graph readFirstGraph(String filename) throws IOException {
+    Iterator<Graph> it = readGraphs(filename).iterator();
     if (!it.hasNext()) {
       throw new IOException("No graphs found in " + filename);
     }
     return it.next();
   }
 
+  public static FlowMapGraph readFlowMapGraph(String location, FlowMapAttrSpec attrSpec) throws IOException {
+    return new FlowMapGraph(readFirstGraph(location), attrSpec);
+  }
+
   public static boolean isNodeSelfAttr(String attrName) {
-    return !attrName.equals(FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID);
+    return !attrName.equals(FlowMapGraph.GRAPH_NODE_ID_COLUMN);
   }
 
   public static boolean isEdgeSelfAttr(String attrName) {
-    return !attrName.equals(SRCID)  &&  !attrName.equals(TRGID);
+    return !attrName.equals(SRC_TEMP_ID)  &&  !attrName.equals(TRG_TEMP_ID);
   }
 
   public Iterable<Graph> readFromStream(InputStream is) throws IOException {
@@ -155,7 +160,7 @@ public class GraphMLReader3 {
               String nodeId = in.getAttributeValue(NAMESPACE, "id");
               nodeIdToIndex.put(nodeId, ri);
 
-              nodeTable.set(ri, FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID, nodeId);
+              nodeTable.set(ri, FlowMapGraph.GRAPH_NODE_ID_COLUMN, nodeId);
 
               readData(in, nodeTable, ri, "node");
 
@@ -163,8 +168,8 @@ public class GraphMLReader3 {
 
               int ri = edgeTable.addRow();
 
-              edgeTable.setString(ri, SRCID, in.getAttributeValue(NAMESPACE, "source"));
-              edgeTable.setString(ri, TRGID, in.getAttributeValue(NAMESPACE, "target"));
+              edgeTable.setString(ri, SRC_TEMP_ID, in.getAttributeValue(NAMESPACE, "source"));
+              edgeTable.setString(ri, TRG_TEMP_ID, in.getAttributeValue(NAMESPACE, "target"));
 
               readData(in, edgeTable, ri, "edge");
             }
@@ -181,7 +186,7 @@ public class GraphMLReader3 {
               while (rows.hasNext()) {
                 int ri = rows.nextInt();
 
-                String src = edgeTable.getString(ri, SRCID);
+                String src = edgeTable.getString(ri, SRC_TEMP_ID);
                 if (!nodeIdToIndex.containsKey(src)) {
                   throw new IOException(
                     "Tried to create edge with source node id=" + src
@@ -189,7 +194,7 @@ public class GraphMLReader3 {
                 }
                 edgeTable.setInt(ri, SRC, nodeIdToIndex.get(src));
 
-                String trg = edgeTable.getString(ri, TRGID);
+                String trg = edgeTable.getString(ri, TRG_TEMP_ID);
                 if (!nodeIdToIndex.containsKey(trg)) {
                   throw new IOException(
                     "Tried to create edge with target node id=" + trg
@@ -197,8 +202,8 @@ public class GraphMLReader3 {
                 }
                 edgeTable.setInt(ri, TRG, nodeIdToIndex.get(trg));
               }
-              edgeTable.removeColumn(SRCID);
-              edgeTable.removeColumn(TRGID);
+              edgeTable.removeColumn(SRC_TEMP_ID);
+              edgeTable.removeColumn(TRG_TEMP_ID);
 
 
               // Finally, create the graph
@@ -265,12 +270,12 @@ public class GraphMLReader3 {
 
   private void initSchemas() {
     nodeSchema = new Schema();
-    nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_TABLE_COLUMN_NAME__ID, String.class);
+    nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_ID_COLUMN, String.class);
     edgeSchema = new Schema();
     edgeSchema.addColumn(SRC, int.class);
     edgeSchema.addColumn(TRG, int.class);
-    edgeSchema.addColumn(SRCID, String.class);
-    edgeSchema.addColumn(TRGID, String.class);
+    edgeSchema.addColumn(SRC_TEMP_ID, String.class);
+    edgeSchema.addColumn(TRG_TEMP_ID, String.class);
   }
 
   private void readKey(XMLStreamReader in) throws IOException {

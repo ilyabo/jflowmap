@@ -39,6 +39,7 @@ import jflowmap.views.flowstrates.FlowstratesView;
 
 import org.apache.log4j.Logger;
 
+import prefuse.data.Graph;
 import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.common.collect.Lists;
@@ -53,7 +54,7 @@ public class ViewConfig {
   public static final String PROP_VIEW = "view";
 
   public static final String PROP_DATA = "data";
-  public static final String PROP_DATA_AGGREGATOR = PROP_DATA + ".aggregator";
+
   public static final String PROP_DATA_CSV = PROP_DATA + ".csv";
   public static final String PROP_DATA_CSV_FLOWS = PROP_DATA_CSV + ".flows";
   public static final String PROP_DATA_CSV_NODES = PROP_DATA_CSV + ".nodes";
@@ -71,6 +72,11 @@ public class ViewConfig {
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT = PROP_DATA_ATTRS_FLOW + ".weight";
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_RE = PROP_DATA_ATTRS_FLOW_WEIGHT + ".re";
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_LIST = PROP_DATA_ATTRS_FLOW_WEIGHT + ".csvList";
+
+  public static final String PROP_DATA_GRAPHML = PROP_DATA + ".graphml";
+  public static final String PROP_DATA_GRAPHML_SRC = PROP_DATA_GRAPHML + ".src";
+
+  public static final String PROP_DATA_AGGREGATOR = PROP_DATA + ".aggregator";
 
   public static final String PROP_MAP = "map";
   public static final String PROP_MAP_PROJECTION = PROP_MAP + ".projection";
@@ -99,9 +105,20 @@ public class ViewConfig {
     }
   }
 
+  public String getLocation() {
+    return location;
+  }
+
   public IView createView() throws IOException {
-    logger.info("Creating " + viewType + " view with " + dataLoader + " data loader");
-    return viewType.createView(this, dataLoader.load(this), createMap());
+    logger.info("Creating " + viewType + " view" +
+    		" using " + dataLoader + " data loader" +
+    	        " and " + (mapLoader != null ? mapLoader : "no") + " map loader");
+    try {
+      return viewType.createView(this, dataLoader.load(this), createMap());
+    } catch (Exception e) {
+      error(e, location);  // will throw an IOException
+      return null;
+    }
   }
 
   private AreaMap createMap() throws IOException {
@@ -113,12 +130,12 @@ public class ViewConfig {
   }
 
   public static ViewConfig load(String location) throws IOException {
-    logger.info("Loading config from '" + location + "'");
+    logger.info("Loading view config '" + location + "'");
     try {
       ViewConfig config = new ViewConfig(loadProps(location), location);
       return config;
     } catch (Exception e) {
-      error(e, location);  // will throw an exception
+      error(e, location);  // will throw an IOException
       return null;
     }
   }
@@ -159,6 +176,10 @@ public class ViewConfig {
     return PropUtils.getString(props, propName);
   }
 
+  public String getString(String propName, boolean require) {
+    return require ? PropUtils.require(props, propName) : getString(propName);
+  }
+
   public String getStringOrElse(String propName, String defaultValue) {
     return PropUtils.getStringOrElse(props, propName, defaultValue);
   }
@@ -170,30 +191,59 @@ public class ViewConfig {
   enum DataLoaders {
     CSV {
       @Override
-      public Object load(ViewConfig config) throws IOException {
-        return CsvFlowMapGraphReader.readGraph(
+      public Object load(final ViewConfig config) throws IOException {
+        return CsvFlowMapGraphReader.readFlowMapGraph(
             config.require(PROP_DATA_CSV_NODES_SRC),
             config.require(PROP_DATA_CSV_FLOWS_SRC),
-            config.require(PROP_DATA_ATTRS_NODE_ID),
-            config.require(PROP_DATA_ATTRS_FLOW_ORIGIN),
-            config.require(PROP_DATA_ATTRS_FLOW_DEST),
-            new FlowMapAttrSpec(
-                weightAttrs(config),
-                config.require(PROP_DATA_ATTRS_NODE_LABEL),
-                config.require(PROP_DATA_ATTRS_NODE_LON),
-                config.require(PROP_DATA_ATTRS_NODE_LAT)));
+            createFlowMapAttrSpec(
+                config, true,
+                new LazyGet<Iterable<String>>() {
+                  @Override
+                  public Iterable<String> get() throws IOException {
+                    return CsvFlowMapGraphReader.readAttrNames(
+                        config.require(PROP_DATA_CSV_FLOWS_SRC));
+                  }
+                }
+            ));
       }
     },
     GRAPHML {
       @Override
-      public Object load(ViewConfig config) {
-        return null;
+      public Object load(ViewConfig config) throws IOException {
+        final Graph graph = GraphMLReader3.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
+
+        return GraphMLReader3.readFlowMapGraph(
+            config.require(PROP_DATA_GRAPHML_SRC),
+            createFlowMapAttrSpec(
+                config, false,
+                new LazyGet<Iterable<String>>() {
+                    @Override
+                    public Iterable<String> get() { return FlowMapGraph.listFlowAttrs(graph); }
+                }));
       }
     };
 
+    interface LazyGet<T> {
+      T get() throws IOException;
+    }
+
     public abstract Object load(ViewConfig config) throws IOException;
 
-    private static Iterable<String> weightAttrs(ViewConfig config) throws IOException {
+    private static FlowMapAttrSpec createFlowMapAttrSpec(ViewConfig config,
+        boolean requireNodeIdAttrs, LazyGet<Iterable<String>> getFlowAttrs) throws IOException {
+      return new FlowMapAttrSpec(
+          config.getString(PROP_DATA_ATTRS_FLOW_ORIGIN, requireNodeIdAttrs),
+          config.getString(PROP_DATA_ATTRS_FLOW_DEST, requireNodeIdAttrs),
+          weightAttrs(config, getFlowAttrs),
+          config.getString(PROP_DATA_ATTRS_NODE_ID, requireNodeIdAttrs),
+          config.require(PROP_DATA_ATTRS_NODE_LABEL),
+          config.require(PROP_DATA_ATTRS_NODE_LON),
+          config.require(PROP_DATA_ATTRS_NODE_LAT));
+    }
+
+    private static Iterable<String> weightAttrs(ViewConfig config, LazyGet<Iterable<String>> getFlowAttrs)
+      throws IOException
+    {
       Pair<String, String> nameVal =
         config.requireOneOf(PROP_DATA_ATTRS_FLOW_WEIGHT_LIST, PROP_DATA_ATTRS_FLOW_WEIGHT_RE);
 
@@ -203,9 +253,7 @@ public class ViewConfig {
       if (propName.equals(PROP_DATA_ATTRS_FLOW_WEIGHT_LIST)) {
         return Lists.<String>newArrayList(new CSVParser().parseLine(propValue));
       } else if (propName.equals(PROP_DATA_ATTRS_FLOW_WEIGHT_RE)) {
-        Iterable<String> allAttrs =
-          CsvFlowMapGraphReader.readAttrNames(config.require(PROP_DATA_CSV_FLOWS_SRC));
-        return CollectionUtils.filterByPattern(allAttrs, propValue);
+        return CollectionUtils.filterByPattern(getFlowAttrs.get(), propValue);
       } else {
         throw new UnsupportedOperationException("Unsupported property " + propName);
       }
@@ -263,7 +311,7 @@ public class ViewConfig {
       public AreaMap load(ViewConfig config) throws IOException {
         return AreaMap.asAreaMap(ShapefileReader.loadShapefile(
             config.require(PROP_MAP_SHAPEFILE_SRC),
-            config.require(PROP_MAP_SHAPEFILE_DBFAREAIDFIELD)));
+            config.getString(PROP_MAP_SHAPEFILE_DBFAREAIDFIELD)));
       }
     }
     ;

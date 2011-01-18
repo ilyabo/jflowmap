@@ -18,7 +18,10 @@
 
 package jflowmap.util;
 
-import com.google.common.collect.Iterables;
+import java.util.Collection;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Doubles;
 
 /**
  * @author Ilya Boyandin
@@ -55,10 +58,11 @@ public class ArrayUtils {
   }
 
   public static double[] toArrayOfPrimitives(Iterable<Double> data) {
-    double[] a = new double[Iterables.size(data)];
-    int i = 0;
-    for (Double v : data) { a[i++] = v; }
-    return a;
+    if (data instanceof Collection) {
+      return Doubles.toArray((Collection<Double>)data);
+    } else {
+      return Doubles.toArray(ImmutableList.copyOf(data));
+    }
   }
 
 }

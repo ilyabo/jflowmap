@@ -38,8 +38,9 @@ public class CsvDatasetSpec extends DatasetSpec {
   @Override
   public FlowMapGraph load() throws IOException {
     Iterable<String> flowAttrs = CsvFlowMapGraphReader.readAttrNames(flowsCsv);
-    return CsvFlowMapGraphReader.readGraph(
-        nodesCsv, flowsCsv, nodeIdAttr, originNodeAttr, destNodeAttr,
+    return CsvFlowMapGraphReader.readFlowMapGraph(
+        nodesCsv, flowsCsv,
+//        nodeIdAttr, originNodeAttr, destNodeAttr,
         createFlowMapAttrsSpecFor(flowAttrs));
   }
 

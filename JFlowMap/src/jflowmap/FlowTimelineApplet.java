@@ -19,6 +19,7 @@
 package jflowmap;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class FlowTimelineApplet extends BaseApplet {
   private final static FlowMapAttrSpec REFUGEES_ATTR_SPECS = new FlowMapAttrSpec(
       // NOTE: using rityp and ritypnv is wrong, because the summaries then only include positive differences
 //      "rity",
-      "r",
+      Arrays.asList("r"),
       "name", "x", "y");
 
 

@@ -91,15 +91,15 @@ class HeatMapCell extends PPath {
   public String getTooltipLabels() {
     return
       weightAttr + ":" + "\n" +
-      flowMapGraph.getAttrSpec().getEdgeWeightDiffAttr(weightAttr) + ":" + "\n" +
-      flowMapGraph.getAttrSpec().getEdgeWeightRelativeDiffAttr(weightAttr) + ":";
+      flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr) + ":" + "\n" +
+      flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr) + ":";
   }
 
   public String getTooltipValues() {
     double weight = edge.getDouble(weightAttr);
-    double weightDiff = edge.getDouble(flowMapGraph.getAttrSpec().getEdgeWeightDiffAttr(weightAttr));
+    double weightDiff = edge.getDouble(flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr));
     double weightRelDiff = edge.getDouble(
-        flowMapGraph.getAttrSpec().getEdgeWeightRelativeDiffAttr(weightAttr));
+        flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr));
     return
       NUMBER_FORMAT.format(weight) + "\n" +
       NUMBER_FORMAT.format(weightDiff) + "\n" +

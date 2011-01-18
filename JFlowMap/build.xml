@@ -10,7 +10,7 @@
 	<property name="path.classes" value="bin"/>
 	<property name="path.lib" value="lib"/>
 	<property name="path.build" value="demo"/>
-	<property name="mainclass" value="jflowmap.FlowMapMain"/>
+	<property name="mainclass" value="jflowmap.JFlowMapMain"/>
 
     <!--
     <target name="build-prod">
@@ -115,7 +115,7 @@
                 <exclude name="**/*Test.class"/>
                 <exclude name="**/*Test$*.class"/>
                 <include name="**/res/*.*"/>
-                <include name="**/images/*.*"/>
+                <include name="**/resources/*.*"/>
             </fileset>
             <fileset dir="${path.build}">
                 <include name="log4j.properties"/>

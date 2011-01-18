@@ -151,6 +151,8 @@ public class FlowMapGraphEdgeAggregator {
       newEdge.set(AGGREGATE_LIST_COLUMN, ImmutableList.copyOf(edges));
     }
 
+    FlowMapGraph.setGraphId(aggGraph, flowMapGraph.getId() + " aggregated by " + groupFunction);
+
     return new FlowMapGraph(aggGraph, flowMapGraph.getAttrSpec());
   }
 

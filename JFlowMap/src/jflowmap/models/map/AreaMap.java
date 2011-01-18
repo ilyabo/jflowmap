@@ -70,7 +70,7 @@ public class AreaMap {
   }
 
   public static final AreaMap load(String filename) throws IOException {
-    logger.info("Loading area map \"" + filename + "\"");
+    logger.info("Loading area map '" + filename + "'");
     return XmlAreaMapModelReader2.readMap(filename);
   }
 

@@ -29,7 +29,7 @@ public enum ValueType {
 
     @Override
     public String getColumnValueAttr(FlowMapAttrSpec attrSpec, String columnAttr) {
-      return attrSpec.getEdgeWeightDiffAttr(columnAttr);
+      return attrSpec.getFlowWeightDiffAttr(columnAttr);
     }
   },
 
@@ -41,7 +41,7 @@ public enum ValueType {
 
     @Override
     public String getColumnValueAttr(FlowMapAttrSpec attrSpec, String columnAttr) {
-      return attrSpec.getEdgeWeightRelativeDiffAttr(columnAttr);
+      return attrSpec.getFlowWeightRelativeDiffAttr(columnAttr);
     }
   };
 

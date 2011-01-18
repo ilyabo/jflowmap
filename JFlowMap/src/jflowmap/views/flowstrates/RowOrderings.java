@@ -188,7 +188,7 @@ enum RowOrderings {
     public abstract Comparator<Edge> getComparator(FlowMapGraph fmg);
 
     private static int compareNodeVPos(FlowMapGraph fmg, Edge e1, Edge e2, NodeEdgePos s) {
-      String yattr = fmg.getAttrSpec().getYNodeAttr();
+      String yattr = fmg.getAttrSpec().getNodeLatAttr();
       return -(int)Math.signum(s.nodeOf(e1).getDouble(yattr) - s.nodeOf(e2).getDouble(yattr));
     }
 

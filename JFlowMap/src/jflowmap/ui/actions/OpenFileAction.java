@@ -85,7 +85,7 @@ public class OpenFileAction extends AbstractAction {
       @Override
       public JComponent createPropertiesPanel(String fileName) throws IOException {
 
-        Graph graph = GraphMLReader3.loadFirstGraph(fileName);
+        Graph graph = GraphMLReader3.readFirstGraph(fileName);
         String[] doubleNodeAttrs = Iterables.toArray(FlowMapGraph.nodeAttrsOf(graph, double.class), String.class);
         String[] doubleEdgeAttrs = Iterables.toArray(FlowMapGraph.edgeAttrsOf(graph, double.class), String.class);
         String[] stringNodeAttrs = Iterables.toArray(FlowMapGraph.nodeAttrsOf(graph, String.class), String.class);
