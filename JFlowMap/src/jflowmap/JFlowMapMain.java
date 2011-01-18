@@ -18,9 +18,14 @@
 
 package jflowmap;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -29,6 +34,11 @@ import jflowmap.data.ViewConfig;
 import jflowmap.util.SwingUtils;
 
 import org.apache.log4j.Logger;
+
+import at.fhj.utils.misc.FileUtils;
+import at.fhj.utils.swing.JMsgPane;
+import foxtrot.Task;
+import foxtrot.Worker;
 
 /**
  * @author Ilya Boyandin
@@ -39,6 +49,8 @@ public class JFlowMapMain {
 
   public static boolean IS_OS_MAC = getOSMatches("Mac");
   public static final String OS_NAME = System.getProperty("os.name");
+  public static final ImageIcon LOADING_ICON = new ImageIcon(
+      JFlowMapMain.class.getResource("resources/loading.gif"));
 
   public static void main(String[] args) throws IOException {
     logger.info(">>> Starting JFlowMap");
@@ -46,18 +58,42 @@ public class JFlowMapMain {
     if (args.length >= 2  &&  args[0].equals("--fullscreen")) {
 
       final String configLocation = args[1];
-      ViewConfig config = ViewConfig.load(configLocation);
 
       initSystemLF();
 
-      final IView view = config.createView();
-
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          JFrame frame = new JFrame("JFlowMap: " + configLocation);
+          final JFrame frame = new JFrame("JFlowMap: " + configLocation);
           SwingUtils.makeFullscreen(frame);
           frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-          frame.add(view.getViewComponent());
+
+          frame.getContentPane().setBackground(Color.white);
+
+          JLabel loadingLabel = new JLabel(" Opening '" +
+              FileUtils.getFilename(configLocation) + "'...", LOADING_ICON, JLabel.CENTER);
+          frame.add(loadingLabel);
+
+          IView view = null;
+          try {
+            view = (IView) Worker.post(new Task() {
+              @Override
+              public Object run() throws Exception {
+                ViewConfig config = ViewConfig.load(configLocation);
+                return config.createView();
+              }
+            });
+          } catch (Exception ex) {
+            logger.error("Cannot open view", ex);
+            JMsgPane.showProblemDialog(frame, ex);
+            System.exit(0);
+          }
+
+          frame.remove(loadingLabel);
+          frame.add(view.getViewComponent(), BorderLayout.CENTER);
+          JComponent controls = view.getControls();
+          if (controls != null) {
+            frame.add(controls, BorderLayout.NORTH);
+          }
           frame.setVisible(true);
         }
       });

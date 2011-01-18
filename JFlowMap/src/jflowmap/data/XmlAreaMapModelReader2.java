@@ -46,7 +46,11 @@ public class XmlAreaMapModelReader2 {
   }
 
   public static AreaMap readMap(String location) throws IOException {
-    return loadFrom(location, IOLib.streamFromString(location));
+    InputStream is = IOLib.streamFromString(location);
+    if (is == null) {
+      throw new IllegalArgumentException("Cannot load area map from '" + location + "'");
+    }
+    return loadFrom(location, is);
   }
 
   private static AreaMap loadFrom(String name, InputStream is) throws IOException {

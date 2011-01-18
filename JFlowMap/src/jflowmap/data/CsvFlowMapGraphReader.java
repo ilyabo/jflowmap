@@ -115,11 +115,11 @@ public class CsvFlowMapGraphReader {
         lineNum++;
       }
     } catch (Exception ioe) {
-      throw new IOException("Parse error in '" + csvLocation + "' line " + lineNum + ": " +
+      throw new IOException("Error loading '" + csvLocation + "' (line " + lineNum + "): " +
           ioe.getMessage(), ioe);
     } finally {
       try {
-        csv.close();
+        if (csv != null) csv.close();
       } catch (IOException ioe) {
         // can't do anything about it
       }
@@ -145,7 +145,7 @@ public class CsvFlowMapGraphReader {
     throws IOException {
     Integer col = colsByName.get(attrName);
     if (col == null) {
-      throw new IOException("No column '"+attrName+"' in CSV");
+      throw new IOException("Column '"+attrName+"' not found in CSV file");
     }
     if (col >= csvLine.length) {
       throw new IOException("No value for column '"+attrName+"'");

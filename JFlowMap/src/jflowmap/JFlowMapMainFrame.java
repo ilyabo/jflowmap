@@ -323,7 +323,7 @@ public class JFlowMapMainFrame extends JFrame {
   }
 
   public void shutdown() {
-    logger.info(">>> Exiting FlowMapView");
+    logger.info(">>> Exiting JFlowMap");
 //    savePreferences();
     System.exit(0);
   }
