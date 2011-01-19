@@ -7,5 +7,8 @@ You can find quite a few of them in the 'viewconf' folder.
 For example, to open the refugee dataset in the Flowstrates view type:
 java -jar jflowmap.jar viewconf/refugees-flowstrates.jfmv  
 
+To open it in the fullscreen mode type:
+java -jar jflowmap.jar -fullscreen viewconf/refugees-flowstrates.jfmv  
+
 
 Ilya Boyandin <ilya.boyandin@unifr.ch>
