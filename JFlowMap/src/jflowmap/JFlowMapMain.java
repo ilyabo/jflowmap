@@ -60,7 +60,7 @@ public class JFlowMapMain {
 
     final String configLocation;
     final boolean fullscreenMode;
-    if (args[0].equals("--fullscreen")) {
+    if (args[0].equals("-fullscreen")) {
       fullscreenMode = true;
       configLocation = args[1];
     } else {
@@ -107,11 +107,21 @@ public class JFlowMapMain {
         }
 
         frame.remove(loadingLabel);
-        frame.add(view.getViewComponent(), BorderLayout.CENTER);
-        JComponent controls = view.getControls();
-        if (controls != null) {
-          frame.add(controls, BorderLayout.NORTH);
+        boolean isViewEmpty = true;
+        if (view != null) {
+          if (view.getViewComponent() != null) {
+            frame.add(view.getViewComponent(), BorderLayout.CENTER);
+            isViewEmpty = false;
+          }
+          JComponent controls = view.getControls();
+          if (controls != null) {
+            frame.add(controls, BorderLayout.NORTH);
+          }
         }
+        if (isViewEmpty) {
+          frame.add(new JLabel("No view", JLabel.CENTER), BorderLayout.CENTER);
+        }
+        frame.validate();
       }
     });
 
