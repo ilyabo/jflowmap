@@ -222,8 +222,7 @@ public class ViewConfig {
       public Object load(ViewConfig config) throws IOException {
         final Graph graph = StaxGraphMLReader.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
 
-        return StaxGraphMLReader.readFlowMapGraph(
-            config.require(PROP_DATA_GRAPHML_SRC),
+        return new FlowMapGraph(graph,
             createFlowMapAttrSpec(
                 config, false,
                 new LazyGet<Iterable<String>>() {
