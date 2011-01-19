@@ -52,6 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumnModel;
 
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
@@ -160,12 +161,12 @@ public class ControlPanel {
     private TableSorter flowsTableSorter;
     private ClustersTableModel clustersTableModel;
     private VisualFlowMap visualFlowMap;
-    private final List<GraphMLDatasetSpec> datasetSpecs;
+    private final FlowMapAttrSpec attrSpec;
 
 
-    public ControlPanel(FlowMapView flowMap, List<GraphMLDatasetSpec> datasetSpecs) {
+    public ControlPanel(FlowMapView flowMap, FlowMapAttrSpec attrSpec) {
         this.jFlowMap = flowMap;
-        this.datasetSpecs = datasetSpecs;
+        this.attrSpec = attrSpec;
         $$$setupUI$$$();
 
         loadVisualFlowMap(flowMap.getVisualFlowMap());
@@ -231,8 +232,8 @@ public class ControlPanel {
     }
 
     private void initModelsOnce() {
-        if (datasetSpecs != null) {
-            datasetCombo.setModel(new DefaultComboBoxModel(datasetSpecs.toArray()));
+        if (attrSpec != null) {
+            datasetCombo.setModel(new DefaultComboBoxModel(attrSpec.getFlowWeightAttrs().toArray()));
         } else {
             // TODO: move dataset combo out of the control panel
         }
@@ -924,7 +925,7 @@ public class ControlPanel {
         CellConstraints cc = new CellConstraints();
         panel2.add(datasetCombo, cc.xy(3, 1));
         final JLabel label1 = new JLabel();
-        label1.setText("Dataset:");
+        label1.setText("Flow weight attr:");
         panel2.add(label1, cc.xy(1, 1));
         final JSeparator separator1 = new JSeparator();
         separator1.setOrientation(1);

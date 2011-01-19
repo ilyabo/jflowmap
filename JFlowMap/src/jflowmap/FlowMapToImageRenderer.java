@@ -42,7 +42,7 @@ import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.MultiFlowMapStats;
 import jflowmap.geo.MapProjections;
 import jflowmap.util.SwingUtils;
-import jflowmap.views.IColorScheme;
+import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMap;
 import jflowmap.views.flowmap.VisualFlowMapModel;
@@ -141,7 +141,7 @@ public class FlowMapToImageRenderer extends JFrame {
     this.showLegend = showLegend;
   }
 
-  public void setColorScheme(IColorScheme colorScheme) {
+  public void setColorScheme(IFlowMapColorScheme colorScheme) {
     jFlowMap.setColorScheme(colorScheme);
   }
 

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Properties;
 
 import jflowmap.FlowMapAttrSpec;
+import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.IView;
@@ -34,6 +35,7 @@ import jflowmap.util.CollectionUtils;
 import jflowmap.util.IOUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.PropUtils;
+import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
 
@@ -189,6 +191,10 @@ public class ViewConfig {
     return PropUtils.getIntOrElse(props, propName, defaultValue);
   }
 
+  public double getDoubleOrElse(String propName, double defaultValue) {
+    return PropUtils.getDoubleOrElse(props, propName, defaultValue);
+  }
+
   enum DataLoaders {
     CSV {
       @Override
@@ -281,26 +287,38 @@ public class ViewConfig {
             mapProjection(config));
       }
 
-      private MapProjections mapProjection(ViewConfig config) throws IOException {
-        String projName = config.getStringOrElse(PROP_MAP_PROJECTION, "Mercator").toUpperCase();
-        MapProjections proj = MapProjections.valueOf(
-            projName);
-        if (proj == null) {
-          config.error("Projection '" + projName + "' is not supported");
-        }
-        return proj;
-      }
     },
     FLOWMAP {
       @Override
-      public IView createView(ViewConfig config, Object data, AreaMap areaMap) {
-        return null;
+      public IView createView(ViewConfig config, Object data, AreaMap areaMap) throws IOException {
+        return
+          new FlowMapView((FlowMapGraph)data, areaMap, mapProjection(config),
+              config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN, Double.NaN),
+              FlowMapColorSchemes.findByName(
+                  config.getStringOrElse(FlowMapView.VIEW_CONFIG_PROP_COLOR_SCHEME, "Dark")));
       }
     }
+//    , FLOWMAPSMALLMULTIPLES {
+//      @Override
+//      public IView createView(ViewConfig config, Object data, AreaMap areaMap) throws IOException {
+//        return null;
+//      }
+//    }
     ;
 
     public abstract IView createView(ViewConfig config, Object data, AreaMap areaMap)
       throws IOException;
+
+    private static MapProjections mapProjection(ViewConfig config) throws IOException {
+      String projName = config.getStringOrElse(PROP_MAP_PROJECTION, "Mercator").toUpperCase();
+      MapProjections proj = MapProjections.valueOf(
+          projName);
+      if (proj == null) {
+        config.error("Projection '" + projName + "' is not supported");
+      }
+      return proj;
+    }
+
   }
 
   enum MapLoaders {

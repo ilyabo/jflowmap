@@ -100,28 +100,33 @@ public class JFlowMapMain {
               return config.createView();
             }
           });
+
+          frame.remove(loadingLabel);
+
+          boolean isViewEmpty = true;
+          if (view != null) {
+
+            JComponent controls = view.getControls();
+            if (controls != null) {
+              frame.add(controls, view.getControlsLayoutConstraint());
+            }
+
+            JComponent viewComp = view.getViewComponent();
+            if (viewComp != null) {
+              frame.add(viewComp, BorderLayout.CENTER);
+              isViewEmpty = false;
+            }
+          }
+          if (isViewEmpty) {
+            frame.add(new JLabel("No view", JLabel.CENTER), BorderLayout.CENTER);
+          }
+          frame.validate();
+
         } catch (Exception ex) {
           logger.error("Cannot open view", ex);
           JMsgPane.showProblemDialog(frame, ex);
           System.exit(0);
         }
-
-        frame.remove(loadingLabel);
-        boolean isViewEmpty = true;
-        if (view != null) {
-          if (view.getViewComponent() != null) {
-            frame.add(view.getViewComponent(), BorderLayout.CENTER);
-            isViewEmpty = false;
-          }
-          JComponent controls = view.getControls();
-          if (controls != null) {
-            frame.add(controls, BorderLayout.NORTH);
-          }
-        }
-        if (isViewEmpty) {
-          frame.add(new JLabel("No view", JLabel.CENTER), BorderLayout.CENTER);
-        }
-        frame.validate();
       }
     });
 

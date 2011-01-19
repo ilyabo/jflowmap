@@ -35,7 +35,7 @@ import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.data.XmlRegionsReader;
 import jflowmap.util.piccolo.PCollapsableItemsContainer;
-import jflowmap.views.IColorScheme;
+import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.Tooltip;
 import jflowmap.views.flowmap.FlowMapView;
 
@@ -132,7 +132,7 @@ public class VisualTimeline extends PNode {
 
   }
 
-  public IColorScheme getColorScheme() {
+  public IFlowMapColorScheme getColorScheme() {
     return jFlowTimeline.getColorScheme();
   }
 

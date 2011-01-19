@@ -22,7 +22,7 @@ import java.awt.Color;
 
 import jflowmap.views.ColorCodes;
 import jflowmap.views.EnumColorScheme;
-import jflowmap.views.IColorScheme;
+import jflowmap.views.IFlowMapColorScheme;
 
 /**
  * @author Ilya Boyandin
@@ -312,13 +312,13 @@ GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
 
   .build());
 
-  private IColorScheme scheme;
+  private IFlowMapColorScheme scheme;
 
-  private FlowMapColorSchemes(IColorScheme scheme) {
+  private FlowMapColorSchemes(IFlowMapColorScheme scheme) {
     this.scheme = scheme;
   }
 
-  public IColorScheme getScheme() {
+  public IFlowMapColorScheme getScheme() {
     return scheme;
   }
 
@@ -330,7 +330,7 @@ GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
     return getScheme().getForValue(code, value);
   }
 
-  public static final FlowMapColorSchemes findByScheme(IColorScheme scheme) {
+  public static final FlowMapColorSchemes findByScheme(IFlowMapColorScheme scheme) {
     for (FlowMapColorSchemes cs : values()) {
       if (cs.getScheme() == scheme) {
         return cs;
@@ -339,7 +339,7 @@ GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
     return null;
   }
 
-  public static IColorScheme findByName(String colorSchemeName) {
+  public static IFlowMapColorScheme findByName(String colorSchemeName) {
     for (FlowMapColorSchemes cs : values()) {
       if (colorSchemeName.equals(cs.getScheme().getName())) {
         return cs.getScheme();

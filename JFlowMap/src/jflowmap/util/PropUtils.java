@@ -57,6 +57,14 @@ public class PropUtils {
     return Integer.parseInt(val);
   }
 
+  public static double getDoubleOrElse(Properties props, String propName, double defaultValue) {
+    String val = props.getProperty(propName);
+    if (isEmpty(val)) {
+      return defaultValue;
+    }
+    return Double.parseDouble(val);
+  }
+
   public static boolean isEmpty(String value) {
     return value == null  ||  value.trim().length() == 0;
   }

@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Ilya Boyandin
  */
-public class EnumColorScheme implements IColorScheme {
+public class EnumColorScheme implements IFlowMapColorScheme {
 
   private final String name;
   private final Map<ColorCodes, Getter> colors;
@@ -56,7 +56,7 @@ public class EnumColorScheme implements IColorScheme {
     return colors.get(code).getFor(value);
   }
 
-  private static IColorScheme of(String name, Map<ColorCodes, Getter> colors) {
+  private static IFlowMapColorScheme of(String name, Map<ColorCodes, Getter> colors) {
     return new EnumColorScheme(name, colors);
   }
 
@@ -79,7 +79,7 @@ public class EnumColorScheme implements IColorScheme {
       return this;
     }
 
-    public IColorScheme build() {
+    public IFlowMapColorScheme build() {
       return EnumColorScheme.of(name, mapBuilder.build());
     }
   }

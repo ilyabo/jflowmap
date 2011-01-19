@@ -18,6 +18,7 @@
 
 package jflowmap.views.flowmap;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -33,7 +34,7 @@ import jflowmap.geo.MapProjection;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.IColorScheme;
+import jflowmap.views.IFlowMapColorScheme;
 
 import org.apache.log4j.Logger;
 
@@ -48,15 +49,30 @@ public class FlowMapView extends AbstractCanvasView {
 
   private ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
-  private IColorScheme colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
+  private IFlowMapColorScheme colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
-  public FlowMapView(FlowMapGraph flowMapGraph, AreaMap areaMap, MapProjection proj) {
-    setVisualFlowMap(createVisualFlowMap(flowMapGraph, proj));
+  public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN = "view.flowmap.weightFilterMin";
+  public static final String VIEW_CONFIG_PROP_COLOR_SCHEME = "view.flowmap.colorScheme";
+
+  public FlowMapView(FlowMapGraph fmg, AreaMap areaMap, MapProjection proj) {
+    this(fmg, areaMap, proj, Double.NaN, null);
+  }
+
+  public FlowMapView(FlowMapGraph fmg, AreaMap areaMap, MapProjection proj, double weightFilterMin,
+      IFlowMapColorScheme colorScheme) {
+    setVisualFlowMap(createVisualFlowMap(fmg, proj));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap, proj));
     }
+    if (!Double.isNaN(weightFilterMin)) {
+      getVisualFlowMap().getModel().setEdgeWeightFilterMin(weightFilterMin);
+    }
+    if (colorScheme != null) {
+      setColorScheme(colorScheme);
+    }
+    controlPanel = new ControlPanel(this, fmg.getAttrSpec());
   }
 
   public FlowMapView(List<GraphMLDatasetSpec> datasetSpecs, boolean showControlPanel) {
@@ -69,13 +85,22 @@ public class FlowMapView extends AbstractCanvasView {
     }
 
     if (showControlPanel) {
-      controlPanel = new ControlPanel(this, datasetSpecs);
+      controlPanel = new ControlPanel(this, getVisualFlowMap().getFlowMapGraph().getAttrSpec());
     }
   }
 
   @Override
   public JComponent getControls() {
-    return controlPanel.getPanel();
+    if (controlPanel != null) {
+      return controlPanel.getPanel();
+    } else {
+      return null;
+    }
+  }
+
+  @Override
+  public String getControlsLayoutConstraint() {
+    return BorderLayout.SOUTH;
   }
 
   public void load(GraphMLDatasetSpec dataset) {
@@ -112,7 +137,7 @@ public class FlowMapView extends AbstractCanvasView {
     return visualFlowMap.getName();
   }
 
-  public void setColorScheme(IColorScheme colorScheme) {
+  public void setColorScheme(IFlowMapColorScheme colorScheme) {
     this.colorScheme = colorScheme;
     getVisualCanvas().setBackground(colorScheme.get(ColorCodes.BACKGROUND));
     if (visualFlowMap != null) {
@@ -123,7 +148,7 @@ public class FlowMapView extends AbstractCanvasView {
     }
   }
 
-  public IColorScheme getColorScheme() {
+  public IFlowMapColorScheme getColorScheme() {
     return colorScheme;
   }
 

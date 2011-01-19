@@ -24,7 +24,7 @@ import java.awt.Color;
 /**
  * @author Ilya Boyandin
  */
-public interface IColorScheme {
+public interface IFlowMapColorScheme {
 
   String getName();
 

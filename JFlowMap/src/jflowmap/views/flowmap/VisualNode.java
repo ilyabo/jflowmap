@@ -40,6 +40,7 @@ import prefuse.data.Node;
 
 import com.google.common.base.Function;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -69,8 +70,8 @@ public class VisualNode extends PNode {
 
   private final Node node;
 
-  private final double valueX;
-  private final double valueY;
+  private final double origX;
+  private final double origY;
 
   private PPath clusterMarker;
 
@@ -79,15 +80,13 @@ public class VisualNode extends PNode {
 
 //  private static final Font LABEL_FONT = new Font("Dialog", Font.BOLD, 5);
 
-  public VisualNode(VisualFlowMap visualFlowMap, Node node, double x, double y) {
-    if (Double.isNaN(x)  ||  Double.isNaN(y)) {
+  public VisualNode(VisualFlowMap visualFlowMap, Node node, double origX, double origY) {
+    if (Double.isNaN(origX)  ||  Double.isNaN(origY)) {
       logger.error("NaN coordinates passed in for node: " + node);
       throw new IllegalArgumentException("NaN coordinates passed in for node " + node);
     }
-    setX(x);
-    setY(y);
-    this.valueX = x;
-    this.valueY = y;
+    this.origX = origX;
+    this.origY = origY;
     this.node = node;
     this.visualFlowMap = visualFlowMap;
     addInputEventListener(INPUT_EVENT_HANDLER);
@@ -105,7 +104,7 @@ public class VisualNode extends PNode {
         clusterMembers.addChild(pnode);
 
 
-        PPath pline = new PPath(new Line2D.Double(origNode.getPosition(), this.getPosition()));
+        PPath pline = new PPath(new Line2D.Double(origNode.getPoint(), this.getPoint()));
         pline.setStrokePaint(origNodeLinePaint);
         clusterMembers.addChild(pline);
       }
@@ -121,27 +120,21 @@ public class VisualNode extends PNode {
 //    addChild(label);
 //    label.moveToBack();
 
-
-//    if (Arrays.asList("MEX", "BLZ", "SLV", "JAM", "DOM", "KNA", "ATG", "DMA", "LCA", "VCT", "BRB", "GRD", "TTO", "GUY").contains(node.getString("code"))) {
-//      double size = visualFlowMap.getModel().getNodeSize() * 2;
-//      clusterMarker = new PPath(new Ellipse2D.Double(getValueX() - size/2, getValueY() - size/2, size, size));
-//      clusterMarker.setStroke(new PFixedWidthStroke(1));
-//      addChild(clusterMarker);
-//      clusterMarker.moveToBack();
-//      clusterMarker.setPaint(new Color(242, 75, 63, 150));
-//    }
-
     updateSize();
     updateVisibility();
   }
 
-  public Point2D getPosition() {
-    return new Point2D.Double(valueX, valueY);
+  public Point2D getPoint() {
+    return new Point2D.Double(origX, origY);
   }
 
   private Shape createNodeShape(double x, double y) {
-    double size = visualFlowMap.getModel().getNodeSize();
+    double size = getSize();
     return new Ellipse2D.Double(x - size/2, y - size/2, size, size);
+  }
+
+  private double getSize() {
+    return visualFlowMap.getModel().getNodeSize();
   }
 
   protected void updateVisibility() {
@@ -152,11 +145,21 @@ public class VisualNode extends PNode {
     }
   }
 
+  protected void updatePositionInCamera(PCamera cam) {
+    Point2D p = getPoint();
+    double size = getSize();
+    setVisible(cam.getViewBounds().contains(p));
+//      labelNode.setVisible(cam.getBounds().contains(labelNode.getFullBounds()));
+    cam.viewToLocal(p);
+    p.setLocation(p.getX(), p.getY());
+    PNodes.setPosition(this, p.getX(), p.getY(), true);
+  }
+
   protected void updateSize() {
     if (marker != null) {
       removeChild(marker);
     }
-    marker = new PPath(createNodeShape(valueX, valueY));
+    marker = new PPath(createNodeShape(0, 0));
     marker.setPaint(visualFlowMap.getColor(ColorCodes.NODE_PAINT));
     marker.setStroke(null);
     addChild(marker);
@@ -164,11 +167,11 @@ public class VisualNode extends PNode {
   }
 
   public double getValueX() {
-  	return valueX;
+  	return origX;
   }
 
   public double getValueY() {
-    return valueY;
+    return origY;
   }
 
 //  public void createNodeShape() {
@@ -471,4 +474,5 @@ public class VisualNode extends PNode {
       return new Point(node.getX(), node.getY());
     }
   };
+
 }

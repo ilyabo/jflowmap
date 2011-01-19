@@ -99,7 +99,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private PBounds nodeBounds;
 
   private final PNode edgeLayer;
-  private final PNode nodeLayer;
+//  private final PNode nodeLayer;
 
   private final VisualFlowMapModel visualFlowMapModel;
   private List<VisualNode> visualNodes;
@@ -145,14 +145,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdgePaintFactory = new VisualEdgePaintFactory(this);
     visualEdgeStrokeFactory = new VisualEdgeStrokeFactory(this);
 
-    nodeLayer = new PNode();
+//    nodeLayer = new PNode();
     createNodeVisuals();
 
     edgeLayer = new PNode();
     createEdgeVisuals();
 
     addChild(edgeLayer);
-    addChild(nodeLayer);
+//    addChild(nodeLayer);
 
     tooltipBox = new Tooltip();
     tooltipBox.setVisible(false);
@@ -164,8 +164,18 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     setLegendVisible(showLegend);
 
     initModelChangeListeners(visualFlowMapModel);
-//    fitInCameraView();
-//    fitInCameraView(false);
+
+    getCamera().addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
+          fitInCameraView();
+        } else
+        if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
+          hideTooltip();
+          updateNodePositions();
+        }
+      }
+    });
   }
 
   public String getEdgeWeightAttr() {
@@ -216,7 +226,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void createNodeVisuals() {
-    nodeLayer.removeAllChildren();
+//    nodeLayer.removeAllChildren();
+    if (visualNodes != null) {
+      for (VisualNode vn : visualNodes) {
+        getCamera().removeChild(vn);
+      }
+    }
 
     Graph graph = getFlowMapGraph().getGraph();
 
@@ -231,10 +246,13 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       Point2D p = getMapProjection().project(lon, lat);
 
       VisualNode vnode = new VisualNode(this, node, p.getX(), p.getY());
-      nodeLayer.addChild(vnode);
+//      nodeLayer.addChild(vnode);
+      getCamera().addChild(vnode);
       visualNodes.add(vnode);
       nodesToVisuals.put(node, vnode);
     }
+
+    updateNodePositions();
   }
 
   public void setAreaMap(VisualAreaMap areaMap) {
@@ -411,7 +429,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       VisualEdge edge = (VisualEdge) component;
       tooltipBox.setText(
           wordWrapLabel(edge.getLabel(), maxLabelWidth),
-          getFlowMapGraph().getEdgeWeightAttrs() + ": ", Double.toString(edge.getEdgeWeight()));
+          getEdgeWeightAttr() + ": ", Double.toString(edge.getEdgeWeight())
+          );
     } else {
       return;
     }
@@ -537,6 +556,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   protected void updateNodeSizes() {
     for (VisualNode vn : visualNodes) {
       vn.updateSize();
+    }
+  }
+
+  private void updateNodePositions() {
+    for (VisualNode vn : visualNodes) {
+      vn.updatePositionInCamera(getCamera());
     }
   }
 

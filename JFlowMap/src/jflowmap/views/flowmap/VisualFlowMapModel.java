@@ -58,7 +58,7 @@ public class VisualFlowMapModel {
   private boolean autoAdjustEdgeColorScale;
   private double maxEdgeWidth = 1.0;
   private double directionMarkerSize = .17; //0.1;
-  private double nodeSize;
+  private double nodeSize = 6;
   private double visualLegendScale = 1.0;
 
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
@@ -93,7 +93,7 @@ public class VisualFlowMapModel {
 //        lenStats.getAvg() / 70,
 //        Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 100);
 
-    nodeSize = lengthStats.getAvg() / 50;
+//    nodeSize = lengthStats.getAvg() / 50;
   }
 
   public void setVisualLegendScale(double scale) {

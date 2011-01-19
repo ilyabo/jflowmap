@@ -18,6 +18,7 @@
 
 package jflowmap.views.flowstrates;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Shape;
@@ -1061,6 +1062,11 @@ public class FlowstratesView extends AbstractCanvasView {
   @Override
   public JComponent getControls() {
     return controlPanel;
+  }
+
+  @Override
+  public String getControlsLayoutConstraint() {
+    return BorderLayout.NORTH;
   }
 
   private void renewHeatmap() {
