@@ -1,7 +1,10 @@
 
-Thanks for your interest in JFlowMap. 
+Thanks for your interest in JFlowMap! 
 
-To run the tool use, for instance:
+To run the tool from the command line you need a view configuration file. 
+You can find quite a few of them in the 'viewconf' folder. 
+
+For example, to open the refugee dataset in the Flowstrates view type:
 java -jar jflowmap.jar viewconf/refugees-flowstrates.jfmv  
 
 
