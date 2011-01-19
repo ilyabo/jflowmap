@@ -53,9 +53,9 @@ import com.google.common.collect.Maps;
  *
  * @author Ilya Boyandin
  */
-public class GraphMLReader3 {
+public class StaxGraphMLReader {
 
-  public static Logger logger = Logger.getLogger(GraphMLReader3.class);
+  public static Logger logger = Logger.getLogger(StaxGraphMLReader.class);
 
   private static final String DEFAULT_CHARSET = "utf-8";
   public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
@@ -75,7 +75,7 @@ public class GraphMLReader3 {
   private Map<String, String> attrIdToName;
   private Map<String, Integer> nodeIdToIndex;
 
-  public GraphMLReader3() {
+  public StaxGraphMLReader() {
     dataParser = ParserFactory.getDefaultFactory();
   }
 
@@ -96,7 +96,7 @@ public class GraphMLReader3 {
   }
 
   public static Iterable<Graph> readGraphs(String filename) throws IOException {
-    return new GraphMLReader3().readFromLocation(filename);
+    return new StaxGraphMLReader().readFromLocation(filename);
   }
 
   public static Graph readFirstGraph(String filename) throws IOException {

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.GraphMLReader3;
+import jflowmap.data.StaxGraphMLReader;
 import jflowmap.data.MultiFlowMapStats;
 
 import org.apache.log4j.Logger;
@@ -120,7 +120,7 @@ public class FlowMapGraphSet {
 
   public static FlowMapGraphSet loadGraphML(String filename, FlowMapAttrSpec attrSpec)
       throws IOException {
-    return new FlowMapGraphSet(GraphMLReader3.readGraphs(filename), attrSpec);
+    return new FlowMapGraphSet(StaxGraphMLReader.readGraphs(filename), attrSpec);
   }
 
   /**
@@ -133,7 +133,7 @@ public class FlowMapGraphSet {
       throws IOException {
     return ImmutableList.copyOf(
         Iterables.transform(
-            GraphMLReader3.readGraphs(filename), FlowMapGraph.funcGraphToFlowMapGraph(attrSpec, stats)));
+            StaxGraphMLReader.readGraphs(filename), FlowMapGraph.funcGraphToFlowMapGraph(attrSpec, stats)));
   }
 
   /**

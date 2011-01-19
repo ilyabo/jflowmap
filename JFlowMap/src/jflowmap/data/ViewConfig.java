@@ -220,9 +220,9 @@ public class ViewConfig {
     GRAPHML {
       @Override
       public Object load(ViewConfig config) throws IOException {
-        final Graph graph = GraphMLReader3.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
+        final Graph graph = StaxGraphMLReader.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
 
-        return GraphMLReader3.readFlowMapGraph(
+        return StaxGraphMLReader.readFlowMapGraph(
             config.require(PROP_DATA_GRAPHML_SRC),
             createFlowMapAttrSpec(
                 config, false,

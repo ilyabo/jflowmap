@@ -22,7 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
-import jflowmap.data.GraphMLReader3;
+import jflowmap.data.StaxGraphMLReader;
 import jflowmap.ui.actions.OpenFileAction;
 
 import org.apache.log4j.Logger;
@@ -172,7 +172,7 @@ public class JFlowMapMainFrame extends JFrame {
 
   private Iterable<Graph> loadFile(String filename) throws IOException {
     logger.info("Opening file: " + filename);
-    Iterable<Graph> graphs = new GraphMLReader3().readFromLocation(filename);
+    Iterable<Graph> graphs = new StaxGraphMLReader().readFromLocation(filename);
     return graphs;
   }
 

@@ -40,7 +40,7 @@ import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.IView;
 import jflowmap.JFlowMapMainFrame;
-import jflowmap.data.GraphMLReader3;
+import jflowmap.data.StaxGraphMLReader;
 import jflowmap.geo.MapProjections;
 import jflowmap.ui.PropertiesDialog;
 import net.miginfocom.swing.MigLayout;
@@ -85,7 +85,7 @@ public class OpenFileAction extends AbstractAction {
       @Override
       public JComponent createPropertiesPanel(String fileName) throws IOException {
 
-        Graph graph = GraphMLReader3.readFirstGraph(fileName);
+        Graph graph = StaxGraphMLReader.readFirstGraph(fileName);
         String[] doubleNodeAttrs = Iterables.toArray(FlowMapGraph.nodeAttrsOf(graph, double.class), String.class);
         String[] doubleEdgeAttrs = Iterables.toArray(FlowMapGraph.edgeAttrsOf(graph, double.class), String.class);
         String[] stringNodeAttrs = Iterables.toArray(FlowMapGraph.nodeAttrsOf(graph, String.class), String.class);

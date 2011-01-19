@@ -32,7 +32,7 @@ import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.GraphMLDatasetSpec;
-import jflowmap.data.GraphMLReader3;
+import jflowmap.data.StaxGraphMLReader;
 import jflowmap.data.MinMax;
 import jflowmap.data.MultiFlowMapStats;
 import jflowmap.geom.GeomUtils;
@@ -585,7 +585,7 @@ public class FlowMapGraph {
   }
 
   public static FlowMapGraph loadGraphML(GraphMLDatasetSpec dataset, FlowMapStats stats) throws IOException {
-    Iterator<Graph> it = GraphMLReader3.readGraphs(dataset.getFilename()).iterator();
+    Iterator<Graph> it = StaxGraphMLReader.readGraphs(dataset.getFilename()).iterator();
     if (!it.hasNext()) {
       throw new IOException("No graphs found in '" + dataset.getFilename() + "'");
     }
@@ -866,7 +866,7 @@ public class FlowMapGraph {
       public boolean apply(String attr) {
 
         return
-          GraphMLReader3.isNodeSelfAttr(attr)  &&
+          StaxGraphMLReader.isNodeSelfAttr(attr)  &&
           (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);
       }
     });
@@ -877,7 +877,7 @@ public class FlowMapGraph {
       @Override
       public boolean apply(String attr) {
         return
-          GraphMLReader3.isEdgeSelfAttr(attr) &&
+          StaxGraphMLReader.isEdgeSelfAttr(attr) &&
           (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);
       }
     });
