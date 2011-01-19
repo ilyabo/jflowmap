@@ -1,9 +1,8 @@
 
 Thanks for your interest in JFlowMap. 
 
-Currently, the tool is supposed to be used as an applet. Check the contents
-of the "applets" folder for examples.
-
+To run the tool use, for instance:
+java -jar jflowmap.jar viewconf/refugees-flowstrates.jfmv  
 
 
 Ilya Boyandin <ilya.boyandin@unifr.ch>
