@@ -44,22 +44,25 @@ public class CsvFlowMapGraphReader {
   private static Logger logger = Logger.getLogger(CsvFlowMapGraphReader.class);
 
   private final FlowMapAttrSpec attrSpec;
+  private final char separator;
 
   private FlowMapGraphBuilder builder;
 
-  private CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec) {
+
+  private CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec, char separator) {
     this.attrSpec = attrSpec;
+    this.separator = separator;
   }
 
   /**
    * Calling this method prior to readGraph() might be useful for
    * initializing FlowMapAttrSpec which can then be passed to readGraph().
    */
-  public static Iterable<String> readAttrNames(String location) throws IOException {
+  public static Iterable<String> readAttrNames(String csvLocation, char separator) throws IOException {
     List<String> list = null;
     CSVReader csv = null;
     try {
-      csv = new CSVReader(new InputStreamReader(IOUtils.asInputStream(location)));
+      csv = createReader(csvLocation, separator);
       String[] header = csv.readNext();
       list = new ArrayList<String>(header.length);
       for (String attr : header) {
@@ -67,7 +70,7 @@ public class CsvFlowMapGraphReader {
       }
     } catch (Exception ioe) {
       throw new IOException(
-          "Error reading from location '" + location + "': " + ioe.getMessage(), ioe);
+          "Error reading from location '" + csvLocation + "': " + ioe.getMessage(), ioe);
     } finally {
       try { if (csv != null) csv.close(); } catch (IOException ioe) {}
     }
@@ -75,8 +78,8 @@ public class CsvFlowMapGraphReader {
   }
 
   public static FlowMapGraph readFlowMapGraph(String nodesLocation, String flowsLocation,
-      FlowMapAttrSpec attrSpec) throws IOException {
-    return new CsvFlowMapGraphReader(attrSpec).read(nodesLocation, flowsLocation);
+      FlowMapAttrSpec attrSpec, char separator) throws IOException {
+    return new CsvFlowMapGraphReader(attrSpec, separator).read(nodesLocation, flowsLocation);
   }
 
   private FlowMapGraph read(String nodesLocation, String flowsLocation) throws IOException {
@@ -100,7 +103,7 @@ public class CsvFlowMapGraphReader {
     int lineNum = 1;
     try {
       Map<String, Integer> colsByName = null;
-      csv = new CSVReader(new InputStreamReader(IOUtils.asInputStream(csvLocation)));
+      csv = createReader(csvLocation, separator);
       String[] csvLine;
       while ((csvLine = csv.readNext()) != null) {
         if (lineNum == 1) {
@@ -122,6 +125,10 @@ public class CsvFlowMapGraphReader {
         // can't do anything about it
       }
     }
+  }
+
+  private static CSVReader createReader(String csvLocation, char separator) throws IOException {
+    return new CSVReader(new InputStreamReader(IOUtils.asInputStream(csvLocation)), separator);
   }
 
   private Map<String, String> asAttrValuesMap(final String[] csvLine,
