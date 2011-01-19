@@ -58,7 +58,7 @@ public class VisualFlowMapModel {
   private boolean autoAdjustEdgeColorScale;
   private double maxEdgeWidth = 1.0;
   private double directionMarkerSize = .17; //0.1;
-  private double nodeSize = 6;
+  private double nodeSize = 4;
   private double visualLegendScale = 1.0;
 
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
