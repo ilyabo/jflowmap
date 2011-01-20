@@ -58,7 +58,6 @@ import jflowmap.FlowMapGraph;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.MinMax;
 import jflowmap.util.Pair;
 import jflowmap.views.flowmap.FlowMapView;
@@ -69,6 +68,7 @@ import jflowmap.views.flowmap.VisualNodeCluster;
 import at.fhj.utils.graphics.AxisMarks;
 import at.fhj.utils.swing.FancyTable;
 import at.fhj.utils.swing.TableSorter;
+import at.fhj.utils.swing.TableSorter.Directive;
 import ch.unifr.dmlib.cluster.Linkage;
 import ch.unifr.dmlib.cluster.Linkages;
 
@@ -189,7 +189,7 @@ public class ControlPanel {
         // load data
         FlowMapGraph fmg = visualFlowMap.getFlowMapGraph();
         fdBundlingParams = new ForceDirectedBundlerParameters(
-            fmg, visualFlowMap.getEdgeWeightAttr());
+            fmg, visualFlowMap.getFlowWeightAttr());
         if (!modelsInitialized) {
             initModelsOnce();
             modelsInitialized = true;
@@ -392,7 +392,10 @@ public class ControlPanel {
         datasetCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (initializing) return;
-                jFlowMap.load((GraphMLDatasetSpec) datasetCombo.getSelectedItem(), null);
+                jFlowMap.setSelectedFlowWeightAttr((String) datasetCombo.getSelectedItem());
+                List<Directive> sort = flowsTableSorter.getSortingColumns();
+                flowsTableModel.setVisualFlowMap(jFlowMap.getVisualFlowMap());
+                flowsTableSorter.setSortingColumns(sort); // prevent the column sortings being reset
                 jFlowMap.fitInView();
             }
         });

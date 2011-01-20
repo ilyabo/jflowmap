@@ -308,7 +308,7 @@ public class FlowMapToImageRenderer extends JFrame {
             if (fdebInitializer != null) {
               FlowMapGraph fmg = visualFlowMap.getFlowMapGraph();
               ForceDirectedBundlerParameters bundlerParams = new ForceDirectedBundlerParameters(
-                  fmg, visualFlowMap.getEdgeWeightAttr());
+                  fmg, visualFlowMap.getFlowWeightAttr());
               setupBundlerParams(bundlerParams);
               visualFlowMap.bundleEdges(bundlerParams);
             }

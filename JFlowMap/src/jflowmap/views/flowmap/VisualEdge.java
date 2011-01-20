@@ -211,7 +211,7 @@ public abstract class VisualEdge extends PNode {
   }
 
   public double getEdgeWeight() {
-    return edge.getDouble(visualFlowMap.getEdgeWeightAttr());
+    return edge.getDouble(visualFlowMap.getFlowWeightAttr());
   }
 
   public double getEdgeLength() {

@@ -62,7 +62,7 @@ public class FlowMapView extends AbstractCanvasView {
 
   public FlowMapView(FlowMapGraph fmg, AreaMap areaMap, MapProjection proj, double weightFilterMin,
       IFlowMapColorScheme colorScheme) {
-    setVisualFlowMap(createVisualFlowMap(fmg, proj));
+    setVisualFlowMap(createVisualFlowMap(fmg, proj, fmg.getEdgeWeightAttrs().get(0)));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap, proj));
     }
@@ -117,7 +117,8 @@ public class FlowMapView extends AbstractCanvasView {
     try {
       FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset, stats);
 
-      VisualFlowMap visualFlowMap = createVisualFlowMap(flowMapGraph, dataset.getMapProjection());
+      VisualFlowMap visualFlowMap = createVisualFlowMap(
+          flowMapGraph, dataset.getMapProjection(), flowMapGraph.getEdgeWeightAttrs().get(0));
 
       AreaMap areaMap = AreaMap.loadFor(dataset);
 
@@ -130,6 +131,10 @@ public class FlowMapView extends AbstractCanvasView {
       logger.error("Couldn't load flow map " + dataset.getFilename(), ex);
       throw new RuntimeException("Couldn't load flow map '" + dataset.getFilename() + "':\n" + ex.getMessage());
     }
+  }
+
+  public void setSelectedFlowWeightAttr(String flowWeightAttr) {
+    visualFlowMap.setSelectedFlowWeightAttr(flowWeightAttr);
   }
 
   @Override
@@ -156,8 +161,9 @@ public class FlowMapView extends AbstractCanvasView {
     return colorScheme.get(code);
   }
 
-  public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph, MapProjection proj) {
-    return new VisualFlowMap(this, flowMapGraph, true, proj);
+  public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph, MapProjection proj,
+      String flowWeightAttr) {
+    return new VisualFlowMap(this, flowMapGraph, true, proj, flowWeightAttr);
   }
 
   public VisualFlowMap getVisualFlowMap() {

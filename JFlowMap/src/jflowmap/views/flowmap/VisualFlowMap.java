@@ -126,15 +126,15 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final VisualEdgeStrokeFactory visualEdgeStrokeFactory;
   private final Legend visualLegend;
 
-  private final String edgeWeightAttr;
+  private String flowWeightAttr;
   private final MapProjection mapProjection;
 
 
-  public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend, MapProjection proj) {
+  public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend,
+      MapProjection proj, String flowWeightAttr) {
     this.jFlowMap = jFlowMap;
     this.mapProjection = proj;
-
-    edgeWeightAttr = flowMapGraph.getEdgeWeightAttrs().get(0);
+    this.flowWeightAttr = flowWeightAttr;
 
     visualFlowMapModel = new VisualFlowMapModel(flowMapGraph);
 //    double minWeight = flowMapGraph.getAttrSpec().getWeightFilterMin();
@@ -146,12 +146,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdgeStrokeFactory = new VisualEdgeStrokeFactory(this);
 
 //    nodeLayer = new PNode();
-    createNodeVisuals();
 
     edgeLayer = new PNode();
-    createEdgeVisuals();
-
     addChild(edgeLayer);
+
+    createVisuals();
+
 //    addChild(nodeLayer);
 
     tooltipBox = new Tooltip();
@@ -178,8 +178,25 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     });
   }
 
-  public String getEdgeWeightAttr() {
-    return edgeWeightAttr;
+  private void createVisuals() {
+    createNodeVisuals();
+    createEdgeVisuals();
+  }
+
+  public void setSelectedFlowWeightAttr(String flowWeightAttr) {
+    if (!this.flowWeightAttr.equals(flowWeightAttr)) {
+      this.flowWeightAttr = flowWeightAttr;
+      resetClusters();
+      createVisuals();
+    }
+  }
+
+  public VisualAreaMap getAreaMap() {
+    return areaMap;
+  }
+
+  public String getFlowWeightAttr() {
+    return flowWeightAttr;
   }
 
   @Override
@@ -309,7 +326,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
 //    Iterator<Integer> it = graph.getEdgeTable().rows();
     @SuppressWarnings("unchecked")
-    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(edgeWeightAttr, true);
+    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(flowWeightAttr, true);
 
     while (it.hasNext()) {
       Edge edge = graph.getEdge(it.next());
@@ -330,7 +347,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //        );
 //      }
 
-      double value = edge.getDouble(edgeWeightAttr);
+      double value = edge.getDouble(flowWeightAttr);
       if (Double.isNaN(value)) {
         // Warning "Omitting edge with NaN value" Commented out: because it was slowing bundling down too much
 //        logger.warn(
@@ -429,7 +446,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       VisualEdge edge = (VisualEdge) component;
       tooltipBox.setText(
           wordWrapLabel(edge.getLabel(), maxLabelWidth),
-          getEdgeWeightAttr() + ": ", Double.toString(edge.getEdgeWeight())
+          getFlowWeightAttr() + ": ", Double.toString(edge.getEdgeWeight())
           );
     } else {
       return;
@@ -957,7 +974,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     FlowMapGraph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(
         getFlowMapGraph().getAttrSpec(), visualNodeClusters);
-    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph, mapProjection);
+    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph, mapProjection,
+        flowWeightAttr);
     if (areaMap != null) {
       clusteredFlowMap.setAreaMap(new VisualAreaMap(areaMap));
     }
