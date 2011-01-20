@@ -18,27 +18,19 @@
 
 package jflowmap;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import jflowmap.data.ViewConfig;
 import jflowmap.util.SwingUtils;
 
 import org.apache.log4j.Logger;
 
-import at.fhj.utils.misc.FileUtils;
 import at.fhj.utils.swing.JMsgPane;
-import foxtrot.Task;
-import foxtrot.Worker;
 
 /**
  * @author Ilya Boyandin
@@ -49,8 +41,6 @@ public class JFlowMapMain {
 
   public static boolean IS_OS_MAC = getOSMatches("Mac");
   public static final String OS_NAME = System.getProperty("os.name");
-  public static final ImageIcon LOADING_ICON = new ImageIcon(
-      JFlowMapMain.class.getResource("resources/loading.gif"));
 
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
@@ -84,49 +74,16 @@ public class JFlowMapMain {
           SwingUtils.maximize(frame);
         }
 
-
-        JLabel loadingLabel = new JLabel(" Opening '" +
-            FileUtils.getFilename(configLocation) + "'...", LOADING_ICON, JLabel.CENTER);
-        frame.add(loadingLabel);
-
         frame.setVisible(true);
 
-        IView view = null;
         try {
-          view = (IView) Worker.post(new Task() {
-            @Override
-            public Object run() throws Exception {
-              ViewConfig config = ViewConfig.load(configLocation);
-              return config.createView();
-            }
-          });
-
-          frame.remove(loadingLabel);
-
-          boolean isViewEmpty = true;
-          if (view != null) {
-
-            JComponent controls = view.getControls();
-            if (controls != null) {
-              frame.add(controls, view.getControlsLayoutConstraint());
-            }
-
-            JComponent viewComp = view.getViewComponent();
-            if (viewComp != null) {
-              frame.add(viewComp, BorderLayout.CENTER);
-              isViewEmpty = false;
-            }
-          }
-          if (isViewEmpty) {
-            frame.add(new JLabel("No view", JLabel.CENTER), BorderLayout.CENTER);
-          }
-          frame.validate();
-
+          ViewLoader.loadView(configLocation, frame.getContentPane());
         } catch (Exception ex) {
           logger.error("Cannot open view", ex);
           JMsgPane.showProblemDialog(frame, ex);
           System.exit(0);
         }
+
       }
     });
 
@@ -172,5 +129,6 @@ public class JFlowMapMain {
     }
     return OS_NAME.startsWith(osNamePrefix);
   }
+
 
 }
