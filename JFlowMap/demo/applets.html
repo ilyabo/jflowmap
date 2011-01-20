@@ -1,0 +1,31 @@
+<html>
+
+<head>
+<script type="text/javascript">
+var init = function() {
+ var apps = [ 
+  'refugees-flowmap',
+  'refugees-flowstrates',
+  'commuters-ch-flowmap',
+  'commuters-si-flowmap',
+  'commuters-si-flowstrates',
+  'migrations-oecd-flowstrates',
+  'migrations-us-flowmap',
+  'aid-data-agg-after1970-flowstrates'
+ ];
+ var i;
+ var app = location.search.substr(1);
+ if (app) {
+  document.write('<applet code="jflowmap.JFlowMapApplet" archive="jflowmap.jar" codebase="." width="100%" height="100%"><param name="viewConfig" value="viewconf/'+app+'.jfmv"></applet>');
+ } else {
+  document.write('<div style="margin:10px;"><h1>JFlowMap demo applets</h1> Choose an applet to open:<ul>');
+  for (i=0;i<apps.length;i++) document.write('<li><a href="?'+apps[i]+'">'+apps[i]+'</a>');
+  document.write('</ul></div>');
+ }
+};
+</script></head>
+<body style="overflow:hidden; padding:0px 0px;margin:0px 0px">
+<script type="text/javascript">init();</script>
+</body>
+
+</html>
