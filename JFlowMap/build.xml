@@ -12,49 +12,15 @@
 	<property name="path.build" value="demo"/>
 	<property name="mainclass" value="jflowmap.JFlowMapMain"/>
 
-    <!--
-    <target name="build-prod">
-        <antcall target="_build">
-           <param name="mode" value="prod"/>
-        </antcall>
-        <antcall target="sign"/>
-    </target>
-
-   <target name="build-preloaded-datasets-xjar">
-        <antcall target="_build">
-            <param name="mainclass" value="jflowmap.FlowMapPreloadedDataMain"/>
-            <param name="mode" value="prod"/>
-        	<param name="include.data" value="true"/>
-        </antcall>
-    </target>
-
-   <target name="build-duotimeline-xjar">
-        <antcall target="_build">
-            <param name="app.name" value="duotimeline"/>
-            <param name="mainclass" value="jflowmap.DuoTimelineMain"/>
-            <param name="mode" value="prod"/>
-            <param name="include.data.explicit" value="data/refugees/refugees_1975-2008.xml.gz,data/refugees/countries-areas.xml.gz"/>
-        </antcall>
-    </target>
-    -->
 
    <target name="build">
         <antcall target="_build">
-            <!--param name="app.name" value="duotimeline-applet"/-->
             <param name="mode" value="applet"/>
             <param name="include.applet.meta-inf" value="true"/>
         </antcall>
-   	<!--
-        <antcall target="sign">
-            <param name="app.name" value="duotimeline-applet"/>
-        </antcall>
-        -->
     </target>
 
 	<target name="_build" depends="mkdirs, compile, make-jar, proguard, add-manifest" />
-	<!--
-	<target name="_build" depends="mkdirs, clean, compile, make-jar, proguard, add-manifest" />
-	-->
 
     
 	<path id="libs-classpath">
@@ -128,9 +94,6 @@
             <fileset dir=".">
                   <selector if="include.data">
                   	<or>
-                      <!--
-                      <filename name="data/**/*.*" />
-                      -->
                       <filename name="data/datasets.xml" />
                       <filename name="data/airlines/airlines.xml.gz" />
                       <filename name="data/migrations/migrations-500.xml.gz" />
