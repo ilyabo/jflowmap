@@ -20,6 +20,11 @@ package jflowmap.geo;
 
 import java.awt.geom.Point2D;
 
+import jflowmap.geom.Point;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 /**
  * @author Ilya Boyandin
  */
@@ -51,5 +56,14 @@ public enum MapProjections implements MapProjection {
       return degrees * Math.PI / 180;
     }
   };
+
+  public static Iterable<Point> projectAll(Iterable<Point> points, final MapProjection mapProjection) {
+    return Iterables.transform(points, new Function<Point, Point>() {
+      @Override
+      public Point apply(Point from) {
+        return Point.valueOf(mapProjection.project(from.x(), from.y()));
+      }
+    });
+  }
 
 }

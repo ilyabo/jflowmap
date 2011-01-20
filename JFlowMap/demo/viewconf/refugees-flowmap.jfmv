@@ -1,5 +1,5 @@
 view=flowmap
-view.flowmap.colorScheme=Dark
+view.flowmap.colorScheme=Light Blue
 view.flowmap.weightFilterMin=500
 
 data=csv

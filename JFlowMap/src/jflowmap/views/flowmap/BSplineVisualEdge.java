@@ -27,6 +27,9 @@ import java.util.List;
 import jflowmap.geom.BSplinePath;
 import jflowmap.geom.Point;
 import prefuse.data.Edge;
+
+import com.google.common.collect.ImmutableList;
+
 import edu.umd.cs.piccolo.nodes.PPath;
 
 /**
@@ -44,12 +47,12 @@ public class BSplineVisualEdge extends VisualEdge {
 //  private List<Point> subdivisionPoints;
 
   public BSplineVisualEdge(VisualFlowMap visualFlowMap, Edge edge,
-      VisualNode sourceNode, VisualNode targetNode, List<Point> points,
+      VisualNode sourceNode, VisualNode targetNode, Iterable<Point> points,
       boolean showSplinePoints) {
 
     super(visualFlowMap, edge, sourceNode, targetNode);
 
-    this.points = points;
+    this.points = ImmutableList.copyOf(points);
     this.showSplinePoints = showSplinePoints;
 
     init();

@@ -46,8 +46,10 @@ import jflowmap.data.MinMax;
 import jflowmap.es_agg.EdgeSegment;
 import jflowmap.es_agg.EdgeSegmentAggregator;
 import jflowmap.geo.MapProjection;
+import jflowmap.geo.MapProjections;
 import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;
+import jflowmap.geom.Point;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
 import jflowmap.views.Tooltip;
@@ -362,8 +364,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
         VisualEdge visualEdge;
         if (getFlowMapGraph().hasEdgeSubdivisionPoints(edge)) {
+
+          Iterable<Point> points = MapProjections.projectAll(
+              getFlowMapGraph().getEdgePoints(edge), getMapProjection());
+
           visualEdge = new BSplineVisualEdge(
-              this, edge, fromNode, toNode, getFlowMapGraph().getEdgePoints(edge), SHOW_SPLINE_POINTS);
+              this, edge, fromNode, toNode, points, SHOW_SPLINE_POINTS);
         } else {
           visualEdge = new LineVisualEdge(this, edge, fromNode, toNode);
         }
