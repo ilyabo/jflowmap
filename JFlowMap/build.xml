@@ -139,7 +139,7 @@
                     </or>
                   </selector>
             </fileset>
-            <fileset dir="applets">
+            <fileset dir="classes-applets">
                   <selector if="include.applet.meta-inf">
                   	<or>
                       <filename name="META-INF/**/*.*" />
