@@ -396,7 +396,7 @@ public class ControlPanel {
                 List<Directive> sort = flowsTableSorter.getSortingColumns();
                 flowsTableModel.setVisualFlowMap(jFlowMap.getVisualFlowMap());
                 flowsTableSorter.setSortingColumns(sort); // prevent the column sortings being reset
-                jFlowMap.fitInView();
+//                jFlowMap.fitInView();
             }
         });
     }
