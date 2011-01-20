@@ -20,20 +20,26 @@ package jflowmap;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingWorker;
 
 import jflowmap.data.ViewConfig;
+
+import org.apache.log4j.Logger;
+
 import at.fhj.utils.misc.FileUtils;
-import foxtrot.Task;
-import foxtrot.Worker;
+import at.fhj.utils.swing.JMsgPane;
 
 /**
  * @author Ilya Boyandin
  */
 public class ViewLoader {
+
+  private static Logger logger = Logger.getLogger(ViewLoader.class);
 
   public static final ImageIcon LOADING_ICON = new ImageIcon(
       JFlowMapMain.class.getResource("resources/loading.gif"));
@@ -41,39 +47,62 @@ public class ViewLoader {
   public static void loadView(final String viewConfigLocation, final Container parent)
     throws Exception
   {
-    JLabel loadingLabel = new JLabel(" Opening '" +
+    final JLabel loadingLabel = new JLabel(" Opening '" +
         FileUtils.getFilename(viewConfigLocation) + "'...", LOADING_ICON, JLabel.CENTER);
     parent.add(loadingLabel);
 
-    IView view = null;
-    view = (IView) Worker.post(new Task() {
+//    view = (IView) Worker.post(new Task() {
+//      @Override
+//      public Object run() throws Exception {
+//        ViewConfig config = ViewConfig.load(viewConfigLocation);
+//        return config.createView();
+//      }
+//    });
+
+
+    SwingWorker<IView, Object> worker = new SwingWorker<IView, Object>() {
       @Override
-      public Object run() throws Exception {
+      public IView doInBackground() throws IOException {
         ViewConfig config = ViewConfig.load(viewConfigLocation);
         return config.createView();
       }
-    });
 
-    parent.remove(loadingLabel);
+      @Override
+      protected void done() {
+        boolean isViewEmpty = true;
+        try {
+          IView view = get();
+          if (view != null) {
+            JComponent controls = view.getControls();
+            if (controls != null) {
+              parent.add(controls, view.getControlsLayoutConstraint());
+            }
 
-    boolean isViewEmpty = true;
-    if (view != null) {
-
-      JComponent controls = view.getControls();
-      if (controls != null) {
-        parent.add(controls, view.getControlsLayoutConstraint());
+            JComponent viewComp = view.getViewComponent();
+            if (viewComp != null) {
+              parent.add(viewComp, BorderLayout.CENTER);
+              isViewEmpty = false;
+            }
+          }
+        } catch (Exception ex) {
+          logger.error("Cannot open view", ex);
+          JMsgPane.showProblemDialog(parent, ex);
+          isViewEmpty = true;
+        } finally {
+          try {
+            parent.remove(loadingLabel);
+            if (isViewEmpty) {
+              parent.add(new JLabel("No view", JLabel.CENTER), BorderLayout.CENTER);
+            }
+            parent.validate();
+          } catch (Exception ex) {
+            // ignore
+          }
+        }
       }
+    };
 
-      JComponent viewComp = view.getViewComponent();
-      if (viewComp != null) {
-        parent.add(viewComp, BorderLayout.CENTER);
-        isViewEmpty = false;
-      }
-    }
-    if (isViewEmpty) {
-      parent.add(new JLabel("No view", JLabel.CENTER), BorderLayout.CENTER);
-    }
-    parent.validate();
+    worker.execute();
   }
 
 }
