@@ -7,7 +7,7 @@ data.csv.separator=,
 data.csv.nodes.src=data/refugee-nodes.csv.gz
 data.csv.flows.src=data/refugee-flows.csv.gz
 
-data.attrs.node.id=Codez
+data.attrs.node.id=Code
 data.attrs.node.label=Name
 data.attrs.node.lat=Lat
 data.attrs.node.lon=Lon
