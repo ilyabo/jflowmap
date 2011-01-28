@@ -3,7 +3,7 @@ var init = function(views) {
    deployJava.runApplet(
     {code:'jflowmap.JFlowMapApplet', width:'100%', height:'100%', archive:'jflowmap.jar'},
     {viewConfig:'viewconf/'+viewconf+'.jfmv', codebase_lookup:'.',
-     image:'images/loading.gif', boxbgcolor:'white', boxborder:'false', centerimage:'true'},
+     image:'resources/loading.gif', boxbgcolor:'white', boxborder:'false', centerimage:'true'},
     '1.6');
  };
  var writeViewLinks = function(view) {
