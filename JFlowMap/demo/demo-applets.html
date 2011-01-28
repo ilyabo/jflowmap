@@ -1,8 +1,16 @@
 <html>
 
 <head>
+<script src="http://www.java.com/js/deployJava.js"></script>
 <script type="text/javascript">
 var init = function() {
+ var deployApp = function(app) {
+   deployJava.runApplet(
+    {code:'jflowmap.JFlowMapApplet', width:'100%', height:'100%', archive:'jflowmap.jar'},
+	{viewConfig:'viewconf/'+app+'.jfmv', codebase_lookup:'.',
+	 image: 'images/loading.gif', boxbgcolor:'lightgray', boxborder:'false', centerimage:'true'},
+	'1.6');
+ }
  var apps = [ 
   'refugees-flowmap',
   'refugees-flowstrates',
@@ -16,7 +24,7 @@ var init = function() {
  var i;
  var app = location.search.substr(1);
  if (app) {
-  document.write('<applet code="jflowmap.JFlowMapApplet" archive="jflowmap.jar" codebase="." width="100%" height="100%"><param name="viewConfig" value="viewconf/'+app+'.jfmv"></applet>');
+  deployApp(app);
  } else {
   document.write('<div style="margin:10px;"><h1>JFlowMap demo applets</h1> Choose an applet to open:<ul>');
   for (i=0;i<apps.length;i++) document.write('<li><a href="?'+apps[i]+'">'+apps[i]+'</a>');
