@@ -1,39 +1,40 @@
 <html>
 
 <head>
-<script src="http://www.java.com/js/deployJava.js"></script>
-<script type="text/javascript">
-var init = function() {
- var deployApp = function(app) {
-   deployJava.runApplet(
-    {code:'jflowmap.JFlowMapApplet', width:'100%', height:'100%', archive:'jflowmap.jar'},
-	{viewConfig:'viewconf/'+app+'.jfmv', codebase_lookup:'.',
-	 image:'images/loading.gif', boxbgcolor:'white', boxborder:'false', centerimage:'true'},
-	'1.6');
- }
- var apps = [ 
-  'refugees-flowmap',
-  'refugees-flowstrates',
-  'commuters-ch-flowmap',
-  'commuters-si-flowmap',
-  'commuters-si-flowstrates',
-  'migrations-oecd-flowstrates',
-  'migrations-us-flowmap',
-  'aid-data-agg-after1970-flowstrates'
- ];
- var i;
- var app = location.search.substr(1);
- if (app) {
-  deployApp(app);
- } else {
-  document.write('<div style="margin:10px;"><h1>JFlowMap demo applets</h1> Choose an applet to open:<ul>');
-  for (i=0;i<apps.length;i++) document.write('<li><a href="?'+apps[i]+'">'+apps[i]+'</a>');
-  document.write('</ul></div>');
- }
-};
-</script></head>
+  <style type="text/css">
+  body {font:82% arial,sans-serif;}
+  p.viewdesc {font-size:.9em; color:#333333;  }
+  p.jfvmdesc {font-size:.8em; color:gray;  display:inline; }
+  ul.views {margin-top:.5em; margin-bottom:2em; list-style-type:none; padding-left:1em;}
+  ul.views li {margin:.5em 0;}
+  h3.view {margin-bottom:0; }
+  </style>
+  <script type="text/javascript" src="http://www.java.com/js/deployJava.js"></script>
+  <script type="text/javascript" src="resources/viewconf-list.js"></script>
+</head>
 <body style="overflow:hidden; padding:0px 0px;margin:0px 0px">
-<script type="text/javascript">init();</script>
+<script type="text/javascript">init([
+  {name:'Flow map',
+   desc:'Represents flows of a single time period at a time.',
+   viewconfs: [
+    {jfmv:'refugees-flowmap', name:'Refugees of the world\'s countries', 
+     desc:'Data collected by the UN Refugee Agency. Can be found at <a href="http://data.un.org/">data.un.org</a>.'},
+    {jfmv:'commuters-ch-flowmap', name:'Commuters in Switzerland'},
+    {jfmv:'commuters-si-flowmap', name:'Commuters in Slovenia'},
+    {jfmv:'migrations-us-flowmap', name:'US migrations', desc:'From the US census 2000.'}
+   ]
+  },
+  {name: 'Flowstrates',
+   desc:'Allows to analyze the temporal changes in the flow magnitudes.',
+   viewconfs: [
+    {jfmv:'refugees-flowstrates', name:'Refugees of the world\'s countries'},
+    {jfmv:'commuters-si-flowstrates' ,name:'Commuters in Switzerland'},
+    {jfmv:'migrations-oecd-flowstrates', name:'Commuters in Slovenia'},
+    {jfmv:'aid-data-agg-after1970-flowstrates', name:'World aid data',
+     desc:'From <a href="http://aiddata.org">aiddata.org</a>.'}
+    ]
+  }
+ ]);</script>
 </body>
 
 </html>
