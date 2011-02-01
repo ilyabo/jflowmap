@@ -182,10 +182,10 @@ public class FlowstratesView extends AbstractCanvasView {
   };
   private final FlowMapGraphAggLayers layers;
   private Legend legend;
-  private PPath columnHighlightRect;
+  private final PPath columnHighlightRect;
   private final float flowtiLinesAlpha = .1f;
 
-  private MapProjection mapProjection;
+  private final MapProjection mapProjection;
 
 //  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
 //    this(flowMapGraph, areaMap, null, -1, MapProjections.MERCATOR);
@@ -378,6 +378,7 @@ public class FlowstratesView extends AbstractCanvasView {
       this.maxVisibleTuples = maxVisibleTuples;
       this.visibleEdges = null;
       renewHeatmap();
+      fitHeatMap();
     }
   }
 
@@ -410,6 +411,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private void updateVisibleEdges() {
     visibleEdges = null;
     renewHeatmap();
+    fitHeatMap();
   }
 
   private Predicate<Edge> getEdgePredicate() {

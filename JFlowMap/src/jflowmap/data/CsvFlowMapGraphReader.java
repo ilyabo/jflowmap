@@ -45,24 +45,26 @@ public class CsvFlowMapGraphReader {
 
   private final FlowMapAttrSpec attrSpec;
   private final char separator;
+  private final String charset;
 
   private FlowMapGraphBuilder builder;
 
-
-  private CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec, char separator) {
+  private CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec, char separator, String charset) {
     this.attrSpec = attrSpec;
     this.separator = separator;
+    this.charset = charset;
   }
 
   /**
    * Calling this method prior to readGraph() might be useful for
    * initializing FlowMapAttrSpec which can then be passed to readGraph().
    */
-  public static Iterable<String> readAttrNames(String csvLocation, char separator) throws IOException {
+  public static Iterable<String> readAttrNames(String csvLocation, char separator, String charset)
+  throws IOException {
     List<String> list = null;
     CSVReader csv = null;
     try {
-      csv = createReader(csvLocation, separator);
+      csv = createReader(csvLocation, separator, charset);
       String[] header = csv.readNext();
       list = new ArrayList<String>(header.length);
       for (String attr : header) {
@@ -78,8 +80,8 @@ public class CsvFlowMapGraphReader {
   }
 
   public static FlowMapGraph readFlowMapGraph(String nodesLocation, String flowsLocation,
-      FlowMapAttrSpec attrSpec, char separator) throws IOException {
-    return new CsvFlowMapGraphReader(attrSpec, separator).read(nodesLocation, flowsLocation);
+      FlowMapAttrSpec attrSpec, char separator, String charset) throws IOException {
+    return new CsvFlowMapGraphReader(attrSpec, separator, charset).read(nodesLocation, flowsLocation);
   }
 
   private FlowMapGraph read(String nodesLocation, String flowsLocation) throws IOException {
@@ -103,7 +105,7 @@ public class CsvFlowMapGraphReader {
     int lineNum = 1;
     try {
       Map<String, Integer> colsByName = null;
-      csv = createReader(csvLocation, separator);
+      csv = createReader(csvLocation, separator, charset);
       String[] csvLine;
       while ((csvLine = csv.readNext()) != null) {
         if (lineNum == 1) {
@@ -127,8 +129,10 @@ public class CsvFlowMapGraphReader {
     }
   }
 
-  private static CSVReader createReader(String csvLocation, char separator) throws IOException {
-    return new CSVReader(new InputStreamReader(IOUtils.asInputStream(csvLocation)), separator);
+  private static CSVReader createReader(String csvLocation, char separator, String charset)
+  throws IOException {
+    return new CSVReader(new InputStreamReader(
+        IOUtils.asInputStream(csvLocation), charset), separator);
   }
 
   private Map<String, String> asAttrValuesMap(final String[] csvLine,

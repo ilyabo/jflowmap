@@ -64,9 +64,24 @@ public class JFlowMapMain {
 
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        final JFrame frame = new JFrame("JFlowMap: " + configLocation);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(Color.white);
+        final JFrame frame = createFrame(configLocation);
+
+//        JComponent cp = (JComponent)frame.getContentPane();
+//        cp.getInputMap().put(KeyStroke.getKeyStroke("F11"), "fullScreen");
+//        cp.getActionMap().put("fullScreen", new AbstractAction() {
+//          @Override
+//          public void actionPerformed(ActionEvent e) {
+//            SwingUtilities.invokeLater(new Runnable() {
+//              public void run() {
+//                JFrame newFrame = createFrame(configLocation);
+//                SwingUtils.makeFullscreen(newFrame);
+//                newFrame.setContentPane(frame.getContentPane());
+//                frame.dispose();
+//                newFrame.setVisible(true);
+//              }
+//            });
+//          }
+//        });
 
         if (fullscreenMode) {
           SwingUtils.makeFullscreen(frame);
@@ -84,6 +99,13 @@ public class JFlowMapMain {
           System.exit(0);
         }
 
+      }
+
+      private JFrame createFrame(final String configLocation) {
+        final JFrame frame = new JFrame("JFlowMap: " + configLocation);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setBackground(Color.white);
+        return frame;
       }
     });
 

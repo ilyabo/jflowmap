@@ -59,6 +59,7 @@ public class ViewConfig {
 
   public static final String PROP_DATA_CSV = PROP_DATA + ".csv";
   public static final String PROP_DATA_CSV_SEPARATOR = PROP_DATA_CSV + ".separator";
+  public static final String PROP_DATA_CSV_CHARSET = PROP_DATA_CSV + ".charset";
   public static final String PROP_DATA_CSV_FLOWS = PROP_DATA_CSV + ".flows";
   public static final String PROP_DATA_CSV_NODES = PROP_DATA_CSV + ".nodes";
   public static final String PROP_DATA_CSV_FLOWS_SRC = PROP_DATA_CSV_FLOWS + ".src";
@@ -200,6 +201,7 @@ public class ViewConfig {
       @Override
       public Object load(final ViewConfig config) throws IOException {
         final char csvSeparator = config.getStringOrElse(PROP_DATA_CSV_SEPARATOR, ",").charAt(0);
+        final String csvCharset = config.getStringOrElse(PROP_DATA_CSV_CHARSET, "utf-8");
         return CsvFlowMapGraphReader.readFlowMapGraph(
             config.require(PROP_DATA_CSV_NODES_SRC),
             config.require(PROP_DATA_CSV_FLOWS_SRC),
@@ -210,11 +212,11 @@ public class ViewConfig {
                   public Iterable<String> get() throws IOException {
                     return CsvFlowMapGraphReader.readAttrNames(
                         config.require(PROP_DATA_CSV_FLOWS_SRC),
-                        csvSeparator);
+                        csvSeparator, csvCharset);
                   }
                 }
             ),
-            csvSeparator);
+            csvSeparator, csvCharset);
       }
     },
     GRAPHML {
