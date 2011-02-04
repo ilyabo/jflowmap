@@ -366,7 +366,7 @@ public class FlowstratesView extends AbstractCanvasView {
     layers.setActiveLayer(layerName);
     this.visibleEdges = null;
     renewHeatmap();
-    fitHeatMap();
+    fitHeatMapInView();
   }
 
   // public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
@@ -378,7 +378,7 @@ public class FlowstratesView extends AbstractCanvasView {
       this.maxVisibleTuples = maxVisibleTuples;
       this.visibleEdges = null;
       renewHeatmap();
-      fitHeatMap();
+      fitHeatMapInView();
     }
   }
 
@@ -411,7 +411,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private void updateVisibleEdges() {
     visibleEdges = null;
     renewHeatmap();
-    fitHeatMap();
+    fitHeatMapInView();
   }
 
   private Predicate<Edge> getEdgePredicate() {
@@ -1439,7 +1439,7 @@ public class FlowstratesView extends AbstractCanvasView {
     layoutCameraNode(targetsCamera, +1, -1, .30, .96);
 
     if (!fitInViewOnce) {
-      fitHeatMap();
+      fitMapsInView();
     }
     updateFlowLinePositions();
 
@@ -1453,19 +1453,20 @@ public class FlowstratesView extends AbstractCanvasView {
      */
   }
 
-  private void fitHeatMap() {
+  private void fitMapsInView() {
     fintInCameraView(NodeEdgePos.SOURCE);
+    fitHeatMapInView();
+    fintInCameraView(NodeEdgePos.TARGET);
+    fitInViewOnce = true;
+  }
 
+  private void fitHeatMapInView() {
     PBounds heatmapBounds = heatmapLayer.getFullBounds();
     if (heatmapBounds.height > heatmapBounds.width * 10) {
       heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height
           / heatmapCamera.getWidth();
     }
     heatmapCamera.setViewBounds(GeomUtils.growRectByPercent(heatmapBounds, .025, .1, .025, .1));
-
-    fintInCameraView(NodeEdgePos.TARGET);
-
-    fitInViewOnce = true;
   }
 
   private void fintInCameraView(NodeEdgePos s) {
