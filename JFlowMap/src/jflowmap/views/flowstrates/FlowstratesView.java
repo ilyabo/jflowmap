@@ -122,6 +122,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private static final Font HEATMAP_COLUMN_LABELS_FONT = new Font("Arial", Font.PLAIN, 25 /*19*/);
   private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 23);
 
+  private final float FLOW_LINES_ALPHA = .1f; //.3f;
 
   private static final double cellWidth = 40;
   private static final double cellHeight = 40;
@@ -183,7 +184,6 @@ public class FlowstratesView extends AbstractCanvasView {
   private final FlowMapGraphAggLayers layers;
   private Legend legend;
   private final PPath columnHighlightRect;
-  private final float flowtiLinesAlpha = .1f;
 
   private final MapProjection mapProjection;
 
@@ -444,7 +444,7 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     }
     flowLinesPalette = new HashMap<String, Color>(ids.size());
-    Color[] palette = ColorUtils.createCategoryColors(ids.size(), flowtiLinesAlpha);
+    Color[] palette = ColorUtils.createCategoryColors(ids.size(), FLOW_LINES_ALPHA);
     int i = 0;
     for (String src : ids) {
       flowLinesPalette.put(src, palette[i++]);
