@@ -129,7 +129,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private final JPanel controlPanel;
   private ValueType valueType = ValueType.VALUE;
-  private FlowtiLinesColoringMode flowtiLinesColoringMode = FlowtiLinesColoringMode.SOURCE;
+  private FlowLinesColoringMode flowtiLinesColoringMode = FlowLinesColoringMode.SOURCE;
   private int maxVisibleTuples;
 
   private ColorSchemes sequentialColorScheme = ColorSchemes.OrRd;
@@ -141,7 +141,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private Map<String, Centroid> srcNodeIdsToCentroids;
   private Map<String, Centroid> targetNodeIdsToCentroids;
-  private Map<Edge, Pair<FlowtiLine, FlowtiLine>> edgesToLines;
+  private Map<Edge, Pair<FlowLine, FlowLine>> edgesToLines;
 
   private VisualAreaMap sourceVisualAreaMap;
   private VisualAreaMap targetVisualAreaMap;
@@ -152,9 +152,11 @@ public class FlowstratesView extends AbstractCanvasView {
   private final PCamera sourcesCamera = new PCamera();
   private final PCamera targetsCamera = new PCamera();
 
-  private final PLayer sourcesLayer = new PLayer();
   private final HeatmapLayer heatmapLayer;
+
+  private final PLayer sourcesLayer = new PLayer();
   private final PLayer targetsLayer = new PLayer();
+
   private Map<String, Color> flowLinesPalette;
 
   private boolean showFlowtiLinesForHighligtedNodesOnly = false;
@@ -253,15 +255,17 @@ public class FlowstratesView extends AbstractCanvasView {
 
     logger.info("Creating area maps");
     createAreaMaps(areaMap);
-    logger.info("Done (creating area maps)");
+    logger.info("Done creating area maps");
 
     mapToMatrixLinesLayer = new PNode();
     getCamera().addChild(mapToMatrixLinesLayer);
 
     createLegend();
+
     logger.info("Creating heatmap");
     heatmapLayer.renewHeatmap();
-    logger.info("Done (creating heatmap)");
+    logger.info("Done creating heatmap");
+
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
@@ -413,7 +417,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void updateFlowtiLinesPalette() {
-    if (flowtiLinesColoringMode == FlowtiLinesColoringMode.SAME_COLOR) {
+    if (flowtiLinesColoringMode == FlowLinesColoringMode.SAME_COLOR) {
       if (flowLinesPalette != null)
         flowLinesPalette.clear();
       return;
@@ -479,7 +483,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return visibleEdges;
   }
 
-  public void setHeatMapCellValueType(ValueType valueType) {
+  public void setValueType(ValueType valueType) {
     if (this.valueType != valueType) {
       this.valueType = valueType;
       heatmapLayer.updateHeatmapColors();
@@ -646,8 +650,8 @@ public class FlowstratesView extends AbstractCanvasView {
     // if (!showFlowtiLinesForHighligtedNodesOnly)
     {
       for (Edge edge : getVisibleEdges()) {
-        FlowtiLine src = createFlowtiLine(edge);
-        FlowtiLine target = createFlowtiLine(edge);
+        FlowLine src = createFlowtiLine(edge);
+        FlowLine target = createFlowtiLine(edge);
         // src.setVisible(!showFlowtiLinesForHighligtedNodesOnly || src.isHighlighted());
         // target.setVisible(!showFlowtiLinesForHighligtedNodesOnly || target.isHighlighted());
         edgesToLines.put(edge, Pair.of(src, target));
@@ -658,18 +662,18 @@ public class FlowstratesView extends AbstractCanvasView {
     updateFlowLinePositions();
   }
 
-  public FlowtiLinesColoringMode getFlowtiLinesColoringMode() {
+  public FlowLinesColoringMode getFlowtiLinesColoringMode() {
     return flowtiLinesColoringMode;
   }
 
-  public void setFlowtiLinesColoringMode(FlowtiLinesColoringMode flowLinesColoringMode) {
+  public void setFlowtiLinesColoringMode(FlowLinesColoringMode flowLinesColoringMode) {
     this.flowtiLinesColoringMode = flowLinesColoringMode;
     updateFlowtiLinesPalette();
     updateFlowtiLineColors();
   }
 
-  private FlowtiLine createFlowtiLine(Edge edge) {
-    FlowtiLine line = new FlowtiLine();
+  private FlowLine createFlowtiLine(Edge edge) {
+    FlowLine line = new FlowLine();
     mapToMatrixLinesLayer.addChild(line);
     return line;
   }
@@ -679,15 +683,15 @@ public class FlowstratesView extends AbstractCanvasView {
     // return;
     // }
 
-    for (Map.Entry<Edge, Pair<FlowtiLine, FlowtiLine>> e : edgesToLines.entrySet()) {
-      Pair<FlowtiLine, FlowtiLine> p = e.getValue();
+    for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
+      Pair<FlowLine, FlowLine> p = e.getValue();
       Pair<Color, Color> colors = getFlowLineColors(e.getKey());
 
-      FlowtiLine srcLine = p.first();
+      FlowLine srcLine = p.first();
       srcLine.setColor(colors.first());
       srcLine.setHighlightedColor(colors.second());
 
-      FlowtiLine targetLine = p.second();
+      FlowLine targetLine = p.second();
       targetLine.setColor(colors.first());
       targetLine.setHighlightedColor(colors.second());
     }
@@ -755,12 +759,12 @@ public class FlowstratesView extends AbstractCanvasView {
     PBounds heatMapViewBounds = heatmapLayer.getHeatmapCamera().getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
-      Pair<FlowtiLine, FlowtiLine> lines = edgesToLines.get(edge);
+      Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = heatmapLayer.getEdgeLabels(edge);
 
       Point2D srcCentroidPoint = getCentroidPoint(edge, NodeEdgePos.SOURCE);
       boolean inVis = srcCentroidPoint != null && sourcesCamera.getViewBounds().contains(srcCentroidPoint);
-      FlowtiLine lineIn = lines.first();
+      FlowLine lineIn = lines.first();
       if (inVis) {
         Point2D.Double matrixIn = heatmapLayer.getMatrixInPoint(row);
         inVis = inVis && heatMapViewBounds.contains(matrixIn);
@@ -780,7 +784,7 @@ public class FlowstratesView extends AbstractCanvasView {
       Point2D targetCentroidPoint = getCentroidPoint(edge, NodeEdgePos.TARGET);
       boolean outVis = targetCentroidPoint != null
           && targetsCamera.getViewBounds().contains(targetCentroidPoint);
-      FlowtiLine lineOut = lines.second();
+      FlowLine lineOut = lines.second();
       if (outVis) {
         Point2D.Double matrixOut = heatmapLayer.getMatrixOutPoint(row);
         outVis = outVis && heatMapViewBounds.contains(matrixOut);
@@ -977,7 +981,7 @@ public class FlowstratesView extends AbstractCanvasView {
       c.setTimeSliderVisible(highlighted);
     }
     for (Edge e : findVisibleEdges(Arrays.asList(nodeId), s.dir())) {
-      Pair<FlowtiLine, FlowtiLine> pair = edgesToLines.get(e);
+      Pair<FlowLine, FlowLine> pair = edgesToLines.get(e);
       if (pair != null) {
         pair.first().setHighlighted(highlighted);
         pair.second().setHighlighted(highlighted);
@@ -1049,7 +1053,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
 
-  private void setEdgeCentroidsHighlighted(HeatMapCell hmcell, NodeEdgePos npos, boolean highlighted) {
+  private void setEdgeCentroidsHighlighted(HeatmapCell hmcell, NodeEdgePos npos, boolean highlighted) {
     Node node = flowMapGraph.getNodeOf(hmcell.getEdge(), npos);
     Centroid c = getNodeIdsToCentroids(npos).get(flowMapGraph.getNodeId(node));
     if (c != null) {
@@ -1057,11 +1061,11 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  PTypedBasicInputEventHandler<HeatMapCell> createHeatMapCellHoverListener() {
-    return new PTypedBasicInputEventHandler<HeatMapCell>(HeatMapCell.class) {
+  PTypedBasicInputEventHandler<HeatmapCell> createHeatMapCellHoverListener() {
+    return new PTypedBasicInputEventHandler<HeatmapCell>(HeatmapCell.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        HeatMapCell cell = node(event);
+        HeatmapCell cell = node(event);
         // updateMapColors(node.getFlowMapGraph());
 
         // highlight cell
@@ -1070,7 +1074,7 @@ public class FlowstratesView extends AbstractCanvasView {
         cell.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
 
         // highlight flow lines
-        Pair<FlowtiLine, FlowtiLine> lines = lines(event);
+        Pair<FlowLine, FlowLine> lines = lines(event);
         if (lines != null) {
           lines.first().setHighlighted(true);
           lines.second().setHighlighted(true);
@@ -1084,11 +1088,11 @@ public class FlowstratesView extends AbstractCanvasView {
       @Override
       public void mouseExited(PInputEvent event) {
         // updateMapColors(null);
-        HeatMapCell cell = node(event);
+        HeatmapCell cell = node(event);
         cell.setStroke(style.getTimelineCellStroke());
         cell.setStrokePaint(style.getTimelineCellStrokeColor());
 
-        Pair<FlowtiLine, FlowtiLine> lines = lines(event);
+        Pair<FlowLine, FlowLine> lines = lines(event);
         if (lines != null) {
           lines.first().setHighlighted(false);
           lines.second().setHighlighted(false);
@@ -1099,7 +1103,7 @@ public class FlowstratesView extends AbstractCanvasView {
         updateMapAreaColorsOnHeatMapCellHover(cell, false);
       }
 
-      private Pair<FlowtiLine, FlowtiLine> lines(PInputEvent event) {
+      private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
         return edgesToLines.get(node(event).getEdge());
       }
 
@@ -1177,17 +1181,17 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   protected String getTooltipHeaderFor(PNode node) {
-    return ((HeatMapCell) node).getTooltipHeader();
+    return ((HeatmapCell) node).getTooltipHeader();
   }
 
   @Override
   protected String getTooltipLabelsFor(PNode node) {
-    return ((HeatMapCell) node).getTooltipLabels();
+    return ((HeatmapCell) node).getTooltipLabels();
   }
 
   @Override
   protected String getTooltipValuesFor(PNode node) {
-    return ((HeatMapCell) node).getTooltipValues();
+    return ((HeatmapCell) node).getTooltipValues();
   }
 
   @Override
@@ -1329,7 +1333,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return visibleEdgesStats;
   }
 
-  void updateMapAreaColorsOnHeatMapCellHover(HeatMapCell cell, boolean hover) {
+  void updateMapAreaColorsOnHeatMapCellHover(HeatmapCell cell, boolean hover) {
     Edge edge = cell.getEdge();
     String attr = cell.getWeightAttr();
     if (FlowMapGraphEdgeAggregator.isAggregate(edge)) {

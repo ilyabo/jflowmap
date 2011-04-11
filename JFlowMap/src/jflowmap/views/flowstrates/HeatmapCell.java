@@ -30,7 +30,7 @@ import edu.umd.cs.piccolo.nodes.PPath;
 /**
  * @author Ilya Boyandin
  */
-class HeatMapCell extends PPath {
+class HeatmapCell extends PPath {
 
   private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance();
 
@@ -39,7 +39,7 @@ class HeatMapCell extends PPath {
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public HeatMapCell(HeatmapLayer layer, double x, double y,
+  public HeatmapCell(HeatmapLayer layer, double x, double y,
       double cellWidth, double cellHeight, String weightAttr, FlowMapGraph fmg, Edge edge) {
     super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
     this.heatmapLayer = layer;

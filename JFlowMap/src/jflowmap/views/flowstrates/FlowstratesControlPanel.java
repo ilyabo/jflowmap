@@ -107,7 +107,7 @@ public class FlowstratesControlPanel extends JPanel {
     differencesCombo.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        view.setHeatMapCellValueType((ValueType) differencesCombo.getSelectedItem());
+        view.setValueType((ValueType) differencesCombo.getSelectedItem());
       }
     });
 
@@ -285,12 +285,12 @@ public class FlowstratesControlPanel extends JPanel {
     panel.setName("Flow lines");
 
     panel.add(new JLabel("Coloring:"), "al right");
-    final JComboBox coloringCombo = new JComboBox(FlowtiLinesColoringMode.values());
+    final JComboBox coloringCombo = new JComboBox(FlowLinesColoringMode.values());
     coloringCombo.setSelectedItem(view.getFlowtiLinesColoringMode());
     coloringCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         view.setFlowtiLinesColoringMode(
-            (FlowtiLinesColoringMode)coloringCombo.getSelectedItem());
+            (FlowLinesColoringMode)coloringCombo.getSelectedItem());
       }
     });
     panel.add(coloringCombo, "");

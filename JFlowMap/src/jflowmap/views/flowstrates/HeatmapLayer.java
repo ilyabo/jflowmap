@@ -82,7 +82,7 @@ public class HeatmapLayer extends PLayer {
     columnHighlightRect.setVisible(false);
     addChild(columnHighlightRect);
 
-    heatmapCellTooltipListener = flowstratesView.createTooltipListener(HeatMapCell.class);
+    heatmapCellTooltipListener = flowstratesView.createTooltipListener(HeatmapCell.class);
     heatmapCellHoverListener = flowstratesView.createHeatMapCellHoverListener();
 
   }
@@ -127,7 +127,7 @@ public class HeatmapLayer extends PLayer {
           label.moveToFront();
           final String attr = label.getName();
 
-          Iterable<HeatMapCell> cells = getHeatMapColumnCells(attr);
+          Iterable<HeatmapCell> cells = getHeatMapColumnCells(attr);
           flowstratesView.updateMapAreaColorsOnHeatMapColumnLabelHover(attr, true);
 
           columnHighlightRect.setBounds(
@@ -184,7 +184,7 @@ public class HeatmapLayer extends PLayer {
       for (String weightAttr : getFlowMapGraph().getEdgeWeightAttrs()) {
         double x = col * cellWidth;
 
-        HeatMapCell cell = new HeatMapCell(
+        HeatmapCell cell = new HeatmapCell(
             this, x, y, cellWidth, cellHeight, weightAttr,
             flowstratesView.getAggLayers().getFlowMapGraphOf(edge), edge);
 
@@ -222,20 +222,20 @@ public class HeatmapLayer extends PLayer {
     // row)));
   }
 
-  private Iterable<HeatMapCell> getHeatMapColumnCells(final String attr) {
+  private Iterable<HeatmapCell> getHeatMapColumnCells(final String attr) {
     return
       Iterables.filter(
-        PNodes.childrenOfType(heatmapNode, HeatMapCell.class),
-        new Predicate<HeatMapCell>() {
+        PNodes.childrenOfType(heatmapNode, HeatmapCell.class),
+        new Predicate<HeatmapCell>() {
           @Override
-          public boolean apply(HeatMapCell cell) {
+          public boolean apply(HeatmapCell cell) {
             return attr.equals(cell.getWeightAttr());
           }
         });
   }
 
   void updateHeatmapColors() {
-    for (HeatMapCell cell : PNodes.childrenOfType(heatmapNode, HeatMapCell.class)) {
+    for (HeatmapCell cell : PNodes.childrenOfType(heatmapNode, HeatmapCell.class)) {
       cell.updateColor();
     }
     flowstratesView.updateLegend();
@@ -243,7 +243,7 @@ public class HeatmapLayer extends PLayer {
   }
 
 
-  public Color getColorFor(HeatMapCell cell) {
+  public Color getColorFor(HeatmapCell cell) {
     ValueType valueType = flowstratesView.getValueType();
 
     String attr = valueType.getColumnValueAttr(

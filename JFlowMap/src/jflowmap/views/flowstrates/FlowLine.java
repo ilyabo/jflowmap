@@ -8,14 +8,14 @@ import edu.umd.cs.piccolox.nodes.PLine;
 /**
  * @author Ilya Boyandin
  */
-class FlowtiLine extends PLine {
+class FlowLine extends PLine {
   private static final BasicStroke STROKE = new BasicStroke(2);
 
   private boolean isHighlighted;
   private Color color = Color.white;
   private Color highlightedColor = Color.yellow;
 
-  public FlowtiLine() {
+  public FlowLine() {
 //    this.color = color;
 //    this.highlightedColor = highlightedColor;
     setStroke(STROKE);
