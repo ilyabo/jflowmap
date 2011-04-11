@@ -149,13 +149,11 @@ public class FlowstratesView extends AbstractCanvasView {
   private List<Edge> visibleEdges;
   private Predicate<Edge> customEdgeFilter;
 
-  private final PCamera sourcesCamera = new PCamera();
-  private final PCamera targetsCamera = new PCamera();
 
   private final HeatmapLayer heatmapLayer;
 
-  private final PLayer sourcesLayer = new PLayer();
-  private final PLayer targetsLayer = new PLayer();
+  private final GeoLayer sourcesLayer;
+  private final GeoLayer targetsLayer;
 
   private Map<String, Color> flowLinesPalette;
 
@@ -222,19 +220,21 @@ public class FlowstratesView extends AbstractCanvasView {
 
     heatmapLayer = new HeatmapLayer(this);
 
-    sourcesCamera.addLayer(sourcesLayer);
-    targetsCamera.addLayer(targetsLayer);
+    sourcesLayer = new GeoLayer(this);
+    targetsLayer = new GeoLayer(this);
 
-    addCaption(sourcesCamera, "Origins");
+
+    addCaption(sourcesLayer.getGeoLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
       addCaption(heatmapLayer.getHeatmapCamera(), "Time");
     }
-    addCaption(targetsCamera, "Destinations");
+    addCaption(targetsLayer.getGeoLayerCamera(), "Destinations");
+
 
     PLayer canvasLayer = canvas.getLayer();
-    canvasLayer.addChild(sourcesCamera);
+    canvasLayer.addChild(sourcesLayer.getGeoLayerCamera());
     canvasLayer.addChild(heatmapLayer.getHeatmapCamera());
-    canvasLayer.addChild(targetsCamera);
+    canvasLayer.addChild(targetsLayer.getGeoLayerCamera());
 
     controlPanel = new FlowstratesControlPanel(this);
 
@@ -285,11 +285,9 @@ public class FlowstratesView extends AbstractCanvasView {
         }
       }
     };
-    sourcesCamera.addPropertyChangeListener(linesUpdater);
-    targetsCamera.addPropertyChangeListener(linesUpdater);
+    sourcesLayer.getGeoLayerCamera().addPropertyChangeListener(linesUpdater);
+    targetsLayer.getGeoLayerCamera().addPropertyChangeListener(linesUpdater);
     heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
-
-
   }
 
   private void addCaption(PCamera camera, String caption) {
@@ -591,9 +589,9 @@ public class FlowstratesView extends AbstractCanvasView {
   private PCamera getVisualAreaMapCamera(NodeEdgePos s) {
     switch (s) {
     case SOURCE:
-      return sourcesCamera;
+      return sourcesLayer.getGeoLayerCamera();
     case TARGET:
-      return targetsCamera;
+      return targetsLayer.getGeoLayerCamera();
     }
     throw new AssertionError();
   }
@@ -763,13 +761,13 @@ public class FlowstratesView extends AbstractCanvasView {
       Pair<PText, PText> labels = heatmapLayer.getEdgeLabels(edge);
 
       Point2D srcCentroidPoint = getCentroidPoint(edge, NodeEdgePos.SOURCE);
-      boolean inVis = srcCentroidPoint != null && sourcesCamera.getViewBounds().contains(srcCentroidPoint);
+      boolean inVis = srcCentroidPoint != null && sourcesLayer.getGeoLayerCamera().getViewBounds().contains(srcCentroidPoint);
       FlowLine lineIn = lines.first();
       if (inVis) {
         Point2D.Double matrixIn = heatmapLayer.getMatrixInPoint(row);
         inVis = inVis && heatMapViewBounds.contains(matrixIn);
         if (inVis) {
-          sourcesCamera.viewToLocal(srcCentroidPoint);
+          sourcesLayer.getGeoLayerCamera().viewToLocal(srcCentroidPoint);
           heatmapLayer.getHeatmapCamera().viewToLocal(matrixIn);
           lineIn.setPoint(0, srcCentroidPoint.getX(), srcCentroidPoint.getY());
           Rectangle2D fromLabelBounds = heatmapLayer.getHeatmapCamera().viewToLocal(labels.first().getBounds());
@@ -783,13 +781,13 @@ public class FlowstratesView extends AbstractCanvasView {
 
       Point2D targetCentroidPoint = getCentroidPoint(edge, NodeEdgePos.TARGET);
       boolean outVis = targetCentroidPoint != null
-          && targetsCamera.getViewBounds().contains(targetCentroidPoint);
+          && targetsLayer.getGeoLayerCamera().getViewBounds().contains(targetCentroidPoint);
       FlowLine lineOut = lines.second();
       if (outVis) {
         Point2D.Double matrixOut = heatmapLayer.getMatrixOutPoint(row);
         outVis = outVis && heatMapViewBounds.contains(matrixOut);
         if (outVis) {
-          targetsCamera.viewToLocal(targetCentroidPoint);
+          targetsLayer.getGeoLayerCamera().viewToLocal(targetCentroidPoint);
           heatmapLayer.getHeatmapCamera().viewToLocal(matrixOut);
           lineOut.setPoint(0, targetCentroidPoint.getX(), targetCentroidPoint.getY());
           Rectangle2D toLabelBounds = heatmapLayer.getHeatmapCamera().viewToLocal(labels.second().getBounds());
@@ -859,11 +857,11 @@ public class FlowstratesView extends AbstractCanvasView {
 
     sourcesLayer.addChild(sourceVisualAreaMap);
     targetsLayer.addChild(targetVisualAreaMap);
-    sourcesCamera.setPaint(sourceVisualAreaMap.getPaint());
-    targetsCamera.setPaint(targetVisualAreaMap.getPaint());
+    sourcesLayer.getGeoLayerCamera().setPaint(sourceVisualAreaMap.getPaint());
+    targetsLayer.getGeoLayerCamera().setPaint(targetVisualAreaMap.getPaint());
 
-    // sourcesCamera.setViewBounds(sourcesLayer.getFullBounds());
-    // targetsCamera.setViewBounds(targetsLayer.getFullBounds());
+    // sourcesLayer.getGeoLayerCamera().setViewBounds(sourcesLayer.getFullBounds());
+    // targetsLayer.getGeoLayerCamera().setViewBounds(targetsLayer.getFullBounds());
 
     addMouseOverListenersToMaps(sourceVisualAreaMap, NodeEdgePos.SOURCE);
     addMouseOverListenersToMaps(targetVisualAreaMap, NodeEdgePos.TARGET);
@@ -875,8 +873,8 @@ public class FlowstratesView extends AbstractCanvasView {
     sourceVisualAreaMap.setBounds(sourceVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
     targetVisualAreaMap.setBounds(targetVisualAreaMap.getFullBoundsReference()); // enable mouse ev.
 
-    sourcesCamera.addInputEventListener(createLasso(sourcesCamera, NodeEdgePos.SOURCE));
-    targetsCamera.addInputEventListener(createLasso(targetsCamera, NodeEdgePos.TARGET));
+    sourcesLayer.getGeoLayerCamera().addInputEventListener(createLasso(sourcesLayer.getGeoLayerCamera(), NodeEdgePos.SOURCE));
+    targetsLayer.getGeoLayerCamera().addInputEventListener(createLasso(targetsLayer.getGeoLayerCamera(), NodeEdgePos.TARGET));
   }
 
   /**
@@ -1242,9 +1240,9 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   public void fitInView() {
-    layoutCameraNode(sourcesCamera, -1, -1, .30, .96);
+    layoutCameraNode(sourcesLayer.getGeoLayerCamera(), -1, -1, .30, .96);
     layoutCameraNode(heatmapLayer.getHeatmapCamera(), 0, 0, .40, 1.0);
-    layoutCameraNode(targetsCamera, +1, -1, .30, .96);
+    layoutCameraNode(targetsLayer.getGeoLayerCamera(), +1, -1, .30, .96);
 
     if (!fitInViewOnce) {
       fitMapsInView();
