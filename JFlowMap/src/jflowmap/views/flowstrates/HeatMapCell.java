@@ -34,23 +34,19 @@ class HeatMapCell extends PPath {
 
   private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance();
 
-  private final FlowstratesView view;
+  private final HeatmapLayer heatmapLayer;
   private final String weightAttr;
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public HeatMapCell(FlowstratesView view, double x, double y,
+  public HeatMapCell(HeatmapLayer layer, double x, double y,
       double cellWidth, double cellHeight, String weightAttr, FlowMapGraph fmg, Edge edge) {
     super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
-    this.view = view;
+    this.heatmapLayer = layer;
     this.flowMapGraph = fmg;
     this.weightAttr = weightAttr;
     this.edge = edge;
     updateColor();
-  }
-
-  public FlowstratesView getView() {
-    return view;
   }
 
   public Edge getEdge() {
@@ -68,7 +64,6 @@ class HeatMapCell extends PPath {
   private double getWeight() {
     return edge.getDouble(weightAttr);
   }
-
 
   public String getTooltipHeader() {
     // return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
@@ -107,7 +102,7 @@ class HeatMapCell extends PPath {
   }
 
   public void updateColor() {
-    setPaint(view.getColorFor(this));
+    setPaint(heatmapLayer.getColorFor(this));
   }
 
 }
