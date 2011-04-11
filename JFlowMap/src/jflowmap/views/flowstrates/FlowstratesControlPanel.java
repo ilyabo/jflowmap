@@ -61,8 +61,8 @@ public class FlowstratesControlPanel extends JPanel {
 //    tabbedPane = new JTabbedPane();
 //    add(tabbedPane);
 
-    addPanel(createDataPanel());
     addPanel(createFilterPanel());
+    addPanel(createDataPanel());
     addPanel(createHeatmapColorsPanel());
     addPanel(createFlowLinesPanel());
   }
