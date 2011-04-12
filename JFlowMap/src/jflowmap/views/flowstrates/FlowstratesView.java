@@ -147,33 +147,32 @@ public class FlowstratesView extends AbstractCanvasView {
   private final MapProjection mapProjection;
 
 
-  public FlowstratesView(
-      FlowMapGraph flowMapGraph, AreaMap areaMap, AggLayersBuilder aggLayersBuilder,
-      int maxVisibleTuples, MapProjection mapProjection) {
-
+  public FlowstratesView(FlowMapGraph fmg, AreaMap areaMap, AggLayersBuilder aggregator,
+      int maxVisibleTuples, MapProjection proj) {
 
     logger.info("Opening flowstrates view");
 
-
-    if (aggLayersBuilder == null) {
-      aggLayersBuilder = new DefaultAggLayersBuilder();
-    }
-    this.layers = aggLayersBuilder.build(flowMapGraph);
-
-    for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
-      fmg.addEdgeWeightDifferenceColumns();
-      fmg.addEdgeWeightRelativeDifferenceColumns();
-    }
-
-    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
-    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph, flowMapGraph.getEdgeWeightDiffAttr());
-    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph,
-        flowMapGraph.getEdgeWeightRelativeDiffAttrNames());
-
-
-    this.flowMapGraph = flowMapGraph;
+    this.flowMapGraph = fmg;
     this.maxVisibleTuples = maxVisibleTuples;
-    this.mapProjection = mapProjection;
+    this.mapProjection = proj;
+
+
+    if (aggregator == null) {
+      aggregator = new DefaultAggLayersBuilder();
+    }
+    this.layers = aggregator.build(fmg);
+
+    for (FlowMapGraph fmgg : layers.getFlowMapGraphs()) {
+      fmgg.addEdgeWeightDifferenceColumns();
+      fmgg.addEdgeWeightRelativeDifferenceColumns();
+    }
+
+    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg);
+    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
+    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg,
+        fmg.getEdgeWeightRelativeDiffAttrNames());
+
+
 
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
