@@ -24,12 +24,14 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.FlowEndpoints;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PLabel;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PPaths;
+import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import prefuse.data.Edge;
 
 import com.google.common.base.Predicate;
@@ -83,7 +85,7 @@ public class HeatmapLayer extends PLayer {
     addChild(columnHighlightRect);
 
     heatmapCellTooltipListener = flowstratesView.createTooltipListener(HeatmapCell.class);
-    heatmapCellHoverListener = flowstratesView.createHeatMapCellHoverListener();
+    heatmapCellHoverListener = createHeatMapCellHoverListener();
 
   }
 
@@ -261,6 +263,65 @@ public class HeatmapLayer extends PLayer {
           / heatmapCamera.getWidth();
     }
     heatmapCamera.setViewBounds(GeomUtils.growRectByPercent(heatmapBounds, .025, .1, .025, .1));
+  }
+
+
+  PTypedBasicInputEventHandler<HeatmapCell> createHeatMapCellHoverListener() {
+    return new PTypedBasicInputEventHandler<HeatmapCell>(HeatmapCell.class) {
+      @Override
+      public void mouseEntered(PInputEvent event) {
+        HeatmapCell cell = node(event);
+
+        FlowstratesStyle style = flowstratesView.getStyle();
+
+        // highlight cell
+        cell.moveToFront();
+        cell.setStroke(style.getSelectedTimelineCellStroke());
+        cell.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
+
+        // highlight flow lines
+        Pair<FlowLine, FlowLine> lines = lines(event);
+        if (lines != null) {
+          lines.first().setHighlighted(true);
+          lines.second().setHighlighted(true);
+        }
+        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.ORIGIN, true);
+        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.DEST, true);
+
+        flowstratesView.updateMapAreaColorsOnHeatMapCellHover(cell, true);
+      }
+
+      @Override
+      public void mouseExited(PInputEvent event) {
+        HeatmapCell cell = node(event);
+        FlowstratesStyle style = flowstratesView.getStyle();
+
+        cell.setStroke(style.getTimelineCellStroke());
+        cell.setStrokePaint(style.getTimelineCellStrokeColor());
+
+        Pair<FlowLine, FlowLine> lines = lines(event);
+        if (lines != null) {
+          lines.first().setHighlighted(false);
+          lines.second().setHighlighted(false);
+        }
+        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.ORIGIN, false);
+        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.DEST, false);
+
+        flowstratesView.updateMapAreaColorsOnHeatMapCellHover(cell, false);
+      }
+
+      private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
+        return flowstratesView.getFlowLines(node(event).getEdge());
+      }
+
+
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (event.isControlDown()) {
+          flowstratesView.setEgdeForSimilaritySorting(node(event).getEdge());
+        }
+      }
+    };
   }
 
 }

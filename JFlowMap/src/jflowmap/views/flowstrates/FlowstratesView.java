@@ -21,7 +21,6 @@ package jflowmap.views.flowstrates;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -52,7 +51,6 @@ import jflowmap.models.map.AreaMap;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
-import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
 import jflowmap.views.VisualCanvas;
@@ -604,6 +602,10 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
+  Pair<FlowLine, FlowLine> getFlowLines(Edge edge) {
+    return edgesToLines.get(edge);
+  }
+
   private Pair<Color, Color> getFlowLineColors(Edge edge) {
     Color c;
     switch (flowtiLinesColoringMode) {
@@ -691,22 +693,6 @@ public class FlowstratesView extends AbstractCanvasView {
     mapToMatrixLinesLayer.repaint();
   }
 
-  /**
-   * @returns List of ids of selected nodes, or null if no nodes were selected
-   */
-  List<String> applyLassoToNodeCentroids(Shape shape, FlowEndpoints s) {
-    List<String> nodeIds = null;
-    for (Map.Entry<String, Centroid> e : getNodeIdsToCentroids(s).entrySet()) {
-      Centroid centroid = e.getValue();
-      if (shape.contains(centroid.getPoint())) {
-        if (nodeIds == null) {
-          nodeIds = Lists.newArrayList();
-        }
-        nodeIds.add(e.getKey());
-      }
-    }
-    return nodeIds;
-  }
 
   /**
    * @return True if the selection was not empty
@@ -827,7 +813,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return BorderLayout.NORTH;
   }
 
-  private void setEdgeCentroidsHighlighted(HeatmapCell hmcell, FlowEndpoints npos, boolean highlighted) {
+  void setEdgeCentroidsHighlighted(HeatmapCell hmcell, FlowEndpoints npos, boolean highlighted) {
     Node node = flowMapGraph.getNodeOf(hmcell.getEdge(), npos);
     Centroid c = getNodeIdsToCentroids(npos).get(flowMapGraph.getNodeId(node));
     if (c != null) {
@@ -845,62 +831,7 @@ public class FlowstratesView extends AbstractCanvasView {
     destsMapLayer.updateMapAreaColorsOnHeatMapColumnLabelHover(columnAttr, hover);
   }
 
-  PTypedBasicInputEventHandler<HeatmapCell> createHeatMapCellHoverListener() {
-    return new PTypedBasicInputEventHandler<HeatmapCell>(HeatmapCell.class) {
-      @Override
-      public void mouseEntered(PInputEvent event) {
-        HeatmapCell cell = node(event);
-        // updateMapColors(node.getFlowMapGraph());
-
-        // highlight cell
-        cell.moveToFront();
-        cell.setStroke(style.getSelectedTimelineCellStroke());
-        cell.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
-
-        // highlight flow lines
-        Pair<FlowLine, FlowLine> lines = lines(event);
-        if (lines != null) {
-          lines.first().setHighlighted(true);
-          lines.second().setHighlighted(true);
-        }
-        setEdgeCentroidsHighlighted(cell, FlowEndpoints.ORIGIN, true);
-        setEdgeCentroidsHighlighted(cell, FlowEndpoints.DEST, true);
-
-        updateMapAreaColorsOnHeatMapCellHover(cell, true);
-      }
-
-      @Override
-      public void mouseExited(PInputEvent event) {
-        // updateMapColors(null);
-        HeatmapCell cell = node(event);
-        cell.setStroke(style.getTimelineCellStroke());
-        cell.setStrokePaint(style.getTimelineCellStrokeColor());
-
-        Pair<FlowLine, FlowLine> lines = lines(event);
-        if (lines != null) {
-          lines.first().setHighlighted(false);
-          lines.second().setHighlighted(false);
-        }
-        setEdgeCentroidsHighlighted(cell, FlowEndpoints.ORIGIN, false);
-        setEdgeCentroidsHighlighted(cell, FlowEndpoints.DEST, false);
-
-        updateMapAreaColorsOnHeatMapCellHover(cell, false);
-      }
-
-      private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
-        return edgesToLines.get(node(event).getEdge());
-      }
-
-      @Override
-      public void mouseClicked(PInputEvent event) {
-        if (event.isControlDown()) {
-          setEgdeForSimilaritySorting(node(event).getEdge());
-        }
-      }
-    };
-  }
-
-  private void setEgdeForSimilaritySorting(Edge edge) {
+  void setEgdeForSimilaritySorting(Edge edge) {
     flowMapGraph.setEgdeForSimilaritySorting(edge);
     updateVisibleEdges();
   }

@@ -42,6 +42,7 @@ import jflowmap.views.flowmap.VisualAreaMap;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
@@ -161,12 +162,30 @@ public class MapLayer extends PLayer {
       @Override
       public void selectionMade(Shape shape) {
         flowstratesView.setCustomEdgeFilter(null);
-        flowstratesView.setSelectedNodes(flowstratesView.applyLassoToNodeCentroids(shape, endpoint), endpoint);
+        flowstratesView.setSelectedNodes(applyLassoToNodeCentroids(shape, endpoint), endpoint);
         flowstratesView.updateVisibleEdges();
         updateCentroidColors();
       }
     };
   }
+
+  /**
+   * @returns List of ids of selected nodes, or null if no nodes were selected
+   */
+  private List<String> applyLassoToNodeCentroids(Shape shape, FlowEndpoints s) {
+    List<String> nodeIds = null;
+    for (Map.Entry<String, Centroid> e : nodeIdsToCentroids.entrySet()) {
+      Centroid centroid = e.getValue();
+      if (shape.contains(centroid.getPoint())) {
+        if (nodeIds == null) {
+          nodeIds = Lists.newArrayList();
+        }
+        nodeIds.add(e.getKey());
+      }
+    }
+    return nodeIds;
+  }
+
 
   Point2D getCentroidPoint(Edge edge) {
     Centroid centroid = nodeIdsToCentroids.get(getFlowMapGraph().getNodeId(endpoint.nodeOf(edge)));
@@ -236,23 +255,26 @@ public class MapLayer extends PLayer {
   }
 
   private void colorizeMapArea(String areaId, double value, boolean hover, FlowEndpoints s) {
-    VisualArea area = visualAreaMap.getVisualAreaBy(areaId);
-    if (area != null && !area.isEmpty()) {
-      Color color;
-      if (hover) {
-        color = flowstratesView.getColorFor(value);
+    Centroid c = nodeIdsToCentroids.get(areaId);
+    if (c != null) {
+      VisualArea area = visualAreaMap.getVisualAreaBy(areaId);
+      if (area != null && !area.isEmpty()) {
+        Color color;
+        if (hover) {
+          color = flowstratesView.getColorFor(value);
+        } else {
+          color = flowstratesView.getMapColorScheme().getColor(ColorCodes.AREA_PAINT);
+        }
+        area.setPaint(color);
       } else {
-        color = flowstratesView.getMapColorScheme().getColor(ColorCodes.AREA_PAINT);
+        Color color;
+        if (hover) {
+          color = flowstratesView.getColorFor(value);
+        } else {
+          color = flowstratesView.getStyle().getMapAreaCentroidLabelPaint();
+        }
+        c.getLabelNode().setPaint(color);
       }
-      area.setPaint(color);
-    } else {
-      Color color;
-      if (hover) {
-        color = flowstratesView.getColorFor(value);
-      } else {
-        color = flowstratesView.getStyle().getMapAreaCentroidLabelPaint();
-      }
-      nodeIdsToCentroids.get(areaId).getLabelNode().setPaint(color);
     }
   }
 
@@ -283,8 +305,7 @@ public class MapLayer extends PLayer {
     } else {
       edges = getFlowMapGraph().edges();
     }
-    colorizeMapAreasWithBaseNodeSummaries(columnAttr, hover, edges, FlowEndpoints.ORIGIN);
-    colorizeMapAreasWithBaseNodeSummaries(columnAttr, hover, edges, FlowEndpoints.DEST);
+    colorizeMapAreasWithBaseNodeSummaries(columnAttr, hover, edges, endpoint);
   }
 
 
