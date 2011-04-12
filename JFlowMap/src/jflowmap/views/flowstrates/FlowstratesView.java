@@ -583,58 +583,53 @@ public class FlowstratesView extends AbstractCanvasView {
 
 
   private void updateFlowLinePositions() {
-    PBounds heatMapViewBounds = heatmapLayer.getHeatmapCamera().getViewBounds();
     int row = 0;
+
     for (Edge edge : getVisibleEdges()) {
       Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = heatmapLayer.getEdgeLabels(edge);
 
-      Point2D originCentroidPoint = originsMapLayer.getCentroidPoint(edge);
-      boolean inVis = originCentroidPoint != null
-          && originsMapLayer.getMapLayerCamera().getViewBounds().contains(originCentroidPoint);
-      FlowLine lineIn = lines.first();
-      if (inVis) {
-        Point2D.Double matrixIn = heatmapLayer.getMatrixInPoint(row);
-        inVis = inVis && heatMapViewBounds.contains(matrixIn);
-        if (inVis) {
-          originsMapLayer.getMapLayerCamera().viewToLocal(originCentroidPoint);
-          heatmapLayer.getHeatmapCamera().viewToLocal(matrixIn);
-          lineIn.setPoint(0, originCentroidPoint.getX(), originCentroidPoint.getY());
-          Rectangle2D fromLabelBounds = heatmapLayer.getHeatmapCamera().viewToLocal(
-              labels.first().getBounds());
-          lineIn.setPoint(1, matrixIn.x - fromLabelBounds.getWidth(),
-              matrixIn.y + fromLabelBounds.getHeight() / 2);
-          lineIn.setPoint(2, matrixIn.x, matrixIn.y + fromLabelBounds.getHeight() / 2);
-        }
-      }
-      lineIn.setVisible(inVis);
-      lineIn.setPickable(false);
-
-      Point2D destCentroidPoint = destsMapLayer.getCentroidPoint(edge);
-      boolean outVis = destCentroidPoint != null
-          && destsMapLayer.getMapLayerCamera().getViewBounds().contains(destCentroidPoint);
-      FlowLine lineOut = lines.second();
-      if (outVis) {
-        Point2D.Double matrixOut = heatmapLayer.getMatrixOutPoint(row);
-        outVis = outVis && heatMapViewBounds.contains(matrixOut);
-        if (outVis) {
-          destsMapLayer.getMapLayerCamera().viewToLocal(destCentroidPoint);
-          heatmapLayer.getHeatmapCamera().viewToLocal(matrixOut);
-          lineOut.setPoint(0, destCentroidPoint.getX(), destCentroidPoint.getY());
-          Rectangle2D toLabelBounds = heatmapLayer.getHeatmapCamera()
-              .viewToLocal(labels.second().getBounds());
-          lineOut.setPoint(1, matrixOut.x + toLabelBounds.getWidth(), matrixOut.y + toLabelBounds.getHeight()
-              / 2);
-          lineOut.setPoint(2, matrixOut.x, matrixOut.y + toLabelBounds.getHeight() / 2);
-        }
-      }
-      lineOut.setVisible(outVis);
-      lineOut.setPickable(false);
+      updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoints.ORIGIN);
+      updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoints.DEST);
 
       row++;
     }
 
     mapToMatrixLinesLayer.repaint();
+  }
+
+  private void updateFlowLine(int row, Edge edge, FlowLine line, PText label, FlowEndpoints ep) {
+
+    PCamera hmcam = heatmapLayer.getHeatmapCamera();
+    PBounds viewBounds = hmcam.getViewBounds();
+
+    MapLayer mapLayer = (ep == FlowEndpoints.ORIGIN ? originsMapLayer : destsMapLayer);
+
+    Point2D p1 = mapLayer.getCentroidPoint(edge);
+    boolean visible =
+      (p1 != null  &&  mapLayer.getMapLayerCamera().getViewBounds().contains(p1));
+
+    if (visible) {
+      Point2D.Double p2 = heatmapLayer.getHeatmapRowFlowInOutPoint(row, ep);
+      visible = (visible  &&  viewBounds.contains(p2));
+      if (visible) {
+        mapLayer.getMapLayerCamera().viewToLocal(p1);
+        hmcam.viewToLocal(p2);
+        Rectangle2D lb = hmcam.viewToLocal(label.getBounds());
+
+        line.setPoint(0, p1.getX(), p1.getY());
+
+        if (ep == FlowEndpoints.ORIGIN) {
+          line.setPoint(1, p2.x - lb.getWidth(), p2.y + lb.getHeight() / 2);
+          line.setPoint(2, p2.x, p2.y + lb.getHeight() / 2);
+        } else {
+          line.setPoint(1, p2.x + lb.getWidth(), p2.y + lb.getHeight() / 2);
+          line.setPoint(2, p2.x, p2.y + lb.getHeight() / 2);
+        }
+      }
+    }
+    line.setVisible(visible);
+    line.setPickable(false);
   }
 
 

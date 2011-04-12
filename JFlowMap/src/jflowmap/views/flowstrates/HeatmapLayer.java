@@ -24,6 +24,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
+import jflowmap.FlowEndpoints;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.Pair;
@@ -149,13 +150,20 @@ public class HeatmapLayer extends PLayer {
     }
   }
 
-  Point2D.Double getMatrixInPoint(int row) {
-    return new Point2D.Double(-10, getTupleY(row) + HeatmapLayer.cellHeight / 2);
-  }
+  Point2D.Double getHeatmapRowFlowInOutPoint(int row, FlowEndpoints ep) {
+    switch (ep) {
 
-  Point2D.Double getMatrixOutPoint(int row) {
-    return new Point2D.Double(10 + HeatmapLayer.cellWidth * getFlowMapGraph().getEdgeWeightAttrsCount(), getTupleY(row)
-        + HeatmapLayer.cellHeight / 2);
+    case ORIGIN:
+      return new Point2D.Double(-10, getTupleY(row) + HeatmapLayer.cellHeight / 2);
+
+    case DEST:
+      int numCols = getFlowMapGraph().getEdgeWeightAttrsCount();
+      return new Point2D.Double(
+          10 + HeatmapLayer.cellWidth * numCols, getTupleY(row) + HeatmapLayer.cellHeight / 2);
+
+    default:
+      throw new AssertionError();
+    }
   }
 
   double getTupleY(int row) {
