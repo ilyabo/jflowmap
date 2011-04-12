@@ -54,9 +54,7 @@ import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
 import jflowmap.views.VisualCanvas;
-import jflowmap.views.flowmap.AbstractLegendItemProducer;
 import jflowmap.views.flowmap.ColorSchemeAware;
-import jflowmap.views.flowmap.FlowMapView;
 
 import org.apache.log4j.Logger;
 
@@ -75,7 +73,6 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
-import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -169,9 +166,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
     FlowMapSummaries.supplyNodesWithWeightSummaries(fmg);
     FlowMapSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
-    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg,
-        fmg.getEdgeWeightRelativeDiffAttrNames());
-
+    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
 
 
     VisualCanvas canvas = getVisualCanvas();
@@ -193,8 +188,10 @@ public class FlowstratesView extends AbstractCanvasView {
             (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
+
     // canvas.setMinZoomScale(1e-1);
     // canvas.setMaxZoomScale(1e+2);
+
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
@@ -224,7 +221,11 @@ public class FlowstratesView extends AbstractCanvasView {
     mapToMatrixLinesLayer = new PNode();
     getCamera().addChild(mapToMatrixLinesLayer);
 
-    createLegend();
+    logger.info("Creating legend");
+    legend = new FlowstratesLegend(this);
+    heatmapLayer.getHeatmapCamera().addChild(legend);
+    logger.info("Done creating legend");
+
 
     logger.info("Creating heatmap");
     heatmapLayer.renewHeatmap();
@@ -269,38 +270,6 @@ public class FlowstratesView extends AbstractCanvasView {
     textNode.setFont(CAPTION_FONT);
     camera.addAttribute(CAPTION_NODE_ATTR, textNode);
     camera.addChild(textNode);
-  }
-
-  private void createLegend() {
-    legend = new Legend(
-        new Color(220, 220, 220, 225),
-        new Color(60, 60, 60, 200),
-
-        new AbstractLegendItemProducer(4) {
-
-          @Override
-          public PNode createItem(double value) {
-            PPath item = new PPath(new Rectangle2D.Double(0, 0, 10, 10));
-            item.setPaint(getColorFor(value));
-            item.setName(FlowMapView.NUMBER_FORMAT.format(value));
-            item.setStroke(null);
-            return item;
-          }
-
-          @Override
-          public PNode createHeader() {
-            return null;
-          }
-
-          @Override
-          public MinMax getMinMax() {
-            return getValueType().getMinMax(getStats());
-          }
-
-        });
-    legend.setOffset(5, 12);
-    legend.setScale(1.4);
-    heatmapLayer.getHeatmapCamera().addChild(legend);
   }
 
   void updateLegend() {
