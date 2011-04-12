@@ -24,7 +24,6 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.FlowEndpoints;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.Pair;
@@ -285,8 +284,6 @@ public class HeatmapLayer extends PLayer {
           lines.first().setHighlighted(true);
           lines.second().setHighlighted(true);
         }
-        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.ORIGIN, true);
-        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.DEST, true);
 
         flowstratesView.updateMapAreaColorsOnHeatMapCellHover(cell, true);
       }
@@ -304,14 +301,12 @@ public class HeatmapLayer extends PLayer {
           lines.first().setHighlighted(false);
           lines.second().setHighlighted(false);
         }
-        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.ORIGIN, false);
-        flowstratesView.setEdgeCentroidsHighlighted(cell, FlowEndpoints.DEST, false);
 
         flowstratesView.updateMapAreaColorsOnHeatMapCellHover(cell, false);
       }
 
       private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
-        return flowstratesView.getFlowLines(node(event).getEdge());
+        return flowstratesView.getFlowLinesOf(node(event).getEdge());
       }
 
 

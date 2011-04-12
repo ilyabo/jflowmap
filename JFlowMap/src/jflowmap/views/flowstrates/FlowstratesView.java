@@ -62,7 +62,6 @@ import jflowmap.views.flowmap.VisualAreaMap;
 import org.apache.log4j.Logger;
 
 import prefuse.data.Edge;
-import prefuse.data.Node;
 import prefuse.util.ColorLib;
 
 import com.google.common.base.Predicate;
@@ -537,7 +536,7 @@ public class FlowstratesView extends AbstractCanvasView {
     throw new AssertionError();
   }
 
-  private Map<String, Centroid> getNodeIdsToCentroids(FlowEndpoints s) {
+  Map<String, Centroid> getNodeIdsToCentroids(FlowEndpoints s) {
     return getMapLayer(s).getNodeIdsToCentroids();
   }
 
@@ -601,7 +600,7 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  Pair<FlowLine, FlowLine> getFlowLines(Edge edge) {
+  Pair<FlowLine, FlowLine> getFlowLinesOf(Edge edge) {
     return edgesToLines.get(edge);
   }
 
@@ -755,32 +754,6 @@ public class FlowstratesView extends AbstractCanvasView {
   // }
 
 
-  void setNodeHighlighted(final String nodeId, FlowEndpoints s, boolean highlighted) {
-    Centroid c = getNodeIdsToCentroids(s).get(nodeId);
-    if (c != null) {
-      c.setHighlighted(highlighted);
-      c.setTimeSliderVisible(highlighted);
-    }
-    Predicate<Node> acceptNodes = new Predicate<Node>() {
-      @Override
-      public boolean apply(Node node) {
-        return nodeId.equals(flowMapGraph.getNodeId(node));
-      }
-    };
-    for (Edge e : s.filterByNodePredicate(visibleEdges, acceptNodes)) {
-      Pair<FlowLine, FlowLine> pair = edgesToLines.get(e);
-      if (pair != null) {
-        pair.first().setHighlighted(highlighted);
-        pair.second().setHighlighted(highlighted);
-        // if (showFlowtiLinesForHighligtedNodesOnly) {
-        // pair.first().setVisible(highlighted);
-        // pair.second().setVisible(highlighted);
-        // }
-      }
-    }
-
-    getMapLayer(s).setVisualAreaMapHighlighted(nodeId, highlighted);
-  }
 
   @Override
   public JComponent getViewComponent() {
@@ -798,17 +771,12 @@ public class FlowstratesView extends AbstractCanvasView {
     return BorderLayout.NORTH;
   }
 
-  void setEdgeCentroidsHighlighted(HeatmapCell hmcell, FlowEndpoints npos, boolean highlighted) {
-    Node node = flowMapGraph.getNodeOf(hmcell.getEdge(), npos);
-    Centroid c = getNodeIdsToCentroids(npos).get(flowMapGraph.getNodeId(node));
-    if (c != null) {
-      c.setHighlighted(highlighted);
-    }
-  }
-
   void updateMapAreaColorsOnHeatMapCellHover(HeatmapCell cell, boolean hover) {
     originsMapLayer.updateMapAreaColorsOnHeatMapCellHover(cell, hover);
     destsMapLayer.updateMapAreaColorsOnHeatMapCellHover(cell, hover);
+
+    originsMapLayer.setEdgeCentroidsHighlighted(cell, hover);
+    destsMapLayer.setEdgeCentroidsHighlighted(cell, hover);
   }
 
   void updateMapAreaColorsOnHeatMapColumnLabelHover(String columnAttr, boolean hover) {
@@ -883,36 +851,6 @@ public class FlowstratesView extends AbstractCanvasView {
   private RowOrderings rowOrdering = RowOrderings.SRC_VPOS;
   private FlowMapStats visibleEdgesStats;
 
-  private Rectangle2D centroidsBounds(FlowEndpoints s) {
-    Rectangle2D.Double b = new Rectangle2D.Double();
-    boolean first = true;
-    for (Centroid c : getNodeIdsToCentroids(s).values()) {
-      double x = c.getOrigX();
-      double y = c.getOrigY();
-      if (first) {
-        b.x = x;
-        b.y = y;
-        first = false;
-      } else {
-        if (x < b.x) {
-          b.x = x;
-        }
-        if (x > b.getMaxX()) {
-          b.width = x - b.x;
-        }
-        if (y < b.y) {
-          b.y = y;
-        }
-        if (y > b.getMaxY()) {
-          b.height = y - b.y;
-        }
-      }
-    }
-    // getVisualAreaMapCamera(s).localToView(b);
-
-    return b;
-  }
-
   @Override
   public void fitInView() {
     layoutCameraNode(originsMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
@@ -934,15 +872,16 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fitMapsInView() {
-    fintInCameraView(FlowEndpoints.ORIGIN);
+    fitInCameraView(FlowEndpoints.ORIGIN);
     heatmapLayer.fitHeatMapInView();
-    fintInCameraView(FlowEndpoints.DEST);
+    fitInCameraView(FlowEndpoints.DEST);
+
     fitInViewOnce = true;
   }
 
-  private void fintInCameraView(FlowEndpoints s) {
+  private void fitInCameraView(FlowEndpoints s) {
     getMapLayer(s).getMapLayerCamera().setViewBounds(
-        GeomUtils.growRectByPercent(centroidsBounds(s), .2, .2, .2, .2));
+        GeomUtils.growRectByPercent(destsMapLayer.centroidsBounds(this), .2, .2, .2, .2));
   }
 
   private void layoutCameraNode(PCamera camera, double halign, double valign, double hsizeProportion,

@@ -21,6 +21,8 @@ package jflowmap.views.flowstrates;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ import jflowmap.data.Nodes;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.Lasso;
 import jflowmap.util.CollectionUtils;
+import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
@@ -43,6 +46,7 @@ import jflowmap.views.flowmap.VisualAreaMap;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -214,7 +218,7 @@ public class MapLayer extends PLayer {
       public void mouseEntered(PInputEvent event) {
         Centroid c = node(event);
         if (c != null) {
-          flowstratesView.setNodeHighlighted(c.getNodeId(), endpoint, true);
+          setNodeHighlighted(c.getNodeId(), true);
         }
       }
 
@@ -222,7 +226,7 @@ public class MapLayer extends PLayer {
       public void mouseExited(PInputEvent event) {
         Centroid c = node(event);
         if (c != null) {
-          flowstratesView.setNodeHighlighted(c.getNodeId(), endpoint, false);
+          setNodeHighlighted(c.getNodeId(), false);
         }
       }
     };
@@ -237,7 +241,7 @@ public class MapLayer extends PLayer {
         VisualArea va = node(event);
         if (va != null) {
           String areaId = va.getArea().getId();
-          flowstratesView.setNodeHighlighted(areaId, endpoint, true);
+          setNodeHighlighted(areaId, true);
         }
       }
 
@@ -246,7 +250,7 @@ public class MapLayer extends PLayer {
         VisualArea va = node(event);
         if (va != null) {
           String areaId = va.getArea().getId();
-          flowstratesView.setNodeHighlighted(areaId, endpoint, false);
+          setNodeHighlighted(areaId, false);
         }
       }
     };
@@ -345,5 +349,72 @@ public class MapLayer extends PLayer {
       va.repaint();
     }
   }
+
+  Rectangle2D centroidsBounds(FlowstratesView flowstratesView) {
+    Double b = new Double();
+    boolean first = true;
+    for (Centroid c : nodeIdsToCentroids.values()) {
+      double x = c.getOrigX();
+      double y = c.getOrigY();
+      if (first) {
+        b.x = x;
+        b.y = y;
+        first = false;
+      } else {
+        if (x < b.x) {
+          b.x = x;
+        }
+        if (x > b.getMaxX()) {
+          b.width = x - b.x;
+        }
+        if (y < b.y) {
+          b.y = y;
+        }
+        if (y > b.getMaxY()) {
+          b.height = y - b.y;
+        }
+      }
+    }
+    // getVisualAreaMapCamera(s).localToView(b);
+
+    return b;
+  }
+
+
+  void setEdgeCentroidsHighlighted(HeatmapCell hmcell, boolean highlighted) {
+    Node node = getFlowMapGraph().getNodeOf(hmcell.getEdge(), endpoint);
+    Centroid c = nodeIdsToCentroids.get(getFlowMapGraph().getNodeId(node));
+    if (c != null) {
+      c.setHighlighted(highlighted);
+    }
+  }
+
+  public void setNodeHighlighted(final String nodeId, boolean highlighted) {
+    Centroid c = nodeIdsToCentroids.get(nodeId);
+    if (c != null) {
+      c.setHighlighted(highlighted);
+      c.setTimeSliderVisible(highlighted);
+    }
+    Predicate<Node> acceptNodes = new Predicate<Node>() {
+      @Override
+      public boolean apply(Node node) {
+        return nodeId.equals(getFlowMapGraph().getNodeId(node));
+      }
+    };
+    for (Edge e : endpoint.filterByNodePredicate(flowstratesView.getVisibleEdges(), acceptNodes)) {
+      Pair<FlowLine, FlowLine> pair = flowstratesView.getFlowLinesOf(e);
+      if (pair != null) {
+        pair.first().setHighlighted(highlighted);
+        pair.second().setHighlighted(highlighted);
+        // if (showFlowtiLinesForHighligtedNodesOnly) {
+        // pair.first().setVisible(highlighted);
+        // pair.second().setVisible(highlighted);
+        // }
+      }
+    }
+
+    setVisualAreaMapHighlighted(nodeId, highlighted);
+  }
+
 
 }
