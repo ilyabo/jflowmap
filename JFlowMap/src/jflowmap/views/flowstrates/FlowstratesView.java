@@ -57,7 +57,6 @@ import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.AbstractLegendItemProducer;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.FlowMapView;
-import jflowmap.views.flowmap.VisualAreaMap;
 
 import org.apache.log4j.Logger;
 
@@ -315,6 +314,10 @@ public class FlowstratesView extends AbstractCanvasView {
     changes.addPropertyChangeListener(prop.name(), listener);
   }
 
+  void fireNodeSelectionChanged(List<String> old, List<String> nodeIds) {
+    changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
+  }
+
   @Override
   public String getName() {
     return getClass().getSimpleName();
@@ -436,20 +439,20 @@ public class FlowstratesView extends AbstractCanvasView {
     return list;
   }
 
-  private Iterable<Edge> removeEdgesWithNaNs(Iterable<Edge> edges) {
+  private Iterable<Edge> removeEdgesWithOnlyNaNs(Iterable<Edge> edges) {
     return // Remove rows with no weights
-    Iterables.filter(edges, new Predicate<Edge>() {
-      @Override
-      public boolean apply(Edge e) {
-        return flowMapGraph.hasNonZeroWeight(e);
-      }
-    });
+      Iterables.filter(edges, new Predicate<Edge>() {
+        @Override
+        public boolean apply(Edge e) {
+          return flowMapGraph.hasNonZeroWeight(e);
+        }
+      });
   }
 
   List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
       List<Edge> edges = Lists.newArrayList(
-          getTopEdges(Iterables.filter(removeEdgesWithNaNs(layers.getVisibleEdges()),
+          getTopEdges(Iterables.filter(removeEdgesWithOnlyNaNs(layers.getVisibleEdges()),
           getEdgePredicate())));
 
       Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
@@ -513,24 +516,6 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private PCamera getCamera() {
     return getVisualCanvas().getCamera();
-  }
-
-  private MapLayer getMapLayer(FlowEndpoints s) {
-    switch (s) {
-    case ORIGIN:
-      return originsMapLayer;
-    case DEST:
-      return destsMapLayer;
-    }
-    throw new AssertionError();
-  }
-
-  private VisualAreaMap getVisualAreaMap(FlowEndpoints s) {
-    return getMapLayer(s).getVisualAreaMap();
-  }
-
-  Map<String, Centroid> getNodeIdsToCentroids(FlowEndpoints s) {
-    return getMapLayer(s).getNodeIdsToCentroids();
   }
 
   public void setShowLinesForHighligtedOnly(boolean showLinesForHighligtedOnly) {
@@ -843,16 +828,16 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fitMapsInView() {
-    fitInCameraView(FlowEndpoints.ORIGIN);
+    fitInCameraView(originsMapLayer);
     heatmapLayer.fitHeatMapInView();
-    fitInCameraView(FlowEndpoints.DEST);
+    fitInCameraView(destsMapLayer);
 
     fitInViewOnce = true;
   }
 
-  private void fitInCameraView(FlowEndpoints s) {
-    getMapLayer(s).getMapLayerCamera().setViewBounds(
-        GeomUtils.growRectByPercent(destsMapLayer.centroidsBounds(this), .2, .2, .2, .2));
+  private void fitInCameraView(MapLayer layer) {
+    Rectangle2D nb = GeomUtils.growRectByPercent(layer.centroidsBounds(this), .2, .2, .2, .2);
+    layer.getMapLayerCamera().setViewBounds(nb);
   }
 
   private void layoutCameraNode(PCamera camera, double halign, double valign, double hsizeProportion,
@@ -913,10 +898,6 @@ public class FlowstratesView extends AbstractCanvasView {
       visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
     }
     return visibleEdgesStats;
-  }
-
-  void fireNodeSelectionChanged(List<String> old, List<String> nodeIds) {
-    changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
   }
 
 }
