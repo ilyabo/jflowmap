@@ -150,7 +150,10 @@ public class HeatmapLayer extends PLayer {
     }
   }
 
-  Point2D.Double getHeatmapRowFlowInOutPoint(int row, FlowEndpoints ep) {
+  /**
+   * @return The point in the heatmap camera view coords.
+   */
+  Point2D.Double getHeatmapFlowLineInPoint(int row, FlowEndpoints ep) {
     switch (ep) {
 
     case ORIGIN:

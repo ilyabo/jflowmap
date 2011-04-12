@@ -599,33 +599,37 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void updateFlowLine(int row, Edge edge, FlowLine line, PText label, FlowEndpoints ep) {
-
     PCamera hmcam = heatmapLayer.getHeatmapCamera();
     PBounds viewBounds = hmcam.getViewBounds();
 
     MapLayer mapLayer = (ep == FlowEndpoints.ORIGIN ? originsMapLayer : destsMapLayer);
 
-    Point2D p1 = mapLayer.getCentroidPoint(edge);
+    Point2D p0 = mapLayer.getCentroidPoint(edge);
     boolean visible =
-      (p1 != null  &&  mapLayer.getMapLayerCamera().getViewBounds().contains(p1));
+      (p0 != null  &&  mapLayer.getMapLayerCamera().getViewBounds().contains(p0));
 
     if (visible) {
-      Point2D.Double p2 = heatmapLayer.getHeatmapRowFlowInOutPoint(row, ep);
-      visible = (visible  &&  viewBounds.contains(p2));
+      Point2D.Double p = heatmapLayer.getHeatmapFlowLineInPoint(row, ep);
+      visible = (visible  &&  viewBounds.contains(p));
       if (visible) {
-        mapLayer.getMapLayerCamera().viewToLocal(p1);
-        hmcam.viewToLocal(p2);
+        mapLayer.getMapLayerCamera().viewToLocal(p0);
+        hmcam.viewToLocal(p);
         Rectangle2D lb = hmcam.viewToLocal(label.getBounds());
 
-        line.setPoint(0, p1.getX(), p1.getY());
+        line.setPoint(0, p0.getX(), p0.getY());
 
+        double x1 = p.x;
+        double y1 = p.y + lb.getHeight() / 2;
         if (ep == FlowEndpoints.ORIGIN) {
-          line.setPoint(1, p2.x - lb.getWidth(), p2.y + lb.getHeight() / 2);
-          line.setPoint(2, p2.x, p2.y + lb.getHeight() / 2);
+          x1 -= lb.getWidth();
         } else {
-          line.setPoint(1, p2.x + lb.getWidth(), p2.y + lb.getHeight() / 2);
-          line.setPoint(2, p2.x, p2.y + lb.getHeight() / 2);
+          x1 += lb.getWidth();
         }
+        line.setPoint(1, x1, y1);
+
+        double x2 = p.x;
+        double y2 = y1;
+        line.setPoint(2, x2, y2);
       }
     }
     line.setVisible(visible);
