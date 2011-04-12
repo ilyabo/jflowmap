@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
 
-import jflowmap.EdgeDirection;
+import jflowmap.FlowDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.MinMax;
@@ -113,8 +113,8 @@ public class VisualTimelineNodeCell extends PNode {
 
     setBounds(x, y, width, height);
 
-    double inValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, EdgeDirection.INCOMING);
-    double outValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, EdgeDirection.OUTGOING);
+    double inValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, FlowDirection.INCOMING);
+    double outValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, FlowDirection.OUTGOING);
 
 
     double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);

@@ -21,7 +21,7 @@ package jflowmap.views.flowstrates;
 import java.awt.Color;
 import java.awt.Stroke;
 
-import jflowmap.NodeEdgePos;
+import jflowmap.FlowEndpoints;
 
 /**
  * @author Ilya Boyandin
@@ -54,7 +54,7 @@ public interface FlowstratesStyle {
 
   Color getMapAreaSelectedCentroidPaint();
 
-  Color getLassoStrokePaint(NodeEdgePos s);
+  Color getLassoStrokePaint(FlowEndpoints s);
 
   Color getMapAreaHighlightedStrokePaint();
 

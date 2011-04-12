@@ -26,7 +26,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import jflowmap.EdgeDirection;
+import jflowmap.FlowDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
@@ -141,9 +141,9 @@ public class VisualTimeline extends PNode {
     String attr = flowMapGraphs.getAttrSpec().getFlowWeightAttrs().get(0);
     return stats
       .getNodeAttrStats(
-          FlowMapSummaries.getWeightSummaryNodeAttr(attr, EdgeDirection.INCOMING))
+          FlowMapSummaries.getWeightSummaryNodeAttr(attr, FlowDirection.INCOMING))
       .mergeWith(globalStats.getNodeAttrStats(
-          FlowMapSummaries.getWeightSummaryNodeAttr(attr, EdgeDirection.OUTGOING)))
+          FlowMapSummaries.getWeightSummaryNodeAttr(attr, FlowDirection.OUTGOING)))
       .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG))
       .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG));
   }
@@ -296,8 +296,8 @@ public class VisualTimeline extends PNode {
   public void showTooltip(VisualTimelineNodeCell vc) {
     Node node = vc.getNode();
 
-    double inValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), EdgeDirection.INCOMING);
-    double outValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), EdgeDirection.OUTGOING);
+    double inValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.INCOMING);
+    double outValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.OUTGOING);
 
     double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
     double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);

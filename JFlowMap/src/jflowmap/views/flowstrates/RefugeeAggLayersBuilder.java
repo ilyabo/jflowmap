@@ -3,7 +3,7 @@ package jflowmap.views.flowstrates;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.FlowMapGraphAggLayers.Builder;
-import jflowmap.NodeEdgePos;
+import jflowmap.FlowEndpoints;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
 import prefuse.data.Edge;
 
@@ -40,7 +40,7 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           }, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(NodeEdgePos.SOURCE, "region2", "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.ORIGIN, "region2", "ALL"))
           );
 
       builder.addAggregationLayer("Origin/Region", null,
@@ -52,7 +52,7 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           }, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(NodeEdgePos.SOURCE, "region1", "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.ORIGIN, "region1", "ALL"))
           );
 
 
@@ -65,7 +65,7 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           }, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(NodeEdgePos.TARGET, "region2", "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.DESTINATION, "region2", "ALL"))
           );
 
 
@@ -78,7 +78,7 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           }, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(NodeEdgePos.TARGET, "region1", "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.DESTINATION, "region1", "ALL"))
           );
 
 

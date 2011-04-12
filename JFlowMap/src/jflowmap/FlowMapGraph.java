@@ -134,11 +134,11 @@ public class FlowMapGraph {
     };
   }
 
-  public Iterable<Node> nodesHavingEdges(final EdgeDirection dir) {
+  public Iterable<Node> nodesHavingEdges(final FlowDirection dir) {
     return Iterables.filter(nodes(), new Predicate<Node>() {
       @Override
       public boolean apply(Node node) {
-        return dir.getDegree(node) > 0;
+        return dir.degreeOf(node) > 0;
       }
     });
   }
@@ -241,10 +241,10 @@ public class FlowMapGraph {
     return node.getString(attrSpec.getNodeLabelAttr());
   }
 
-  public Node getNodeOf(Edge edge, NodeEdgePos pos) {
+  public Node getNodeOf(Edge edge, FlowEndpoints pos) {
     switch (pos) {
-    case SOURCE: return edge.getSourceNode();
-    case TARGET: return edge.getTargetNode();
+    case ORIGIN: return edge.getSourceNode();
+    case DESTINATION: return edge.getTargetNode();
     }
     throw new AssertionError();
   }
@@ -666,11 +666,11 @@ public class FlowMapGraph {
     };
   }
 
-  public Comparator<Edge> createMaxNodeSummariesForWeightComparator(NodeEdgePos s) {
+  public Comparator<Edge> createMaxNodeSummariesForWeightComparator(FlowEndpoints s) {
     return createMaxNodeSummariesComparator(getEdgeWeightAttrs(), s);
   }
 
-  private Comparator<Edge> createMaxNodeSummariesComparator(final List<String> attrs, final NodeEdgePos s) {
+  private Comparator<Edge> createMaxNodeSummariesComparator(final List<String> attrs, final FlowEndpoints s) {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {

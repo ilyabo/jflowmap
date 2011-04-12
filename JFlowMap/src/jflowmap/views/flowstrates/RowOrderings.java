@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.NodeEdgePos;
+import jflowmap.FlowEndpoints;
 import jflowmap.clustering.Cosine;
 import jflowmap.geom.GeomUtils;
 import prefuse.data.Edge;
@@ -19,7 +19,7 @@ enum RowOrderings {
     MAX_NODE_SUMMARIES("origin totals max") {
       @Override
       public Comparator<Edge> getComparator(FlowMapGraph fmg) {
-        return Collections.reverseOrder(fmg.createMaxNodeSummariesForWeightComparator(NodeEdgePos.SOURCE));
+        return Collections.reverseOrder(fmg.createMaxNodeSummariesForWeightComparator(FlowEndpoints.ORIGIN));
       }
     },
     SRC_VPOS("origin vpos") {
@@ -28,12 +28,12 @@ enum RowOrderings {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
-            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.SOURCE);
+            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.ORIGIN);
             if (c == 0) {
-              c = compareNodeLabels(fmg, e1, e2, NodeEdgePos.SOURCE);
+              c = compareNodeLabels(fmg, e1, e2, FlowEndpoints.ORIGIN);
             }
             if (c == 0) {
-              c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.TARGET);
+              c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.DESTINATION);
             }
             return c;
           }
@@ -47,12 +47,12 @@ enum RowOrderings {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
-            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.TARGET);
+            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.DESTINATION);
             if (c == 0) {
-              c = compareNodeLabels(fmg, e1, e2, NodeEdgePos.TARGET);
+              c = compareNodeLabels(fmg, e1, e2, FlowEndpoints.DESTINATION);
             }
             if (c == 0) {
-              c = RowOrderings.compareNodeVPos(fmg, e1, e2, NodeEdgePos.SOURCE);
+              c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.ORIGIN);
             }
             return c;
           }
@@ -187,12 +187,12 @@ enum RowOrderings {
 
     public abstract Comparator<Edge> getComparator(FlowMapGraph fmg);
 
-    private static int compareNodeVPos(FlowMapGraph fmg, Edge e1, Edge e2, NodeEdgePos s) {
+    private static int compareNodeVPos(FlowMapGraph fmg, Edge e1, Edge e2, FlowEndpoints s) {
       String yattr = fmg.getAttrSpec().getNodeLatAttr();
       return -(int)Math.signum(s.nodeOf(e1).getDouble(yattr) - s.nodeOf(e2).getDouble(yattr));
     }
 
-    private static int compareNodeLabels(FlowMapGraph fmg, Edge e1, Edge e2, NodeEdgePos s) {
+    private static int compareNodeLabels(FlowMapGraph fmg, Edge e1, Edge e2, FlowEndpoints s) {
       return fmg.getNodeLabel(s.nodeOf(e1)).compareTo(fmg.getNodeLabel(s.nodeOf(e2)));
     }
 

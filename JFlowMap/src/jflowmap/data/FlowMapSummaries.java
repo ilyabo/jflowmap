@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.EdgeDirection;
+import jflowmap.FlowDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
@@ -59,7 +59,7 @@ public class FlowMapSummaries {
   private FlowMapSummaries() {
   }
 
-  public static double getWeightSummary(Node node, String weightAttrName, EdgeDirection dir) {
+  public static double getWeightSummary(Node node, String weightAttrName, FlowDirection dir) {
     String attrName = getWeightSummaryNodeAttr(weightAttrName, dir);
     if (!node.canGet(attrName, double.class)) {
       throw new IllegalArgumentException("Cannot get summary attr: " + attrName);
@@ -88,7 +88,7 @@ public class FlowMapSummaries {
   }
 
 
-  public static String getWeightSummaryNodeAttr(String weightAttrName, EdgeDirection dir) {
+  public static String getWeightSummaryNodeAttr(String weightAttrName, FlowDirection dir) {
     switch (dir) {
     case OUTGOING: return NODE_COLUMN__SUM_OUTGOING_PREFIX + weightAttrName;
     case INCOMING: return NODE_COLUMN__SUM_INCOMING_PREFIX + weightAttrName;
@@ -135,8 +135,8 @@ public class FlowMapSummaries {
       }
     }
 
-    String outgoingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, EdgeDirection.OUTGOING);
-    String incomingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, EdgeDirection.INCOMING);
+    String outgoingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, FlowDirection.OUTGOING);
+    String incomingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, FlowDirection.INCOMING);
 
     nodeTable.addColumn(outgoingSumAttrName, double.class);
     nodeTable.addColumn(incomingSumAttrName, double.class);
@@ -219,7 +219,7 @@ public class FlowMapSummaries {
   }
 
   public static Iterable<String> getWeightSummaryNodeAttrs(
-      Iterable<String> edgeWeightAttrNames, EdgeDirection dir) {
+      Iterable<String> edgeWeightAttrNames, FlowDirection dir) {
     List<String> list = new ArrayList<String>(Iterables.size(edgeWeightAttrNames));
     for (String attr : edgeWeightAttrNames) {
       list.add(getWeightSummaryNodeAttr(attr, dir));
@@ -228,7 +228,7 @@ public class FlowMapSummaries {
   }
 
   public static Comparator<Node> createMaxNodeWeightSummariesComparator(FlowMapGraph fmg,
-      EdgeDirection dir) {
+      FlowDirection dir) {
     List<String> weightAttrs = fmg.getEdgeWeightAttrs();
     Comparator<Node> comp = fmg.createMaxNodeAttrValueComparator(
           getWeightSummaryNodeAttrs(weightAttrs, dir)

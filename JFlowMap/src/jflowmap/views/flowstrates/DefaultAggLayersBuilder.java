@@ -3,7 +3,7 @@ package jflowmap.views.flowstrates;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.FlowMapGraphAggLayers.Builder;
-import jflowmap.NodeEdgePos;
+import jflowmap.FlowEndpoints;
 import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
 import jflowmap.data.FlowMapGraphEdgeAggregator.GroupFunctions;
 import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
@@ -31,14 +31,14 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
         builder.edgeAggregatorFor(GroupFunctions.SRC_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(NodeEdgePos.SOURCE, labelAttr, "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.ORIGIN, labelAttr, "ALL"))
           );
 
     builder.addAggregationLayer("Dest", null,
         builder.edgeAggregatorFor(GroupFunctions.TARGET_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(NodeEdgePos.TARGET, labelAttr, "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.DESTINATION, labelAttr, "ALL"))
           );
 
     return builder;
@@ -53,12 +53,12 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
     };
   }
 
-  protected static ValueAggregator oneSideNodeLabelsAggregator(NodeEdgePos s, final String attr,
+  protected static ValueAggregator oneSideNodeLabelsAggregator(FlowEndpoints s, final String attr,
       final String aggLabel) {
     final AggEntity ae;
     switch (s) {
-      case SOURCE: ae = AggEntity.SOURCE_NODE; break;
-      case TARGET: ae = AggEntity.TARGET_NODE; break;
+      case ORIGIN: ae = AggEntity.SOURCE_NODE; break;
+      case DESTINATION: ae = AggEntity.TARGET_NODE; break;
       default: throw new AssertionError();
     }
     return new ValueAggregator() {
