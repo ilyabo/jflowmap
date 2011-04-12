@@ -136,7 +136,6 @@ public class FlowstratesView extends AbstractCanvasView {
   private boolean showFlowtiLinesForHighligtedNodesOnly = false;
   private boolean focusOnVisibleRows = false;
 
-  private List<String> selOriginNodes, selDestNodes;
 
   private final ColorSchemeAware mapColorScheme = new ColorSchemeAware() {
     @Override
@@ -385,10 +384,14 @@ public class FlowstratesView extends AbstractCanvasView {
     return new Predicate<Edge>() {
       @Override
       public boolean apply(Edge edge) {
-        return (customEdgeFilter == null || customEdgeFilter.apply(edge))
-            && (selOriginNodes == null || selOriginNodes
-                .contains(flowMapGraph.getNodeId(edge.getSourceNode())))
-            && (selDestNodes == null || selDestNodes.contains(flowMapGraph.getNodeId(edge.getTargetNode())));
+        return
+         (customEdgeFilter == null || customEdgeFilter.apply(edge))  &&
+
+         (originsMapLayer.isNodeSelectionEmpty()  ||
+          originsMapLayer.nodeSelectionContains(edge.getSourceNode()))  &&
+
+         (destsMapLayer.isNodeSelectionEmpty()  ||
+          destsMapLayer.nodeSelectionContains(edge.getTargetNode()));
       }
     };
   }
@@ -445,9 +448,9 @@ public class FlowstratesView extends AbstractCanvasView {
 
   List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
-      List<Edge> edges = Lists.newArrayList(getTopEdges(Iterables.filter(removeEdgesWithNaNs(
-      // flowMapGraph.edges()
-          layers.getVisibleEdges()), getEdgePredicate())));
+      List<Edge> edges = Lists.newArrayList(
+          getTopEdges(Iterables.filter(removeEdgesWithNaNs(layers.getVisibleEdges()),
+          getEdgePredicate())));
 
       Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
 
@@ -524,16 +527,6 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private VisualAreaMap getVisualAreaMap(FlowEndpoints s) {
     return getMapLayer(s).getVisualAreaMap();
-  }
-
-  List<String> getSelectedNodes(FlowEndpoints s) {
-    switch (s) {
-    case ORIGIN:
-      return selOriginNodes;
-    case DEST:
-      return selDestNodes;
-    }
-    throw new AssertionError();
   }
 
   Map<String, Centroid> getNodeIdsToCentroids(FlowEndpoints s) {
@@ -696,10 +689,7 @@ public class FlowstratesView extends AbstractCanvasView {
    * @return True if the selection was not empty
    */
   private boolean clearNodeSelection() {
-    if (selOriginNodes != null || selDestNodes != null) {
-      selOriginNodes = selDestNodes = null;
-      originsMapLayer.updateCentroidColors();
-      destsMapLayer.updateCentroidColors();
+    if (originsMapLayer.clearNodeSelection()  ||  destsMapLayer.clearNodeSelection()) {
       updateVisibleEdges();
       return true;
     } else {
@@ -713,29 +703,10 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   public boolean isFilterApplied() {
-    return (selOriginNodes != null && selOriginNodes.size() > 0)
-        || (selDestNodes != null && selDestNodes.size() > 0) || (customEdgeFilter != null);
-  }
-
-  void setSelectedNodes(List<String> nodeIds, FlowEndpoints s) {
-    switch (s) {
-    case ORIGIN:
-      if (selOriginNodes != nodeIds) {
-        List<String> old = selOriginNodes;
-        selOriginNodes = nodeIds;
-        changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
-      }
-      break;
-    case DEST:
-      if (selDestNodes != nodeIds) {
-        List<String> old = selDestNodes;
-        selDestNodes = nodeIds;
-        changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
-      }
-      break;
-    default:
-      throw new AssertionError();
-    }
+    return
+      !originsMapLayer.isNodeSelectionEmpty()  ||
+      !destsMapLayer.isNodeSelectionEmpty() ||
+      customEdgeFilter != null;
   }
 
   //
@@ -942,6 +913,10 @@ public class FlowstratesView extends AbstractCanvasView {
       visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
     }
     return visibleEdgesStats;
+  }
+
+  void fireNodeSelectionChanged(List<String> old, List<String> nodeIds) {
+    changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
   }
 
 }

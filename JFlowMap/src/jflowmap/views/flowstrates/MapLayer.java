@@ -67,6 +67,7 @@ public class MapLayer extends PLayer {
   private final FlowstratesView flowstratesView;
   private final FlowEndpoints endpoint;
   private final Map<String, Centroid> nodeIdsToCentroids;
+  private List<String> selectedNodes;
 
 
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
@@ -162,12 +163,21 @@ public class MapLayer extends PLayer {
     return map;
   }
 
+
+  void setSelectedNodes(List<String> nodeIds) {
+    if (selectedNodes != nodeIds) {
+      List<String> old = selectedNodes;
+      selectedNodes = nodeIds;
+      flowstratesView.fireNodeSelectionChanged(old, nodeIds);
+    }
+  }
+
   private Lasso createLasso(PCamera targetCamera) {
     return new Lasso(targetCamera, flowstratesView.getStyle().getLassoStrokePaint(endpoint)) {
       @Override
       public void selectionMade(Shape shape) {
         flowstratesView.setCustomEdgeFilter(null);
-        flowstratesView.setSelectedNodes(applyLassoToNodeCentroids(shape, endpoint), endpoint);
+        setSelectedNodes(applyLassoToNodeCentroids(shape));
         flowstratesView.updateVisibleEdges();
         updateCentroidColors();
       }
@@ -177,7 +187,7 @@ public class MapLayer extends PLayer {
   /**
    * @returns List of ids of selected nodes, or null if no nodes were selected
    */
-  private List<String> applyLassoToNodeCentroids(Shape shape, FlowEndpoints s) {
+  private List<String> applyLassoToNodeCentroids(Shape shape) {
     List<String> nodeIds = null;
     for (Map.Entry<String, Centroid> e : nodeIdsToCentroids.entrySet()) {
       Centroid centroid = e.getValue();
@@ -204,11 +214,10 @@ public class MapLayer extends PLayer {
   }
 
   void updateCentroidColors() {
-    List<String> selNodes = flowstratesView.getSelectedNodes(endpoint);
     for (Map.Entry<String, Centroid> e : nodeIdsToCentroids.entrySet()) {
       String nodeId = e.getKey();
       Centroid centroid = e.getValue();
-      centroid.setSelected(selNodes != null && selNodes.contains(nodeId));
+      centroid.setSelected(nodeSelectionContains(nodeId));
     }
   }
 
@@ -414,6 +423,31 @@ public class MapLayer extends PLayer {
     }
 
     setVisualAreaMapHighlighted(nodeId, highlighted);
+  }
+
+  public boolean isNodeSelectionEmpty() {
+    return selectedNodes == null  ||  selectedNodes.isEmpty();
+  }
+
+  public boolean nodeSelectionContains(String nodeId) {
+    if (selectedNodes == null) {
+      return false;
+    }
+    return selectedNodes.contains(nodeId);
+  }
+
+  public boolean nodeSelectionContains(Node node) {
+    return nodeSelectionContains(getFlowMapGraph().getNodeId(node));
+  }
+
+  public boolean clearNodeSelection() {
+    if (selectedNodes == null) {
+      return false;
+    } else {
+      selectedNodes = null;
+      updateCentroidColors();
+      return true;
+    }
   }
 
 
