@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.FlowMapGraph;
 import jflowmap.FlowEndpoints;
+import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.models.map.AreaMap;
 import jflowmap.ui.Lasso;
@@ -46,7 +46,7 @@ import edu.umd.cs.piccolo.event.PInputEventListener;
 /**
  * @author Ilya Boyandin
  */
-public class GeoLayer extends PLayer {
+public class MapLayer extends PLayer {
 
   private static final double CENTROID_DOT_SIZE = 2.0;
 
@@ -57,7 +57,7 @@ public class GeoLayer extends PLayer {
   private final Map<String, Centroid> nodeIdsToCentroids;
 
 
-  public GeoLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
+  public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
     this.flowstratesView = flowstratesView;
     this.nodeEdgePos = s;
 
@@ -69,7 +69,7 @@ public class GeoLayer extends PLayer {
         areaMap, flowstratesView.getMapProjection());
 
     addChild(visualAreaMap);
-    getGeoLayerCamera().setPaint(visualAreaMap.getPaint());
+    geoLayerCamera.setPaint(visualAreaMap.getPaint());
 
     addMouseOverListenersToMaps(visualAreaMap);
 
@@ -80,7 +80,7 @@ public class GeoLayer extends PLayer {
     geoLayerCamera.addInputEventListener(createLasso(geoLayerCamera));
   }
 
-  public PCamera getGeoLayerCamera() {
+  public PCamera getMapLayerCamera() {
     return geoLayerCamera;
   }
 

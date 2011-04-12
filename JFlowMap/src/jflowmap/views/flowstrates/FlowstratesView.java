@@ -134,8 +134,8 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private final HeatmapLayer heatmapLayer;
 
-  private final GeoLayer originsGeoLayer;
-  private final GeoLayer destsGeoLayer;
+  private final MapLayer originsMapLayer;
+  private final MapLayer destsMapLayer;
 
   private Map<String, Color> flowLinesPalette;
 
@@ -211,19 +211,19 @@ public class FlowstratesView extends AbstractCanvasView {
 
     heatmapLayer = new HeatmapLayer(this);
 
-    originsGeoLayer = new GeoLayer(this, areaMap, FlowEndpoints.ORIGIN);
-    destsGeoLayer = new GeoLayer(this, areaMap, FlowEndpoints.DESTINATION);
+    originsMapLayer = new MapLayer(this, areaMap, FlowEndpoints.ORIGIN);
+    destsMapLayer = new MapLayer(this, areaMap, FlowEndpoints.DESTINATION);
 
-    addCaption(originsGeoLayer.getGeoLayerCamera(), "Origins");
+    addCaption(originsMapLayer.getMapLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
       addCaption(heatmapLayer.getHeatmapCamera(), "Time");
     }
-    addCaption(destsGeoLayer.getGeoLayerCamera(), "Destinations");
+    addCaption(destsMapLayer.getMapLayerCamera(), "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();
-    canvasLayer.addChild(originsGeoLayer.getGeoLayerCamera());
+    canvasLayer.addChild(originsMapLayer.getMapLayerCamera());
     canvasLayer.addChild(heatmapLayer.getHeatmapCamera());
-    canvasLayer.addChild(destsGeoLayer.getGeoLayerCamera());
+    canvasLayer.addChild(destsMapLayer.getMapLayerCamera());
 
     controlPanel = new FlowstratesControlPanel(this);
 
@@ -259,8 +259,8 @@ public class FlowstratesView extends AbstractCanvasView {
         }
       }
     };
-    originsGeoLayer.getGeoLayerCamera().addPropertyChangeListener(linesUpdater);
-    destsGeoLayer.getGeoLayerCamera().addPropertyChangeListener(linesUpdater);
+    originsMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
+    destsMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
   }
 
@@ -515,18 +515,18 @@ public class FlowstratesView extends AbstractCanvasView {
     return getVisualCanvas().getCamera();
   }
 
-  private GeoLayer getGeoLayer(FlowEndpoints s) {
+  private MapLayer getMapLayer(FlowEndpoints s) {
     switch (s) {
     case ORIGIN:
-      return originsGeoLayer;
+      return originsMapLayer;
     case DESTINATION:
-      return destsGeoLayer;
+      return destsMapLayer;
     }
     throw new AssertionError();
   }
 
   private VisualAreaMap getVisualAreaMap(FlowEndpoints s) {
-    return getGeoLayer(s).getVisualAreaMap();
+    return getMapLayer(s).getVisualAreaMap();
   }
 
   List<String> getSelectedNodes(FlowEndpoints s) {
@@ -540,7 +540,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private Map<String, Centroid> getNodeIdsToCentroids(FlowEndpoints s) {
-    return getGeoLayer(s).getNodeIdsToCentroids();
+    return getMapLayer(s).getNodeIdsToCentroids();
   }
 
   public void setShowLinesForHighligtedOnly(boolean showLinesForHighligtedOnly) {
@@ -622,8 +622,8 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void updateCentroids() {
-    getGeoLayer(FlowEndpoints.ORIGIN).updateCentroids();
-    getGeoLayer(FlowEndpoints.DESTINATION).updateCentroids();
+    getMapLayer(FlowEndpoints.ORIGIN).updateCentroids();
+    getMapLayer(FlowEndpoints.DESTINATION).updateCentroids();
   }
 
   // private boolean addIfNotIntersects(Area occupied, Centroid c) {
@@ -659,13 +659,13 @@ public class FlowstratesView extends AbstractCanvasView {
 
       Point2D originCentroidPoint = getCentroidPoint(edge, FlowEndpoints.ORIGIN);
       boolean inVis = originCentroidPoint != null
-          && originsGeoLayer.getGeoLayerCamera().getViewBounds().contains(originCentroidPoint);
+          && originsMapLayer.getMapLayerCamera().getViewBounds().contains(originCentroidPoint);
       FlowLine lineIn = lines.first();
       if (inVis) {
         Point2D.Double matrixIn = heatmapLayer.getMatrixInPoint(row);
         inVis = inVis && heatMapViewBounds.contains(matrixIn);
         if (inVis) {
-          originsGeoLayer.getGeoLayerCamera().viewToLocal(originCentroidPoint);
+          originsMapLayer.getMapLayerCamera().viewToLocal(originCentroidPoint);
           heatmapLayer.getHeatmapCamera().viewToLocal(matrixIn);
           lineIn.setPoint(0, originCentroidPoint.getX(), originCentroidPoint.getY());
           Rectangle2D fromLabelBounds = heatmapLayer.getHeatmapCamera().viewToLocal(
@@ -680,13 +680,13 @@ public class FlowstratesView extends AbstractCanvasView {
 
       Point2D destCentroidPoint = getCentroidPoint(edge, FlowEndpoints.DESTINATION);
       boolean outVis = destCentroidPoint != null
-          && destsGeoLayer.getGeoLayerCamera().getViewBounds().contains(destCentroidPoint);
+          && destsMapLayer.getMapLayerCamera().getViewBounds().contains(destCentroidPoint);
       FlowLine lineOut = lines.second();
       if (outVis) {
         Point2D.Double matrixOut = heatmapLayer.getMatrixOutPoint(row);
         outVis = outVis && heatMapViewBounds.contains(matrixOut);
         if (outVis) {
-          destsGeoLayer.getGeoLayerCamera().viewToLocal(destCentroidPoint);
+          destsMapLayer.getMapLayerCamera().viewToLocal(destCentroidPoint);
           heatmapLayer.getHeatmapCamera().viewToLocal(matrixOut);
           lineOut.setPoint(0, destCentroidPoint.getX(), destCentroidPoint.getY());
           Rectangle2D toLabelBounds = heatmapLayer.getHeatmapCamera()
@@ -728,8 +728,8 @@ public class FlowstratesView extends AbstractCanvasView {
   private boolean clearNodeSelection() {
     if (selOriginNodes != null || selDestNodes != null) {
       selOriginNodes = selDestNodes = null;
-      getGeoLayer(FlowEndpoints.ORIGIN).updateCentroidColors();
-      getGeoLayer(FlowEndpoints.DESTINATION).updateCentroidColors();
+      getMapLayer(FlowEndpoints.ORIGIN).updateCentroidColors();
+      getMapLayer(FlowEndpoints.DESTINATION).updateCentroidColors();
       updateVisibleEdges();
       return true;
     } else {
@@ -1028,9 +1028,9 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   public void fitInView() {
-    layoutCameraNode(originsGeoLayer.getGeoLayerCamera(), -1, -1, .30, .96);
+    layoutCameraNode(originsMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
     layoutCameraNode(heatmapLayer.getHeatmapCamera(), 0, 0, .40, 1.0);
-    layoutCameraNode(destsGeoLayer.getGeoLayerCamera(), +1, -1, .30, .96);
+    layoutCameraNode(destsMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
 
     if (!fitInViewOnce) {
       fitMapsInView();
@@ -1054,7 +1054,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fintInCameraView(FlowEndpoints s) {
-    getGeoLayer(s).getGeoLayerCamera().setViewBounds(
+    getMapLayer(s).getMapLayerCamera().setViewBounds(
         GeomUtils.growRectByPercent(centroidsBounds(s), .2, .2, .2, .2));
   }
 
