@@ -727,17 +727,17 @@ public class FlowstratesView extends AbstractCanvasView {
     return BorderLayout.NORTH;
   }
 
-  void updateMapAreaColorsOnHeatMapCellHover(HeatmapCell cell, boolean hover) {
-    originsMapLayer.updateMapAreaColorsOnHeatMapCellHover(cell, hover);
-    destsMapLayer.updateMapAreaColorsOnHeatMapCellHover(cell, hover);
+  void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
+    originsMapLayer.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
+    destsMapLayer.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
 
     originsMapLayer.setEdgeCentroidsHighlighted(cell, hover);
     destsMapLayer.setEdgeCentroidsHighlighted(cell, hover);
   }
 
-  void updateMapAreaColorsOnHeatMapColumnLabelHover(String columnAttr, boolean hover) {
-    originsMapLayer.updateMapAreaColorsOnHeatMapColumnLabelHover(columnAttr, hover);
-    destsMapLayer.updateMapAreaColorsOnHeatMapColumnLabelHover(columnAttr, hover);
+  void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
+    originsMapLayer.updateOnHeatmapColumnHover(columnAttr, hover);
+    destsMapLayer.updateOnHeatmapColumnHover(columnAttr, hover);
   }
 
   void setEgdeForSimilaritySorting(Edge edge) {

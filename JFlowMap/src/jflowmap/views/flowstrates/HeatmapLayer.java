@@ -129,7 +129,7 @@ public class HeatmapLayer extends PLayer {
           final String attr = label.getName();
 
           Iterable<HeatmapCell> cells = getHeatMapColumnCells(attr);
-          flowstratesView.updateMapAreaColorsOnHeatMapColumnLabelHover(attr, true);
+          flowstratesView.updateMapsOnHeatmapColumnHover(attr, true);
 
           columnHighlightRect.setBounds(
               GeomUtils.growRect(PNodes.fullBoundsOf(cells), 2));
@@ -142,7 +142,7 @@ public class HeatmapLayer extends PLayer {
         public void mouseExited(PInputEvent event) {
           PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
           columnHighlightRect.setVisible(false);
-          flowstratesView.updateMapAreaColorsOnHeatMapColumnLabelHover(label.getName(), false);
+          flowstratesView.updateMapsOnHeatmapColumnHover(label.getName(), false);
         }
       });
       col++;
@@ -285,7 +285,7 @@ public class HeatmapLayer extends PLayer {
           lines.second().setHighlighted(true);
         }
 
-        flowstratesView.updateMapAreaColorsOnHeatMapCellHover(cell, true);
+        flowstratesView.updateMapsOnHeatmapCellHover(cell, true);
       }
 
       @Override
@@ -302,7 +302,7 @@ public class HeatmapLayer extends PLayer {
           lines.second().setHighlighted(false);
         }
 
-        flowstratesView.updateMapAreaColorsOnHeatMapCellHover(cell, false);
+        flowstratesView.updateMapsOnHeatmapCellHover(cell, false);
       }
 
       private Pair<FlowLine, FlowLine> lines(PInputEvent event) {

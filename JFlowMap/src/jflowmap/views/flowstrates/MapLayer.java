@@ -292,7 +292,7 @@ public class MapLayer extends PLayer {
     }
   }
 
-  void updateMapAreaColorsOnHeatMapCellHover(HeatmapCell cell, boolean hover) {
+  void updateMapAreaColorsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
     Edge edge = cell.getEdge();
     String attr = cell.getWeightAttr();
 
@@ -312,7 +312,7 @@ public class MapLayer extends PLayer {
   }
 
 
-  void updateMapAreaColorsOnHeatMapColumnLabelHover(String columnAttr, boolean hover) {
+  void updateOnHeatmapColumnHover(String columnAttr, boolean hover) {
     Iterable<Edge> edges;
     if (flowstratesView.isFilterApplied()) {
       edges = flowstratesView.getVisibleEdges();
