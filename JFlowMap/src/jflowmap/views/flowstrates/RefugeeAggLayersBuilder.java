@@ -65,7 +65,7 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           }, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(FlowEndpoints.DESTINATION, "region2", "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.DEST, "region2", "ALL"))
           );
 
 
@@ -78,7 +78,7 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           }, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(FlowEndpoints.DESTINATION, "region1", "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.DEST, "region1", "ALL"))
           );
 
 

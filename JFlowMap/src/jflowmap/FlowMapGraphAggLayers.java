@@ -134,10 +134,10 @@ public class FlowMapGraphAggLayers {
   }
 
   public void expandTarget(Edge e) {
-    expand(e.getTargetNode(), FlowEndpoints.DESTINATION);
+    expand(e.getTargetNode(), FlowEndpoints.DEST);
   }
 
-  public void setActiveLayer(String layerName) {
+  public void setSelectedLayer(String layerName) {
     AggLayer layer = getLayerByName(layerName);
 
     if (layer == null) {
@@ -175,7 +175,7 @@ public class FlowMapGraphAggLayers {
   }
 
   public void collapseTarget(Edge e) {
-    collapse(e.getTargetNode(), FlowEndpoints.DESTINATION);
+    collapse(e.getTargetNode(), FlowEndpoints.DEST);
   }
 
   private void collapse(Node node, FlowEndpoints as) {

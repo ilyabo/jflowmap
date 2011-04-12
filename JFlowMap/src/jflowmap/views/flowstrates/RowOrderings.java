@@ -33,7 +33,7 @@ enum RowOrderings {
               c = compareNodeLabels(fmg, e1, e2, FlowEndpoints.ORIGIN);
             }
             if (c == 0) {
-              c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.DESTINATION);
+              c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.DEST);
             }
             return c;
           }
@@ -47,9 +47,9 @@ enum RowOrderings {
         return new Comparator<Edge>() {
           @Override
           public int compare(Edge e1, Edge e2) {
-            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.DESTINATION);
+            int c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.DEST);
             if (c == 0) {
-              c = compareNodeLabels(fmg, e1, e2, FlowEndpoints.DESTINATION);
+              c = compareNodeLabels(fmg, e1, e2, FlowEndpoints.DEST);
             }
             if (c == 0) {
               c = RowOrderings.compareNodeVPos(fmg, e1, e2, FlowEndpoints.ORIGIN);

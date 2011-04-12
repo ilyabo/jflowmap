@@ -38,7 +38,7 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
         builder.edgeAggregatorFor(GroupFunctions.TARGET_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(FlowEndpoints.DESTINATION, labelAttr, "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoints.DEST, labelAttr, "ALL"))
           );
 
     return builder;
@@ -58,7 +58,7 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
     final AggEntity ae;
     switch (s) {
       case ORIGIN: ae = AggEntity.SOURCE_NODE; break;
-      case DESTINATION: ae = AggEntity.TARGET_NODE; break;
+      case DEST: ae = AggEntity.TARGET_NODE; break;
       default: throw new AssertionError();
     }
     return new ValueAggregator() {

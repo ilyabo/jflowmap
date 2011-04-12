@@ -242,7 +242,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     switch (s) {
     case ORIGIN:
       return LASSO_SOURCES_STROKE_PAINT;
-    case DESTINATION:
+    case DEST:
       return LASSO_TARGETS_STROKE_PAINT;
     default:
       throw new AssertionError();

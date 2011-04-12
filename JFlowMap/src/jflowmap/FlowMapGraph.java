@@ -244,7 +244,7 @@ public class FlowMapGraph {
   public Node getNodeOf(Edge edge, FlowEndpoints pos) {
     switch (pos) {
     case ORIGIN: return edge.getSourceNode();
-    case DESTINATION: return edge.getTargetNode();
+    case DEST: return edge.getTargetNode();
     }
     throw new AssertionError();
   }

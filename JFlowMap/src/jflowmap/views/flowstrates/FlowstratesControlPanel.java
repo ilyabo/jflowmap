@@ -133,7 +133,7 @@ public class FlowstratesControlPanel extends JPanel {
       @Override
       public void itemStateChanged(ItemEvent e) {
         view.clearFilters();
-        view.setActiveAggLayer((String)e.getItem());
+        view.setSelectedAggLayer((String)e.getItem());
       }
     });
 

@@ -20,10 +20,10 @@ public enum FlowEndpoints {
   ORIGIN {
     @Override public Node nodeOf(Edge e) { return e.getSourceNode(); }
     @Override public FlowDirection dir() { return FlowDirection.OUTGOING; }
-    @Override public FlowEndpoints opposite() { return DESTINATION; }
+    @Override public FlowEndpoints opposite() { return DEST; }
   },
 
-  DESTINATION {
+  DEST {
     @Override public Node nodeOf(Edge e) { return e.getTargetNode(); }
     @Override public FlowDirection dir() { return FlowDirection.INCOMING; }
     @Override public FlowEndpoints opposite() { return ORIGIN; }
