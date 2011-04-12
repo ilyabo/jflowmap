@@ -132,7 +132,6 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private Map<String, Color> flowLinesPalette;
 
-  private boolean showFlowLinesForHighligtedNodesOnly = false;
   private boolean focusOnVisibleRows = false;
 
 
@@ -147,12 +146,11 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private final MapProjection mapProjection;
 
-  // public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap) {
-  // this(flowMapGraph, areaMap, null, -1, MapProjections.MERCATOR);
-  // }
 
-  public FlowstratesView(FlowMapGraph flowMapGraph, AreaMap areaMap, AggLayersBuilder aggLayersBuilder,
+  public FlowstratesView(
+      FlowMapGraph flowMapGraph, AreaMap areaMap, AggLayersBuilder aggLayersBuilder,
       int maxVisibleTuples, MapProjection mapProjection) {
+
 
     logger.info("Opening flowstrates view");
 
@@ -161,7 +159,7 @@ public class FlowstratesView extends AbstractCanvasView {
       aggLayersBuilder = new DefaultAggLayersBuilder();
     }
     this.layers = aggLayersBuilder.build(flowMapGraph);
-    // this.layers = RefugeeAggLayers.createAggLayers(flowMapGraph);
+
     for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
       fmg.addEdgeWeightDifferenceColumns();
       fmg.addEdgeWeightRelativeDifferenceColumns();
@@ -338,10 +336,6 @@ public class FlowstratesView extends AbstractCanvasView {
     heatmapLayer.fitHeatMapInView();
   }
 
-  // public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
-  // changes.addPropertyChangeListener(prop.name(), listener);
-  // }
-
   public void setMaxVisibleTuples(int maxVisibleTuples) {
     if (this.maxVisibleTuples != maxVisibleTuples) {
       this.maxVisibleTuples = maxVisibleTuples;
@@ -440,13 +434,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private Iterable<Edge> removeEdgesWithOnlyNaNs(Iterable<Edge> edges) {
-    return // Remove rows with no weights
-      Iterables.filter(edges, new Predicate<Edge>() {
-        @Override
-        public boolean apply(Edge e) {
-          return flowMapGraph.hasNonZeroWeight(e);
-        }
-      });
+    return Iterables.filter(edges, new Predicate<Edge>() {
+      @Override public boolean apply(Edge e) { return flowMapGraph.hasNonZeroWeight(e); }
+    });
   }
 
   List<Edge> getVisibleEdges() {
@@ -519,7 +509,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   public void setShowLinesForHighligtedOnly(boolean showLinesForHighligtedOnly) {
-    this.showFlowLinesForHighligtedNodesOnly = showLinesForHighligtedOnly;
+//    this.showFlowLinesForHighligtedNodesOnly = showLinesForHighligtedOnly;
     renewFlowLines();
   }
 
@@ -528,15 +518,10 @@ public class FlowstratesView extends AbstractCanvasView {
 
     edgesToLines = Maps.newHashMap();
 
-    // if (!showFlowLinesForHighligtedNodesOnly)
-    {
-      for (Edge edge : getVisibleEdges()) {
-        FlowLine origin = createFlowLine(edge);
-        FlowLine dest = createFlowLine(edge);
-        // origin.setVisible(!showFlowLinesForHighligtedNodesOnly || origin.isHighlighted());
-        // dest.setVisible(!showFlowLinesForHighligtedNodesOnly || dest.isHighlighted());
-        edgesToLines.put(edge, Pair.of(origin, dest));
-      }
+    for (Edge edge : getVisibleEdges()) {
+      FlowLine origin = createFlowLine(edge);
+      FlowLine dest = createFlowLine(edge);
+      edgesToLines.put(edge, Pair.of(origin, dest));
     }
 
     updateFlowLineColors();
@@ -560,10 +545,6 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void updateFlowLineColors() {
-    // if (showFlowLinesForHighligtedNodesOnly) {
-    // return;
-    // }
-
     for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
       Pair<FlowLine, FlowLine> p = e.getValue();
       Pair<Color, Color> colors = getFlowLineColors(e.getKey());
@@ -601,20 +582,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
 
-  // private boolean addIfNotIntersects(Area occupied, Centroid c) {
-  // PBounds clb = c.getLabelNode().getBounds();
-  // if (!occupied.intersects(clb)) {
-  // occupied.add(new Area(clb));
-  // return true;
-  // } else {
-  // return false;
-  // }
-  // }
-
   private void updateFlowLinePositions() {
-    // if (showFlowLinesForHighligtedNodesOnly) {
-    // return;
-    // }
     PBounds heatMapViewBounds = heatmapLayer.getHeatmapCamera().getViewBounds();
     int row = 0;
     for (Edge edge : getVisibleEdges()) {
@@ -693,22 +661,6 @@ public class FlowstratesView extends AbstractCanvasView {
       !destsMapLayer.isNodeSelectionEmpty() ||
       customEdgeFilter != null;
   }
-
-  //
-  // private void anchorRightVisualAreaMap() {
-  // PNodes.moveTo(originsVisualAreaMap, getCamera().getViewBounds().getMaxX() -
-  // originsVisualAreaMap.getFullBoundsReference().getWidth(), 0);
-  // }
-
-  // private void updateMapColors(FlowMapGraph fmg) {
-  // colorizeMap(originVisualAreaMap, fmg, EdgeDirection.INCOMING);
-  // colorizeMap(destVisualAreaMap, fmg, EdgeDirection.OUTGOING);
-  // }
-
-  // private void schedule(PActivity activity) {
-  // getCamera().getRoot().getActivityScheduler().addActivity(activity);
-  // }
-
 
 
   @Override
