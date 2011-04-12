@@ -57,7 +57,6 @@ import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.AbstractLegendItemProducer;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.FlowMapView;
-import jflowmap.views.flowmap.VisualArea;
 import jflowmap.views.flowmap.VisualAreaMap;
 
 import org.apache.log4j.Logger;
@@ -780,21 +779,7 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     }
 
-    VisualArea va = getVisualAreaMap(s).getVisualAreaBy(nodeId);
-    if (va != null) {
-      va.moveToFront();
-      if (highlighted) {
-        va.setStroke(style.getMapAreaHighlightedStroke());
-        va.setStrokePaint(style.getMapAreaHighlightedStrokePaint());
-        va.setPaint(style.getMapAreaHighlightedPaint());
-      } else {
-        va.setStroke(style.getMapAreaStroke());
-        va.setStrokePaint(mapColorScheme.getColor(ColorCodes.AREA_STROKE));
-        va.setPaint(mapColorScheme.getColor(ColorCodes.AREA_PAINT));
-      }
-      va.repaint();
-    }
-
+    getMapLayer(s).setVisualAreaMapHighlighted(nodeId, highlighted);
   }
 
   @Override

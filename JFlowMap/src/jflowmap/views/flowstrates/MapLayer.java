@@ -37,6 +37,7 @@ import jflowmap.util.CollectionUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
+import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.VisualArea;
 import jflowmap.views.flowmap.VisualAreaMap;
 import prefuse.data.Edge;
@@ -322,6 +323,27 @@ public class MapLayer extends PLayer {
     ValueType vtype = flowstratesView.getValueType();
 
     return vtype.getColumnValueAttr(getFlowMapGraph().getAttrSpec(), columnAttr);
+  }
+
+  void setVisualAreaMapHighlighted(String nodeId, boolean highlighted) {
+    VisualArea va = visualAreaMap.getVisualAreaBy(nodeId);
+    FlowstratesStyle style = flowstratesView.getStyle();
+
+    if (va != null) {
+      va.moveToFront();
+      if (highlighted) {
+        va.setStroke(style.getMapAreaHighlightedStroke());
+        va.setStrokePaint(style.getMapAreaHighlightedStrokePaint());
+        va.setPaint(style.getMapAreaHighlightedPaint());
+      } else {
+        ColorSchemeAware cs = flowstratesView.getMapColorScheme();
+
+        va.setStroke(style.getMapAreaStroke());
+        va.setStrokePaint(cs.getColor(ColorCodes.AREA_STROKE));
+        va.setPaint(cs.getColor(ColorCodes.AREA_PAINT));
+      }
+      va.repaint();
+    }
   }
 
 }
