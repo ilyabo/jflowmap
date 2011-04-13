@@ -226,7 +226,7 @@ public class HeatmapLayer extends PLayer {
     // heatmapLayer.getHeatmapCamera().setViewBounds(heatmapNode.getFullBounds());
 
     createColumnLabels();
-    flowstratesView.renewFlowLines();
+    flowstratesView.getFlowLinesLayerNode().renewFlowLines();
     flowstratesView.updateLegend();
 
     repaint();
@@ -317,7 +317,7 @@ public class HeatmapLayer extends PLayer {
       }
 
       private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
-        return flowstratesView.getFlowLinesOf(node(event).getEdge());
+        return flowstratesView.getFlowLinesLayerNode().getFlowLinesOf(node(event).getEdge());
       }
 
 

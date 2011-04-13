@@ -411,7 +411,7 @@ public class MapLayer extends PLayer {
       }
     };
     for (Edge e : endpoint.filterByNodePredicate(flowstratesView.getVisibleEdges(), acceptNodes)) {
-      Pair<FlowLine, FlowLine> pair = flowstratesView.getFlowLinesOf(e);
+      Pair<FlowLine, FlowLine> pair = flowstratesView.getFlowLinesLayerNode().getFlowLinesOf(e);
       if (pair != null) {
         pair.first().setHighlighted(highlighted);
         pair.second().setHighlighted(highlighted);
