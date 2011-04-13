@@ -130,7 +130,7 @@ public class HeatmapLayer extends PLayer {
           final String attr = label.getName();
 
           Iterable<HeatmapCell> cells = getHeatMapColumnCells(attr);
-          flowstratesView.updateMapsOnHeatmapColumnHover(attr, true);
+          updateMapsOnHeatmapColumnHover(attr, true);
 
           columnHighlightRect.setBounds(
               GeomUtils.growRect(PNodes.fullBoundsOf(cells), 2));
@@ -143,7 +143,7 @@ public class HeatmapLayer extends PLayer {
         public void mouseExited(PInputEvent event) {
           PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
           columnHighlightRect.setVisible(false);
-          flowstratesView.updateMapsOnHeatmapColumnHover(label.getName(), false);
+          updateMapsOnHeatmapColumnHover(label.getName(), false);
         }
       });
       col++;
@@ -275,6 +275,24 @@ public class HeatmapLayer extends PLayer {
     heatmapCamera.setViewBounds(GeomUtils.growRectByPercent(heatmapBounds, .025, .1, .025, .1));
   }
 
+  void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
+    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoints.ORIGIN);
+    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoints.DEST);
+
+    originMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
+    destMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
+
+    originMap.setEdgeCentroidsHighlighted(cell, hover);
+    destMap.setEdgeCentroidsHighlighted(cell, hover);
+  }
+
+  void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
+    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoints.ORIGIN);
+    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoints.DEST);
+
+    originMap.updateOnHeatmapColumnHover(columnAttr, hover);
+    destMap.updateOnHeatmapColumnHover(columnAttr, hover);
+  }
 
   PTypedBasicInputEventHandler<HeatmapCell> createHeatMapCellHoverListener() {
     return new PTypedBasicInputEventHandler<HeatmapCell>(HeatmapCell.class) {
@@ -296,7 +314,7 @@ public class HeatmapLayer extends PLayer {
           lines.second().setHighlighted(true);
         }
 
-        flowstratesView.updateMapsOnHeatmapCellHover(cell, true);
+        updateMapsOnHeatmapCellHover(cell, true);
       }
 
       @Override
@@ -313,7 +331,7 @@ public class HeatmapLayer extends PLayer {
           lines.second().setHighlighted(false);
         }
 
-        flowstratesView.updateMapsOnHeatmapCellHover(cell, false);
+        updateMapsOnHeatmapCellHover(cell, false);
       }
 
       private Pair<FlowLine, FlowLine> lines(PInputEvent event) {

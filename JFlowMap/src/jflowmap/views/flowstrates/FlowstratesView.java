@@ -113,8 +113,8 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private final HeatmapLayer heatmapLayer;
 
-  private final MapLayer originsMapLayer;
-  private final MapLayer destsMapLayer;
+  private final MapLayer originMapLayer;
+  private final MapLayer destMapLayer;
 
   private boolean focusOnVisibleRows = false;
 
@@ -184,19 +184,19 @@ public class FlowstratesView extends AbstractCanvasView {
 
     heatmapLayer = new HeatmapLayer(this);
 
-    originsMapLayer = new MapLayer(this, areaMap, FlowEndpoints.ORIGIN);
-    destsMapLayer = new MapLayer(this, areaMap, FlowEndpoints.DEST);
+    originMapLayer = new MapLayer(this, areaMap, FlowEndpoints.ORIGIN);
+    destMapLayer = new MapLayer(this, areaMap, FlowEndpoints.DEST);
 
-    addCaption(originsMapLayer.getMapLayerCamera(), "Origins");
+    addCaption(originMapLayer.getMapLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
       addCaption(heatmapLayer.getHeatmapCamera(), "Time");
     }
-    addCaption(destsMapLayer.getMapLayerCamera(), "Destinations");
+    addCaption(destMapLayer.getMapLayerCamera(), "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();
-    canvasLayer.addChild(originsMapLayer.getMapLayerCamera());
+    canvasLayer.addChild(originMapLayer.getMapLayerCamera());
     canvasLayer.addChild(heatmapLayer.getHeatmapCamera());
-    canvasLayer.addChild(destsMapLayer.getMapLayerCamera());
+    canvasLayer.addChild(destMapLayer.getMapLayerCamera());
 
 
     flowLinesLayerNode = new FlowLinesLayerNode(this);
@@ -232,16 +232,16 @@ public class FlowstratesView extends AbstractCanvasView {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
 
-          originsMapLayer.updateCentroids();
-          destsMapLayer.updateCentroids();
+          originMapLayer.updateCentroids();
+          destMapLayer.updateCentroids();
 
           flowLinesLayerNode.updateFlowLinePositions();
           // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
         }
       }
     };
-    originsMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
-    destsMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
+    originMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
+    destMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
   }
 
@@ -251,8 +251,8 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public MapLayer getMapLayer(FlowEndpoints ep) {
     switch (ep) {
-      case ORIGIN: return originsMapLayer;
-      case DEST: return destsMapLayer;
+      case ORIGIN: return originMapLayer;
+      case DEST: return destMapLayer;
       default: throw new AssertionError();
     }
   }
@@ -278,14 +278,6 @@ public class FlowstratesView extends AbstractCanvasView {
 
   void updateLegend() {
     legend.update();
-  }
-
-  public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
-    changes.addPropertyChangeListener(prop.name(), listener);
-  }
-
-  void fireNodeSelectionChanged(List<String> old, List<String> nodeIds) {
-    changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
   }
 
   @Override
@@ -356,11 +348,11 @@ public class FlowstratesView extends AbstractCanvasView {
         return
          (customEdgeFilter == null || customEdgeFilter.apply(edge))  &&
 
-         (originsMapLayer.isNodeSelectionEmpty()  ||
-          originsMapLayer.nodeSelectionContains(edge.getSourceNode()))  &&
+         (originMapLayer.isNodeSelectionEmpty()  ||
+          originMapLayer.nodeSelectionContains(edge.getSourceNode()))  &&
 
-         (destsMapLayer.isNodeSelectionEmpty()  ||
-          destsMapLayer.nodeSelectionContains(edge.getTargetNode()));
+         (destMapLayer.isNodeSelectionEmpty()  ||
+          destMapLayer.nodeSelectionContains(edge.getTargetNode()));
       }
     };
   }
@@ -460,14 +452,11 @@ public class FlowstratesView extends AbstractCanvasView {
     flowLinesLayerNode.renewFlowLines();
   }
 
-
-
-
   /**
    * @return True if the selection was not empty
    */
   private boolean clearNodeSelection() {
-    if (originsMapLayer.clearNodeSelection()  ||  destsMapLayer.clearNodeSelection()) {
+    if (originMapLayer.clearNodeSelection()  ||  destMapLayer.clearNodeSelection()) {
       updateVisibleEdges();
       return true;
     } else {
@@ -482,11 +471,10 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public boolean isFilterApplied() {
     return
-      !originsMapLayer.isNodeSelectionEmpty()  ||
-      !destsMapLayer.isNodeSelectionEmpty() ||
+      !originMapLayer.isNodeSelectionEmpty()  ||
+      !destMapLayer.isNodeSelectionEmpty() ||
       customEdgeFilter != null;
   }
-
 
   @Override
   public JComponent getViewComponent() {
@@ -499,22 +487,30 @@ public class FlowstratesView extends AbstractCanvasView {
     return controlPanel;
   }
 
+  public RowOrderings getRowOrdering() {
+    return rowOrdering;
+  }
+
+  public FlowMapStats getStats() {
+    if (focusOnVisibleRows) {
+      return getVisibleEdgesStats();
+    } else {
+      // return flowMapGraph.getStats();
+      return layers.getStatsForVisibleEdges();
+    }
+  }
+
+  private FlowMapStats getVisibleEdgesStats() {
+    List<Edge> edges = getVisibleEdges();
+    if (visibleEdgesStats == null) {
+      visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
+    }
+    return visibleEdgesStats;
+  }
+
   @Override
   public String getControlsLayoutConstraint() {
     return BorderLayout.NORTH;
-  }
-
-  void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
-    originsMapLayer.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
-    destsMapLayer.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
-
-    originsMapLayer.setEdgeCentroidsHighlighted(cell, hover);
-    destsMapLayer.setEdgeCentroidsHighlighted(cell, hover);
-  }
-
-  void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
-    originsMapLayer.updateOnHeatmapColumnHover(columnAttr, hover);
-    destsMapLayer.updateOnHeatmapColumnHover(columnAttr, hover);
   }
 
   void setEgdeForSimilaritySorting(Edge edge) {
@@ -586,9 +582,9 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   public void fitInView() {
-    layoutCameraNode(originsMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
+    layoutCameraNode(originMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
     layoutCameraNode(heatmapLayer.getHeatmapCamera(), 0, 0, .40, 1.0);
-    layoutCameraNode(destsMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
+    layoutCameraNode(destMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
 
     if (!fitInViewOnce) {
       fitMapsInView();
@@ -605,9 +601,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fitMapsInView() {
-    fitInCameraView(originsMapLayer);
+    fitInCameraView(originMapLayer);
     heatmapLayer.fitHeatMapInView();
-    fitInCameraView(destsMapLayer);
+    fitInCameraView(destMapLayer);
 
     fitInViewOnce = true;
   }
@@ -656,25 +652,12 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  public RowOrderings getRowOrdering() {
-    return rowOrdering;
+  public void addPropertyChangeListener(Properties prop, PropertyChangeListener listener) {
+    changes.addPropertyChangeListener(prop.name(), listener);
   }
 
-  public FlowMapStats getStats() {
-    if (focusOnVisibleRows) {
-      return getVisibleEdgesStats();
-    } else {
-      // return flowMapGraph.getStats();
-      return layers.getStatsForVisibleEdges();
-    }
-  }
-
-  private FlowMapStats getVisibleEdgesStats() {
-    List<Edge> edges = getVisibleEdges();
-    if (visibleEdgesStats == null) {
-      visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
-    }
-    return visibleEdgesStats;
+  void fireNodeSelectionChanged(List<String> old, List<String> nodeIds) {
+    changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
   }
 
 }
