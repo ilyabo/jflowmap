@@ -60,7 +60,7 @@ public class Lasso extends PBasicInputEventHandler {
 //    });
   }
 
-  private boolean isSelecting() {
+  public boolean isSelecting() {
     return line.getPointCount() > 0;
   }
 

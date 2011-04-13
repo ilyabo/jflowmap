@@ -69,6 +69,8 @@ public class MapLayer extends PLayer {
   private final Map<String, Centroid> nodeIdsToCentroids;
   private List<String> selectedNodes;
 
+  private final Lasso lasso;
+
 
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
     this.flowstratesView = flowstratesView;
@@ -90,7 +92,8 @@ public class MapLayer extends PLayer {
 
     visualAreaMap.setBounds(visualAreaMap.getFullBoundsReference()); // enable mouse ev.
 
-    geoLayerCamera.addInputEventListener(createLasso(geoLayerCamera));
+    lasso = createLasso(geoLayerCamera);
+    geoLayerCamera.addInputEventListener(lasso);
   }
 
   public PCamera getMapLayerCamera() {
@@ -225,6 +228,8 @@ public class MapLayer extends PLayer {
     return new PTypedBasicInputEventHandler<Centroid>(Centroid.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
+        if (lasso.isSelecting()) return;
+
         Centroid c = node(event);
         if (c != null) {
           setNodeHighlighted(c.getNodeId(), true);
@@ -245,8 +250,10 @@ public class MapLayer extends PLayer {
     PInputEventListener listener = new PTypedBasicInputEventHandler<VisualArea>(VisualArea.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (event.isControlDown())
-          return;
+        if (lasso.isSelecting()) return;
+
+        if (event.isControlDown()) return;
+
         VisualArea va = node(event);
         if (va != null) {
           String areaId = va.getArea().getId();
