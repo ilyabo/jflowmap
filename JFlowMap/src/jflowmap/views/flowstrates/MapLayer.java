@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +46,8 @@ import prefuse.data.Edge;
 import prefuse.data.Node;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -66,10 +67,11 @@ public class MapLayer extends PLayer {
   private final VisualAreaMap visualAreaMap;
   private final FlowstratesView flowstratesView;
   private final FlowEndpoints endpoint;
-  private final Map<String, Centroid> nodeIdsToCentroids;
+  private Map<String, Centroid> nodeIdsToCentroids;
   private List<String> selectedNodes;
 
   private final Lasso lasso;
+  private PInputEventListener centroidHoverListener;
 
 
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
@@ -80,20 +82,20 @@ public class MapLayer extends PLayer {
     geoLayerCamera.addLayer(this);
 
     visualAreaMap = new VisualAreaMap(
-        flowstratesView.getMapColorScheme(),
-        areaMap, flowstratesView.getMapProjection());
+        flowstratesView.getMapColorScheme(), areaMap, flowstratesView.getMapProjection());
 
     addChild(visualAreaMap);
     geoLayerCamera.setPaint(visualAreaMap.getPaint());
 
     addMouseOverListenersToMaps(visualAreaMap);
 
-    nodeIdsToCentroids = createCentroids();
+    createCentroids();
 
     visualAreaMap.setBounds(visualAreaMap.getFullBoundsReference()); // enable mouse ev.
 
     lasso = createLasso(geoLayerCamera);
     geoLayerCamera.addInputEventListener(lasso);
+
   }
 
   public PCamera getMapLayerCamera() {
@@ -135,8 +137,8 @@ public class MapLayer extends PLayer {
     return c;
   }
 
-  private Map<String, Centroid> createCentroids() {
-    Map<String, Centroid> map = Maps.newLinkedHashMap();
+  private void createCentroids() {
+    nodeIdsToCentroids = Maps.newLinkedHashMap();
 
     FlowMapGraph flowMapGraph = flowstratesView.getFlowMapGraph();
 
@@ -144,28 +146,64 @@ public class MapLayer extends PLayer {
     Iterable<Node> nodes = CollectionUtils.sort(
         flowMapGraph.nodesHavingEdges(endpoint.dir()),
         Collections.reverseOrder(
-            FlowMapSummaries.createMaxNodeWeightSummariesComparator(flowMapGraph,
-            endpoint.dir())));
+            FlowMapSummaries.createMaxNodeWeightSummariesComparator(
+                flowMapGraph, endpoint.dir())));
 
-    PInputEventListener listener = createCentroidHoverListener();
+    centroidHoverListener = createCentroidHoverListener();
 
-    for (Node node : nodes) {
-      double lon = node.getDouble(flowMapGraph.getXNodeAttr());
-      double lat = node.getDouble(flowMapGraph.getYNodeAttr());
+    // Nodes having coords
+    for (Node node : Iterables.filter(nodes, haveCoordsPredicate())) {
+      Point2D p = visualAreaMap.getMapProjection().project(
+          node.getDouble(flowMapGraph.getNodeLonAttr()),
+          node.getDouble(flowMapGraph.getNodeLatAttr()));
 
-      Point2D p = visualAreaMap.getMapProjection().project(lon, lat);
-
-      Centroid centroid = createCentroid(p.getX(), p.getY(), node);
-      centroid.addInputEventListener(listener);
-
-      geoLayerCamera.addChild(centroid);
-      // VisualArea va = getVisualAreaMap(s).getVisualAreaBy(flowMapGraph.getNodeId(node));
-
-      map.put(flowMapGraph.getNodeId(node), centroid);
+      addCentroid(nodeIdsToCentroids, node, p.getX(), p.getY());
     }
-    return map;
+
+
+    // Nodes having no coords
+    Rectangle2D bounds = centroidsBounds();
+
+    Iterable<Node> nodesWithoutCoords = flowMapGraph.sortByAttr(
+          Iterables.filter(nodes, Predicates.not(haveCoordsPredicate())),
+          flowMapGraph.getNodeLabelAttr());
+
+
+    final int maxPerRow = 5;
+    int numNodesWithoutCoords = Iterables.size(nodesWithoutCoords);
+    int cnt = 0;
+    final int numPerRow = Math.min(maxPerRow, numNodesWithoutCoords);
+    final double rowHeight = (bounds.getHeight() / 10);
+
+    for (Node node : nodesWithoutCoords) {
+      addCentroid(nodeIdsToCentroids, node,
+          bounds.getMinX() + (cnt % numPerRow) * (bounds.getWidth() / numPerRow),
+          bounds.getMaxY() + bounds.getHeight() / 5 + Math.floor(cnt / numPerRow) * rowHeight);
+
+      cnt++;
+    }
   }
 
+  private void addCentroid(Map<String, Centroid> map, Node node, double x, double y) {
+    Centroid centroid = createCentroid(x, y, node);
+    centroid.addInputEventListener(centroidHoverListener);
+    geoLayerCamera.addChild(centroid);
+    map.put(getFlowMapGraph().getNodeId(node), centroid);
+  }
+
+  private Predicate<Node> haveCoordsPredicate() {
+    return new Predicate<Node>() {
+      @Override
+      public boolean apply(Node node) {
+        FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
+
+        double lon = node.getDouble(fmg.getNodeLonAttr());
+        double lat = node.getDouble(fmg.getNodeLatAttr());
+
+        return (!Double.isNaN(lon)  &&  !Double.isNaN(lat));
+      }
+    };
+  }
 
   void setSelectedNodes(List<String> nodeIds) {
     if (selectedNodes != nodeIds) {
@@ -366,8 +404,8 @@ public class MapLayer extends PLayer {
     }
   }
 
-  Rectangle2D centroidsBounds(FlowstratesView flowstratesView) {
-    Double b = new Double();
+  Rectangle2D centroidsBounds() {
+    Rectangle2D.Double b = new Rectangle2D.Double();
     boolean first = true;
     for (Centroid c : nodeIdsToCentroids.values()) {
       double x = c.getOrigX();
@@ -456,6 +494,5 @@ public class MapLayer extends PLayer {
       return true;
     }
   }
-
 
 }

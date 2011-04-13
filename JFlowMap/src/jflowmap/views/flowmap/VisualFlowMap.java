@@ -259,8 +259,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     nodesToVisuals = new LinkedHashMap<Node, VisualNode>();
     for (int i = 0; i < numNodes; i++) {
       Node node = graph.getNode(i);
-      double lon = node.getDouble(getFlowMapGraph().getXNodeAttr());
-      double lat = node.getDouble(getFlowMapGraph().getYNodeAttr());
+      double lon = node.getDouble(getFlowMapGraph().getNodeLonAttr());
+      double lat = node.getDouble(getFlowMapGraph().getNodeLatAttr());
 
       Point2D p = getMapProjection().project(lon, lat);
 

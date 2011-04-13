@@ -32,9 +32,9 @@ import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapSummaries;
 import jflowmap.data.GraphMLDatasetSpec;
-import jflowmap.data.StaxGraphMLReader;
 import jflowmap.data.MinMax;
 import jflowmap.data.MultiFlowMapStats;
+import jflowmap.data.StaxGraphMLReader;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.util.MathUtils;
@@ -178,11 +178,11 @@ public class FlowMapGraph {
     return getGraphId(graph);
   }
 
-  public String getXNodeAttr() {
+  public String getNodeLonAttr() {
     return attrSpec.getNodeLonAttr();
   }
 
-  public String getYNodeAttr() {
+  public String getNodeLatAttr() {
     return attrSpec.getNodeLatAttr();
   }
 

@@ -149,7 +149,7 @@ public enum AttrDataTypes implements ValueAggregator {
       return 1;
     }
 
-    if (!klass.isAssignableFrom(Comparable.class)) {
+    if (!(v1 instanceof Comparable)  ||  !(v2 instanceof Comparable)) {
       throw new UnsupportedOperationException();
     }
 

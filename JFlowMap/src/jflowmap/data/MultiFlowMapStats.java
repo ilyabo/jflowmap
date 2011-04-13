@@ -203,12 +203,12 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
     private enum Name implements Function<FlowMapGraph, String> {
       NODE_X {
         public String apply(FlowMapGraph from) {
-          return from.getXNodeAttr();
+          return from.getNodeLonAttr();
         }
       },
       NODE_Y {
         public String apply(FlowMapGraph from) {
-          return from.getYNodeAttr();
+          return from.getNodeLatAttr();
         }
       },
       ;
