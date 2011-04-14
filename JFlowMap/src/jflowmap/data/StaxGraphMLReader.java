@@ -158,6 +158,9 @@ public class StaxGraphMLReader {
               int ri = nodeTable.addRow();
 
               String nodeId = in.getAttributeValue(NAMESPACE, "id");
+              if (nodeIdToIndex.containsKey(nodeId)) {
+                throw new IOException("Duplicate node id: '" + nodeId + "'");
+              }
               nodeIdToIndex.put(nodeId, ri);
 
               nodeTable.set(ri, FlowMapGraph.GRAPH_NODE_ID_COLUMN, nodeId);

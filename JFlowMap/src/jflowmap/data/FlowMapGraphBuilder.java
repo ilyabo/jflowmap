@@ -90,8 +90,9 @@ public class FlowMapGraphBuilder {
 
   public Node addNode(String id, Point position, String label) {
     Node node = graph.addNode();
-    if (id != null) {
-      node.setString(graphNodeIdAttr, id);
+    node.setString(graphNodeIdAttr, id);
+    if (nodesById.containsKey(id)) {
+      throw new IllegalArgumentException("Duplicate node id '" + id + "'");
     }
     if (attrSpec.hasNodePositions()) {
       if (position == null) {
