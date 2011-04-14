@@ -864,7 +864,6 @@ public class FlowMapGraph {
     return attrsOf(graph.getNodeTable(), new Predicate<String>() {
       @Override
       public boolean apply(String attr) {
-
         return
           StaxGraphMLReader.isNodeSelfAttr(attr)  &&
           (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);

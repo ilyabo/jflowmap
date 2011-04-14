@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class MapLayer extends PLayer {
   private List<String> selectedNodes;
 
   private final Lasso lasso;
-  private PInputEventListener centroidHoverListener;
+  private PInputEventListener centroidMouseListener;
 
 
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
@@ -124,19 +125,6 @@ public class MapLayer extends PLayer {
     }
   }
 
-  private Centroid createCentroid(double x, double y, Node node) {
-    FlowMapGraph flowMapGraph = flowstratesView.getFlowMapGraph();
-
-    String nodeId = flowMapGraph.getNodeId(node);
-    String nodeLabel = flowMapGraph.getNodeLabel(node);
-    Centroid c = new Centroid(
-        nodeId, nodeLabel, x, y, CENTROID_DOT_SIZE,
-        flowstratesView.getStyle().getMapAreaCentroidPaint(),
-        flowstratesView);
-    // c.setPickable(false);
-    return c;
-  }
-
   private void createCentroids() {
     nodeIdsToCentroids = Maps.newLinkedHashMap();
 
@@ -149,46 +137,66 @@ public class MapLayer extends PLayer {
             FlowMapSummaries.createMaxNodeWeightSummariesComparator(
                 flowMapGraph, endpoint.dir())));
 
-    centroidHoverListener = createCentroidHoverListener();
+    centroidMouseListener = createCentroidMouseListener();
 
-    // Nodes having coords
+    createCentroidsForNodesWithCoords(flowMapGraph, nodes);
+    createCentroidsForNodesWithoutCoords(flowMapGraph, nodes);
+  }
+
+  private void createCentroidsForNodesWithCoords(FlowMapGraph flowMapGraph, Iterable<Node> nodes) {
     for (Node node : Iterables.filter(nodes, haveCoordsPredicate())) {
       Point2D p = visualAreaMap.getMapProjection().project(
           node.getDouble(flowMapGraph.getNodeLonAttr()),
           node.getDouble(flowMapGraph.getNodeLatAttr()));
 
-      addCentroid(nodeIdsToCentroids, node, p.getX(), p.getY());
-    }
-
-
-    // Nodes having no coords
-    Rectangle2D bounds = centroidsBounds();
-
-    Iterable<Node> nodesWithoutCoords = flowMapGraph.sortByAttr(
-          Iterables.filter(nodes, Predicates.not(haveCoordsPredicate())),
-          flowMapGraph.getNodeLabelAttr());
-
-
-    final int maxPerRow = 5;
-    int numNodesWithoutCoords = Iterables.size(nodesWithoutCoords);
-    int cnt = 0;
-    final int numPerRow = Math.min(maxPerRow, numNodesWithoutCoords);
-    final double rowHeight = (bounds.getHeight() / 10);
-
-    for (Node node : nodesWithoutCoords) {
-      addCentroid(nodeIdsToCentroids, node,
-          bounds.getMinX() + (cnt % numPerRow) * (bounds.getWidth() / numPerRow),
-          bounds.getMaxY() + bounds.getHeight() / 5 + Math.floor(cnt / numPerRow) * rowHeight);
-
-      cnt++;
+      createCentroid(node, p.getX(), p.getY());
     }
   }
 
-  private void addCentroid(Map<String, Centroid> map, Node node, double x, double y) {
-    Centroid centroid = createCentroid(x, y, node);
-    centroid.addInputEventListener(centroidHoverListener);
-    geoLayerCamera.addChild(centroid);
-    map.put(getFlowMapGraph().getNodeId(node), centroid);
+  private void createCentroidsForNodesWithoutCoords(FlowMapGraph flowMapGraph, Iterable<Node> nodes) {
+    Rectangle2D bounds = centroidsBounds();
+
+    Iterable<Node> filteredNodes = flowMapGraph.sortByAttr(
+          Iterables.filter(nodes, Predicates.not(haveCoordsPredicate())),
+          flowMapGraph.getNodeLabelAttr());
+
+    int num = Iterables.size(filteredNodes);
+    if (num > 0) {
+      final int maxPerRow = 4;
+      int cnt = 0;
+      final int numPerRow = Math.min(maxPerRow, num);
+      final double vspacing = (bounds.getHeight() / 10);
+      final int r = num % numPerRow;
+      final double hspacing = bounds.getWidth() / (numPerRow - 1);
+      final double topMargin = bounds.getHeight() / 5;
+
+      for (Node node : filteredNodes) {
+        final int numInThisRow = (cnt >= (num - r) ? r : numPerRow);
+        double hcentering = (bounds.getWidth() - (numInThisRow - 1) * hspacing)/2;
+
+        createCentroid(node,
+            hcentering + bounds.getMinX() + (cnt % numPerRow) * hspacing,
+            bounds.getMaxY() + topMargin + Math.floor(cnt / numPerRow) * vspacing);
+
+        cnt++;
+      }
+    }
+  }
+
+  private void createCentroid(Node node, double x, double y) {
+    FlowMapGraph flowMapGraph = flowstratesView.getFlowMapGraph();
+
+    String nodeId = flowMapGraph.getNodeId(node);
+    String nodeLabel = flowMapGraph.getNodeLabel(node);
+    Centroid c = new Centroid(
+        nodeId, nodeLabel, x, y, CENTROID_DOT_SIZE,
+        flowstratesView.getStyle().getMapAreaCentroidPaint(),
+        flowstratesView);
+    // c.setPickable(false);
+
+    c.addInputEventListener(centroidMouseListener);
+    geoLayerCamera.addChild(c);
+    nodeIdsToCentroids.put(c.getNodeId(), c);
   }
 
   private Predicate<Node> haveCoordsPredicate() {
@@ -207,9 +215,12 @@ public class MapLayer extends PLayer {
 
   void setSelectedNodes(List<String> nodeIds) {
     if (selectedNodes != nodeIds) {
+      flowstratesView.setCustomEdgeFilter(null);
       List<String> old = selectedNodes;
       selectedNodes = nodeIds;
       flowstratesView.fireNodeSelectionChanged(old, nodeIds);
+      flowstratesView.updateVisibleEdges();
+      updateCentroidColors();
     }
   }
 
@@ -217,10 +228,7 @@ public class MapLayer extends PLayer {
     return new Lasso(targetCamera, flowstratesView.getStyle().getLassoStrokePaint(endpoint)) {
       @Override
       public void selectionMade(Shape shape) {
-        flowstratesView.setCustomEdgeFilter(null);
         setSelectedNodes(applyLassoToNodeCentroids(shape));
-        flowstratesView.updateVisibleEdges();
-        updateCentroidColors();
       }
     };
   }
@@ -262,7 +270,7 @@ public class MapLayer extends PLayer {
     }
   }
 
-  private PInputEventListener createCentroidHoverListener() {
+  private PInputEventListener createCentroidMouseListener() {
     return new PTypedBasicInputEventHandler<Centroid>(Centroid.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
@@ -271,6 +279,16 @@ public class MapLayer extends PLayer {
         Centroid c = node(event);
         if (c != null) {
           setNodeHighlighted(c.getNodeId(), true);
+        }
+      }
+
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (lasso.isSelecting()) return;
+
+        Centroid c = node(event);
+        if (c != null) {
+          setSelectedNodes(Arrays.asList(c.getNodeId()));
         }
       }
 
@@ -444,6 +462,9 @@ public class MapLayer extends PLayer {
   }
 
   public void setNodeHighlighted(final String nodeId, boolean highlighted) {
+    if (nodeId == null) {
+      return;
+    }
     Centroid c = nodeIdsToCentroids.get(nodeId);
     if (c != null) {
       c.setHighlighted(highlighted);
