@@ -21,6 +21,7 @@ package jflowmap.views.flowmap;
 import java.awt.Color;
 import java.awt.Paint;
 
+import jflowmap.geo.MapProjection;
 import jflowmap.models.map.Area;
 import jflowmap.views.ColorCodes;
 import edu.umd.cs.piccolo.activities.PActivity;
@@ -37,11 +38,15 @@ public class VisualArea extends PPath {
   private final Area area;
   private PActivity lastActivity;
 
-  public VisualArea(VisualAreaMap visualAreaMap, Area area) {
-    super(area.asPath(visualAreaMap.getMapProjection()));
+  public VisualArea(VisualAreaMap visualAreaMap, Area area, MapProjection proj) {
+    super(area.asPath(proj));
     this.visualAreaMap = visualAreaMap;
     this.area = area;
     updateColors();
+  }
+
+  public VisualArea(VisualAreaMap visualAreaMap, Area area) {
+    this(visualAreaMap, area, visualAreaMap.getMapProjection());
   }
 
   public Area getArea() {

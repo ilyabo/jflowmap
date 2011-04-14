@@ -44,9 +44,23 @@ public class VisualAreaMap extends PNode {
     this.colorSchemaAware = cs;
     this.mapProjection = proj;
     for (Area area : mapModel.getAreas()) {
-      addChild(new VisualArea(this, area));
+      addArea(area);
     }
     setPaint(getColorSchemaAware().getColor(ColorCodes.BACKGROUND));
+  }
+
+  public VisualArea addArea(Area area) {
+    return addArea(area, mapProjection);
+  }
+
+  public VisualArea addArea(Area area, MapProjection proj) {
+    VisualArea visualArea = createVisualArea(area, proj);
+    addChild(visualArea);
+    return visualArea;
+  }
+
+  private VisualArea createVisualArea(Area area, MapProjection proj) {
+    return new VisualArea(this, area, proj);
   }
 
   public MapProjection getMapProjection() {
