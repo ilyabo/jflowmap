@@ -2,7 +2,7 @@ view=flowstrates
 view.flowstrates.maxVisibleTuples=200
 
 data=graphml
-data.graphml.src=data/aid-data.xml.gz
+data.graphml.src=data/aid-data-flowstrates.xml.gz
 
 data.attrs.node.label=name
 data.attrs.node.lat=lat
