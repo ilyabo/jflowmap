@@ -173,9 +173,9 @@ public class MapLayer extends PLayer {
       final int maxPerRow = 4;
       int cnt = 0;
       final int numPerRow = Math.min(maxPerRow, num);
-      final double vspacing = (bounds.getHeight() / 10);
       final int r = num % numPerRow;
-      final double hspacing = bounds.getWidth() / (numPerRow - 1);
+      final double hspacing = bounds.getWidth() * 0.7 / (numPerRow - 1);
+      final double vspacing = (bounds.getHeight() / 10);
       final double topMargin = bounds.getHeight() / 5;
 
       for (Node node : nodesWithoutCoords) {
@@ -191,11 +191,11 @@ public class MapLayer extends PLayer {
 
         visualAreaMap.addArea(new Area(nodeId, label, Arrays.asList(new Polygon(
             new Point2D[] {
-                new Point2D.Double(x - hspacing/3, y - vspacing/4),
-                new Point2D.Double(x + hspacing/3, y - vspacing/4),
-                new Point2D.Double(x + hspacing/3, y + vspacing*3/4),
-                new Point2D.Double(x - hspacing/3, y + vspacing*3/4),
-                new Point2D.Double(x - hspacing/3, y - vspacing/4)
+                new Point2D.Double(x - hspacing/2, y - vspacing/3),
+                new Point2D.Double(x + hspacing/2, y - vspacing/3),
+                new Point2D.Double(x + hspacing/2, y + vspacing*2/3),
+                new Point2D.Double(x - hspacing/2, y + vspacing*2/3),
+                new Point2D.Double(x - hspacing/2, y - vspacing/3)
             }))),
             MapProjections.NONE);
 
@@ -387,7 +387,7 @@ public class MapLayer extends PLayer {
     setSelectedNodes(newSelection);
   }
 
-  private void colorizeMapArea(String areaId, double value, boolean hover, FlowEndpoints s) {
+  private void colorizeMapArea(String areaId, double value, boolean hover) {
     Centroid c = nodeIdsToCentroids.get(areaId);
     if (c != null) {
       VisualArea area = visualAreaMap.getVisualAreaBy(areaId);
@@ -426,7 +426,7 @@ public class MapLayer extends PLayer {
       FlowMapAttrSpec attrSpec = getFlowMapGraph().getAttrSpec();
 
       double value = edge.getDouble(vtype.getColumnValueAttr(attrSpec, attr));
-      colorizeMapArea(flowstratesView.getAggLayers().getSourceNodeId(edge), value, hover, endpoint);
+      colorizeMapArea(flowstratesView.getAggLayers().getNodeId(edge, endpoint), value, hover);
     }
   }
 
@@ -443,11 +443,11 @@ public class MapLayer extends PLayer {
 
 
   private void colorizeMapAreasWithBaseNodeSummaries(String weightAttr, boolean hover, Iterable<Edge> edges,
-      FlowEndpoints s) {
-    for (Node node : Nodes.nodesOfEdges(edges, s)) {
-      double value = FlowMapSummaries.getWeightSummary(node, getColumnValueAttrName(weightAttr), s.dir());
+      FlowEndpoints ep) {
+    for (Node node : Nodes.nodesOfEdges(edges, ep)) {
+      double value = FlowMapSummaries.getWeightSummary(node, getColumnValueAttrName(weightAttr), ep.dir());
       String areaId = getFlowMapGraph().getNodeId(node);
-      colorizeMapArea(areaId, value, hover, s);
+      colorizeMapArea(areaId, value, hover);
     }
   }
 

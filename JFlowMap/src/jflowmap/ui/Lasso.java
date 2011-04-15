@@ -44,6 +44,7 @@ public class Lasso extends PBasicInputEventHandler {
   private final PLine line;
   private Point2D lastPos;
   private Area prevSelectionArea;
+  private boolean wasDragged;
 
   /**
    * @param camera Node to which the lasso node will be added.
@@ -66,10 +67,12 @@ public class Lasso extends PBasicInputEventHandler {
 
   @Override
   public void mouseReleased(PInputEvent event) {
-    if ((isSelecting()  /*||  event.isControlDown()*/) // to support "clear selection"
-        &&  inTarget(event)) {
-      stop(event);
+    if (inTarget(event)) {
+      if (isSelecting()  ||  !wasDragged) {  // to support "clear selection"
+        stop(event);
+      }
     }
+    wasDragged = false;
   }
 
   /**
@@ -116,6 +119,7 @@ public class Lasso extends PBasicInputEventHandler {
       } else {
 //        stop(event);
       }
+      wasDragged = true;
     }
   }
 
@@ -149,6 +153,7 @@ public class Lasso extends PBasicInputEventHandler {
     camera.removeChild(line);
     line.removeAllPoints();
     lastPos = null;
+    wasDragged = false;
   }
 
   public Area asArea(LineShape line) {
