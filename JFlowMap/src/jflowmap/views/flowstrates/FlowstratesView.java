@@ -361,7 +361,7 @@ public class FlowstratesView extends AbstractCanvasView {
     List<Edge> list = Lists.newArrayList(edges);
 
     // Sort by magnitude
-    Collections.sort(list, RowOrderings.MAX_MAGNITUDE_IN_ROW.getComparator(flowMapGraph));
+    Collections.sort(list, RowOrderings.MAX_MAGNITUDE_IN_ROW.getComparator(this));
 
     // Take first maxVisibleTuples
     if (maxVisibleTuples >= 0) {
@@ -384,7 +384,7 @@ public class FlowstratesView extends AbstractCanvasView {
           getTopEdges(Iterables.filter(removeEdgesWithOnlyNaNs(layers.getVisibleEdges()),
           getEdgePredicate())));
 
-      Collections.sort(edges, rowOrdering.getComparator(flowMapGraph));
+      Collections.sort(edges, rowOrdering.getComparator(this));
 
       visibleEdges = edges;
       visibleEdgesStats = null;
