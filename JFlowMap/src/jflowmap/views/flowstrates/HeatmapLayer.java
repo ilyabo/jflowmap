@@ -137,6 +137,8 @@ public class HeatmapLayer extends PLayer {
           columnHighlightRect.moveToFront();
           columnHighlightRect.setVisible(true);
           columnHighlightRect.repaint();
+
+          flowstratesView.getFlowLinesLayerNode().hideAllFlowLines();
         }
 
         @Override
@@ -144,6 +146,8 @@ public class HeatmapLayer extends PLayer {
           PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
           columnHighlightRect.setVisible(false);
           updateMapsOnHeatmapColumnHover(label.getName(), false);
+
+          flowstratesView.getFlowLinesLayerNode().updateFlowLinePositionsAndVisibility();
         }
       });
       col++;

@@ -77,7 +77,7 @@ public class FlowLinesLayerNode extends PNode {
     }
 
     updateFlowLineColors();
-    updateFlowLinePositions();
+    updateFlowLinePositionsAndVisibility();
   }
 
   private FlowLine createFlowLine(Edge edge) {
@@ -128,7 +128,15 @@ public class FlowLinesLayerNode extends PNode {
     throw new AssertionError();
   }
 
-  void updateFlowLinePositions() {
+  void hideAllFlowLines() {
+    for (Edge edge : flowstratesView.getVisibleEdges()) {
+      Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
+      lines.first().setVisible(false);
+      lines.second().setVisible(false);
+    }
+  }
+
+  void updateFlowLinePositionsAndVisibility() {
     int row = 0;
 
     for (Edge edge : flowstratesView.getVisibleEdges()) {

@@ -235,7 +235,7 @@ public class FlowstratesView extends AbstractCanvasView {
           originMapLayer.updateCentroids();
           destMapLayer.updateCentroids();
 
-          flowLinesLayerNode.updateFlowLinePositions();
+          flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
           // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
         }
       }
@@ -589,7 +589,7 @@ public class FlowstratesView extends AbstractCanvasView {
     if (!fitInViewOnce) {
       fitMapsInView();
     }
-    flowLinesLayerNode.updateFlowLinePositions();
+    flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
 
     PBounds lb = legend.getFullBoundsReference();
     PBounds vb = getCamera().getViewBounds();
