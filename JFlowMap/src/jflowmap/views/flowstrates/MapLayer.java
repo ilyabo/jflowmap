@@ -37,7 +37,6 @@ import jflowmap.geo.MapProjections;
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.models.map.Polygon;
-import jflowmap.ui.Lasso;
 import jflowmap.util.CollectionUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;

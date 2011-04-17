@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.ui;
+package jflowmap.views.flowstrates;
 
 import java.awt.Color;
 import java.awt.Shape;
@@ -25,6 +25,7 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
+import jflowmap.views.flowmap.VisualAreaMap;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -68,7 +69,9 @@ public class Lasso extends PBasicInputEventHandler {
   @Override
   public void mouseReleased(PInputEvent event) {
     if (inTarget(event)) {
-      if (isSelecting()  ||  !wasDragged) {  // to support "clear selection"
+      if (isSelecting()  ||
+          (!wasDragged  &&  !event.isControlDown()  &&
+             (event.getPickedNode() instanceof VisualAreaMap))) {  // to support "clear selection"
         stop(event);
       }
     }
