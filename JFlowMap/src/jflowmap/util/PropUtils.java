@@ -34,7 +34,7 @@ public class PropUtils {
     if (val == null) {
       throw new IllegalArgumentException("Property '"+propName+"' must be specified");
     }
-    return val;
+    return val.trim();
   }
 
   public static String getString(Properties props, String propName) {
@@ -46,7 +46,7 @@ public class PropUtils {
     if (isEmpty(val)) {
       return defaultValue;
     }
-    return val;
+    return val.trim();
   }
 
   public static int getIntOrElse(Properties props, String propName, int defaultValue) {
@@ -54,7 +54,7 @@ public class PropUtils {
     if (isEmpty(val)) {
       return defaultValue;
     }
-    return Integer.parseInt(val);
+    return Integer.parseInt(val.trim());
   }
 
   public static double getDoubleOrElse(Properties props, String propName, double defaultValue) {
@@ -62,7 +62,7 @@ public class PropUtils {
     if (isEmpty(val)) {
       return defaultValue;
     }
-    return Double.parseDouble(val);
+    return Double.parseDouble(val.trim());
   }
 
   public static boolean isEmpty(String value) {
@@ -73,7 +73,7 @@ public class PropUtils {
     for (String prop : propNames) {
       String val = props.getProperty(prop);
       if (!isEmpty(val)) {
-        return Pair.of(prop, val);
+        return Pair.of(prop, val.trim());
       }
     }
     if (propNames.length > 0) {
