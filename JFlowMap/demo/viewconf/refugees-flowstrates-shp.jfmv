@@ -21,6 +21,6 @@ data.attrs.flow.weight.csvList= 1975,1976,1977,1978,1979,\
 data.aggregator=jflowmap.views.flowstrates.RefugeeAggLayersBuilder
 
 map=shapefile
-map.shapefile.src=data/shapefiles/countries/10m_admin_0_countries-polygons-ms1.shp.gz
+map.shapefile.src=data/shapefiles/countries/countries.shp.gz
 map.shapefile.dbfAreaIdField=ISO_A3
 map.projection=Mercator
