@@ -143,8 +143,10 @@ public class FlowLinesLayerNode extends PNode {
       Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
       Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
 
-      updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoints.ORIGIN);
-      updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoints.DEST);
+      if (lines != null  &&  labels != null) {
+        updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoints.ORIGIN);
+        updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoints.DEST);
+      }
 
       row++;
     }
