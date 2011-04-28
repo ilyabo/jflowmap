@@ -498,6 +498,7 @@ public class FlowstratesView extends AbstractCanvasView {
       // return flowMapGraph.getStats();
       return layers.getStatsForVisibleEdges();
     }
+//    return layers.getStatsForVisibleEdges();
   }
 
   private FlowMapStats getVisibleEdgesStats() {

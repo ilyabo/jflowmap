@@ -9,6 +9,8 @@ data.attrs.node.lat=lat
 data.attrs.node.lon=lon
 data.attrs.flow.weight.re=19[789][0-9]|[2][0-9]{3}
 
-map=xml
-map.xml.src=data/maps/countries-areas-ll.xml.gz
+
+map=shapefile
+map.shapefile.src=data/shapefiles/countries/countries.shp.gz
+map.shapefile.dbfAreaIdField=ISO_A3
 map.projection=WinkelTripel

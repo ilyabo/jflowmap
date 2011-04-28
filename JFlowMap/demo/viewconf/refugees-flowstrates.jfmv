@@ -22,4 +22,4 @@ data.aggregator=jflowmap.views.flowstrates.RefugeeAggLayersBuilder
 
 map=xml
 map.xml.src=data/maps/countries-areas-ll.xml.gz
-map.projection=Mercator
+map.projection=WinkelTripel

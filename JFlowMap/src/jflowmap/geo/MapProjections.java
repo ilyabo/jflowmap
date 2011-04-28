@@ -52,10 +52,35 @@ public enum MapProjections implements MapProjection {
               ));
     }
 
-    private double radians(double degrees) {
-      return degrees * Math.PI / 180;
+  },
+
+  WINKELTRIPEL {
+    private final double phi1 = Math.acos(2/Math.PI);
+    private final double cos_phi1 = Math.cos(phi1);
+
+    @Override
+    public Point2D project(double lon, double lat) {
+      double rlat = radians(lat);
+      double rlon = radians(lon);
+      double cos_rlat = Math.cos(rlat);
+
+      double alpha = Math.acos(cos_rlat * Math.cos(rlon/2));
+
+      double sinc_alpha = sinc(alpha);
+      return new Point2D.Double(
+          (lon * cos_phi1 + 2 * cos_rlat*Math.sin(rlon/2)/sinc_alpha)/2,
+          -(lat + Math.sin(rlat)/sinc_alpha)/2
+      );
     }
+
+    private double sinc(double x) { return Math.sin(x)/x; }
   };
+
+
+  private static double radians(double degrees) {
+    return degrees * Math.PI / 180;
+  }
+
 
   public static Iterable<Point> projectAll(Iterable<Point> points, final MapProjection mapProjection) {
     return Iterables.transform(points, new Function<Point, Point>() {

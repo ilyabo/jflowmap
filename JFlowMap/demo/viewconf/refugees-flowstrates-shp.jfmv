@@ -23,4 +23,4 @@ data.aggregator=jflowmap.views.flowstrates.RefugeeAggLayersBuilder
 map=shapefile
 map.shapefile.src=data/shapefiles/countries/countries.shp.gz
 map.shapefile.dbfAreaIdField=ISO_A3
-map.projection=Mercator
+map.projection=WinkelTripel

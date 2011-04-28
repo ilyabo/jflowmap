@@ -11,4 +11,4 @@ data.attrs.flow.weight.re=B11:TOT:[0-9]{4}
 
 map=xml
 map.xml.src=data/maps/countries-areas-ll.xml.gz
-map.projection=Mercator
+map.projection=WinkelTripel
