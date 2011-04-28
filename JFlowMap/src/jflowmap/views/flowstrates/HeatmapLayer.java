@@ -271,10 +271,10 @@ public class HeatmapLayer extends PLayer {
   }
 
   public void fitHeatMapInView() {
-    PBounds heatmapBounds = getFullBounds();
-    if (heatmapBounds.height > heatmapBounds.width * 10) {
-      heatmapBounds.height = heatmapBounds.width * heatmapCamera.getViewBounds().height
-          / heatmapCamera.getWidth();
+    PBounds heatmapBounds = heatmapNode.getFullBounds();
+    if (heatmapBounds.height > heatmapBounds.width * 7) {
+      PBounds camb = heatmapCamera.getViewBounds();
+      heatmapBounds.height = heatmapBounds.width * (camb.height / camb.width);
     }
     heatmapCamera.setViewBounds(GeomUtils.growRectByPercent(heatmapBounds, .025, .1, .025, .1));
   }
