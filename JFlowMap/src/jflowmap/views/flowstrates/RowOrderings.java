@@ -1,5 +1,6 @@
 package jflowmap.views.flowstrates;
 
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -190,8 +191,11 @@ enum RowOrderings {
     String yattr = fs.getFlowMapGraph().getAttrSpec().getNodeLatAttr();
     return -(int)Math.signum(s.nodeOf(e1).getDouble(yattr) - s.nodeOf(e2).getDouble(yattr));
     */
-    double y1 = fs.getMapLayer(ep).getCentroidPoint(e1).getY();
-    double y2 = fs.getMapLayer(ep).getCentroidPoint(e2).getY();
+    Point2D c1 = fs.getMapLayer(ep).getCentroidPoint(e1);
+    Point2D c2 = fs.getMapLayer(ep).getCentroidPoint(e2);
+
+    double y1 = c1 == null ? Double.NaN : c1.getY();
+    double y2 = c2 == null ? Double.NaN : c2.getY();
 
     return (int)Math.signum(y1 - y2);
   }
