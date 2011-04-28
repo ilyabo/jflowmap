@@ -241,6 +241,7 @@ public class MapLayer extends PLayer {
       flowstratesView.fireNodeSelectionChanged(old, nodeIds);
       flowstratesView.updateVisibleEdges();
       updateCentroidColors();
+      flowstratesView.fitHeatmapInView();
     }
   }
 

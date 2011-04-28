@@ -297,7 +297,7 @@ public class FlowstratesView extends AbstractCanvasView {
     layers.setSelectedLayer(layerName);
     this.visibleEdges = null;
     heatmapLayer.renewHeatmap();
-    heatmapLayer.fitHeatMapInView();
+    fitHeatmapInView();
   }
 
   public void setMaxVisibleTuples(int maxVisibleTuples) {
@@ -305,7 +305,7 @@ public class FlowstratesView extends AbstractCanvasView {
       this.maxVisibleTuples = maxVisibleTuples;
       this.visibleEdges = null;
       heatmapLayer.renewHeatmap();
-      heatmapLayer.fitHeatMapInView();
+      fitHeatmapInView();
     }
   }
 
@@ -338,7 +338,7 @@ public class FlowstratesView extends AbstractCanvasView {
   void updateVisibleEdges() {
     visibleEdges = null;
     heatmapLayer.renewHeatmap();
-    heatmapLayer.fitHeatMapInView();
+    fitHeatmapInView();
   }
 
   private Predicate<Edge> getEdgePredicate() {
@@ -603,10 +603,14 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void fitMapsInView() {
     fitInCameraView(originMapLayer);
-    heatmapLayer.fitHeatMapInView();
+    fitHeatmapInView();
     fitInCameraView(destMapLayer);
 
     fitInViewOnce = true;
+  }
+
+  void fitHeatmapInView() {
+    heatmapLayer.fitHeatMapInView();
   }
 
   private void fitInCameraView(MapLayer layer) {
