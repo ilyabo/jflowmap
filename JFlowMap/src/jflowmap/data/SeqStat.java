@@ -30,14 +30,23 @@ public class SeqStat {
   private final double min;
   private final double max;
   private final double sum;
+  private final double sumPos;
+  private final double sumNeg;
   private final int count;
 
-  private SeqStat(double minValue, double maxValue, double sum, int count) {
+  private SeqStat(
+      double minValue, double maxValue,
+      double sum, double sumPos, double sumNeg,
+      int count) {
     if (minValue > maxValue) {
       throw new IllegalArgumentException("minValue > maxValue");
     }
 
+    this.min = minValue;
+    this.max = maxValue;
     this.sum = sum;
+    this.sumPos = sumPos;
+    this.sumNeg = sumNeg;
     this.count = count;
 
     double avg = getAvg();
@@ -48,13 +57,14 @@ public class SeqStat {
     if (avg < minValue) {
       throw new IllegalArgumentException("avg < minValue");
     }
-    this.min = minValue;
-    this.max = maxValue;
   }
 
   public SeqStat mergeWith(SeqStat minMax) {
     return new SeqStat(
-        Math.min(min, minMax.min), Math.max(max, minMax.max), sum + minMax.sum,
+        Math.min(min, minMax.min), Math.max(max, minMax.max),
+        sum + minMax.sum,
+        sumPos + minMax.sumPos,
+        sumNeg + minMax.sumNeg,
         count + minMax.count);
   }
 
@@ -69,11 +79,19 @@ public class SeqStat {
   public double getSum() {
     return sum;
   }
-  
+
+  public double getSumPos() {
+    return sumPos;
+  }
+
+  public double getSumNeg() {
+    return sumNeg;
+  }
+
   public int getCount() {
     return count;
   }
-  
+
   public double getAvg() {
     return sum / count;
   }
@@ -84,11 +102,13 @@ public class SeqStat {
 
   public static SeqStat createFor(Iterator<Double> it) {
     if (!it.hasNext()) {
-      return new SeqStat(Double.NaN, Double.NaN, Double.NaN, 0);
+      return new SeqStat(Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, 0);
     }
     double max = Double.NaN;
     double min = Double.NaN;
     double sum = 0;
+    double sumPos = 0;
+    double sumNeg = 0;
     int count = 0;
 
     while (it.hasNext()) {
@@ -99,10 +119,15 @@ public class SeqStat {
       if (Double.isNaN(min) || v < min) {
         min = v;
       }
+      if (v > 0) {
+        sumPos += v;
+      } else if (v < 0) {
+        sumNeg += v;
+      }
       sum += v;
       count++;
     }
-    return new SeqStat(min, max, sum, count);
+    return new SeqStat(min, max, sum, sumPos, sumNeg, count);
   }
 
   /**
