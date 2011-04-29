@@ -86,14 +86,14 @@ public class FlowMapGraphAggLayers {
 
 
   private final List<AggLayer> aggLayers;
-  private List<Edge> visibleEdges;  // possibly of different graphs
+  private List<Edge> edges;  // possibly of different graphs
   private final AggLayer baseLayer;
-  private FlowMapStats visibleEdgesStats;
+  private FlowMapStats edgesStats;
 
   private FlowMapGraphAggLayers(AggLayer base, Iterable<AggLayer> layers, AggLayer initialLayer) {
     baseLayer = base;
     aggLayers = ImmutableList.copyOf(Iterables.concat(ImmutableList.of(base), layers));
-    setVisibleEdges(Lists.newArrayList(initialLayer.getFlowMapGraph().edges()));
+    setEdges(Lists.newArrayList(initialLayer.getFlowMapGraph().edges()));
   }
 
   public Iterable<FlowMapGraph> getFlowMapGraphs() {
@@ -109,13 +109,13 @@ public class FlowMapGraphAggLayers {
     return baseLayer.getFlowMapGraph();
   }
 
-  public List<Edge> getVisibleEdges() {
-    return visibleEdges;
+  public List<Edge> getEdges() {
+    return edges;
   }
 
-  private void setVisibleEdges(List<Edge> visibleEdges) {
-    this.visibleEdges = visibleEdges;
-    this.visibleEdgesStats = null;
+  private void setEdges(List<Edge> edges) {
+    this.edges = edges;
+    this.edgesStats = null;
   }
 
 //  public boolean isEdgeAggregatedBy(Edge edge, Edge aggEdge) {
@@ -143,7 +143,7 @@ public class FlowMapGraphAggLayers {
     if (layer == null) {
       throw new IllegalArgumentException("Layer " + layerName + " not found");
     }
-    setVisibleEdges(ImmutableList.copyOf(layer.getFlowMapGraph().edges()));
+    setEdges(ImmutableList.copyOf(layer.getFlowMapGraph().edges()));
   }
 
   public Iterable<String> getLayerNames() {
@@ -157,7 +157,7 @@ public class FlowMapGraphAggLayers {
 
   private void expand(Node node, FlowEndpoints as) {
     AggLayer layer = requireAggLayer(node);
-    Edge aggEdge = requireVisibleEdgeWith(node, as);
+    Edge aggEdge = requireEdgeWith(node, as);
     if (layer == baseLayer) {
       throw new IllegalArgumentException("Base layer node cannot be deaggregated. Node id:" +
           layer.getFlowMapGraph().getNodeId(node));
@@ -165,9 +165,9 @@ public class FlowMapGraphAggLayers {
 
     // replace aggEdge with all edges it aggregates
     List<Edge> deagg = FlowMapGraphEdgeAggregator.getAggregateList(aggEdge);
-    List<Edge> newVisEdges = replaceEdgeWithListOfEdges(visibleEdges, aggEdge, deagg);
+    List<Edge> newEdges = replaceEdgeWithListOfEdges(edges, aggEdge, deagg);
 
-    setVisibleEdges(Collections.unmodifiableList(newVisEdges));
+    setEdges(Collections.unmodifiableList(newEdges));
   }
 
   public void collapseSource(Edge e) {
@@ -181,7 +181,7 @@ public class FlowMapGraphAggLayers {
   private void collapse(Node node, FlowEndpoints as) {
     requireAggLayer(node);
 
-    Edge aggEdge = getEdgeWith(node, as);
+    Edge aggEdge = getFlowMapGraphEdgeWith(node, as);
     if (aggEdge == null) {
       throw new IllegalArgumentException("Edge not found with node " + node + " as " + as);
     }
@@ -189,9 +189,9 @@ public class FlowMapGraphAggLayers {
 
 //    if (isExpanded(aggEdge)) {
     List<Edge> deagg = FlowMapGraphEdgeAggregator.getAggregateList(aggEdge);
-    List<Edge> newVisEdges = replaceListOfEdgesWithEdge(visibleEdges, deagg, aggEdge, false);
+    List<Edge> newEdges = replaceListOfEdgesWithEdge(edges, deagg, aggEdge, false);
 
-    setVisibleEdges(Collections.unmodifiableList(newVisEdges));
+    setEdges(Collections.unmodifiableList(newEdges));
 //    }
   }
 
@@ -278,7 +278,7 @@ public class FlowMapGraphAggLayers {
     return newEdges;
   }
 
-  private Edge getEdgeWith(Node node, FlowEndpoints as) {
+  private Edge getFlowMapGraphEdgeWith(Node node, FlowEndpoints as) {
     FlowMapGraph fmg = getFlowMapGraphOf(node);
     for (Edge e : fmg.edges()) {
       if (as.nodeOf(e) == node) {
@@ -288,8 +288,8 @@ public class FlowMapGraphAggLayers {
     return null;
   }
 
-  private Edge getVisibleEdgeWith(Node node, FlowEndpoints as) {
-    for (Edge e : getVisibleEdges()) {
+  private Edge getEdgeWith(Node node, FlowEndpoints as) {
+    for (Edge e : getEdges()) {
       if (as.nodeOf(e) == node) {
         return e;
       }
@@ -297,8 +297,8 @@ public class FlowMapGraphAggLayers {
     return null;
   }
 
-  private Edge requireVisibleEdgeWith(Node node, FlowEndpoints as) {
-    Edge edge = getVisibleEdgeWith(node, as);
+  private Edge requireEdgeWith(Node node, FlowEndpoints as) {
+    Edge edge = getEdgeWith(node, as);
     if (edge == null) {
       throw new IllegalArgumentException("Node '" + getNodeLabel(node) + "' is not visible as " + as);
     }
@@ -317,12 +317,12 @@ public class FlowMapGraphAggLayers {
     return getFlowMapGraphOf(node).getNodeLabel(node);
   }
 
-  public FlowMapStats getStatsForVisibleEdges() {
-    if (visibleEdgesStats == null) {
-      visibleEdgesStats = EdgeListFlowMapStats.createFor(
-          getVisibleEdges(), baseLayer.getFlowMapGraph().getAttrSpec());
+  public FlowMapStats getStats() {
+    if (edgesStats == null) {
+      edgesStats = EdgeListFlowMapStats.createFor(
+          getEdges(), baseLayer.getFlowMapGraph().getAttrSpec());
     }
-    return visibleEdgesStats;
+    return edgesStats;
   }
 
   private static class AggLayer {
@@ -390,8 +390,8 @@ public class FlowMapGraphAggLayers {
     return getFlowMapGraphOf(edge).getEdgeWeight(edge, weightAttr);
   }
 
-  public Edge findVisibleEdgeByNodeIds(String srcId, String targetId) {
-    for (Edge e : visibleEdges) {
+  public Edge findEdgeByNodeIds(String srcId, String targetId) {
+    for (Edge e : edges) {
       if (srcId.equals(getSourceNodeId(e))  &&  targetId.equals(getTargetNodeId(e))) {
         return e;
       }

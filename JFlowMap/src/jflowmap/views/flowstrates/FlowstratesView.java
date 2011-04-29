@@ -381,7 +381,7 @@ public class FlowstratesView extends AbstractCanvasView {
   List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
       List<Edge> edges = Lists.newArrayList(
-          getTopEdges(Iterables.filter(removeEdgesWithOnlyNaNs(layers.getVisibleEdges()),
+          getTopEdges(Iterables.filter(removeEdgesWithOnlyNaNs(layers.getEdges()),
           getEdgePredicate())));
 
       Collections.sort(edges, rowOrdering.getComparator(this));
@@ -496,7 +496,7 @@ public class FlowstratesView extends AbstractCanvasView {
       return getVisibleEdgesStats();
     } else {
       // return flowMapGraph.getStats();
-      return layers.getStatsForVisibleEdges();
+      return layers.getStats();
     }
 //    return layers.getStatsForVisibleEdges();
   }
