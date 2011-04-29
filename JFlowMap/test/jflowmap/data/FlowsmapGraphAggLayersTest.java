@@ -47,7 +47,7 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_topLevel() {
-    List<Edge> edges = layers.getVisibleEdges();
+    List<Edge> edges = layers.getEdges();
     assertEquals(1, edges.size());
 
     Edge e = edges.get(0);
@@ -59,7 +59,7 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_expandSource() {
-    Edge e = layers.getVisibleEdges().get(0);
+    Edge e = layers.getEdges().get(0);
 
     layers.expandSource(e);
     assertEquals(ImmutableSet.of("1->2,3,4: 900.0", "2->1,4: 300.0"), serializeVisibleEdges(layers));
@@ -68,7 +68,7 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_expandSource_collapseSource_expandSource_collapseSource() {
-    Edge e = layers.getVisibleEdges().get(0);
+    Edge e = layers.getEdges().get(0);
 
     layers.expandSource(e);
     assertEquals(ImmutableSet.of("1->2,3,4: 900.0", "2->1,4: 300.0"), serializeVisibleEdges(layers));
@@ -85,12 +85,12 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_expandSource_expandBothTarget_collapseOneTarget_collapseSourceOverLevel() {
-    Edge e_all = layers.getVisibleEdges().get(0);
+    Edge e_all = layers.getEdges().get(0);
 
     layers.expandSource(e_all);
 
-    Edge e_target1_1 = layers.findVisibleEdgeByNodeIds("2", "1,4");
-    Edge e_target1_2 = layers.findVisibleEdgeByNodeIds("1", "2,3,4");
+    Edge e_target1_1 = layers.findEdgeByNodeIds("2", "1,4");
+    Edge e_target1_2 = layers.findEdgeByNodeIds("1", "2,3,4");
 
     layers.expandTarget(e_target1_1);
     layers.expandTarget(e_target1_2);
@@ -112,12 +112,12 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_collapseOverLevel() {
-    Edge e_all = layers.getVisibleEdges().get(0);
+    Edge e_all = layers.getEdges().get(0);
 
     layers.expandSource(e_all);
 
-    Edge e_target1_1 = layers.findVisibleEdgeByNodeIds("2", "1,4");
-    Edge e_target1_2 = layers.findVisibleEdgeByNodeIds("1", "2,3,4");
+    Edge e_target1_1 = layers.findEdgeByNodeIds("2", "1,4");
+    Edge e_target1_2 = layers.findEdgeByNodeIds("1", "2,3,4");
 
     layers.expandTarget(e_target1_1);
     layers.expandTarget(e_target1_2);
@@ -132,7 +132,7 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_expandSource_collapseSource_collapseSource() {
-    Edge e = layers.getVisibleEdges().get(0);
+    Edge e = layers.getEdges().get(0);
 
     layers.expandSource(e);
     assertEquals(ImmutableSet.of("1->2,3,4: 900.0", "2->1,4: 300.0"), serializeVisibleEdges(layers));
@@ -145,7 +145,7 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_expandTarget() {
-    Edge e = layers.getVisibleEdges().get(0);
+    Edge e = layers.getEdges().get(0);
 
     layers.expandTarget(e);
     assertEquals(ImmutableSet.of("1->2,3,4: 900.0", "2->1,4: 300.0"), serializeVisibleEdges(layers));
@@ -153,12 +153,12 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test
   public void test_expandSource_expandBothTarget() {
-    Edge e = layers.getVisibleEdges().get(0);
+    Edge e = layers.getEdges().get(0);
 
     layers.expandSource(e);
 
-    Edge e2 = layers.getVisibleEdges().get(0);
-    Edge e3 = layers.getVisibleEdges().get(1);
+    Edge e2 = layers.getEdges().get(0);
+    Edge e3 = layers.getEdges().get(1);
 
     layers.expandTarget(e2);
     layers.expandTarget(e3);
@@ -170,9 +170,9 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test(expected=IllegalArgumentException.class)
   public void test_expandUnexpandable() {
-    layers.expandSource(layers.getVisibleEdges().get(0));
-    layers.expandSource(layers.getVisibleEdges().get(0));
-    layers.expandSource(layers.getVisibleEdges().get(0));
+    layers.expandSource(layers.getEdges().get(0));
+    layers.expandSource(layers.getEdges().get(0));
+    layers.expandSource(layers.getEdges().get(0));
   }
 
   @Test(expected=IllegalArgumentException.class)
@@ -190,7 +190,7 @@ public class FlowsmapGraphAggLayersTest {
 
   @Test(expected=IllegalArgumentException.class)
   public void test_expandInvisible() {
-    Edge e = layers.getVisibleEdges().get(0);
+    Edge e = layers.getEdges().get(0);
 
     layers.expandSource(e);
     layers.expandTarget(e);  // not visible anymore
@@ -205,7 +205,7 @@ public class FlowsmapGraphAggLayersTest {
 
   private static Set<String> serializeVisibleEdges(FlowMapGraphAggLayers ft) {
     Set<String> set = Sets.newHashSet();
-    for (Edge edge : ft.getVisibleEdges()) {
+    for (Edge edge : ft.getEdges()) {
       set.add(
           ft.getSourceNodeId(edge) + "->" + ft.getTargetNodeId(edge) + ": " +
           ft.getEdgeWeight(edge, "value")

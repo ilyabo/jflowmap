@@ -31,7 +31,7 @@ import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.data.XmlRegionsReader;
 import jflowmap.util.piccolo.PCollapsableItemsContainer;
@@ -94,14 +94,14 @@ public class VisualTimeline extends PNode {
     this.groupedFlowMapGraphs = groupedFlowMapGraphs;
     this.columnToGroupNodesBy = columnToGroupNodesBy;
 
-    FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraphs);
+    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(flowMapGraphs);
 
 //    FlowMapSummaries.supplyNodesWithDiffs(graphs, attrSpec);
     if (groupedFlowMapGraphs == null) {
       this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats());
     } else {
       for (FlowMapGraph flowMapGraph : groupedFlowMapGraphs.asList()) {
-        FlowMapSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
+        FlowMapNodeSummaries.supplyNodesWithWeightSummaries(flowMapGraph);
       }
       this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats())
                          .mergeWith(nodeSummaryMinMax(groupedFlowMapGraphs.getStats()));
@@ -141,11 +141,11 @@ public class VisualTimeline extends PNode {
     String attr = flowMapGraphs.getAttrSpec().getFlowWeightAttrs().get(0);
     return stats
       .getNodeAttrStats(
-          FlowMapSummaries.getWeightSummaryNodeAttr(attr, FlowDirection.INCOMING))
+          FlowMapNodeSummaries.getWeightSummaryNodeAttr(attr, FlowDirection.INCOMING))
       .mergeWith(globalStats.getNodeAttrStats(
-          FlowMapSummaries.getWeightSummaryNodeAttr(attr, FlowDirection.OUTGOING)))
-      .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG))
-      .mergeWith(globalStats.getNodeAttrStats(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG));
+          FlowMapNodeSummaries.getWeightSummaryNodeAttr(attr, FlowDirection.OUTGOING)))
+      .mergeWith(globalStats.getNodeAttrStats(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG))
+      .mergeWith(globalStats.getNodeAttrStats(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG));
   }
 
   public MinMax getValueStats() {
@@ -296,11 +296,11 @@ public class VisualTimeline extends PNode {
   public void showTooltip(VisualTimelineNodeCell vc) {
     Node node = vc.getNode();
 
-    double inValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.INCOMING);
-    double outValue = FlowMapSummaries.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.OUTGOING);
+    double inValue = FlowMapNodeSummaries.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.INCOMING);
+    double outValue = FlowMapNodeSummaries.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.OUTGOING);
 
-    double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
-    double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
+    double inLocalValue = node.getDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
+    double outLocalValue = node.getDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
 //    double inDiffValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR);
 //    double outDiffValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR);
 

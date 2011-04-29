@@ -28,7 +28,7 @@ import javax.swing.JComponent;
 
 import jflowmap.FlowDirection;
 import jflowmap.FlowMapAttrSpec;
-import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
@@ -113,12 +113,12 @@ public class VisualTimelineNodeCell extends PNode {
 
     setBounds(x, y, width, height);
 
-    double inValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, FlowDirection.INCOMING);
-    double outValue = FlowMapSummaries.getWeightSummary(node, weightAttrName, FlowDirection.OUTGOING);
+    double inValue = FlowMapNodeSummaries.getWeightSummary(node, weightAttrName, FlowDirection.INCOMING);
+    double outValue = FlowMapNodeSummaries.getWeightSummary(node, weightAttrName, FlowDirection.OUTGOING);
 
 
-    double inLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
-    double outLocalValue = node.getDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
+    double inLocalValue = node.getDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
+    double outLocalValue = node.getDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
 
     final MinMax vstats = timeline.getValueStats();
 

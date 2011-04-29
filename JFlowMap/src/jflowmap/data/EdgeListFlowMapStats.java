@@ -28,12 +28,12 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
     return edges;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected Iterable<Tuple> edgesAsTuples() {
     return (Iterable)edges;
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   protected Iterable<Tuple> nodesAsTuples() {
     return (Iterable)nodes;
   }

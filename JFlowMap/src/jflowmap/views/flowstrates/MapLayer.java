@@ -31,7 +31,7 @@ import jflowmap.FlowEndpoints;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
-import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.Nodes;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.Area;
@@ -136,7 +136,7 @@ public class MapLayer extends PLayer {
     Iterable<Node> nodes = CollectionUtils.sort(
         flowMapGraph.nodesHavingEdges(endpoint.dir()),
         Collections.reverseOrder(
-            FlowMapSummaries.createMaxNodeWeightSummariesComparator(
+            FlowMapNodeSummaries.createMaxNodeWeightSummariesComparator(
                 flowMapGraph, endpoint.dir())));
 
     centroidMouseListener = createCentroidMouseListener();
@@ -445,7 +445,7 @@ public class MapLayer extends PLayer {
   private void colorizeMapAreasWithBaseNodeSummaries(String weightAttr, boolean hover, Iterable<Edge> edges,
       FlowEndpoints ep) {
     for (Node node : Nodes.nodesOfEdges(edges, ep)) {
-      double value = FlowMapSummaries.getWeightSummary(node, getColumnValueAttrName(weightAttr), ep.dir());
+      double value = FlowMapNodeSummaries.getWeightSummary(node, getColumnValueAttrName(weightAttr), ep.dir());
       String areaId = getFlowMapGraph().getNodeId(node);
       colorizeMapArea(areaId, value, hover);
     }

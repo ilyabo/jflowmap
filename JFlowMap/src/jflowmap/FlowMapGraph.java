@@ -30,7 +30,7 @@ import java.util.Set;
 import jflowmap.data.AttrDataTypes;
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.MinMax;
 import jflowmap.data.MultiFlowMapStats;
@@ -675,8 +675,8 @@ public class FlowMapGraph {
       @Override
       public int compare(Edge e1, Edge e2) {
         int c = MathUtils.compareDoubles_smallestIsNaN(
-            getMaxAttrValue(s.nodeOf(e1), FlowMapSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())),
-            getMaxAttrValue(s.nodeOf(e2), FlowMapSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())));
+            getMaxAttrValue(s.nodeOf(e1), FlowMapNodeSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())),
+            getMaxAttrValue(s.nodeOf(e2), FlowMapNodeSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())));
 
         if (c == 0) {
           c = getNodeLabel(s.nodeOf(e1)).compareTo(getNodeLabel(s.nodeOf(e2)));

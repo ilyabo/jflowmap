@@ -40,7 +40,7 @@ import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.MinMax;
 import jflowmap.geo.MapProjection;
 import jflowmap.geom.GeomUtils;
@@ -151,9 +151,9 @@ public class FlowstratesView extends AbstractCanvasView {
       fmgg.addEdgeWeightRelativeDifferenceColumns();
     }
 
-    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg);
-    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
-    FlowMapSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
+    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(fmg);
+    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
+    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
 
 
     VisualCanvas canvas = getVisualCanvas();
@@ -495,10 +495,8 @@ public class FlowstratesView extends AbstractCanvasView {
     if (focusOnVisibleRows) {
       return getVisibleEdgesStats();
     } else {
-      // return flowMapGraph.getStats();
       return layers.getStats();
     }
-//    return layers.getStatsForVisibleEdges();
   }
 
   private FlowMapStats getVisibleEdgesStats() {

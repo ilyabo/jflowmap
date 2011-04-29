@@ -41,9 +41,9 @@ import com.google.common.collect.Maps;
 /**
  * @author Ilya Boyandin
  */
-public class FlowMapSummaries {
+public class FlowMapNodeSummaries {
 
-  private static Logger logger = Logger.getLogger(FlowMapSummaries.class);
+  private static Logger logger = Logger.getLogger(FlowMapNodeSummaries.class);
 
   // TODO: generalize FlowMapSummaries (shouldn't be only for regions)
 //  public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
@@ -56,7 +56,7 @@ public class FlowMapSummaries {
   private static final String NODE_COLUMN__SUM_INCOMING_PREFIX= "sumIn:stat:";
 
 
-  private FlowMapSummaries() {
+  private FlowMapNodeSummaries() {
   }
 
   public static double getWeightSummary(Node node, String weightAttrName, FlowDirection dir) {
@@ -161,7 +161,7 @@ public class FlowMapSummaries {
   public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr,
       String edgeWeightAttr) {
     for (FlowMapGraph fmg : fmset.asList()) {
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr, edgeWeightAttr);
+      FlowMapNodeSummaries.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr, edgeWeightAttr);
     }
   }
 
@@ -205,15 +205,15 @@ public class FlowMapSummaries {
       }
     }
 
-    nodeTable.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG, double.class);
-    nodeTable.addColumn(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, double.class);
+    nodeTable.addColumn(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG, double.class);
+    nodeTable.addColumn(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, double.class);
     for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
       Node node = g.getNode(i);
       if (outsums.containsKey(i)) {
-        node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG, outsums.get(i));
+        node.setDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG, outsums.get(i));
       }
       if (insums.containsKey(i)) {
-        node.setDouble(FlowMapSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, insums.get(i));
+        node.setDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, insums.get(i));
       }
     }
   }

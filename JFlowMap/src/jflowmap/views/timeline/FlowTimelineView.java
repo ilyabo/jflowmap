@@ -25,7 +25,7 @@ import javax.swing.JComponent;
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraphSet;
-import jflowmap.data.FlowMapSummaries;
+import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.views.IFlowMapColorScheme;
 
 import org.apache.log4j.Logger;
@@ -62,9 +62,9 @@ public class FlowTimelineView extends AbstractCanvasView {
       FlowMapGraphSet groupedFmset = fmset.groupNodesBy(nodeAttrToGroupBy);
 
       String edgeWeightAttr = fmset.getAttrSpec().getFlowWeightAttrs().get(0);
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(fmset, nodeAttrToGroupBy,
+      FlowMapNodeSummaries.supplyNodesWithIntraregSummaries(fmset, nodeAttrToGroupBy,
           edgeWeightAttr);
-      FlowMapSummaries.supplyNodesWithIntraregSummaries(groupedFmset,
+      FlowMapNodeSummaries.supplyNodesWithIntraregSummaries(groupedFmset,
           fmset.getAttrSpec().getNodeLabelAttr(), edgeWeightAttr);
 
       visualTimeline = new VisualTimeline(this, fmset, groupedFmset, nodeAttrToGroupBy);
