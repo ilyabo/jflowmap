@@ -69,11 +69,11 @@ public class SeqStat {
   public double getSum() {
     return sum;
   }
-
+  
   public int getCount() {
     return count;
   }
-
+  
   public double getAvg() {
     return sum / count;
   }
