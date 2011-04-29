@@ -37,6 +37,13 @@ public enum MapProjections implements MapProjection {
     }
   },
 
+  IDENTITY {
+    @Override
+    public Point2D project(double lon, double lat) {
+      return new Point2D.Double(lon / 180, -lat / 90);
+    }
+  },
+
   MERCATOR {
     // if the scale is smaller than 100 short edges will not be visible
     private final static double SCALE = 100;
@@ -58,23 +65,37 @@ public enum MapProjections implements MapProjection {
     private final double phi1 = Math.acos(2/Math.PI);
     private final double cos_phi1 = Math.cos(phi1);
 
-    @Override
-    public Point2D project(double lon, double lat) {
-      double rlat = radians(lat);
-      double rlon = radians(lon);
-      double cos_rlat = Math.cos(rlat);
+    public Point2D project(double lat, double lon) {
+      double lplam = radians(lat);
+      double lpphi = radians(lon);
 
-      double alpha = Math.acos(cos_rlat * Math.cos(rlon/2));
+      double c = 0.5 * lplam;
+      double cos_lpphi = Math.cos(lpphi);
+      double alpha = Math.acos(cos_lpphi * Math.cos(c));
 
-      double sinc_alpha = sinc(alpha);
-      return new Point2D.Double(
-          (lon * cos_phi1 + 2 * cos_rlat*Math.sin(rlon/2)/sinc_alpha)/2,
-          -(lat + Math.sin(rlat)/sinc_alpha)/2
-      );
+      double x, y;
+
+      if (alpha != 0) {
+        double sinc_alpha = sinc(alpha);
+        x = 2.0 * cos_lpphi * Math.sin(c) / sinc_alpha;
+        y = Math.sin(lpphi) / sinc_alpha;
+      } else {
+        x = y = 0.0;
+      }
+
+      x = (x + lplam * cos_phi1) * 0.5;
+      y = (y + lpphi) * 0.5;
+
+      y = -y;
+
+      return new Point2D.Double(x, y);
     }
 
     private double sinc(double x) { return Math.sin(x)/x; }
-  };
+
+  }
+
+  ;
 
 
   private static double radians(double degrees) {
