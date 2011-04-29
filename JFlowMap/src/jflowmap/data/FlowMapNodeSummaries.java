@@ -24,12 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.FlowDirection;
-import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
-
-import org.apache.log4j.Logger;
-
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -43,7 +39,7 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapNodeSummaries {
 
-  private static Logger logger = Logger.getLogger(FlowMapNodeSummaries.class);
+//  private static Logger logger = Logger.getLogger(FlowMapNodeSummaries.class);
 
   // TODO: generalize FlowMapSummaries (shouldn't be only for regions)
 //  public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
@@ -169,7 +165,6 @@ public class FlowMapNodeSummaries {
       String nodeRegionAttr, String edgeWeightAttr) {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
-    FlowMapAttrSpec as = flowMapGraph.getAttrSpec();
 
     Map<Integer, Double> outsums = Maps.newHashMap();
     Map<Integer, Double> insums = Maps.newHashMap();
