@@ -32,7 +32,7 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
   private static final String NODE_ATTR_KEY_PREFIX = ":node:";
   private static final String EDGE_ATTR_KEY_PREFIX = ":edge:";
 
-  private final Map<String, MinMax> statsCache = Maps.newHashMap();
+  private final Map<String, SeqStat> statsCache = Maps.newHashMap();
 
   private final FlowMapAttrSpec attrSpec;
 
@@ -44,8 +44,8 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
     return attrSpec;
   }
 
-  protected synchronized MinMax getCachedOrCalc(String key, AttrStatsCalculator calc) {
-    MinMax stats = statsCache.get(key);
+  protected synchronized SeqStat getCachedOrCalc(String key, AttrStatsCalculator calc) {
+    SeqStat stats = statsCache.get(key);
     if (stats == null) {
       stats = calc.calc();
       statsCache.put(key, stats);
@@ -54,17 +54,17 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
   }
 
   protected interface AttrStatsCalculator {
-    MinMax calc();
+    SeqStat calc();
   }
 
   protected abstract Iterable<Edge> edges();
 
-  public MinMax getEdgeLengthStats() {
+  public SeqStat getEdgeLengthStats() {
     return getCachedOrCalc(
         AttrKeys.EDGE_LENGTH.name(),
         new AttrStatsCalculator() {
           @Override
-          public MinMax calc() {
+          public SeqStat calc() {
             List<Double> edgeLengths = Lists.newArrayList();
             for (Edge edge : edges()) {
               Node src = edge.getSourceNode();
@@ -75,7 +75,7 @@ public abstract class AbstractFlowMapStats implements FlowMapStats {
               double y2 = target.getDouble(attrSpec.getNodeLatAttr());
               edgeLengths.add(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
             }
-            return MinMax.createFor(edgeLengths.iterator());
+            return SeqStat.createFor(edgeLengths.iterator());
           }
         });
   }

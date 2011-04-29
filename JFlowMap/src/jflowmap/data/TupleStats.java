@@ -37,7 +37,7 @@ public class TupleStats {
   }
 
   @SuppressWarnings("unchecked")
-  public static MinMax createFor(final TupleSet tupleSet, Iterable<String> attrNames) {
+  public static SeqStat createFor(final TupleSet tupleSet, Iterable<String> attrNames) {
     Iterable it = new Iterable<Tuple>() {@Override
       public Iterator<Tuple> iterator() {
         return tupleSet.tuples();
@@ -46,24 +46,24 @@ public class TupleStats {
   }
 
   @SuppressWarnings("unchecked")
-  public static MinMax createFor(TupleSet tupleSet, String attrName) {
-    return MinMax.createFor(attrValuesIterator(tupleSet.tuples(), attrName));
+  public static SeqStat createFor(TupleSet tupleSet, String attrName) {
+    return SeqStat.createFor(attrValuesIterator(tupleSet.tuples(), attrName));
   }
 
-  public static MinMax createFor(Iterable<Tuple> edges, Iterable<String> attrNames) {
-    return MinMax.createFor(attrValuesIterator(edges, attrNames));
+  public static SeqStat createFor(Iterable<Tuple> edges, Iterable<String> attrNames) {
+    return SeqStat.createFor(attrValuesIterator(edges, attrNames));
   };
 
 
   @SuppressWarnings("unchecked")
-  public static MinMax createFor(Iterator<TupleSet> it, Iterator<String> attrNameIt) {
+  public static SeqStat createFor(Iterator<TupleSet> it, Iterator<String> attrNameIt) {
     List<Iterator<Double>> iterators = Lists.newArrayList();
     while (it.hasNext()) {
       assert attrNameIt.hasNext();
       iterators.add(attrValuesIterator(it.next().tuples(), attrNameIt.next()));
     }
     assert !attrNameIt.hasNext();
-    return MinMax.createFor(Iterators.concat(iterators.iterator()));
+    return SeqStat.createFor(Iterators.concat(iterators.iterator()));
   }
 
   private static Iterator<Double> attrValuesIterator(Iterator<Tuple> it, final String attrName) {

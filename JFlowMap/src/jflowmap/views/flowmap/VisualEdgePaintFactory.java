@@ -22,7 +22,7 @@ import java.awt.Color;
 import java.awt.LinearGradientPaint;
 import java.awt.Paint;
 
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.ColorUtils;
 import jflowmap.views.ColorCodes;
@@ -105,7 +105,7 @@ public class VisualEdgePaintFactory {
           if (model.getUseProportionalDirectionMarkers()) {
             markerSize = (float)model.getDirectionMarkerSize();
           } else {
-            MinMax lstats = visualFlowMap.getStats().getEdgeLengthStats();
+            SeqStat lstats = visualFlowMap.getStats().getEdgeLengthStats();
             markerSize = (float)Math.min(
                 .5 - MIN_FRACTION_DIFF,  // the markers must not be longer than half of an edge
                 ((lstats.getMin() + model.getDirectionMarkerSize() * (lstats.getMax() - lstats.getMin()))

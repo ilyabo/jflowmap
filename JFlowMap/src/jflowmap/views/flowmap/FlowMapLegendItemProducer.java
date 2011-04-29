@@ -4,7 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.geom.ArrowQuadPath;
 import jflowmap.views.ColorCodes;
 import edu.umd.cs.piccolo.PNode;
@@ -36,7 +36,7 @@ public class FlowMapLegendItemProducer extends AbstractLegendItemProducer {
   }
 
   @Override
-  public MinMax getMinMax() {
+  public SeqStat getMinMax() {
     return visualFlowMap.getStats().getEdgeWeightStats();
   }
 

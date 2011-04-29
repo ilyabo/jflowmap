@@ -60,7 +60,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
 
 
   @Override
-  public MinMax getEdgeWeightStats() {
+  public SeqStat getEdgeWeightStats() {
     return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT.name(),
         new Function<FlowMapGraph, List<String>>() {
           @Override
@@ -71,14 +71,14 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
     );
   }
 
-  protected MinMax getEdgeAttrsStats(String key, final Function<FlowMapGraph, List<String>> getEdgeAttrs) {
+  protected SeqStat getEdgeAttrsStats(String key, final Function<FlowMapGraph, List<String>> getEdgeAttrs) {
     return getCachedOrCalc(
         key,
         new AttrStatsCalculator() {
-          @Override public MinMax calc() {
-            MinMax minMax = null;
+          @Override public SeqStat calc() {
+            SeqStat minMax = null;
             for (FlowMapGraph fmg : flowMapGraphs) {
-              MinMax mm = TupleStats.createFor(fmg.getGraph().getEdges(), getEdgeAttrs.apply(fmg));
+              SeqStat mm = TupleStats.createFor(fmg.getGraph().getEdges(), getEdgeAttrs.apply(fmg));
               if (minMax == null) {
                 minMax = mm;
               } else {
@@ -91,7 +91,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
     );
   }
 
-  public MinMax getEdgeWeightDiffStats() {
+  public SeqStat getEdgeWeightDiffStats() {
     return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
         new Function<FlowMapGraph, List<String>>() {
           @Override
@@ -103,7 +103,7 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
   }
 
 
-  public MinMax getEdgeWeightRelativeDiffStats() {
+  public SeqStat getEdgeWeightRelativeDiffStats() {
     return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
         new Function<FlowMapGraph, List<String>>() {
           @Override
@@ -116,11 +116,11 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
 
 
 
-  public MinMax getNodeXStats() {
+  public SeqStat getNodeXStats() {
     return getAttrStats(Attrs.NODE_X);
   }
 
-  public MinMax getNodeYStats() {
+  public SeqStat getNodeYStats() {
     return getAttrStats(Attrs.NODE_Y);
   }
 
@@ -128,10 +128,10 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
    * NOTE: this method suggests that every graph in this flowMapGraphs
    * has the attribute with <code>attrName</code>.
    */
-  public MinMax getNodeAttrStats(final String attrName) {
+  public SeqStat getNodeAttrStats(final String attrName) {
     return getCachedOrCalc(AttrKeys.nodeAttr(attrName), new AttrStatsCalculator() {
       @Override
-      public MinMax calc() {
+      public SeqStat calc() {
         return TupleStats.createFor(
             attrIterator(Tuples.NODES),
             attrIterator(new Function<FlowMapGraph, String>() {
@@ -144,10 +144,10 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
     });
   }
 
-  private MinMax getAttrStats(final Attrs attr) {
+  private SeqStat getAttrStats(final Attrs attr) {
     return getCachedOrCalc(attr.name(), new AttrStatsCalculator() {
       @Override
-      public MinMax calc() {
+      public SeqStat calc() {
         return TupleStats.createFor(
             attrIterator(attr.funToTupleSet()), attrIterator(attr.funToName()));
       }

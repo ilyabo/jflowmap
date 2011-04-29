@@ -32,7 +32,7 @@ import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapNodeSummaries;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.data.XmlRegionsReader;
 import jflowmap.util.piccolo.PCollapsableItemsContainer;
 import jflowmap.views.IFlowMapColorScheme;
@@ -78,7 +78,7 @@ public class VisualTimeline extends PNode {
 
 //  private Graph selectedGraph;
   private final Tooltip tooltipBox;
-  private final MinMax valueMinMax;
+  private final SeqStat valueMinMax;
   private final String columnToGroupNodesBy;
 
   private final PCollapsableItemsContainer container;
@@ -136,7 +136,7 @@ public class VisualTimeline extends PNode {
     return jFlowTimeline.getColorScheme();
   }
 
-  private MinMax nodeSummaryMinMax(FlowMapStats stats) {
+  private SeqStat nodeSummaryMinMax(FlowMapStats stats) {
     FlowMapStats globalStats = flowMapGraphs.getStats();
     String attr = flowMapGraphs.getAttrSpec().getFlowWeightAttrs().get(0);
     return stats
@@ -148,7 +148,7 @@ public class VisualTimeline extends PNode {
       .mergeWith(globalStats.getNodeAttrStats(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG));
   }
 
-  public MinMax getValueStats() {
+  public SeqStat getValueStats() {
     return valueMinMax;
   }
 

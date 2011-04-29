@@ -23,7 +23,7 @@ import java.beans.PropertyChangeSupport;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 
 /**
  * @author Ilya Boyandin
@@ -72,11 +72,11 @@ public class VisualFlowMapModel {
   private void initFromStats() {
     FlowMapStats stats = flowMapGraph.getStats();
 
-    MinMax lengthStats = stats.getEdgeLengthStats();
+    SeqStat lengthStats = stats.getEdgeLengthStats();
     this.edgeLengthFilterMin = lengthStats.getMin();
     this.edgeLengthFilterMax = lengthStats.getMax();
 
-    MinMax weightStats = stats.getEdgeWeightStats();
+    SeqStat weightStats = stats.getEdgeWeightStats();
     this.edgeWeightFilterMin = weightStats.getMin();
     this.edgeWeightFilterMax = weightStats.getMax();
 
@@ -338,7 +338,7 @@ public class VisualFlowMapModel {
 
 
   public double normalize(double edgeWeight, boolean useLogValue) {
-    MinMax ws = getFlowMapGraph().getStats().getEdgeWeightStats();
+    SeqStat ws = getFlowMapGraph().getStats().getEdgeWeightStats();
     if (useLogValue) {
       return ws.normalizeLog(edgeWeight);
     } else {

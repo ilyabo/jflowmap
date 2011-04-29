@@ -21,37 +21,41 @@ package jflowmap.data;
 import java.util.Iterator;
 
 /**
+ * Stats for a sequence of numbers.
+ *
  * @author Ilya Boyandin
  */
-public class MinMax {
+public class SeqStat {
+
   private final double min;
   private final double max;
-  private final double avg;
-  // private final double minLog;
-  // private final double maxLog;
+  private final double sum;
   private final int count;
 
-  private MinMax(double minValue, double avg, double maxValue, int count) {
+  private SeqStat(double minValue, double maxValue, double sum, int count) {
     if (minValue > maxValue) {
       throw new IllegalArgumentException("minValue > maxValue");
     }
+
+    this.sum = sum;
+    this.count = count;
+
+    double avg = getAvg();
+
     if (avg > maxValue) {
       throw new IllegalArgumentException("avg > maxValue");
     }
     if (avg < minValue) {
       throw new IllegalArgumentException("avg < minValue");
     }
-    this.avg = avg;
     this.min = minValue;
     this.max = maxValue;
-    // this.minLog = Math.log(min);
-    // this.maxLog = Math.log(max);
-    this.count = count;
   }
 
-  public MinMax mergeWith(MinMax minMax) {
-    return new MinMax(Math.min(min, minMax.min), (avg * count + minMax.count * minMax.count)
-        / (count + minMax.count), Math.max(max, minMax.max), count + minMax.count);
+  public SeqStat mergeWith(SeqStat minMax) {
+    return new SeqStat(
+        Math.min(min, minMax.min), Math.max(max, minMax.max), sum + minMax.sum,
+        count + minMax.count);
   }
 
   public double getMax() {
@@ -62,25 +66,25 @@ public class MinMax {
     return min;
   }
 
-  public double getAvg() {
-    return avg;
+  public double getSum() {
+    return sum;
   }
 
-  // public double getMaxLog() {
-  // return maxLog;
-  // }
-  //
-  // public double getMinLog() {
-  // return minLog;
-  // }
+  public int getCount() {
+    return count;
+  }
 
-  public static MinMax createFor(Iterable<Double> values) {
+  public double getAvg() {
+    return sum / count;
+  }
+
+  public static SeqStat createFor(Iterable<Double> values) {
     return createFor(values.iterator());
   }
 
-  public static MinMax createFor(Iterator<Double> it) {
+  public static SeqStat createFor(Iterator<Double> it) {
     if (!it.hasNext()) {
-      return new MinMax(Double.NaN, Double.NaN, Double.NaN, 0);
+      return new SeqStat(Double.NaN, Double.NaN, Double.NaN, 0);
     }
     double max = Double.NaN;
     double min = Double.NaN;
@@ -98,7 +102,7 @@ public class MinMax {
       sum += v;
       count++;
     }
-    return new MinMax(min, sum / count, max, count);
+    return new SeqStat(min, max, sum, count);
   }
 
   /**
@@ -221,15 +225,9 @@ public class MinMax {
     return rv;
   }
 
-  // private static final double LOG_SCALE_MAX = 1e5;
-  // private static final double LOG_SCALE_MAX_LOG = Math.log(LOG_SCALE_MAX);
-  // private double logarithmize(double v) {
-  // return 1 + (LOG_SCALE_MAX - 1) * (v - min) / (max - min);
-  // }
-
   @Override
   public String toString() {
-    return "MinMax [min=" + min + ", max=" + max + ", avg=" + avg + ", count=" + count + "]";
+    return "MinMax [min=" + min + ", max=" + max + ", sum=" + sum + ", count=" + count + "]";
   }
 
 }

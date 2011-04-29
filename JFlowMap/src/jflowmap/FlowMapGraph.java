@@ -32,7 +32,7 @@ import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.GraphMLDatasetSpec;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.data.MultiFlowMapStats;
 import jflowmap.data.StaxGraphMLReader;
 import jflowmap.geom.GeomUtils;
@@ -300,7 +300,7 @@ public class FlowMapGraph {
 //    return getNodeAttrValues(Arrays.asList(graph), attrName);
 //  }
 
-  public MinMax getEdgeLengthStats() {
+  public SeqStat getEdgeLengthStats() {
     return stats.getEdgeLengthStats();
   }
 

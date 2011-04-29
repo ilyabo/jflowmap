@@ -2,7 +2,7 @@ package jflowmap.views.flowstrates;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 
 /**
  * @author Ilya Boyandin
@@ -11,7 +11,7 @@ public enum ValueType {
 
   VALUE("original value") {
     @Override
-    public MinMax getMinMax(FlowMapStats stats) {
+    public SeqStat getMinMax(FlowMapStats stats) {
       return stats.getEdgeWeightStats();
     }
 
@@ -23,7 +23,7 @@ public enum ValueType {
 
   DIFF("difference") {
     @Override
-    public MinMax getMinMax(FlowMapStats stats) {
+    public SeqStat getMinMax(FlowMapStats stats) {
       return stats.getEdgeWeightDiffStats();
     }
 
@@ -35,7 +35,7 @@ public enum ValueType {
 
   DIFF_REL("relative diff") {
     @Override
-    public MinMax getMinMax(FlowMapStats stats) {
+    public SeqStat getMinMax(FlowMapStats stats) {
       return stats.getEdgeWeightRelativeDiffStats();
     }
 
@@ -51,7 +51,7 @@ public enum ValueType {
     this.name = name;
   }
 
-  public abstract MinMax getMinMax(FlowMapStats stats);
+  public abstract SeqStat getMinMax(FlowMapStats stats);
 
   public abstract String getColumnValueAttr(FlowMapAttrSpec attrSpec, String columnAttr);
 

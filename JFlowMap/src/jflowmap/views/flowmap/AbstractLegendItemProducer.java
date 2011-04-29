@@ -2,7 +2,7 @@ package jflowmap.views.flowmap;
 
 import java.util.List;
 
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.views.Legend.ItemProducer;
 
 import com.google.common.collect.Lists;
@@ -29,7 +29,7 @@ public abstract class AbstractLegendItemProducer implements ItemProducer {
   public Iterable<PNode> createItems() {
     List<PNode> items = Lists.newArrayList();
 
-    MinMax stats = getMinMax();
+    SeqStat stats = getMinMax();
     List<Double> values = LegendValuesGenerator.generate(
         stats.getMin(), stats.getMax(), numLegendValues);
     for (Double value : values) {
@@ -41,6 +41,6 @@ public abstract class AbstractLegendItemProducer implements ItemProducer {
 
   public abstract PNode createItem(double value);
 
-  public abstract MinMax getMinMax();
+  public abstract SeqStat getMinMax();
 
 }

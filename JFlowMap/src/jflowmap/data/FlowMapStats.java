@@ -23,18 +23,18 @@ package jflowmap.data;
  */
 public interface FlowMapStats {
 
-  MinMax getEdgeLengthStats();
+  SeqStat getEdgeLengthStats();
 
-  MinMax getEdgeWeightDiffStats();
+  SeqStat getEdgeWeightDiffStats();
 
-  MinMax getEdgeWeightStats();
+  SeqStat getEdgeWeightStats();
 
-  MinMax getEdgeWeightRelativeDiffStats();
+  SeqStat getEdgeWeightRelativeDiffStats();
 
-  MinMax getNodeAttrStats(String attr);
+  SeqStat getNodeAttrStats(String attr);
 
-  MinMax getNodeXStats();
+  SeqStat getNodeXStats();
 
-  MinMax getNodeYStats();
+  SeqStat getNodeYStats();
 
 }

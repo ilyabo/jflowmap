@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import jflowmap.FlowDirection;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.data.FlowMapNodeSummaries;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.util.ArrayUtils;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.piccolo.PNodes;
@@ -120,7 +120,7 @@ public class VisualTimelineNodeCell extends PNode {
     double inLocalValue = node.getDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG);
     double outLocalValue = node.getDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG);
 
-    final MinMax vstats = timeline.getValueStats();
+    final SeqStat vstats = timeline.getValueStats();
 
     rect = new PPath(new Rectangle2D.Double(
         x + (SHOW_DIFF ? DIFF_BOX_WIDTH + DIFF_BOX_GAP : 0), y,

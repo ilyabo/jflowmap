@@ -21,7 +21,7 @@ package jflowmap.views.flowstrates;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.views.Legend;
 import jflowmap.views.flowmap.AbstractLegendItemProducer;
 import jflowmap.views.flowmap.FlowMapView;
@@ -54,7 +54,7 @@ public class FlowstratesLegend extends Legend {
         }
 
         @Override
-        public MinMax getMinMax() {
+        public SeqStat getMinMax() {
           return flowstratesView.getValueType().getMinMax(flowstratesView.getStats());
         }
 

@@ -58,7 +58,7 @@ import jflowmap.FlowMapGraph;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.util.Pair;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMap;
@@ -313,7 +313,7 @@ public class ControlPanel {
     private void initFilterModels() {
         FlowMapStats stats = getGraphStats();
 
-        MinMax weightStats = stats.getEdgeWeightStats();
+        SeqStat weightStats = stats.getEdgeWeightStats();
 
         final double minWeight = weightStats.getMin();
         final double maxWeight = weightStats.getMax();
@@ -335,7 +335,7 @@ public class ControlPanel {
         maxWeightFilterSpinner.setModel(maxWeightFilterModels.first());
         maxWeightFilterSlider.setModel(maxWeightFilterModels.second());
 
-        MinMax lengthStats = stats.getEdgeLengthStats();
+        SeqStat lengthStats = stats.getEdgeLengthStats();
 
         Pair<SpinnerModel, BoundedRangeModel> minLengthFilterModels =
                 new BoundSpinnerSliderModels<Double>(

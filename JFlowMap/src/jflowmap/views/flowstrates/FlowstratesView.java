@@ -41,7 +41,7 @@ import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.FlowMapNodeSummaries;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjection;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
@@ -521,7 +521,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return getColorForWeight(value, valueType.getMinMax(getStats()));
   }
 
-  public Color getColorForWeight(double weight, MinMax wstats) {
+  public Color getColorForWeight(double weight, SeqStat wstats) {
     FlowstratesStyle style = getStyle();
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();

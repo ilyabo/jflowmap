@@ -42,11 +42,11 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
     return new EdgeListFlowMapStats(edges, attrSpec);
   }
 
-  protected MinMax getAttrStats(String key, final Iterable<Tuple> tuples, final List<String> edgeAttrs) {
+  protected SeqStat getAttrStats(String key, final Iterable<Tuple> tuples, final List<String> edgeAttrs) {
     return getCachedOrCalc(
         key,
         new AttrStatsCalculator() {
-          @Override public MinMax calc() {
+          @Override public SeqStat calc() {
             return TupleStats.createFor(tuples, edgeAttrs);
           }
         }
@@ -54,40 +54,40 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
   }
 
   @Override
-  public MinMax getEdgeWeightStats() {
+  public SeqStat getEdgeWeightStats() {
     return getAttrStats(AttrKeys.EDGE_WEIGHT.name(),
         edgesAsTuples(),
         getAttrSpec().getFlowWeightAttrs());
   }
 
   @Override
-  public MinMax getEdgeWeightDiffStats() {
+  public SeqStat getEdgeWeightDiffStats() {
     return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
         edgesAsTuples(),
         getAttrSpec().getFlowWeightDiffAttrs());
   }
 
   @Override
-  public MinMax getEdgeWeightRelativeDiffStats() {
+  public SeqStat getEdgeWeightRelativeDiffStats() {
     return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
         edgesAsTuples(),
         getAttrSpec().getFlowWeightRelativeDiffAttrs());
   }
 
   @Override
-  public MinMax getNodeAttrStats(String attrName) {
+  public SeqStat getNodeAttrStats(String attrName) {
     return getAttrStats(AttrKeys.nodeAttr(attrName),
         nodesAsTuples(),
         getAttrSpec().getFlowWeightRelativeDiffAttrs());
   }
 
   @Override
-  public MinMax getNodeXStats() {
+  public SeqStat getNodeXStats() {
     return getNodeAttrStats(AttrKeys.NODE_X.name());
   }
 
   @Override
-  public MinMax getNodeYStats() {
+  public SeqStat getNodeYStats() {
     return getNodeAttrStats(AttrKeys.NODE_Y.name());
   }
 

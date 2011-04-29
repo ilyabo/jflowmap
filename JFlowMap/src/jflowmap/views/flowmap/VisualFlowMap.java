@@ -42,7 +42,7 @@ import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import jflowmap.es_agg.EdgeSegment;
 import jflowmap.es_agg.EdgeSegmentAggregator;
 import jflowmap.geo.MapProjection;
@@ -709,7 +709,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     clearAggregatedEdgesLayer();
 
     // create aggregated edge weight stats to normalize on them
-    MinMax stats = MinMax.createFor(Iterators.transform(segments.iterator(), EdgeSegment.TRANSFORM_TO_WEIGHT));
+    SeqStat stats = SeqStat.createFor(Iterators.transform(segments.iterator(), EdgeSegment.TRANSFORM_TO_WEIGHT));
 
     PNode parentNode = getAggregatedEdgesLayer();
 

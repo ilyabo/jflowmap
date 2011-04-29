@@ -20,7 +20,7 @@ package jflowmap.bundling;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.MinMax;
+import jflowmap.data.SeqStat;
 import at.fhj.utils.graphics.AxisMarks;
 
 /**
@@ -63,8 +63,8 @@ public class ForceDirectedBundlerParameters {
     numCycles = 10;
     P = 1;
     FlowMapStats stats = flowMapGraph.getStats();
-    MinMax xStats = stats.getNodeXStats();
-    MinMax yStats = stats.getNodeYStats();
+    SeqStat xStats = stats.getNodeXStats();
+    SeqStat yStats = stats.getNodeYStats();
 //    MinMax lenStats = graphStats.getEdgeLengthStats();
 //    S = 0.4;
 //    S = AxisMarks.ordAlpha(Math.min(xStats.getMax() - xStats.getMin(), yStats.getMax() - yStats.getMin()) / 1000) * 4;
