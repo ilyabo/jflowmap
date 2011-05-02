@@ -20,10 +20,12 @@ package jflowmap.data;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import jflowmap.FlowDirection;
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphSet;
 import prefuse.data.Edge;
@@ -37,7 +39,7 @@ import com.google.common.collect.Maps;
 /**
  * @author Ilya Boyandin
  */
-public class FlowMapNodeSummaries {
+public class FlowMapNodeTotals {
 
 //  private static Logger logger = Logger.getLogger(FlowMapNodeSummaries.class);
 
@@ -52,7 +54,7 @@ public class FlowMapNodeSummaries {
   private static final String NODE_COLUMN__SUM_INCOMING_PREFIX= "sumIn:stat:";
 
 
-  private FlowMapNodeSummaries() {
+  private FlowMapNodeTotals() {
   }
 
   public static double getWeightSummary(Node node, String weightAttrName, FlowDirection dir) {
@@ -92,15 +94,34 @@ public class FlowMapNodeSummaries {
     }
   }
 
+
+  /**
+   * Returns map nodeId->total value
+   */
+  public static Map<String, Double> calcNodeWeightTotalsForEdges(
+      FlowMapGraph fmg, Iterable<Edge> edges, String attrName, FlowEndpoint ep) {
+
+    HashMap<String, Double> map = Maps.newHashMap();
+    for (Edge e : edges) {
+      String nodeId = fmg.getNodeId(ep.nodeOf(e));
+      double val = fmg.getEdgeWeight(e, attrName);
+      Double prevSum = map.get(nodeId);
+      if (prevSum == null  ||  Double.isNaN(prevSum)) {
+        map.put(nodeId, val);
+      } else {
+        if (!Double.isNaN(val)) {
+          map.put(nodeId, prevSum + val);
+        }
+      }
+    }
+    return map;
+  }
+
+
   private static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph,
       String weightAttrName) {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
-
-//    if (logger.isDebugEnabled()) {
-//      logger.debug("Adding summary columns to graph '" + flowMapGraph.getId() + "'" +
-//      		" for attr: " + weightAttrName);
-//    }
 
     Map<Integer, Double> outsums = Maps.newHashMap();
     Map<Integer, Double> insums = Maps.newHashMap();
@@ -157,7 +178,7 @@ public class FlowMapNodeSummaries {
   public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr,
       String edgeWeightAttr) {
     for (FlowMapGraph fmg : fmset.asList()) {
-      FlowMapNodeSummaries.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr, edgeWeightAttr);
+      FlowMapNodeTotals.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr, edgeWeightAttr);
     }
   }
 
@@ -200,15 +221,15 @@ public class FlowMapNodeSummaries {
       }
     }
 
-    nodeTable.addColumn(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG, double.class);
-    nodeTable.addColumn(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, double.class);
+    nodeTable.addColumn(FlowMapNodeTotals.NODE_COLUMN__SUM_OUTGOING_INTRAREG, double.class);
+    nodeTable.addColumn(FlowMapNodeTotals.NODE_COLUMN__SUM_INCOMING_INTRAREG, double.class);
     for (int i = 0, numNodes = g.getNodeCount(); i < numNodes; i++) {
       Node node = g.getNode(i);
       if (outsums.containsKey(i)) {
-        node.setDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_OUTGOING_INTRAREG, outsums.get(i));
+        node.setDouble(FlowMapNodeTotals.NODE_COLUMN__SUM_OUTGOING_INTRAREG, outsums.get(i));
       }
       if (insums.containsKey(i)) {
-        node.setDouble(FlowMapNodeSummaries.NODE_COLUMN__SUM_INCOMING_INTRAREG, insums.get(i));
+        node.setDouble(FlowMapNodeTotals.NODE_COLUMN__SUM_INCOMING_INTRAREG, insums.get(i));
       }
     }
   }

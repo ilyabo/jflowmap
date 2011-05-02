@@ -60,6 +60,11 @@ public class MultiFlowMapStats extends AbstractFlowMapStats {
 
 
   @Override
+  public SeqStat getEdgeWeightAttrStats(String weightAttr) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public SeqStat getEdgeWeightStats() {
     return getEdgeAttrsStats(AttrKeys.EDGE_WEIGHT.name(),
         new Function<FlowMapGraph, List<String>>() {

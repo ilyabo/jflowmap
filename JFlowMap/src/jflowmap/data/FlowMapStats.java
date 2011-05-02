@@ -25,6 +25,8 @@ public interface FlowMapStats {
 
   SeqStat getEdgeLengthStats();
 
+  SeqStat getEdgeWeightAttrStats(String weightAttr);
+
   SeqStat getEdgeWeightDiffStats();
 
   SeqStat getEdgeWeightStats();

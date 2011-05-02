@@ -15,23 +15,23 @@ import com.google.common.collect.Iterables;
  *
  * @author Ilya Boyandin
  */
-public enum FlowEndpoints {
+public enum FlowEndpoint {
 
   ORIGIN {
     @Override public Node nodeOf(Edge e) { return e.getSourceNode(); }
     @Override public FlowDirection dir() { return FlowDirection.OUTGOING; }
-    @Override public FlowEndpoints opposite() { return DEST; }
+    @Override public FlowEndpoint opposite() { return DEST; }
   },
 
   DEST {
     @Override public Node nodeOf(Edge e) { return e.getTargetNode(); }
     @Override public FlowDirection dir() { return FlowDirection.INCOMING; }
-    @Override public FlowEndpoints opposite() { return ORIGIN; }
+    @Override public FlowEndpoint opposite() { return ORIGIN; }
   };
 
   public abstract Node nodeOf(Edge e);
 
-  public abstract FlowEndpoints opposite();
+  public abstract FlowEndpoint opposite();
 
   /**
    * Edge direction towards the node

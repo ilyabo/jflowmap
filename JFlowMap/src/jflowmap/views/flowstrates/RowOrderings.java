@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.Comparator;
 
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import prefuse.data.Edge;
 
@@ -16,7 +16,7 @@ enum RowOrderings {
     @Override
     public Comparator<Edge> getComparator(FlowstratesView fs) {
       return Collections.reverseOrder(fs.getFlowMapGraph().
-          createMaxNodeSummariesForWeightComparator(FlowEndpoints.ORIGIN));
+          createMaxNodeSummariesForWeightComparator(FlowEndpoint.ORIGIN));
     }
   },
   SRC_VPOS("origin vpos") {
@@ -25,12 +25,12 @@ enum RowOrderings {
       return new Comparator<Edge>() {
         @Override
         public int compare(Edge e1, Edge e2) {
-          int c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoints.ORIGIN);
+          int c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoint.ORIGIN);
           if (c == 0) {
-            c = compareNodeLabels(fs.getFlowMapGraph(), e1, e2, FlowEndpoints.ORIGIN);
+            c = compareNodeLabels(fs.getFlowMapGraph(), e1, e2, FlowEndpoint.ORIGIN);
           }
           if (c == 0) {
-            c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoints.DEST);
+            c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoint.DEST);
           }
           return c;
         }
@@ -44,12 +44,12 @@ enum RowOrderings {
       return new Comparator<Edge>() {
         @Override
         public int compare(Edge e1, Edge e2) {
-          int c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoints.DEST);
+          int c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoint.DEST);
           if (c == 0) {
-            c = compareNodeLabels(fs.getFlowMapGraph(), e1, e2, FlowEndpoints.DEST);
+            c = compareNodeLabels(fs.getFlowMapGraph(), e1, e2, FlowEndpoint.DEST);
           }
           if (c == 0) {
-            c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoints.ORIGIN);
+            c = RowOrderings.compareNodeVPos(fs, e1, e2, FlowEndpoint.ORIGIN);
           }
           return c;
         }
@@ -186,7 +186,7 @@ enum RowOrderings {
 
   public abstract Comparator<Edge> getComparator(FlowstratesView fs);
 
-  private static int compareNodeVPos(FlowstratesView fs, Edge e1, Edge e2, FlowEndpoints ep) {
+  private static int compareNodeVPos(FlowstratesView fs, Edge e1, Edge e2, FlowEndpoint ep) {
     /*
     String yattr = fs.getFlowMapGraph().getAttrSpec().getNodeLatAttr();
     return -(int)Math.signum(s.nodeOf(e1).getDouble(yattr) - s.nodeOf(e2).getDouble(yattr));
@@ -200,7 +200,7 @@ enum RowOrderings {
     return (int)Math.signum(y1 - y2);
   }
 
-  private static int compareNodeLabels(FlowMapGraph fmg, Edge e1, Edge e2, FlowEndpoints s) {
+  private static int compareNodeLabels(FlowMapGraph fmg, Edge e1, Edge e2, FlowEndpoint s) {
     return fmg.getNodeLabel(s.nodeOf(e1)).compareTo(fmg.getNodeLabel(s.nodeOf(e2)));
   }
 

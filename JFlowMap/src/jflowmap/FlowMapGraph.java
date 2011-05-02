@@ -29,11 +29,11 @@ import java.util.Set;
 
 import jflowmap.data.AttrDataTypes;
 import jflowmap.data.FlowMapGraphBuilder;
+import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.FlowMapNodeSummaries;
 import jflowmap.data.GraphMLDatasetSpec;
-import jflowmap.data.SeqStat;
 import jflowmap.data.MultiFlowMapStats;
+import jflowmap.data.SeqStat;
 import jflowmap.data.StaxGraphMLReader;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
@@ -241,7 +241,7 @@ public class FlowMapGraph {
     return node.getString(attrSpec.getNodeLabelAttr());
   }
 
-  public Node getNodeOf(Edge edge, FlowEndpoints pos) {
+  public Node getNodeOf(Edge edge, FlowEndpoint pos) {
     switch (pos) {
     case ORIGIN: return edge.getSourceNode();
     case DEST: return edge.getTargetNode();
@@ -613,6 +613,10 @@ public class FlowMapGraph {
   public double getMaxAttrValue(Tuple nodeOrEdge, Iterable<String> attrNames) {
     double max = Double.NaN;
     for (String attr : attrNames) {
+      if (!nodeOrEdge.canGetDouble(attr)) {
+        throw new IllegalArgumentException("Cannot get double value of "+
+            nodeOrEdge.getClass().getSimpleName()+ "'s attribute '" + attr + "'");
+      }
       double v = nodeOrEdge.getDouble(attr);
       if (Double.isNaN(max)  ||  v > max) {
         max = v;
@@ -666,17 +670,17 @@ public class FlowMapGraph {
     };
   }
 
-  public Comparator<Edge> createMaxNodeSummariesForWeightComparator(FlowEndpoints s) {
+  public Comparator<Edge> createMaxNodeSummariesForWeightComparator(FlowEndpoint s) {
     return createMaxNodeSummariesComparator(getEdgeWeightAttrs(), s);
   }
 
-  private Comparator<Edge> createMaxNodeSummariesComparator(final List<String> attrs, final FlowEndpoints s) {
+  private Comparator<Edge> createMaxNodeSummariesComparator(final List<String> attrs, final FlowEndpoint s) {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {
         int c = MathUtils.compareDoubles_smallestIsNaN(
-            getMaxAttrValue(s.nodeOf(e1), FlowMapNodeSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())),
-            getMaxAttrValue(s.nodeOf(e2), FlowMapNodeSummaries.getWeightSummaryNodeAttrs(attrs, s.dir())));
+            getMaxAttrValue(s.nodeOf(e1), FlowMapNodeTotals.getWeightSummaryNodeAttrs(attrs, s.dir())),
+            getMaxAttrValue(s.nodeOf(e2), FlowMapNodeTotals.getWeightSummaryNodeAttrs(attrs, s.dir())));
 
         if (c == 0) {
           c = getNodeLabel(s.nodeOf(e1)).compareTo(getNodeLabel(s.nodeOf(e2)));

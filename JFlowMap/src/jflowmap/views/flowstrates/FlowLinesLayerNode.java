@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
@@ -144,8 +144,8 @@ public class FlowLinesLayerNode extends PNode {
       Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
 
       if (lines != null  &&  labels != null) {
-        updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoints.ORIGIN);
-        updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoints.DEST);
+        updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoint.ORIGIN);
+        updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoint.DEST);
       }
 
       row++;
@@ -154,7 +154,7 @@ public class FlowLinesLayerNode extends PNode {
     repaint();
   }
 
-  private void updateFlowLine(int row, Edge edge, FlowLine line, PText label, FlowEndpoints ep) {
+  private void updateFlowLine(int row, Edge edge, FlowLine line, PText label, FlowEndpoint ep) {
     PCamera hmcam = flowstratesView.getHeatmapLayer().getHeatmapCamera();
     PBounds viewBounds = hmcam.getViewBounds();
 
@@ -175,7 +175,7 @@ public class FlowLinesLayerNode extends PNode {
 
         double x1 = p.x;
         double y1 = p.y + lb.getHeight() / 2;
-        if (ep == FlowEndpoints.ORIGIN) {
+        if (ep == FlowEndpoint.ORIGIN) {
           x1 -= lb.getWidth();
         } else {
           x1 += lb.getWidth();

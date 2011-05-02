@@ -25,19 +25,25 @@ import prefuse.data.Node;
  */
 public enum FlowDirection {
 
-  INCOMING {
+  INCOMING(FlowEndpoint.DEST) {
     @Override
     public int degreeOf(Node node) {
       return node.getInDegree();
     }
   },
 
-  OUTGOING {
+  OUTGOING(FlowEndpoint.ORIGIN) {
     @Override
     public int degreeOf(Node node) {
       return node.getOutDegree();
     }
   };
+
+  public final FlowEndpoint thisEndpoint;
+
+  private FlowDirection(FlowEndpoint endpoint) {
+    this.thisEndpoint = endpoint;
+  }
 
   public abstract int degreeOf(Node node);
 

@@ -130,11 +130,11 @@ public class FlowMapGraphAggLayers {
 //  }
 
   public void expandSource(Edge e) {
-    expand(e.getSourceNode(), FlowEndpoints.ORIGIN);
+    expand(e.getSourceNode(), FlowEndpoint.ORIGIN);
   }
 
   public void expandTarget(Edge e) {
-    expand(e.getTargetNode(), FlowEndpoints.DEST);
+    expand(e.getTargetNode(), FlowEndpoint.DEST);
   }
 
   public void setSelectedLayer(String layerName) {
@@ -155,7 +155,7 @@ public class FlowMapGraphAggLayers {
     });
   }
 
-  private void expand(Node node, FlowEndpoints as) {
+  private void expand(Node node, FlowEndpoint as) {
     AggLayer layer = requireAggLayer(node);
     Edge aggEdge = requireEdgeWith(node, as);
     if (layer == baseLayer) {
@@ -171,14 +171,14 @@ public class FlowMapGraphAggLayers {
   }
 
   public void collapseSource(Edge e) {
-    collapse(e.getSourceNode(), FlowEndpoints.ORIGIN);
+    collapse(e.getSourceNode(), FlowEndpoint.ORIGIN);
   }
 
   public void collapseTarget(Edge e) {
-    collapse(e.getTargetNode(), FlowEndpoints.DEST);
+    collapse(e.getTargetNode(), FlowEndpoint.DEST);
   }
 
-  private void collapse(Node node, FlowEndpoints as) {
+  private void collapse(Node node, FlowEndpoint as) {
     requireAggLayer(node);
 
     Edge aggEdge = getFlowMapGraphEdgeWith(node, as);
@@ -278,7 +278,7 @@ public class FlowMapGraphAggLayers {
     return newEdges;
   }
 
-  private Edge getFlowMapGraphEdgeWith(Node node, FlowEndpoints as) {
+  private Edge getFlowMapGraphEdgeWith(Node node, FlowEndpoint as) {
     FlowMapGraph fmg = getFlowMapGraphOf(node);
     for (Edge e : fmg.edges()) {
       if (as.nodeOf(e) == node) {
@@ -288,7 +288,7 @@ public class FlowMapGraphAggLayers {
     return null;
   }
 
-  private Edge getEdgeWith(Node node, FlowEndpoints as) {
+  private Edge getEdgeWith(Node node, FlowEndpoint as) {
     for (Edge e : getEdges()) {
       if (as.nodeOf(e) == node) {
         return e;
@@ -297,7 +297,7 @@ public class FlowMapGraphAggLayers {
     return null;
   }
 
-  private Edge requireEdgeWith(Node node, FlowEndpoints as) {
+  private Edge requireEdgeWith(Node node, FlowEndpoint as) {
     Edge edge = getEdgeWith(node, as);
     if (edge == null) {
       throw new IllegalArgumentException("Node '" + getNodeLabel(node) + "' is not visible as " + as);
@@ -374,7 +374,7 @@ public class FlowMapGraphAggLayers {
     return null;
   }
 
-  public String getNodeId(Edge edge, FlowEndpoints endpoint) {
+  public String getNodeId(Edge edge, FlowEndpoint endpoint) {
     return getFlowMapGraphOf(edge).getNodeId(endpoint.nodeOf(edge));
   }
 

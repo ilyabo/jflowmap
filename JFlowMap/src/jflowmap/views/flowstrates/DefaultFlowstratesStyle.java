@@ -22,7 +22,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Stroke;
 
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
@@ -238,7 +238,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
   private static final Color LASSO_TARGETS_STROKE_PAINT = new Color(0, 0, 200, 150);
 
   @Override
-  public Color getLassoStrokePaint(FlowEndpoints s) {
+  public Color getLassoStrokePaint(FlowEndpoint s) {
     switch (s) {
     case ORIGIN:
       return LASSO_SOURCES_STROKE_PAINT;

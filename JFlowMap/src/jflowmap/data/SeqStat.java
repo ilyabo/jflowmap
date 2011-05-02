@@ -76,22 +76,16 @@ public class SeqStat {
     return min;
   }
 
+  /**
+   * Sum of the non-NaN values
+   */
   public double getSum() {
     return sum;
   }
 
-  public double getSumPos() {
-    return sumPos;
-  }
-
-  public double getSumNeg() {
-    return sumNeg;
-  }
-
-  public int getCount() {
-    return count;
-  }
-
+  /**
+   * Average of the non-NaN values
+   */
   public double getAvg() {
     return sum / count;
   }
@@ -119,13 +113,15 @@ public class SeqStat {
       if (Double.isNaN(min) || v < min) {
         min = v;
       }
-      if (v > 0) {
-        sumPos += v;
-      } else if (v < 0) {
-        sumNeg += v;
+      if (!Double.isNaN(v)) {
+        if (v > 0) {
+          sumPos += v;
+        } else if (v < 0) {
+          sumNeg += v;
+        }
+        sum += v;
+        count++;
       }
-      sum += v;
-      count++;
     }
     return new SeqStat(min, max, sum, sumPos, sumNeg, count);
   }

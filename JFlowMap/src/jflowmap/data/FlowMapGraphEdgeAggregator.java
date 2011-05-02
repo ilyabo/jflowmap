@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 
 import org.apache.log4j.Logger;
 
@@ -143,8 +143,8 @@ public class FlowMapGraphEdgeAggregator {
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
       Edge newEdge = aggGraph.addEdge(
-          aggregateNodes(Nodes.nodesOfEdges(edges, FlowEndpoints.ORIGIN), AggEntity.SOURCE_NODE),
-          aggregateNodes(Nodes.nodesOfEdges(edges, FlowEndpoints.DEST), AggEntity.TARGET_NODE));
+          aggregateNodes(Nodes.nodesOfEdges(edges, FlowEndpoint.ORIGIN), AggEntity.SOURCE_NODE),
+          aggregateNodes(Nodes.nodesOfEdges(edges, FlowEndpoint.DEST), AggEntity.TARGET_NODE));
 
       aggregateEdges(edges, newEdge);
 

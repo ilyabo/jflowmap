@@ -27,11 +27,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
-import jflowmap.data.FlowMapNodeSummaries;
+import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.Nodes;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.Area;
@@ -70,7 +70,7 @@ public class MapLayer extends PLayer {
   private final PCamera geoLayerCamera;
   private final VisualAreaMap visualAreaMap;
   private final FlowstratesView flowstratesView;
-  private final FlowEndpoints endpoint;
+  private final FlowEndpoint endpoint;
   private Map<String, Centroid> nodeIdsToCentroids;
   private List<String> selectedNodes;
 
@@ -78,7 +78,7 @@ public class MapLayer extends PLayer {
   private PInputEventListener centroidMouseListener;
 
 
-  public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoints s) {
+  public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoint s) {
     this.flowstratesView = flowstratesView;
     this.endpoint = s;
 
@@ -136,7 +136,7 @@ public class MapLayer extends PLayer {
     Iterable<Node> nodes = CollectionUtils.sort(
         flowMapGraph.nodesHavingEdges(endpoint.dir()),
         Collections.reverseOrder(
-            FlowMapNodeSummaries.createMaxNodeWeightSummariesComparator(
+            FlowMapNodeTotals.createMaxNodeWeightSummariesComparator(
                 flowMapGraph, endpoint.dir())));
 
     centroidMouseListener = createCentroidMouseListener();
@@ -442,12 +442,16 @@ public class MapLayer extends PLayer {
   }
 
 
-  private void colorizeMapAreasWithBaseNodeSummaries(String weightAttr, boolean hover, Iterable<Edge> edges,
-      FlowEndpoints ep) {
+  private void colorizeMapAreasWithBaseNodeSummaries(String weightAttr, boolean hover,
+      Iterable<Edge> edges, FlowEndpoint ep) {
+    FlowMapGraph fmg = getFlowMapGraph();
+
+    Map<String, Double> sums = FlowMapNodeTotals.calcNodeWeightTotalsForEdges(
+        fmg, edges, getColumnValueAttrName(weightAttr), ep);
+
     for (Node node : Nodes.nodesOfEdges(edges, ep)) {
-      double value = FlowMapNodeSummaries.getWeightSummary(node, getColumnValueAttrName(weightAttr), ep.dir());
-      String areaId = getFlowMapGraph().getNodeId(node);
-      colorizeMapArea(areaId, value, hover);
+      String nodeId = fmg.getNodeId(node);
+      colorizeMapArea(nodeId, sums.get(nodeId), hover);
     }
   }
 

@@ -34,12 +34,12 @@ import javax.swing.JPanel;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.ColorSchemes;
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.data.EdgeListFlowMapStats;
-import jflowmap.data.FlowMapNodeSummaries;
+import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjection;
@@ -116,7 +116,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private final MapLayer originMapLayer;
   private final MapLayer destMapLayer;
 
-  private boolean focusOnVisibleRows = false;
+  private boolean focusOnVisibleRows = true;
 
 
   private final ColorSchemeAware mapColorScheme = new ColorSchemeAware() {
@@ -151,9 +151,9 @@ public class FlowstratesView extends AbstractCanvasView {
       fmgg.addEdgeWeightRelativeDifferenceColumns();
     }
 
-    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(fmg);
-    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
-    FlowMapNodeSummaries.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
+    FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg);
+    FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
+    FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
 
 
     VisualCanvas canvas = getVisualCanvas();
@@ -184,8 +184,8 @@ public class FlowstratesView extends AbstractCanvasView {
 
     heatmapLayer = new HeatmapLayer(this);
 
-    originMapLayer = new MapLayer(this, areaMap, FlowEndpoints.ORIGIN);
-    destMapLayer = new MapLayer(this, areaMap, FlowEndpoints.DEST);
+    originMapLayer = new MapLayer(this, areaMap, FlowEndpoint.ORIGIN);
+    destMapLayer = new MapLayer(this, areaMap, FlowEndpoint.DEST);
 
     addCaption(originMapLayer.getMapLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
@@ -249,7 +249,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return heatmapLayer;
   }
 
-  public MapLayer getMapLayer(FlowEndpoints ep) {
+  public MapLayer getMapLayer(FlowEndpoint ep) {
     switch (ep) {
       case ORIGIN: return originMapLayer;
       case DEST: return destMapLayer;
@@ -499,7 +499,7 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  private FlowMapStats getVisibleEdgesStats() {
+  FlowMapStats getVisibleEdgesStats() {
     List<Edge> edges = getVisibleEdges();
     if (visibleEdgesStats == null) {
       visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());

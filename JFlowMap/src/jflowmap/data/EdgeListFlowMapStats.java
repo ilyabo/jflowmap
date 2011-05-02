@@ -1,5 +1,6 @@
 package jflowmap.data;
 
+import java.util.Arrays;
 import java.util.List;
 
 import jflowmap.FlowMapAttrSpec;
@@ -42,9 +43,13 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
     return new EdgeListFlowMapStats(edges, attrSpec);
   }
 
-  protected SeqStat getAttrStats(String key, final Iterable<Tuple> tuples, final List<String> edgeAttrs) {
+  public SeqStat getEdgeAttrStats(String key, final Iterable<Tuple> tuples, String edgeAttr) {
+    return getEdgeAttrStats(edgeAttr, tuples, Arrays.asList(edgeAttr));
+  }
+
+  protected SeqStat getEdgeAttrStats(String key, final Iterable<Tuple> tuples, final List<String> edgeAttrs) {
     return getCachedOrCalc(
-        key,
+        AttrKeys.edgeAttr(key),
         new AttrStatsCalculator() {
           @Override public SeqStat calc() {
             return TupleStats.createFor(tuples, edgeAttrs);
@@ -54,29 +59,36 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
   }
 
   @Override
+  public SeqStat getEdgeWeightAttrStats(String weightAttr) {
+    return getEdgeAttrStats(weightAttr,
+        edgesAsTuples(),
+        Arrays.asList(weightAttr));
+  }
+
+  @Override
   public SeqStat getEdgeWeightStats() {
-    return getAttrStats(AttrKeys.EDGE_WEIGHT.name(),
+    return getEdgeAttrStats(AttrKeys.EDGE_WEIGHT.name(),
         edgesAsTuples(),
         getAttrSpec().getFlowWeightAttrs());
   }
 
   @Override
   public SeqStat getEdgeWeightDiffStats() {
-    return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
+    return getEdgeAttrStats(AttrKeys.EDGE_WEIGHT_DIFF.name(),
         edgesAsTuples(),
         getAttrSpec().getFlowWeightDiffAttrs());
   }
 
   @Override
   public SeqStat getEdgeWeightRelativeDiffStats() {
-    return getAttrStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
+    return getEdgeAttrStats(AttrKeys.EDGE_WEIGHT_DIFF_REL.name(),
         edgesAsTuples(),
         getAttrSpec().getFlowWeightRelativeDiffAttrs());
   }
 
   @Override
   public SeqStat getNodeAttrStats(String attrName) {
-    return getAttrStats(AttrKeys.nodeAttr(attrName),
+    return getEdgeAttrStats(AttrKeys.nodeAttr(attrName),
         nodesAsTuples(),
         getAttrSpec().getFlowWeightRelativeDiffAttrs());
   }

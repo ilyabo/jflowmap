@@ -3,7 +3,7 @@ package jflowmap.views.flowstrates;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.FlowMapGraphAggLayers.Builder;
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
 import jflowmap.data.FlowMapGraphEdgeAggregator.GroupFunctions;
 import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
@@ -31,14 +31,14 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
         builder.edgeAggregatorFor(GroupFunctions.SRC_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(FlowEndpoints.ORIGIN, labelAttr, "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoint.ORIGIN, labelAttr, "ALL"))
           );
 
     builder.addAggregationLayer("Dest", null,
         builder.edgeAggregatorFor(GroupFunctions.TARGET_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
-              oneSideNodeLabelsAggregator(FlowEndpoints.DEST, labelAttr, "ALL"))
+              oneSideNodeLabelsAggregator(FlowEndpoint.DEST, labelAttr, "ALL"))
           );
 
     return builder;
@@ -53,7 +53,7 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
     };
   }
 
-  protected static ValueAggregator oneSideNodeLabelsAggregator(FlowEndpoints s, final String attr,
+  protected static ValueAggregator oneSideNodeLabelsAggregator(FlowEndpoint s, final String attr,
       final String aggLabel) {
     final AggEntity ae;
     switch (s) {

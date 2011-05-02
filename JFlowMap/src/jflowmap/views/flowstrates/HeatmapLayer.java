@@ -24,7 +24,7 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.Pair;
@@ -157,7 +157,7 @@ public class HeatmapLayer extends PLayer {
   /**
    * @return The point in the heatmap camera view coords.
    */
-  Point2D.Double getHeatmapFlowLineInPoint(int row, FlowEndpoints ep) {
+  Point2D.Double getHeatmapFlowLineInPoint(int row, FlowEndpoint ep) {
     switch (ep) {
 
     case ORIGIN:
@@ -280,8 +280,8 @@ public class HeatmapLayer extends PLayer {
   }
 
   void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
-    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoints.ORIGIN);
-    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoints.DEST);
+    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoint.ORIGIN);
+    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoint.DEST);
 
     originMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
     destMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
@@ -291,8 +291,8 @@ public class HeatmapLayer extends PLayer {
   }
 
   void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
-    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoints.ORIGIN);
-    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoints.DEST);
+    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoint.ORIGIN);
+    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoint.DEST);
 
     originMap.updateOnHeatmapColumnHover(columnAttr, hover);
     destMap.updateOnHeatmapColumnHover(columnAttr, hover);

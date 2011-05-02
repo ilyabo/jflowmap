@@ -3,7 +3,7 @@ package jflowmap.data;
 import java.util.Set;
 
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowEndpoints;
+import jflowmap.FlowEndpoint;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
@@ -30,7 +30,7 @@ public class Nodes {
   /**
    * @return List of distinct nodes of the specified side for the given list of edges
    */
-  public static Iterable<Node> nodesOfEdges(Iterable<Edge> edges, final FlowEndpoints nodePos) {
+  public static Iterable<Node> nodesOfEdges(Iterable<Edge> edges, final FlowEndpoint nodePos) {
     return unique(Iterables.transform(edges, new Function<Edge, Node>() {
       public Node apply(Edge e) {
         return nodePos.nodeOf(e);
