@@ -10,6 +10,6 @@ data.attrs.node.lon=lon
 data.attrs.flow.weight.csvList=2008,2007,2006,2005,2004,2003,2002,2001,2000
 
 map=shapefile
-map.shapefile.src=data/shapefiles/slo/SVN_adm2.shp.gz
+map.shapefile.src=data/maps/slo/SVN_adm2.shp.gz
 map.projection=Mercator
 

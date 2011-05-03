@@ -10,6 +10,6 @@ data.attrs.node.lon=lon
 data.attrs.flow.weight.re=[0-9]{4}
 
 map=shapefile
-map.shapefile.src=data/shapefiles/slo/SVN_adm2.shp.gz
+map.shapefile.src=data/maps/slo/SVN_adm2.shp.gz
 map.projection=Mercator
 
