@@ -37,10 +37,10 @@ public enum MapProjections implements MapProjection {
     }
   },
 
-  IDENTITY {
+  FLIPY {
     @Override
     public Point2D project(double lon, double lat) {
-      return new Point2D.Double(lon / 180, -lat / 90);
+      return new Point2D.Double(lon, -lat);
     }
   },
 
