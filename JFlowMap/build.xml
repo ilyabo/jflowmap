@@ -6,6 +6,7 @@
 
     <property name="app.name" value="jflowmap"/>
     <property name="app.version" value="0.11"/>
+	<property name="dist.name" value="jflowmap-${app.version}"/>
     <property name="cert.name" value="JFlowMap"/>
 	<property name="path.src" value="src"/>
 	<property name="path.classes" value="bin"/>
@@ -19,6 +20,16 @@
             <param name="mode" value="applet"/>
             <param name="include.applet.meta-inf" value="true"/>
         </antcall>
+    </target>
+
+    <target name="build-dist-package" depends="build">
+        <delete failonerror="false" file="${dist.name}.zip"/>
+        <zip destfile="${dist.name}.zip">
+            <zipfileset dir="demo"
+                prefix="${dist.name}/"
+                includes="**"
+                excludes="data-proprietary/**, JFlowMap.log, java.policy.applet"/>
+        </zip>
     </target>
 
 	<target name="_build" depends="mkdirs, compile, make-jar, proguard, add-manifest" />
@@ -71,16 +82,6 @@
 		</proguard>
 		<delete file="${path.build}/${app.name}-no-libs.jar"/>
 	</target>
-
-    <target name="package-demo">
-    	<delete failonerror="false" file="jflowmap-demo-${app.version}.zip"/>
-        <zip destfile="jflowmap-demo-${app.version}.zip">
-        	<zipfileset dir="demo"
-                prefix="jflowmap-demo-${app.version}/"
-        		includes="**"
-        		excludes="data-proprietary/**, JFlowMap.log, java.policy.applet"/>
-        </zip>
-    </target>
 	   	
    <target name="make-jar">
         <copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true" failonerror="false"/>
