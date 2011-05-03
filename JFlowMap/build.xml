@@ -5,6 +5,7 @@
 	<property file="build.properties"/>
 
     <property name="app.name" value="jflowmap"/>
+    <property name="app.version" value="0.11"/>
     <property name="cert.name" value="JFlowMap"/>
 	<property name="path.src" value="src"/>
 	<property name="path.classes" value="bin"/>
@@ -71,6 +72,16 @@
 		<delete file="${path.build}/${app.name}-no-libs.jar"/>
 	</target>
 
+    <target name="package-demo">
+    	<delete failonerror="false" file="jflowmap-demo-${app.version}.zip"/>
+        <zip destfile="jflowmap-demo-${app.version}.zip">
+        	<zipfileset dir="demo"
+                prefix="jflowmap-demo-${app.version}/"
+        		includes="**"
+        		excludes="data-proprietary/**, JFlowMap.log, java.policy.applet"/>
+        </zip>
+    </target>
+	   	
    <target name="make-jar">
         <copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true" failonerror="false"/>
         <copy file="log4j-${mode}.xml" tofile="${path.build}/log4j.xml" overwrite="true" failonerror="false" />
@@ -89,18 +100,6 @@
             </fileset>
             <fileset dir=".">
                 <include name="license.txt"/>
-            </fileset>
-            <fileset dir="." includes="${include.data.explicit}"/>
-            <fileset dir=".">
-                  <selector if="include.data">
-                  	<or>
-                      <filename name="data/datasets.xml" />
-                      <filename name="data/airlines/airlines.xml.gz" />
-                      <filename name="data/migrations/migrations-500.xml.gz" />
-                      <filename name="data/refugees/refugees-*.xml.gz" />
-                      <filename name="data/refugees/countries-areas.xml.gz" />
-                    </or>
-                  </selector>
             </fileset>
             <fileset dir="classes-applets">
                   <selector if="include.applet.meta-inf">
