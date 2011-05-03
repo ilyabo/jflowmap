@@ -197,7 +197,15 @@ public class FlowMapGraphBuilder {
   }
 
   public Edge addEdge(String srcId, String targetId, Iterable<Double> weights) {
-    return addEdge(nodesById.get(srcId), nodesById.get(targetId), weights);
+    return addEdge(requireNode(srcId), requireNode(targetId), weights);
+  }
+
+  private Node requireNode(String nodeId) {
+    Node node = nodesById.get(nodeId);
+    if (node == null) {
+      throw new IllegalArgumentException("Node could not be found by id '" + nodeId + "'");
+    }
+    return node;
   }
 
   public Edge addEdge(Node from, Node to, Iterable<Double> weights) {
