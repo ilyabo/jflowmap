@@ -340,9 +340,9 @@ public class VisualFlowMapModel {
   public double normalize(double edgeWeight, boolean useLogValue) {
     SeqStat ws = getFlowMapGraph().getStats().getEdgeWeightStats();
     if (useLogValue) {
-      return ws.normalizeLog(edgeWeight);
+      return ws.normalizer().normalizeLog(edgeWeight);
     } else {
-      return ws.normalize(edgeWeight);
+      return ws.normalizer().normalize(edgeWeight);
     }
   }
 

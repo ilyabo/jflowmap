@@ -718,7 +718,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //        logger.warn("Zero-length segment: " + seg);
 //      }
 
-      double nv = stats.normalizeLog(seg.getWeight());
+      double nv = stats.normalizer().normalizeLog(seg.getWeight());
 //      double nv = stats.normalize(seg.getWeight());
 //      double nv = seg.getWeight();
       double width = 1 + nv * getModel().getMaxEdgeWidth();

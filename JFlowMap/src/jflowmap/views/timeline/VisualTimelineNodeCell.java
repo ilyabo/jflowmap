@@ -221,11 +221,11 @@ public class VisualTimelineNodeCell extends PNode {
 
 
     if (SHOW_HALF_CIRCLES) {
-      double normalizedIn = vstats.normalizeAroundZero(inValue);
-      double normalizedOut = vstats.normalizeAroundZero(outValue);
+      double normalizedIn = vstats.normalizer().normalizeAroundZero(inValue);
+      double normalizedOut = vstats.normalizer().normalizeAroundZero(outValue);
 
-      double normalizedInLocal = vstats.normalizeAroundZero(inLocalValue); // ! normalize using the non-local stats
-      double normalizedOutLocal = vstats.normalizeAroundZero(outLocalValue);
+      double normalizedInLocal = vstats.normalizer().normalizeAroundZero(inLocalValue); // ! normalize using the non-local stats
+      double normalizedOutLocal = vstats.normalizer().normalizeAroundZero(outLocalValue);
 
       addChild(colorizeHalfCircle(createHalfCircle(x, y, true, normalizedIn), normalizedIn, true, false));
       addChild(colorizeHalfCircle(createHalfCircle(x, y, false, normalizedOut), normalizedOut, false, false));

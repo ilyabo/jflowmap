@@ -526,7 +526,7 @@ public class FlowstratesView extends AbstractCanvasView {
     if (Double.isNaN(weight)) {
       return style.getMissingValueColor();
     }
-    double val = wstats.normalizeLogAroundZero(weight, true);
+    double val = wstats.normalizer().normalizeLogAroundZero(weight, true);
               // wstats.normalizeAroundZero(
     if (val < -1.0 || val > 1.0) {
       return Color.green;
