@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.FlowEndpoint;
-import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapGraphEdgeAggregator;
 import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.Nodes;
+import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
@@ -99,6 +99,10 @@ public class MapLayer extends PLayer {
     lasso = createLasso(geoLayerCamera);
     geoLayerCamera.addInputEventListener(lasso);
 
+  }
+
+  public FlowEndpoint getEndpoint() {
+    return endpoint;
   }
 
   public PCamera getMapLayerCamera() {
@@ -388,13 +392,17 @@ public class MapLayer extends PLayer {
   }
 
   private void colorizeMapArea(String areaId, double value, boolean hover) {
+    colorizeMapArea(areaId, value, hover, flowstratesView.getValueStat());
+  }
+
+  private void colorizeMapArea(String areaId, double value, boolean hover, SeqStat valueStat) {
     Centroid c = nodeIdsToCentroids.get(areaId);
     if (c != null) {
       VisualArea area = visualAreaMap.getVisualAreaBy(areaId);
       if (area != null && !area.isEmpty()) {
         Color color;
         if (hover) {
-          color = flowstratesView.getColorFor(value);
+          color = flowstratesView.getColorFor(value, valueStat);
         } else {
           color = flowstratesView.getMapColorScheme().getColor(ColorCodes.AREA_PAINT);
         }
@@ -402,13 +410,28 @@ public class MapLayer extends PLayer {
       } else {
         Color color;
         if (hover) {
-          color = flowstratesView.getColorFor(value);
+          color = flowstratesView.getColorFor(value, valueStat);
         } else {
           color = flowstratesView.getStyle().getMapAreaCentroidLabelPaint();
         }
         c.getLabelNode().setPaint(color);
       }
     }
+  }
+
+  private void colorizeMapAreasWithNodeTotals(Iterable<Edge> edges, String weightAttr, boolean hover) {
+
+    Map<String, Double> totals = calcNodeTotalsFor(edges, weightAttr);
+
+    for (Node node : Nodes.nodesOfEdges(edges, endpoint)) {
+      String nodeId = getFlowMapGraph().getNodeId(node);
+      colorizeMapArea(nodeId, totals.get(nodeId), hover);
+    }
+  }
+
+  public Map<String, Double> calcNodeTotalsFor(Iterable<Edge> edges, String weightAttr) {
+    return FlowMapNodeTotals.calcNodeTotalsFor(
+        getFlowMapGraph(), edges, getColumnValueAttrName(weightAttr), endpoint);
   }
 
   void updateMapAreaColorsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
@@ -418,14 +441,10 @@ public class MapLayer extends PLayer {
     if (FlowMapGraphEdgeAggregator.isAggregate(edge)) {
 
       List<Edge> edges = FlowMapGraphEdgeAggregator.getBaseAggregateList(edge);
-      colorizeMapAreasWithBaseNodeSummaries(attr, hover, edges, endpoint);
+      colorizeMapAreasWithNodeTotals(edges, attr, hover);
 
     } else {
-
-      ValueType vtype = flowstratesView.getValueType();
-      FlowMapAttrSpec attrSpec = getFlowMapGraph().getAttrSpec();
-
-      double value = edge.getDouble(vtype.getColumnValueAttr(attrSpec, attr));
+      double value = flowstratesView.getEdgeWeightValue(edge, attr);
       colorizeMapArea(flowstratesView.getAggLayers().getNodeId(edge, endpoint), value, hover);
     }
   }
@@ -433,27 +452,14 @@ public class MapLayer extends PLayer {
 
   void updateOnHeatmapColumnHover(String columnAttr, boolean hover) {
     Iterable<Edge> edges;
-    if (flowstratesView.isFilterApplied()) {
+//    if (flowstratesView.isFilterApplied()) {
       edges = flowstratesView.getVisibleEdges();
-    } else {
-      edges = getFlowMapGraph().edges();
-    }
-    colorizeMapAreasWithBaseNodeSummaries(columnAttr, hover, edges, endpoint);
+//    } else {
+//      edges = getFlowMapGraph().edges();
+//    }
+    colorizeMapAreasWithNodeTotals(edges, columnAttr, hover);
   }
 
-
-  private void colorizeMapAreasWithBaseNodeSummaries(String weightAttr, boolean hover,
-      Iterable<Edge> edges, FlowEndpoint ep) {
-    FlowMapGraph fmg = getFlowMapGraph();
-
-    Map<String, Double> sums = FlowMapNodeTotals.calcNodeWeightTotalsForEdges(
-        fmg, edges, getColumnValueAttrName(weightAttr), ep);
-
-    for (Node node : Nodes.nodesOfEdges(edges, ep)) {
-      String nodeId = fmg.getNodeId(node);
-      colorizeMapArea(nodeId, sums.get(nodeId), hover);
-    }
-  }
 
   private String getColumnValueAttrName(String columnAttr) {
     ValueType vtype = flowstratesView.getValueType();

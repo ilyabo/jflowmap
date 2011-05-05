@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import jflowmap.AbstractCanvasView;
 import jflowmap.ColorSchemes;
 import jflowmap.FlowEndpoint;
+import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
@@ -48,7 +49,6 @@ import jflowmap.models.map.AreaMap;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
-import jflowmap.views.Legend;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowmap.ColorSchemeAware;
 
@@ -126,9 +126,11 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   };
   private final FlowMapGraphAggLayers layers;
-  private Legend legend;
+  private FlowstratesLegend legend;
 
   private final MapProjection mapProjection;
+
+  private SeqStat valueStat;
 
 
   public FlowstratesView(FlowMapGraph fmg, AreaMap areaMap, AggLayersBuilder aggregator,
@@ -154,7 +156,6 @@ public class FlowstratesView extends AbstractCanvasView {
     FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg);
     FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
     FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
-
 
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
@@ -209,15 +210,13 @@ public class FlowstratesView extends AbstractCanvasView {
     // scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     // scrollPane.setVerticalScrollBarPolicy(PScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-
+    this.valueStat = stdValueStat();
 
     legend = new FlowstratesLegend(this);
     heatmapLayer.getHeatmapCamera().addChild(legend);
 
+    update();
 
-    logger.info("Creating heatmap");
-    heatmapLayer.renewHeatmap();
-    logger.info("Done creating heatmap");
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
@@ -243,6 +242,19 @@ public class FlowstratesView extends AbstractCanvasView {
     originMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     destMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
+  }
+
+  public void update() {
+    resetValueStat();
+    heatmapLayer.renewHeatmap();
+    getFlowLinesLayerNode().renewFlowLines();
+    updateLegend();
+  }
+
+  void updateColors() {
+    heatmapLayer.updateHeatmapColors();
+    updateLegend();
+    getVisualCanvas().repaint();
   }
 
   public HeatmapLayer getHeatmapLayer() {
@@ -296,7 +308,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setSelectedAggLayer(String layerName) {
     layers.setSelectedLayer(layerName);
     this.visibleEdges = null;
-    heatmapLayer.renewHeatmap();
+    update();
     fitHeatmapInView();
   }
 
@@ -304,7 +316,7 @@ public class FlowstratesView extends AbstractCanvasView {
     if (this.maxVisibleTuples != maxVisibleTuples) {
       this.maxVisibleTuples = maxVisibleTuples;
       this.visibleEdges = null;
-      heatmapLayer.renewHeatmap();
+      update();
       fitHeatmapInView();
     }
   }
@@ -320,7 +332,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setFocusOnVisibleRows(boolean focusOnVisibleRows) {
     if (this.focusOnVisibleRows != focusOnVisibleRows) {
       this.focusOnVisibleRows = focusOnVisibleRows;
-      heatmapLayer.updateHeatmapColors();
+      updateColors();
     }
   }
 
@@ -337,7 +349,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   void updateVisibleEdges() {
     visibleEdges = null;
-    heatmapLayer.renewHeatmap();
+    update();
     fitHeatmapInView();
   }
 
@@ -398,7 +410,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setValueType(ValueType valueType) {
     if (this.valueType != valueType) {
       this.valueType = valueType;
-      heatmapLayer.updateHeatmapColors();
+      updateColors();
     }
   }
 
@@ -406,10 +418,17 @@ public class FlowstratesView extends AbstractCanvasView {
     return valueType;
   }
 
+  public double getEdgeWeightValue(Edge edge, String attr) {
+    ValueType vtype = getValueType();
+    FlowMapAttrSpec attrSpec = getFlowMapGraph().getAttrSpec();
+
+    return edge.getDouble(vtype.getColumnValueAttr(attrSpec, attr));
+  }
+
   public void setDivergingColorScheme(ColorSchemes divergingColorScheme) {
     if (this.divergingColorScheme != divergingColorScheme) {
       this.divergingColorScheme = divergingColorScheme;
-      heatmapLayer.updateHeatmapColors();
+      updateColors();
     }
   }
 
@@ -420,7 +439,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setSequentialColorScheme(ColorSchemes sequentialColorScheme) {
     if (this.sequentialColorScheme != sequentialColorScheme) {
       this.sequentialColorScheme = sequentialColorScheme;
-      heatmapLayer.updateHeatmapColors();
+      updateColors();
     }
   }
 
@@ -431,7 +450,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setInterpolateColors(boolean interpolateColors) {
     if (this.interpolateColors != interpolateColors) {
       this.interpolateColors = interpolateColors;
-      heatmapLayer.updateHeatmapColors();
+      updateColors();
     }
   }
 
@@ -491,7 +510,32 @@ public class FlowstratesView extends AbstractCanvasView {
     return rowOrdering;
   }
 
-  public FlowMapStats getStats() {
+  public SeqStat getValueStat() {
+    return valueStat;
+  }
+
+  /**
+   * Used for coloring the heatmap cells, the areas in the maps and the legend.
+   */
+  public void setValueStat(SeqStat wstat) {
+    if (!wstat.equals(valueStat)) {
+      this.valueStat = wstat;
+      updateColors();
+    }
+  }
+
+  /**
+   * Reset to the normal value (only those values which are shown in the heatmap).
+   */
+  void resetValueStat() {
+    setValueStat(stdValueStat());
+  }
+
+  private SeqStat stdValueStat() {
+    return valueType.getMinMax(getFlowMapStats());
+  }
+
+  private FlowMapStats getFlowMapStats() {
     if (focusOnVisibleRows) {
       return getVisibleEdgesStats();
     } else {
@@ -499,7 +543,7 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  FlowMapStats getVisibleEdgesStats() {
+  private FlowMapStats getVisibleEdgesStats() {
     List<Edge> edges = getVisibleEdges();
     if (visibleEdgesStats == null) {
       visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
@@ -518,15 +562,15 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   public Color getColorFor(double value) {
-    return getColorForWeight(value, valueType.getMinMax(getStats()));
+    return getColorFor(value, getValueStat());
   }
 
-  public Color getColorForWeight(double weight, SeqStat wstats) {
+  public Color getColorFor(double value, SeqStat wstats) {
     FlowstratesStyle style = getStyle();
-    if (Double.isNaN(weight)) {
+    if (Double.isNaN(value)) {
       return style.getMissingValueColor();
     }
-    double val = wstats.normalizer().normalizeLogAroundZero(weight, true);
+    double val = wstats.normalizer().normalizeLogAroundZero(value, true);
               // wstats.normalizeAroundZero(
     if (val < -1.0 || val > 1.0) {
       return Color.green;

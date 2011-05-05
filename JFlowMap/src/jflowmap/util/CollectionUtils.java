@@ -65,4 +65,16 @@ public class CollectionUtils {
     });
   }
 
+
+  private static final Predicate<Double> PREDICATE_NON_NAN = new Predicate<Double>() {
+    @Override
+    public boolean apply(Double val) {
+      return !val.isNaN();
+    }
+  };
+
+  public static Iterable<Double> removeNaNs(Iterable<Double> values) {
+    return Iterables.filter(values, PREDICATE_NON_NAN);
+  }
+
 }

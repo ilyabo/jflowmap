@@ -98,7 +98,7 @@ public class FlowMapNodeTotals {
   /**
    * Returns map nodeId->total value
    */
-  public static Map<String, Double> calcNodeWeightTotalsForEdges(
+  public static Map<String, Double> calcNodeTotalsFor(
       FlowMapGraph fmg, Iterable<Edge> edges, String attrName, FlowEndpoint ep) {
 
     HashMap<String, Double> map = Maps.newHashMap();

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
+import jflowmap.data.SeqStat;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PLabel;
@@ -65,7 +66,7 @@ public class HeatmapLayer extends PLayer {
   private final PCamera heatmapCamera;
   private final PPath columnHighlightRect;
   private final PNode heatmapNode;
-  private final FlowstratesView flowstratesView;
+  final FlowstratesView flowstratesView;
   private Map<Edge, Pair<PText, PText>> edgesToLabels;
 
   public HeatmapLayer(FlowstratesView flowstratesView) {
@@ -87,6 +88,10 @@ public class HeatmapLayer extends PLayer {
     heatmapCellTooltipListener = flowstratesView.createTooltipListener(HeatmapCell.class);
     heatmapCellHoverListener = createHeatMapCellHoverListener();
 
+  }
+
+  public FlowstratesView getFlowstratesView() {
+    return flowstratesView;
   }
 
   public FlowMapGraph getFlowMapGraph() {
@@ -227,15 +232,9 @@ public class HeatmapLayer extends PLayer {
       row++;
     }
 
-    // heatmapLayer.getHeatmapCamera().setViewBounds(heatmapNode.getFullBounds());
-
     createColumnLabels();
-    flowstratesView.getFlowLinesLayerNode().renewFlowLines();
-    flowstratesView.updateLegend();
 
     repaint();
-    // layer.addChild(new PPath(new Rectangle2D.Double(0, 0, cellWidth * maxCol, cellHeight *
-    // row)));
   }
 
   private Iterable<HeatmapCell> getHeatMapColumnCells(final String attr) {
@@ -254,20 +253,6 @@ public class HeatmapLayer extends PLayer {
     for (HeatmapCell cell : PNodes.childrenOfType(heatmapNode, HeatmapCell.class)) {
       cell.updateColor();
     }
-    flowstratesView.updateLegend();
-    flowstratesView.getVisualCanvas().repaint();
-  }
-
-
-  public Color getColorFor(HeatmapCell cell) {
-    ValueType valueType = flowstratesView.getValueType();
-
-    String attr = valueType.getColumnValueAttr(
-        cell.getFlowMapGraph().getAttrSpec(),
-        cell.getWeightAttr());
-
-    double value = cell.getEdge().getDouble(attr);
-    return flowstratesView.getColorFor(value);
   }
 
   public void fitHeatMapInView() {
@@ -294,8 +279,28 @@ public class HeatmapLayer extends PLayer {
     MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoint.ORIGIN);
     MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoint.DEST);
 
+    List<Edge> edges = flowstratesView.getVisibleEdges();
+
+    SeqStat wstat = flowstratesView.getValueStat();
+
+    if (hover) {
+      // "merge" the value stats with the max value of the sums, to construct a color
+      // scale in which we can represent the totals for the nodes
+      wstat = wstat
+          .mergeWith(originMap.calcNodeTotalsFor(edges, columnAttr).values())
+          .mergeWith(destMap.calcNodeTotalsFor(edges, columnAttr).values());
+
+      flowstratesView.setValueStat(wstat);
+    } else {
+
+      flowstratesView.resetValueStat();
+    }
+
+
     originMap.updateOnHeatmapColumnHover(columnAttr, hover);
     destMap.updateOnHeatmapColumnHover(columnAttr, hover);
+
+    //updateHeatmapColors();
   }
 
   PTypedBasicInputEventHandler<HeatmapCell> createHeatMapCellHoverListener() {

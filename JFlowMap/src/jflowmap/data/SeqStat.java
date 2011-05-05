@@ -32,15 +32,10 @@ public class SeqStat {
   private final double min;
   private final double max;
   private final double sum;
-  private final double sumPos;
-  private final double sumNeg;
   private final int count;
   private final Normalizer normalizer;
 
-  private SeqStat(
-      double minValue, double maxValue,
-      double sum, double sumPos, double sumNeg,
-      int count) {
+  private SeqStat(double minValue, double maxValue, double sum, int count) {
     if (minValue > maxValue) {
       throw new IllegalArgumentException("minValue > maxValue");
     }
@@ -48,8 +43,6 @@ public class SeqStat {
     this.min = minValue;
     this.max = maxValue;
     this.sum = sum;
-    this.sumPos = sumPos;
-    this.sumNeg = sumNeg;
     this.count = count;
     this.normalizer = new Normalizer(min, max);
 
@@ -69,7 +62,7 @@ public class SeqStat {
 
   public static SeqStat createFor(Iterator<Double> it) {
     if (!it.hasNext()) {
-      return new SeqStat(Double.NaN, Double.NaN, Double.NaN, Double.NaN, Double.NaN, 0);
+      return new SeqStat(Double.NaN, Double.NaN, Double.NaN, 0);
     }
     double max = Double.NaN;
     double min = Double.NaN;
@@ -96,27 +89,27 @@ public class SeqStat {
         count++;
       }
     }
-    return new SeqStat(min, max, sum, sumPos, sumNeg, count);
+    return new SeqStat(min, max, sum, count);
+  }
+
+  public SeqStat mergeWith(Iterable<Double> it) {
+    return mergeWith(createFor(it));
   }
 
   public SeqStat mergeWith(SeqStat minMax) {
     return new SeqStat(
         Math.min(min, minMax.min), Math.max(max, minMax.max),
         sum + minMax.sum,
-        sumPos + minMax.sumPos,
-        sumNeg + minMax.sumNeg,
         count + minMax.count);
   }
 
-  public SeqStat add(double value) {
+  public SeqStat mergeWith(double value) {
     if (Double.isNaN(value)  ||  (min <= value  &&  value <= max)) {
       return this;
     } else {
       return new SeqStat(
           Math.min(min, value), Math.max(max, value),
           sum + value,
-          (value > 0 ? sumPos + value : sumPos),
-          (value < 0 ? sumNeg + value : sumNeg),
           count + 1
       );
     }
@@ -151,6 +144,41 @@ public class SeqStat {
   @Override
   public String toString() {
     return "MinMax [min=" + min + ", max=" + max + ", sum=" + sum + ", count=" + count + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + count;
+    long temp;
+    temp = Double.doubleToLongBits(max);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
+    temp = Double.doubleToLongBits(min);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
+    temp = Double.doubleToLongBits(sum);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SeqStat other = (SeqStat) obj;
+    if (count != other.count)
+      return false;
+    if (Double.doubleToLongBits(max) != Double.doubleToLongBits(other.max))
+      return false;
+    if (Double.doubleToLongBits(min) != Double.doubleToLongBits(other.min))
+      return false;
+    if (Double.doubleToLongBits(sum) != Double.doubleToLongBits(other.sum))
+      return false;
+    return true;
   }
 
 }

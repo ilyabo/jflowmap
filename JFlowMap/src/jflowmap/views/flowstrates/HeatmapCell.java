@@ -61,8 +61,14 @@ class HeatmapCell extends PPath {
     return weightAttr;
   }
 
-  private double getWeight() {
-    return edge.getDouble(weightAttr);
+  public double getValue() {
+    ValueType valueType = heatmapLayer.getFlowstratesView().getValueType();
+    String attr = valueType.getColumnValueAttr(flowMapGraph.getAttrSpec(), weightAttr);
+    return getEdge().getDouble(attr);
+  }
+
+  public void updateColor() {
+    setPaint(heatmapLayer.getFlowstratesView().getColorFor(getValue()));
   }
 
   public String getTooltipHeader() {
@@ -99,10 +105,6 @@ class HeatmapCell extends PPath {
       NUMBER_FORMAT.format(weight) + "\n" +
       NUMBER_FORMAT.format(weightDiff) + "\n" +
       NUMBER_FORMAT.format(weightRelDiff);
-  }
-
-  public void updateColor() {
-    setPaint(heatmapLayer.getColorFor(this));
   }
 
 }
