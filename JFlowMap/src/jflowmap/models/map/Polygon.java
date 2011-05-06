@@ -35,6 +35,10 @@ public class Polygon {
     this.points = points.clone();
   }
 
+  public boolean isEmpty() {
+    return points.length == 0;
+  }
+
   public Point2D[] getPoints() {
     return points.clone();
   }

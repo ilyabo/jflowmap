@@ -429,7 +429,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   public void fitInCameraView() {
     PBounds boundRect = getVisualNodesBounds();
     boundRect = (PBounds)getCamera().globalToLocal(boundRect);
-    getCamera().animateViewToCenterBounds(GeomUtils.growRectByPercent(boundRect, .05, .05, .05, .05), true, 0);
+    getCamera().animateViewToCenterBounds(GeomUtils.growRectByRelativeSize(boundRect, .05, .05, .05, .05), true, 0);
   }
 
   public String getLabelAttr() {

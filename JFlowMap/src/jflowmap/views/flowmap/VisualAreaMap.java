@@ -44,7 +44,9 @@ public class VisualAreaMap extends PNode {
     this.colorSchemaAware = cs;
     this.mapProjection = proj;
     for (Area area : mapModel.getAreas()) {
-      addArea(area);
+      if (!area.isEmpty()) {
+        addArea(area);
+      }
     }
     setPaint(getColorSchemaAware().getColor(ColorCodes.BACKGROUND));
   }

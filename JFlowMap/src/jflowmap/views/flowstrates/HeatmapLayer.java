@@ -261,7 +261,7 @@ public class HeatmapLayer extends PLayer {
       PBounds camb = heatmapCamera.getViewBounds();
       heatmapBounds.height = heatmapBounds.width * (camb.height / camb.width);
     }
-    heatmapCamera.setViewBounds(GeomUtils.growRectByPercent(heatmapBounds, .025, .1, .025, .1));
+    heatmapCamera.setViewBounds(GeomUtils.growRectByRelativeSize(heatmapBounds, .025, .1, .025, .1));
   }
 
   void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {

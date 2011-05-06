@@ -180,7 +180,7 @@ public final class GeomUtils {
     );
   }
 
-  public static Rectangle2D growRectByPercent(Rectangle2D rect, double top, double right, double bottom, double left) {
+  public static Rectangle2D growRectByRelativeSize(Rectangle2D rect, double top, double right, double bottom, double left) {
     return new Rectangle2D.Double(
         rect.getX() - rect.getWidth() * left,
         rect.getY() - rect.getHeight() * top,

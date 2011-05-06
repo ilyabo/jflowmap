@@ -67,6 +67,13 @@ public class Area {
     return polygons.clone();
   }
 
+  public boolean isEmpty() {
+    for (Polygon p : polygons) {
+      if (!p.isEmpty()) return false;
+    }
+    return true;
+  }
+
   public Path2D asPath(MapProjection proj) {
     GeneralPath path = new GeneralPath();
     for (Polygon poly : polygons) {
@@ -96,4 +103,5 @@ public class Area {
 
     return new Area(id, name, list);
   }
+
 }

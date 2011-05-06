@@ -34,6 +34,7 @@ import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.Nodes;
 import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjections;
+import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.Area;
 import jflowmap.models.map.AreaMap;
 import jflowmap.models.map.Polygon;
@@ -151,7 +152,7 @@ public class MapLayer extends PLayer {
         flowMapGraph.getNodeLabelAttr());
 
     createCentroidsForNodesWithCoords(nodesWithCoords);
-    createCentroidsAndVisualAreasForNodesWithoutCoords(nodesWithoutCoords);
+    createCentroidsAndAreasForNodesWithoutCoords(nodesWithoutCoords);
   }
 
   private void createCentroidsForNodesWithCoords(Iterable<Node> nodesWithCoords) {
@@ -166,7 +167,7 @@ public class MapLayer extends PLayer {
     }
   }
 
-  private void createCentroidsAndVisualAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
+  private void createCentroidsAndAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
     Rectangle2D bounds = centroidsBounds();
     FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
 
@@ -177,30 +178,34 @@ public class MapLayer extends PLayer {
       int cnt = 0;
       final int numPerRow = Math.min(maxPerRow, num);
       final int r = num % numPerRow;
-      final double hspacing = bounds.getWidth() * 0.7 / (numPerRow - 1);
-      final double vspacing = (bounds.getHeight() / 10);
+      final double rwidth = bounds.getWidth() * 0.7 / (maxPerRow - 1);
+      final double rheight = (bounds.getHeight() / 10);
       final double topMargin = bounds.getHeight() / 5;
 
       for (Node node : nodesWithoutCoords) {
         final int numInThisRow = (cnt >= (num - r) ? r : numPerRow);
-        double hcentering = (bounds.getWidth() - (numInThisRow - 1) * hspacing)/2;
+        double hcentering = (bounds.getWidth() - (numInThisRow - 1) * rwidth)/2;
 
-        double x = hcentering + bounds.getMinX() + (cnt % numPerRow) * hspacing;
-        double y = bounds.getMaxY() + topMargin + Math.floor(cnt / numPerRow) * vspacing;
+        double x = hcentering + bounds.getMinX() + (cnt % numPerRow) * rwidth;
+        double y = bounds.getMaxY() + topMargin + Math.floor(cnt / numPerRow) * rheight;
         createCentroid(node, x, y);
 
         String nodeId = fmg.getNodeId(node);
         String label = fmg.getNodeLabel(node);
 
-        visualAreaMap.addArea(new Area(nodeId, label, Arrays.asList(new Polygon(
+        Rectangle2D rect = new Rectangle2D.Double(x - rwidth/2, y - rheight/3, rwidth, rheight);
+        rect = GeomUtils.growRectByRelativeSize(rect, -0.05, -0.1, -0.05, -0.1);
+
+        Polygon polygon = new Polygon(
             new Point2D[] {
-                new Point2D.Double(x - hspacing/2, y - vspacing/3),
-                new Point2D.Double(x + hspacing/2, y - vspacing/3),
-                new Point2D.Double(x + hspacing/2, y + vspacing*2/3),
-                new Point2D.Double(x - hspacing/2, y + vspacing*2/3),
-                new Point2D.Double(x - hspacing/2, y - vspacing/3)
-            }))),
-            MapProjections.NONE);
+                new Point2D.Double(rect.getX(), rect.getY()),
+                new Point2D.Double(rect.getMaxX(), rect.getY()),
+                new Point2D.Double(rect.getMaxX(), rect.getMaxY()),
+                new Point2D.Double(rect.getX(), rect.getMaxY()),
+                new Point2D.Double(rect.getX(), rect.getY())
+            });
+
+        visualAreaMap.addArea(new Area(nodeId, label, Arrays.asList(polygon)), MapProjections.NONE);
 
         cnt++;
       }
@@ -232,7 +237,7 @@ public class MapLayer extends PLayer {
         double lon = node.getDouble(fmg.getNodeLonAttr());
         double lat = node.getDouble(fmg.getNodeLatAttr());
 
-        return (!Double.isNaN(lon)  &&  !Double.isNaN(lat));
+        return !((Double.isNaN(lon)  ||  lon == 0)  &&  (Double.isNaN(lat)  ||  lat == 0));
       }
     };
   }
@@ -420,7 +425,6 @@ public class MapLayer extends PLayer {
   }
 
   private void colorizeMapAreasWithNodeTotals(Iterable<Edge> edges, String weightAttr, boolean hover) {
-
     Map<String, Double> totals = calcNodeTotalsFor(edges, weightAttr);
 
     for (Node node : Nodes.nodesOfEdges(edges, endpoint)) {
