@@ -653,7 +653,8 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fitInCameraView(MapLayer layer) {
-    Rectangle2D nb = GeomUtils.growRectByRelativeSize(layer.centroidsBounds(), .2, .2, .2, .2);
+    Rectangle2D nb = layer.centroidsBounds();
+    GeomUtils.growRectInPlaceByRelativeSize(nb, .2, .2, .2, .2);
     layer.getMapLayerCamera().setViewBounds(nb);
   }
 

@@ -127,7 +127,7 @@ public class MapLayer extends PLayer {
     for (Centroid c : nodeIdsToCentroids.values()) {
       c.updateInCamera(geoLayerCamera);
       if (c.getVisible()) {
-        c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getLabelNode().getBounds()));
+        c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getCollisionBounds()));
       }
     }
   }

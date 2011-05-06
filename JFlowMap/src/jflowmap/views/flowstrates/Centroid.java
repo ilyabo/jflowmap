@@ -4,11 +4,14 @@ import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
+import jflowmap.geom.GeomUtils;
 import jflowmap.util.piccolo.PNodes;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -43,6 +46,12 @@ class Centroid extends PPath {
 
     setStroke(null);
     updateColors();
+  }
+
+  public Rectangle2D getCollisionBounds() {
+    PBounds b = getLabelNode().getBounds();
+    GeomUtils.growRectInPlaceByRelativeSize(b, .4, .1, .1, .1);
+    return b;
   }
 
   public FlowstratesView getView() {
