@@ -180,13 +180,19 @@ public final class GeomUtils {
     );
   }
 
-  public static Rectangle2D growRectByRelativeSize(Rectangle2D rect, double top, double right, double bottom, double left) {
-    return new Rectangle2D.Double(
+  public static void growRectInPlaceByRelativeSize(Rectangle2D rect, double top, double right, double bottom, double left) {
+    rect.setRect(
         rect.getX() - rect.getWidth() * left,
         rect.getY() - rect.getHeight() * top,
         rect.getWidth() * (1 + left + right),
         rect.getHeight() * (1 + top + bottom)
     );
+  }
+
+  public static Rectangle2D growRectByRelativeSize(Rectangle2D rect, double top, double right, double bottom, double left) {
+    Rectangle2D r = new Rectangle2D.Double(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    growRectInPlaceByRelativeSize(r, top, right, bottom, left);
+    return r;
   }
 
 }
