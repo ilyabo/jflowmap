@@ -518,6 +518,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setValueStat(SeqStat wstat) {
     if (!wstat.equals(valueStat)) {
       this.valueStat = wstat;
+      heatmapLayer.resetWeightAttrTotals();
       updateColors();
     }
   }

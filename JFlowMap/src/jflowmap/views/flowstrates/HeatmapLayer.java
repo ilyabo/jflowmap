@@ -79,7 +79,7 @@ public class HeatmapLayer extends PLayer {
     addChild(heatmapNode);
 
     columnHighlightRect = PPaths.rect(0, 0, 1, 1);
-    columnHighlightRect.setStroke(new PFixedWidthStroke(3));
+    columnHighlightRect.setStroke(new PFixedWidthStroke(1));
     columnHighlightRect.setPaint(null);
 //    columnHighlightRect.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
     columnHighlightRect.setStrokePaint(Color.cyan);
@@ -184,7 +184,7 @@ public class HeatmapLayer extends PLayer {
   }
 
   public void renewHeatmap() {
-    weightAttrTotalsStat = null;
+    resetWeightAttrTotals();
 
     heatmapNode.removeAllChildren();
 
@@ -240,6 +240,10 @@ public class HeatmapLayer extends PLayer {
     repaint();
   }
 
+  public void resetWeightAttrTotals() {
+    weightAttrTotalsStat = null;
+  }
+
   private Iterable<HeatmapCell> getHeatMapColumnCells(final String attr) {
     return
       Iterables.filter(
@@ -288,7 +292,7 @@ public class HeatmapLayer extends PLayer {
 
     if (hover) {
       if (weightAttrTotalsStat == null) {
-        for (String attr : getFlowMapGraph().getEdgeWeightAttrs()) {
+         for (String attr : getFlowMapGraph().getEdgeWeightAttrs()) {
           // "merge" the value stats with the max value of the sums, to construct a color
           // scale in which we can represent the totals for the nodes
           wstat = wstat
