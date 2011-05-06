@@ -215,7 +215,7 @@ public class FlowstratesView extends AbstractCanvasView {
     legend = new FlowstratesLegend(this);
     heatmapLayer.getHeatmapCamera().addChild(legend);
 
-    update();
+    resetVisibleEdges();
 
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
@@ -244,7 +244,8 @@ public class FlowstratesView extends AbstractCanvasView {
     heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
   }
 
-  public void update() {
+  public void resetVisibleEdges() {
+    this.visibleEdges = null;
     resetValueStat();
     heatmapLayer.renewHeatmap();
     getFlowLinesLayerNode().renewFlowLines();
@@ -307,16 +308,14 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public void setSelectedAggLayer(String layerName) {
     layers.setSelectedLayer(layerName);
-    this.visibleEdges = null;
-    update();
+    resetVisibleEdges();
     fitHeatmapInView();
   }
 
   public void setMaxVisibleTuples(int maxVisibleTuples) {
     if (this.maxVisibleTuples != maxVisibleTuples) {
       this.maxVisibleTuples = maxVisibleTuples;
-      this.visibleEdges = null;
-      update();
+      resetVisibleEdges();
       fitHeatmapInView();
     }
   }
@@ -348,8 +347,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   void updateVisibleEdges() {
-    visibleEdges = null;
-    update();
+    resetVisibleEdges();
     fitHeatmapInView();
   }
 

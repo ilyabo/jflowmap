@@ -68,6 +68,7 @@ public class HeatmapLayer extends PLayer {
   private final PNode heatmapNode;
   final FlowstratesView flowstratesView;
   private Map<Edge, Pair<PText, PText>> edgesToLabels;
+  private SeqStat weightAttrTotalsStat = null;
 
   public HeatmapLayer(FlowstratesView flowstratesView) {
     this.flowstratesView = flowstratesView;
@@ -183,6 +184,8 @@ public class HeatmapLayer extends PLayer {
   }
 
   public void renewHeatmap() {
+    weightAttrTotalsStat = null;
+
     heatmapNode.removeAllChildren();
 
     int row = 0, maxCol = 0;
@@ -284,15 +287,18 @@ public class HeatmapLayer extends PLayer {
     SeqStat wstat = flowstratesView.getValueStat();
 
     if (hover) {
-      for (String attr : getFlowMapGraph().getEdgeWeightAttrs()) {
-        // "merge" the value stats with the max value of the sums, to construct a color
-        // scale in which we can represent the totals for the nodes
-        wstat = wstat
-            .mergeWith(originMap.calcNodeTotalsFor(edges, attr).values())
-            .mergeWith(destMap.calcNodeTotalsFor(edges, attr).values());
+      if (weightAttrTotalsStat == null) {
+        for (String attr : getFlowMapGraph().getEdgeWeightAttrs()) {
+          // "merge" the value stats with the max value of the sums, to construct a color
+          // scale in which we can represent the totals for the nodes
+          wstat = wstat
+              .mergeWith(originMap.calcNodeTotalsFor(edges, attr).values())
+              .mergeWith(destMap.calcNodeTotalsFor(edges, attr).values());
+        }
+        weightAttrTotalsStat = wstat;
       }
+      flowstratesView.setValueStat(weightAttrTotalsStat);
 
-      flowstratesView.setValueStat(wstat);
     } else {
 
       flowstratesView.resetValueStat();
