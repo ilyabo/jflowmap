@@ -43,7 +43,11 @@ public class FlowstratesLegend extends Legend {
         public PNode createItem(double value) {
           PPath item = new PPath(new Rectangle2D.Double(0, 0, 10, 10));
           item.setPaint(flowstratesView.getColorFor(value));
-          item.setName(FlowMapView.NUMBER_FORMAT.format(value));
+          String name = FlowMapView.NUMBER_FORMAT.format(value);
+          if (flowstratesView.getValueStat().getMin() < 0   &&   value > 0) {
+            name = "+" + name;
+          }
+          item.setName(name);
           item.setStroke(null);
           return item;
         }
