@@ -77,6 +77,7 @@ public class MapLayer extends PLayer {
 
   private final Lasso lasso;
   private PInputEventListener centroidMouseListener;
+  private boolean centroidsOpaque = true;
 
 
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoint s) {
@@ -122,12 +123,30 @@ public class MapLayer extends PLayer {
     return flowstratesView.getFlowMapGraph();
   }
 
+  public void setCentroidsOpaque(boolean value) {
+    if (centroidsOpaque != value) {
+      centroidsOpaque = value;
+      updateCentroids();
+    }
+  }
+
   void updateCentroids() {
     RectSet occupied = new RectSet(nodeIdsToCentroids.size());
     for (Centroid c : nodeIdsToCentroids.values()) {
-      c.updateInCamera(geoLayerCamera);
-      if (c.getVisible()) {
-        c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getCollisionBounds()));
+      if (centroidsOpaque) {
+        c.updateInCamera(geoLayerCamera);
+        if (c.getVisible()) {
+          c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getCollisionBounds()));
+        }
+        c.setOpaque(true);
+      } else {
+//        boolean vis = false;
+//        VisualArea va = getVisualAreaMap().getVisualAreaBy(c.getNodeId());
+//        if (va != null) {
+//          vis = va.getFullBoundsReference().contains(c.getLabelNode().getBoundsReference());
+//        }
+//        c.setVisible(vis);
+        c.setOpaque(false);
       }
     }
   }
@@ -461,6 +480,7 @@ public class MapLayer extends PLayer {
 //    } else {
 //      edges = getFlowMapGraph().edges();
 //    }
+    setCentroidsOpaque(!hover);
     colorizeMapAreasWithNodeTotals(edges, columnAttr, hover);
   }
 

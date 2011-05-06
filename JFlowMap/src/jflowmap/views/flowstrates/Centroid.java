@@ -31,7 +31,6 @@ class Centroid extends PPath {
 
   public Centroid(String nodeId, String nodeLabel, double origX, double origY,
       double size, Paint paint, FlowstratesView view) {
-//    super(new Ellipse2D.Double(origX - size/2, origY - size/2, size, size));
     super(new Ellipse2D.Double(origX, origY, size, size));
     this.origX = origX;
     this.origY = origY;
@@ -52,6 +51,10 @@ class Centroid extends PPath {
     PBounds b = getLabelNode().getBounds();
     GeomUtils.growRectInPlaceByRelativeSize(b, .4, .1, .1, .1);
     return b;
+  }
+
+  public void setOpaque(boolean opaque) {
+    setTransparency(opaque ? 1.0f : 0.15f);
   }
 
   public FlowstratesView getView() {

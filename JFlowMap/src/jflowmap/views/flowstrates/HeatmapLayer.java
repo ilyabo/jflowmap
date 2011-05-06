@@ -298,9 +298,7 @@ public class HeatmapLayer extends PLayer {
         weightAttrTotalsStat = wstat;
       }
       flowstratesView.setValueStat(weightAttrTotalsStat);
-
     } else {
-
       flowstratesView.resetValueStat();
     }
 
