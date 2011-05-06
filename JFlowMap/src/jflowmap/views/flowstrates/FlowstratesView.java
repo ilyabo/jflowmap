@@ -153,9 +153,9 @@ public class FlowstratesView extends AbstractCanvasView {
       fmgg.addEdgeWeightRelativeDifferenceColumns();
     }
 
-    FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg);
-    FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightDiffAttr());
-    FlowMapNodeTotals.supplyNodesWithWeightSummaries(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg);
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightDiffAttr());
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
 
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
@@ -410,7 +410,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setValueType(ValueType valueType) {
     if (this.valueType != valueType) {
       this.valueType = valueType;
-      updateColors();
+      resetValueStat();
     }
   }
 

@@ -20,6 +20,7 @@ package jflowmap.data;
 
 import java.util.Iterator;
 
+import jflowmap.util.MathUtils;
 import jflowmap.util.Normalizer;
 
 /**
@@ -98,7 +99,7 @@ public class SeqStat {
 
   public SeqStat mergeWith(SeqStat minMax) {
     return new SeqStat(
-        Math.min(min, minMax.min), Math.max(max, minMax.max),
+        MathUtils.nonNaNMin(min, minMax.min), MathUtils.nonNaNMax(max, minMax.max),
         sum + minMax.sum,
         count + minMax.count);
   }
@@ -108,7 +109,7 @@ public class SeqStat {
       return this;
     } else {
       return new SeqStat(
-          Math.min(min, value), Math.max(max, value),
+          MathUtils.nonNaNMin(min, value), MathUtils.nonNaNMax(max, value),
           sum + value,
           count + 1
       );

@@ -41,8 +41,6 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapNodeTotals {
 
-//  private static Logger logger = Logger.getLogger(FlowMapNodeSummaries.class);
-
   // TODO: generalize FlowMapSummaries (shouldn't be only for regions)
 //  public static final String NODE_COLUMN__SUM_OUTGOING_DIFF_TO_NEXT_YEAR = "sumOutDiff:stat";
 //  public static final String NODE_COLUMN__SUM_INCOMING_DIFF_TO_NEXT_YEAR = "sumIncDiff:stat";
@@ -57,17 +55,17 @@ public class FlowMapNodeTotals {
   private FlowMapNodeTotals() {
   }
 
-  public static double getWeightSummary(Node node, String weightAttrName, FlowDirection dir) {
-    String attrName = getWeightSummaryNodeAttr(weightAttrName, dir);
+  public static double getTotalWeight(Node node, String weightAttrName, FlowDirection dir) {
+    String attrName = getTotalWeightNodeAttr(weightAttrName, dir);
     if (!node.canGet(attrName, double.class)) {
-      throw new IllegalArgumentException("Cannot get summary attr: " + attrName);
+      throw new IllegalArgumentException("Cannot get node totals attr: " + attrName);
     }
     return node.getDouble(attrName);
   }
 
-  public static void supplyNodesWithWeightSummaries(FlowMapGraphSet flowMapGraphSet) {
+  public static void supplyNodesWithWeightTotals(FlowMapGraphSet flowMapGraphSet) {
     for (FlowMapGraph flowMapGraph : flowMapGraphSet.asList()) {
-      supplyNodesWithWeightSummaries(flowMapGraph);
+      supplyNodesWithWeightTotals(flowMapGraph);
     }
   }
 
@@ -75,18 +73,18 @@ public class FlowMapNodeTotals {
    * This method adds additional columns to the nodes table providing
    * the nodes with useful stats.
    */
-  public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph) {
-    supplyNodesWithWeightSummaries(flowMapGraph, flowMapGraph.getEdgeWeightAttrs());
+  public static void supplyNodesWithWeightTotals(FlowMapGraph flowMapGraph) {
+    supplyNodesWithWeightTotals(flowMapGraph, flowMapGraph.getEdgeWeightAttrs());
   }
 
-  public static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph, List<String> attrNames) {
+  public static void supplyNodesWithWeightTotals(FlowMapGraph flowMapGraph, List<String> attrNames) {
     for (String weightAttrName : attrNames) {
-      supplyNodesWithWeightSummaries(flowMapGraph, weightAttrName);
+      supplyNodesWithWeightTotals(flowMapGraph, weightAttrName);
     }
   }
 
 
-  public static String getWeightSummaryNodeAttr(String weightAttrName, FlowDirection dir) {
+  public static String getTotalWeightNodeAttr(String weightAttrName, FlowDirection dir) {
     switch (dir) {
     case OUTGOING: return NODE_COLUMN__SUM_OUTGOING_PREFIX + weightAttrName;
     case INCOMING: return NODE_COLUMN__SUM_INCOMING_PREFIX + weightAttrName;
@@ -118,7 +116,8 @@ public class FlowMapNodeTotals {
   }
 
 
-  private static void supplyNodesWithWeightSummaries(FlowMapGraph flowMapGraph,
+
+  private static void supplyNodesWithWeightTotals(FlowMapGraph flowMapGraph,
       String weightAttrName) {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
@@ -152,8 +151,8 @@ public class FlowMapNodeTotals {
       }
     }
 
-    String outgoingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, FlowDirection.OUTGOING);
-    String incomingSumAttrName = getWeightSummaryNodeAttr(weightAttrName, FlowDirection.INCOMING);
+    String outgoingSumAttrName = getTotalWeightNodeAttr(weightAttrName, FlowDirection.OUTGOING);
+    String incomingSumAttrName = getTotalWeightNodeAttr(weightAttrName, FlowDirection.INCOMING);
 
     nodeTable.addColumn(outgoingSumAttrName, double.class);
     nodeTable.addColumn(incomingSumAttrName, double.class);
@@ -175,14 +174,14 @@ public class FlowMapNodeTotals {
 
   // TODO: fix intrareg summaries to support wildcarded weight attrs
 
-  public static void supplyNodesWithIntraregSummaries(FlowMapGraphSet fmset, String nodeRegionAttr,
+  public static void supplyNodesWithIntraregTotals(FlowMapGraphSet fmset, String nodeRegionAttr,
       String edgeWeightAttr) {
     for (FlowMapGraph fmg : fmset.asList()) {
-      FlowMapNodeTotals.supplyNodesWithIntraregSummaries(fmg, nodeRegionAttr, edgeWeightAttr);
+      FlowMapNodeTotals.supplyNodesWithIntraregTotals(fmg, nodeRegionAttr, edgeWeightAttr);
     }
   }
 
-  public static void supplyNodesWithIntraregSummaries(FlowMapGraph flowMapGraph,
+  public static void supplyNodesWithIntraregTotals(FlowMapGraph flowMapGraph,
       String nodeRegionAttr, String edgeWeightAttr) {
     Graph g = flowMapGraph.getGraph();
     Table nodeTable = g.getNodeTable();
@@ -234,20 +233,20 @@ public class FlowMapNodeTotals {
     }
   }
 
-  public static Iterable<String> getWeightSummaryNodeAttrs(
+  public static Iterable<String> getWeightTotalsNodeAttrs(
       Iterable<String> edgeWeightAttrNames, FlowDirection dir) {
     List<String> list = new ArrayList<String>(Iterables.size(edgeWeightAttrNames));
     for (String attr : edgeWeightAttrNames) {
-      list.add(getWeightSummaryNodeAttr(attr, dir));
+      list.add(getTotalWeightNodeAttr(attr, dir));
     }
     return list;
   }
 
-  public static Comparator<Node> createMaxNodeWeightSummariesComparator(FlowMapGraph fmg,
+  public static Comparator<Node> createMaxNodeWeightTotalsComparator(FlowMapGraph fmg,
       FlowDirection dir) {
     List<String> weightAttrs = fmg.getEdgeWeightAttrs();
     Comparator<Node> comp = fmg.createMaxNodeAttrValueComparator(
-          getWeightSummaryNodeAttrs(weightAttrs, dir)
+          getWeightTotalsNodeAttrs(weightAttrs, dir)
     );
     return comp;
   }

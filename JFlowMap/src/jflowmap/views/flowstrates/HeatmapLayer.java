@@ -284,11 +284,13 @@ public class HeatmapLayer extends PLayer {
     SeqStat wstat = flowstratesView.getValueStat();
 
     if (hover) {
-      // "merge" the value stats with the max value of the sums, to construct a color
-      // scale in which we can represent the totals for the nodes
-      wstat = wstat
-          .mergeWith(originMap.calcNodeTotalsFor(edges, columnAttr).values())
-          .mergeWith(destMap.calcNodeTotalsFor(edges, columnAttr).values());
+      for (String attr : getFlowMapGraph().getEdgeWeightAttrs()) {
+        // "merge" the value stats with the max value of the sums, to construct a color
+        // scale in which we can represent the totals for the nodes
+        wstat = wstat
+            .mergeWith(originMap.calcNodeTotalsFor(edges, attr).values())
+            .mergeWith(destMap.calcNodeTotalsFor(edges, attr).values());
+      }
 
       flowstratesView.setValueStat(wstat);
     } else {

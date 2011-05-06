@@ -84,4 +84,24 @@ public final class MathUtils {
     return Double.compare(d1, d2);
   }
 
+  public static double nonNaNMin(double a, double b) {
+    if (Double.isNaN(a)) {
+      return b;
+    } else if (Double.isNaN(b)) {
+      return a;
+    } else {
+      return Math.min(a, b);
+    }
+  }
+
+  public static double nonNaNMax(double a, double b) {
+    if (Double.isNaN(a)) {
+      return b;
+    } else if (Double.isNaN(b)) {
+      return a;
+    } else {
+      return Math.max(a, b);
+    }
+  }
+
 }

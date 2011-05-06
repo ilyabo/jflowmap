@@ -113,8 +113,8 @@ public class VisualTimelineNodeCell extends PNode {
 
     setBounds(x, y, width, height);
 
-    double inValue = FlowMapNodeTotals.getWeightSummary(node, weightAttrName, FlowDirection.INCOMING);
-    double outValue = FlowMapNodeTotals.getWeightSummary(node, weightAttrName, FlowDirection.OUTGOING);
+    double inValue = FlowMapNodeTotals.getTotalWeight(node, weightAttrName, FlowDirection.INCOMING);
+    double outValue = FlowMapNodeTotals.getTotalWeight(node, weightAttrName, FlowDirection.OUTGOING);
 
 
     double inLocalValue = node.getDouble(FlowMapNodeTotals.NODE_COLUMN__SUM_INCOMING_INTRAREG);

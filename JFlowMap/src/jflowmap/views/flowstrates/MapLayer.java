@@ -140,7 +140,7 @@ public class MapLayer extends PLayer {
     Iterable<Node> nodes = CollectionUtils.sort(
         flowMapGraph.nodesHavingEdges(endpoint.dir()),
         Collections.reverseOrder(
-            FlowMapNodeTotals.createMaxNodeWeightSummariesComparator(
+            FlowMapNodeTotals.createMaxNodeWeightTotalsComparator(
                 flowMapGraph, endpoint.dir())));
 
     centroidMouseListener = createCentroidMouseListener();

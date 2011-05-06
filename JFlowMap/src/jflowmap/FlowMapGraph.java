@@ -679,8 +679,8 @@ public class FlowMapGraph {
       @Override
       public int compare(Edge e1, Edge e2) {
         int c = MathUtils.compareDoubles_smallestIsNaN(
-            getMaxAttrValue(s.nodeOf(e1), FlowMapNodeTotals.getWeightSummaryNodeAttrs(attrs, s.dir())),
-            getMaxAttrValue(s.nodeOf(e2), FlowMapNodeTotals.getWeightSummaryNodeAttrs(attrs, s.dir())));
+            getMaxAttrValue(s.nodeOf(e1), FlowMapNodeTotals.getWeightTotalsNodeAttrs(attrs, s.dir())),
+            getMaxAttrValue(s.nodeOf(e2), FlowMapNodeTotals.getWeightTotalsNodeAttrs(attrs, s.dir())));
 
         if (c == 0) {
           c = getNodeLabel(s.nodeOf(e1)).compareTo(getNodeLabel(s.nodeOf(e2)));

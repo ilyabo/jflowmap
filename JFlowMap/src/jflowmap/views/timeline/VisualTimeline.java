@@ -94,14 +94,14 @@ public class VisualTimeline extends PNode {
     this.groupedFlowMapGraphs = groupedFlowMapGraphs;
     this.columnToGroupNodesBy = columnToGroupNodesBy;
 
-    FlowMapNodeTotals.supplyNodesWithWeightSummaries(flowMapGraphs);
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(flowMapGraphs);
 
 //    FlowMapSummaries.supplyNodesWithDiffs(graphs, attrSpec);
     if (groupedFlowMapGraphs == null) {
       this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats());
     } else {
       for (FlowMapGraph flowMapGraph : groupedFlowMapGraphs.asList()) {
-        FlowMapNodeTotals.supplyNodesWithWeightSummaries(flowMapGraph);
+        FlowMapNodeTotals.supplyNodesWithWeightTotals(flowMapGraph);
       }
       this.valueMinMax = nodeSummaryMinMax(flowMapGraphs.getStats())
                          .mergeWith(nodeSummaryMinMax(groupedFlowMapGraphs.getStats()));
@@ -141,9 +141,9 @@ public class VisualTimeline extends PNode {
     String attr = flowMapGraphs.getAttrSpec().getFlowWeightAttrs().get(0);
     return stats
       .getNodeAttrStats(
-          FlowMapNodeTotals.getWeightSummaryNodeAttr(attr, FlowDirection.INCOMING))
+          FlowMapNodeTotals.getTotalWeightNodeAttr(attr, FlowDirection.INCOMING))
       .mergeWith(globalStats.getNodeAttrStats(
-          FlowMapNodeTotals.getWeightSummaryNodeAttr(attr, FlowDirection.OUTGOING)))
+          FlowMapNodeTotals.getTotalWeightNodeAttr(attr, FlowDirection.OUTGOING)))
       .mergeWith(globalStats.getNodeAttrStats(FlowMapNodeTotals.NODE_COLUMN__SUM_INCOMING_INTRAREG))
       .mergeWith(globalStats.getNodeAttrStats(FlowMapNodeTotals.NODE_COLUMN__SUM_OUTGOING_INTRAREG));
   }
@@ -296,8 +296,8 @@ public class VisualTimeline extends PNode {
   public void showTooltip(VisualTimelineNodeCell vc) {
     Node node = vc.getNode();
 
-    double inValue = FlowMapNodeTotals.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.INCOMING);
-    double outValue = FlowMapNodeTotals.getWeightSummary(node, vc.getWeightAttrName(), FlowDirection.OUTGOING);
+    double inValue = FlowMapNodeTotals.getTotalWeight(node, vc.getWeightAttrName(), FlowDirection.INCOMING);
+    double outValue = FlowMapNodeTotals.getTotalWeight(node, vc.getWeightAttrName(), FlowDirection.OUTGOING);
 
     double inLocalValue = node.getDouble(FlowMapNodeTotals.NODE_COLUMN__SUM_INCOMING_INTRAREG);
     double outLocalValue = node.getDouble(FlowMapNodeTotals.NODE_COLUMN__SUM_OUTGOING_INTRAREG);

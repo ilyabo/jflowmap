@@ -63,7 +63,7 @@ public class FlowstratesControlPanel extends JPanel {
 
     addPanel(createFilterPanel());
     addPanel(createDataPanel());
-    addPanel(createHeatmapColorsPanel());
+//    addPanel(createHeatmapColorsPanel());
     addPanel(createFlowLinesPanel());
   }
 
