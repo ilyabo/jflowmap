@@ -36,7 +36,7 @@ import jflowmap.data.SeqStat;
 import jflowmap.data.XmlRegionsReader;
 import jflowmap.util.piccolo.PCollapsableItemsContainer;
 import jflowmap.views.IFlowMapColorScheme;
-import jflowmap.views.Tooltip;
+import jflowmap.views.PTooltip;
 import jflowmap.views.flowmap.FlowMapView;
 
 import org.apache.log4j.Logger;
@@ -77,7 +77,7 @@ public class VisualTimeline extends PNode {
 //  private final ColorMap sumOutgoingDiffColorMap;
 
 //  private Graph selectedGraph;
-  private final Tooltip tooltipBox;
+  private final PTooltip tooltipBox;
   private final SeqStat valueMinMax;
   private final String columnToGroupNodesBy;
 
@@ -118,7 +118,7 @@ public class VisualTimeline extends PNode {
 //      this.selectedGraph = this.graphs.get(this.graphs.size() - 1);
 //    }
 
-    tooltipBox = new Tooltip();
+    tooltipBox = new PTooltip();
     tooltipBox.setVisible(false);
     tooltipBox.setPickable(false);
 

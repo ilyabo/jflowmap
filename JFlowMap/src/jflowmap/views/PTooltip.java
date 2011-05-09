@@ -36,7 +36,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 /**
  * @author Ilya Boyandin
  */
-public class Tooltip extends PPath {
+public class PTooltip extends PPath {
 
   private static final long serialVersionUID = 4699401260245122226L;
   private static final Color DEFAULT_PAINT = new Color(0, 213, 213, 220);
@@ -52,7 +52,7 @@ public class Tooltip extends PPath {
   private final PText labelsNode;
   private final PText valuesNode;
 
-  public Tooltip(int archw, int archh) {
+  public PTooltip(int archw, int archh) {
     super(new RoundRectangle2D.Double(0, 0, 100, 100, archw, archh));
     padding = new Point(5, 5);
     gap = 3;
@@ -79,7 +79,7 @@ public class Tooltip extends PPath {
     setTextPaint(DEFAULT_TEXT_PAINT);
   }
 
-  public Tooltip() {
+  public PTooltip() {
     this(10, 20);
   }
 

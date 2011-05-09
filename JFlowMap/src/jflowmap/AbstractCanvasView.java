@@ -25,7 +25,7 @@ import java.awt.geom.Point2D;
 import javax.swing.JComponent;
 
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
-import jflowmap.views.Tooltip;
+import jflowmap.views.PTooltip;
 import jflowmap.views.VisualCanvas;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -37,12 +37,12 @@ import edu.umd.cs.piccolo.util.PBounds;
 public abstract class AbstractCanvasView implements IView {
 
   private final VisualCanvas visualCanvas;
-  private final Tooltip tooltipBox;
+  private final PTooltip tooltipBox;
 
   public AbstractCanvasView() {
     this.visualCanvas = createVisualCanvas();
 
-    tooltipBox = new Tooltip();
+    tooltipBox = new PTooltip();
     tooltipBox.setVisible(false);
     tooltipBox.setPickable(false);
 
@@ -77,7 +77,7 @@ public abstract class AbstractCanvasView implements IView {
     return null;
   }
 
-  public Tooltip getTooltipBox() {
+  public PTooltip getTooltipBox() {
     return tooltipBox;
   }
 

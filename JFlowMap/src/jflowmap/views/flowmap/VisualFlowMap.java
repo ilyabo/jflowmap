@@ -52,7 +52,7 @@ import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
-import jflowmap.views.Tooltip;
+import jflowmap.views.PTooltip;
 
 import org.apache.log4j.Logger;
 
@@ -97,7 +97,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     NODE_SELECTION
   }
 //  private static final Color SINGLE_ELEMENT_CLUSTER_COLOR = new Color(100, 100, 100, 150);
-  private final Tooltip tooltipBox;
+  private final PTooltip tooltipBox;
   private PBounds nodeBounds;
 
   private final PNode edgeLayer;
@@ -156,7 +156,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
 //    addChild(nodeLayer);
 
-    tooltipBox = new Tooltip();
+    tooltipBox = new PTooltip();
     tooltipBox.setVisible(false);
     tooltipBox.setPickable(false);
 
