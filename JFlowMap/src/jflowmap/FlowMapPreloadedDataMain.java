@@ -65,7 +65,7 @@ public class FlowMapPreloadedDataMain extends JFrame {
     flowMap = new FlowMapView(datasetSpecs, true);
 
     setLayout(new BorderLayout());
-    JComponent viewComp = flowMap.getViewComponent();
+    JComponent viewComp = flowMap.getVisualCanvas();
     JComponent controls = flowMap.getControls();
     if (controls == null) {
       add(viewComp, BorderLayout.CENTER);

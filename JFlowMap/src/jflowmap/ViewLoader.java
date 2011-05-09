@@ -23,11 +23,11 @@ import java.awt.Container;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
 import jflowmap.data.ViewConfig;
+import jflowmap.views.VisualCanvas;
 
 import org.apache.log4j.Logger;
 
@@ -73,14 +73,16 @@ public class ViewLoader {
         try {
           IView view = get();
           if (view != null) {
+            /*
             JComponent controls = view.getControls();
             if (controls != null) {
               parent.add(controls, view.getControlsLayoutConstraint());
             }
+            */
 
-            JComponent viewComp = view.getViewComponent();
-            if (viewComp != null) {
-              parent.add(viewComp, BorderLayout.CENTER);
+            VisualCanvas canvas = view.getVisualCanvas();
+            if (canvas != null) {
+              parent.add(canvas, BorderLayout.CENTER);
               isViewEmpty = false;
             }
           }

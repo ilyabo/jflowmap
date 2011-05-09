@@ -493,11 +493,10 @@ public class FlowstratesView extends AbstractCanvasView {
       customEdgeFilter != null;
   }
 
-  @Override
-  public JComponent getViewComponent() {
-    // return scrollPane;
-    return getVisualCanvas();
-  }
+//  @Override
+//  public JComponent getViewComponent() {
+//     return scrollPane;
+//  }
 
   @Override
   public JComponent getControls() {
@@ -670,7 +669,7 @@ public class FlowstratesView extends AbstractCanvasView {
     PText caption = (PText) camera.getAttribute(CAPTION_NODE_ATTR);
     if (caption != null) {
       PBounds capb = caption.getFullBoundsReference();
-      topMargin4Caption = capb.getMaxY() + capb.getHeight() * .25;
+      topMargin4Caption = capb.getMaxY() + capb.getHeight() * .5;
       globalViewBounds.y += topMargin4Caption;
       globalViewBounds.height -= topMargin4Caption;
     }

@@ -53,10 +53,6 @@ public abstract class AbstractCanvasView implements IView {
     return new VisualCanvas();
   }
 
-  public JComponent getViewComponent() {
-    return getVisualCanvas();
-  }
-
   @Override
   public JComponent getControls() {
     return null;
@@ -71,7 +67,7 @@ public abstract class AbstractCanvasView implements IView {
   }
 
   public Frame getParentFrame() {
-    Component parent = this.getViewComponent();
+    Component parent = this.getVisualCanvas();
     while (parent != null) {
       parent = parent.getParent();
       if (parent instanceof Frame) {

@@ -20,12 +20,14 @@ package jflowmap;
 
 import javax.swing.JComponent;
 
+import jflowmap.views.VisualCanvas;
+
 /**
  * @author Ilya Boyandin
  */
 public interface IView {
 
-  JComponent getViewComponent();
+  VisualCanvas getVisualCanvas();
 
   JComponent getControls();
 

@@ -54,7 +54,7 @@ public abstract class BaseApplet extends JApplet {
     try {
       view = createView();
       if (view != null) {
-        add(view.getViewComponent());
+        add(view.getVisualCanvas());
       }
 
       initControls();

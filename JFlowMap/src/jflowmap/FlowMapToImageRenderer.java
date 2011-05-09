@@ -107,7 +107,7 @@ public class FlowMapToImageRenderer extends JFrame {
     this.datasets = datasets;
 
     jFlowMap = new FlowMapView(null, false);
-    add(jFlowMap.getViewComponent());
+    add(jFlowMap.getVisualCanvas());
 
 
     setSize(1024, 768);
@@ -235,8 +235,8 @@ public class FlowMapToImageRenderer extends JFrame {
       final int n = datasets.size();
       progress = new ProgressMonitor(parent, "Rendering", "", 0, n);
 
-      width = jFlowMap.getViewComponent().getWidth();
-      height = jFlowMap.getViewComponent().getHeight();
+      width = jFlowMap.getVisualCanvas().getWidth();
+      height = jFlowMap.getVisualCanvas().getHeight();
       totalWidth = Math.min(n, numColumns) * (width + paddingX) + paddingX;
       totalHeight = ((int)Math.ceil((double)n / numColumns)) * (height + paddingY) + paddingY;
 
@@ -364,7 +364,7 @@ public class FlowMapToImageRenderer extends JFrame {
 
             g.translate(x, y);
 
-            jFlowMap.getViewComponent().paint(g);
+            jFlowMap.getVisualCanvas().paint(g);
 
             g.setColor(datasetNameLabelColor);
             g.setFont(LABEL_FONT);

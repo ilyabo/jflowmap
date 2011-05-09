@@ -461,7 +461,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private String wordWrapLabel(String label, double maxWidth) {
-    FontMetrics fm = jFlowMap.getViewComponent().getGraphics().getFontMetrics();
+    FontMetrics fm = jFlowMap.getVisualCanvas().getGraphics().getFontMetrics();
     int width = SwingUtilities.computeStringWidth(fm, label);
     if (width > maxWidth) {
       StringBuilder sb = new StringBuilder();
@@ -616,7 +616,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           bundler.bundle(getProgressTracker());
         } catch (Exception ex) {
           logger.error("Bundling error", ex);
-          JOptionPane.showMessageDialog(jFlowMap.getViewComponent(),
+          JOptionPane.showMessageDialog(jFlowMap.getVisualCanvas(),
               "Bundling error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
           );
         } catch (Error err) {
@@ -686,7 +686,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           repaint();
         } catch (Exception ex) {
           logger.error("Aggregation error", ex);
-          JOptionPane.showMessageDialog(jFlowMap.getViewComponent(),
+          JOptionPane.showMessageDialog(jFlowMap.getVisualCanvas(),
               "Aggregation error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
           );
         } catch (Error err) {
