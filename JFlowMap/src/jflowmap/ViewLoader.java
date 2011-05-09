@@ -23,16 +23,22 @@ import java.awt.Container;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import jflowmap.data.ViewConfig;
+import jflowmap.util.piccolo.PButton;
 import jflowmap.views.VisualCanvas;
 
 import org.apache.log4j.Logger;
 
 import at.fhj.utils.misc.FileUtils;
 import at.fhj.utils.swing.JMsgPane;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
 
 /**
  * @author Ilya Boyandin
@@ -84,6 +90,25 @@ public class ViewLoader {
             if (canvas != null) {
               parent.add(canvas, BorderLayout.CENTER);
               isViewEmpty = false;
+
+              final JComponent controls = view.getControls();
+              if (controls != null) {
+                PButton button = new PButton("Settings");
+                button.setPosition(2, 2);
+                canvas.getLayer().addChild(button);
+
+                final JDialog dialog = new JDialog(SwingUtilities.windowForComponent(parent), "Settings");
+                dialog.setContentPane(controls);
+                dialog.pack();
+
+                button.addInputEventListener(new PBasicInputEventHandler() {
+                   @Override
+                   public void mouseClicked(PInputEvent event) {
+                    dialog.setVisible(true);
+                   }
+                 });
+              }
+
             }
           }
         } catch (Exception ex) {

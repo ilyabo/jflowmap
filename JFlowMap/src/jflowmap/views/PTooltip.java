@@ -132,7 +132,7 @@ public class PTooltip extends PPath {
       final PBounds hb = headerNode.getBoundsReference();
       final PBounds lb = labelsNode.getBoundsReference();
       final PBounds vb = valuesNode.getBoundsReference();
-      setBounds(getX(), getY(), Math.max(hb.width, lb.width + gap
+      super.setBounds(getX(), getY(), Math.max(hb.width, lb.width + gap
           + vb.width)
           + padding.x * 2, hb.height + gap
           + Math.max(lb.height, vb.height) + padding.y * 2);
