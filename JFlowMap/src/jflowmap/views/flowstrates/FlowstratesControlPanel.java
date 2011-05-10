@@ -18,6 +18,7 @@
 
 package jflowmap.views.flowstrates;
 
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -31,8 +32,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -49,21 +50,21 @@ public class FlowstratesControlPanel extends JPanel {
 
   private final FlowstratesView view;
 
-//  private final JTabbedPane tabbedPane;
+  private final JTabbedPane tabbedPane;
 
   public FlowstratesControlPanel(FlowstratesView view) {
     this.view = view;
 
-    setLayout(new MigLayout("insets 0 0 0 0,btt,nogrid", "", ""));
+//    setLayout(new MigLayout("insets 0 0 0 0,btt,nogrid", "", ""));
+    setLayout(new FlowLayout());
 //    setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-//    setLayout(new FlowLayout());
 
-//    tabbedPane = new JTabbedPane();
-//    add(tabbedPane);
+    tabbedPane = new JTabbedPane();
+    add(tabbedPane);
 
-    addPanel(createFilterPanel());
+//    addPanel(createFilterPanel());
     addPanel(createDataPanel());
-//    addPanel(createHeatmapColorsPanel());
+    addPanel(createHeatmapColorsPanel());
     addPanel(createFlowLinesPanel());
   }
 
@@ -71,16 +72,16 @@ public class FlowstratesControlPanel extends JPanel {
     add(panel);
     panel.setBorder(BorderFactory.createTitledBorder(panel.getName()));
 
-//    panel.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
-//    tabbedPane.addTab(panel.getName(), panel);
+    panel.setBorder(BorderFactory.createEmptyBorder(7, 0, 0, 0));
+    tabbedPane.addTab(panel.getName(), panel);
 
-    JToolBar tb = new JToolBar(panel.getName());
-    tb.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
-    tb.add(panel);
-    tb.setFloatable(true);
-//    tb.addSeparator();
+//    JToolBar tb = new JToolBar(panel.getName());
+//    tb.putClientProperty("JToolBar.isRollover", Boolean.TRUE);
+//    tb.add(panel);
+//    tb.setFloatable(true);
+//    //    tb.addSeparator();
 
-    add(tb);
+//    add(tb);
   }
 
 
@@ -264,16 +265,16 @@ public class FlowstratesControlPanel extends JPanel {
     });
 
 
-    final JCheckBox focusChk = new JCheckBox("Focus on visible rows",
-        view.getFocusOnVisibleRows());
-    panel.add(focusChk, "gapleft 15");
-    focusChk.setEnabled(true);
-    focusChk.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        view.setFocusOnVisibleRows(focusChk.isSelected());
-      }
-    });
+//    final JCheckBox focusChk = new JCheckBox("Focus on visible rows",
+//        view.getFocusOnVisibleRows());
+//    panel.add(focusChk, "gapleft 15");
+//    focusChk.setEnabled(true);
+//    focusChk.addActionListener(new ActionListener() {
+//      @Override
+//      public void actionPerformed(ActionEvent e) {
+//        view.setFocusOnVisibleRows(focusChk.isSelected());
+//      }
+//    });
 
     return panel;
   }

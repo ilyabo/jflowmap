@@ -100,6 +100,7 @@ public class ViewLoader {
                 final JDialog dialog = new JDialog(SwingUtilities.windowForComponent(parent), "Settings");
                 dialog.setContentPane(controls);
                 dialog.pack();
+                dialog.setResizable(false);
 
                 button.addInputEventListener(new PBasicInputEventHandler() {
                    @Override
