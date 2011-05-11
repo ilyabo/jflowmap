@@ -195,4 +195,8 @@ public final class GeomUtils {
     return r;
   }
 
+  public static double area(Rectangle2D rect) {
+    return rect.getWidth() * rect.getHeight();
+  }
+
 }
