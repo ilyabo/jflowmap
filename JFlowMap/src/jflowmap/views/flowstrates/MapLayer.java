@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
@@ -55,6 +56,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -132,22 +134,40 @@ public class MapLayer extends PLayer {
 
   void updateCentroids() {
     RectSet occupied = new RectSet(nodeIdsToCentroids.size());
-    for (Centroid c : nodeIdsToCentroids.values()) {
-      if (centroidsOpaque) {
-        c.updateInCamera(geoLayerCamera);
-        if (c.getVisible()) {
-          c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getCollisionBounds()));
-        }
-        c.setOpaque(true);
-      } else {
+
+    Set<String> left;
+
+    if (isNodeSelectionEmpty()) {
+      left = nodeIdsToCentroids.keySet();
+    } else {
+      // give priority to the selected nodes
+      left = Sets.newLinkedHashSet(nodeIdsToCentroids.keySet());
+      for (String id : selectedNodes) {
+        updateCentroid(nodeIdsToCentroids.get(id), occupied);
+        left.remove(id);
+      }
+    }
+
+    for (String id : left) {
+      updateCentroid(nodeIdsToCentroids.get(id), occupied);
+    }
+  }
+
+  private void updateCentroid(Centroid c, RectSet occupied) {
+    if (centroidsOpaque) {
+      c.updateInCamera(geoLayerCamera);
+      if (c.getVisible()) {
+        c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getCollisionBounds()));
+      }
+      c.setOpaque(true);
+    } else {
 //        boolean vis = false;
 //        VisualArea va = getVisualAreaMap().getVisualAreaBy(c.getNodeId());
 //        if (va != null) {
 //          vis = va.getFullBoundsReference().contains(c.getLabelNode().getBoundsReference());
 //        }
 //        c.setVisible(vis);
-        c.setOpaque(false);
-      }
+      c.setOpaque(false);
     }
   }
 
