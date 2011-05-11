@@ -20,6 +20,10 @@ package jflowmap;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Rectangle;
+import java.awt.Window;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
@@ -37,8 +41,10 @@ import org.apache.log4j.Logger;
 
 import at.fhj.utils.misc.FileUtils;
 import at.fhj.utils.swing.JMsgPane;
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -93,21 +99,7 @@ public class ViewLoader {
 
               final JComponent controls = view.getControls();
               if (controls != null) {
-                PButton button = new PButton("Settings");
-                button.setPosition(2, 2);
-                canvas.getLayer().addChild(button);
-
-                final JDialog dialog = new JDialog(SwingUtilities.windowForComponent(parent), "Settings");
-                dialog.setContentPane(controls);
-                dialog.pack();
-                dialog.setResizable(false);
-
-                button.addInputEventListener(new PBasicInputEventHandler() {
-                   @Override
-                   public void mouseClicked(PInputEvent event) {
-                    dialog.setVisible(true);
-                   }
-                 });
+                createControls(parent, canvas, controls);
               }
 
             }
@@ -131,6 +123,35 @@ public class ViewLoader {
     };
 
     worker.execute();
+  }
+
+  private static void createControls(final Container parent, VisualCanvas canvas,
+      final JComponent controls) {
+    final PButton button = new PButton("Settings");
+    final PCamera ccam = canvas.getCamera();
+    ccam.addChild(button);
+    ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        PBounds b = ccam.getBoundsReference();
+        button.setPosition(b.getMaxX() - button.getWidth() - 2, 2);
+      }
+    });
+
+    Window win = SwingUtilities.windowForComponent(parent);
+    final JDialog dialog = new JDialog(win, "Settings");
+    dialog.setContentPane(controls);
+    dialog.pack();
+    Rectangle b = win.getBounds();
+    dialog.setLocation((int)b.getMaxX() - dialog.getWidth(), (int)b.getMaxY() - dialog.getHeight());
+    dialog.setResizable(false);
+
+    button.addInputEventListener(new PBasicInputEventHandler() {
+       @Override
+       public void mouseClicked(PInputEvent event) {
+        dialog.setVisible(true);
+       }
+     });
   }
 
 }
