@@ -51,6 +51,8 @@ public class FlowLinesLayerNode extends PNode {
   private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.ORIGIN;
   private Map<String, Color> flowLinesPalette;
 
+  private boolean showFlowLines = true;
+
   public FlowLinesLayerNode(FlowstratesView flowstratesView) {
     this.flowstratesView = flowstratesView;
   }
@@ -65,19 +67,28 @@ public class FlowLinesLayerNode extends PNode {
     updateFlowLineColors();
   }
 
+  public void setShowFlowLines(boolean showFlowLines) {
+    if (this.showFlowLines != showFlowLines) {
+      this.showFlowLines = showFlowLines;
+      renewFlowLines();
+    }
+  }
+
   void renewFlowLines() {
     removeAllChildren();
 
     edgesToLines = Maps.newHashMap();
 
-    for (Edge edge : flowstratesView.getVisibleEdges()) {
-      FlowLine origin = createFlowLine(edge);
-      FlowLine dest = createFlowLine(edge);
-      edgesToLines.put(edge, Pair.of(origin, dest));
-    }
+    if (showFlowLines) {
+      for (Edge edge : flowstratesView.getVisibleEdges()) {
+        FlowLine origin = createFlowLine(edge);
+        FlowLine dest = createFlowLine(edge);
+        edgesToLines.put(edge, Pair.of(origin, dest));
+      }
 
-    updateFlowLineColors();
-    updateFlowLinePositionsAndVisibility();
+      updateFlowLineColors();
+      updateFlowLinePositionsAndVisibility();
+    }
   }
 
   private FlowLine createFlowLine(Edge edge) {
@@ -87,17 +98,19 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   private void updateFlowLineColors() {
-    for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
-      Pair<FlowLine, FlowLine> p = e.getValue();
-      Pair<Color, Color> colors = getFlowLineColors(e.getKey());
+    if (showFlowLines) {
+      for (Map.Entry<Edge, Pair<FlowLine, FlowLine>> e : edgesToLines.entrySet()) {
+        Pair<FlowLine, FlowLine> p = e.getValue();
+        Pair<Color, Color> colors = getFlowLineColors(e.getKey());
 
-      FlowLine originLine = p.first();
-      originLine.setColor(colors.first());
-      originLine.setHighlightedColor(colors.second());
+        FlowLine originLine = p.first();
+        originLine.setColor(colors.first());
+        originLine.setHighlightedColor(colors.second());
 
-      FlowLine destLine = p.second();
-      destLine.setColor(colors.first());
-      destLine.setHighlightedColor(colors.second());
+        FlowLine destLine = p.second();
+        destLine.setColor(colors.first());
+        destLine.setHighlightedColor(colors.second());
+      }
     }
   }
 
@@ -131,27 +144,31 @@ public class FlowLinesLayerNode extends PNode {
   void hideAllFlowLines() {
     for (Edge edge : flowstratesView.getVisibleEdges()) {
       Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
-      lines.first().setVisible(false);
-      lines.second().setVisible(false);
+      if (lines != null) {
+        lines.first().setVisible(false);
+        lines.second().setVisible(false);
+      }
     }
   }
 
   void updateFlowLinePositionsAndVisibility() {
-    int row = 0;
+    if (showFlowLines) {
+      int row = 0;
 
-    for (Edge edge : flowstratesView.getVisibleEdges()) {
-      Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
-      Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
+      for (Edge edge : flowstratesView.getVisibleEdges()) {
+        Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
+        Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
 
-      if (lines != null  &&  labels != null) {
-        updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoint.ORIGIN);
-        updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoint.DEST);
+        if (lines != null  &&  labels != null) {
+          updateFlowLine(row, edge, lines.first(), labels.first(), FlowEndpoint.ORIGIN);
+          updateFlowLine(row, edge, lines.second(), labels.second(), FlowEndpoint.DEST);
+        }
+
+        row++;
       }
 
-      row++;
+//      repaint();
     }
-
-    repaint();
   }
 
   private void updateFlowLine(int row, Edge edge, FlowLine line, PText label, FlowEndpoint ep) {

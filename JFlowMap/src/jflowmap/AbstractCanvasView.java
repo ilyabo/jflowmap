@@ -49,6 +49,7 @@ public abstract class AbstractCanvasView implements IView {
     this.visualCanvas.getCamera().addChild(tooltipBox);
   }
 
+
   protected VisualCanvas createVisualCanvas() {
     return new VisualCanvas();
   }

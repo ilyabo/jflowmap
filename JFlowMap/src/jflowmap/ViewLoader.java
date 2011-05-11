@@ -150,6 +150,8 @@ public class ViewLoader {
        @Override
        public void mouseClicked(PInputEvent event) {
         dialog.setVisible(true);
+        dialog.toFront();
+        dialog.requestFocus();
        }
      });
   }

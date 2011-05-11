@@ -20,11 +20,11 @@ package jflowmap.views.flowmap;
 
 import java.awt.Color;
 import java.awt.Paint;
+import java.awt.geom.Rectangle2D;
 
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.Area;
 import jflowmap.views.ColorCodes;
-import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
@@ -36,12 +36,14 @@ public class VisualArea extends PPath {
   private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
   private final VisualAreaMap visualAreaMap;
   private final Area area;
-  private PActivity lastActivity;
+  private final Rectangle2D boundingBox;
+//  private PActivity lastActivity;
 
   public VisualArea(VisualAreaMap visualAreaMap, Area area, MapProjection proj) {
     super(area.asPath(proj));
     this.visualAreaMap = visualAreaMap;
     this.area = area;
+    this.boundingBox = area.asBoundingBox(proj);
     updateColors();
   }
 
@@ -51,6 +53,10 @@ public class VisualArea extends PPath {
 
   public Area getArea() {
     return area;
+  }
+
+  public Rectangle2D getBoundingBox() {
+    return (Rectangle2D)boundingBox.clone();
   }
 
   public void updateColors() {
@@ -68,19 +74,19 @@ public class VisualArea extends PPath {
     repaint();
   }
 
-  @Override
-  public boolean addActivity(PActivity activity) {
-    if (lastActivity != null && lastActivity.isStepping()) {
-      lastActivity.terminate(PActivity.TERMINATE_WITHOUT_FINISHING);
-      lastActivity = null;
-    }
-    if (super.addActivity(activity)) {
-      lastActivity = activity;
-      return true;
-    } else {
-      return false;
-    }
-  }
+//  @Override
+//  public boolean addActivity(PActivity activity) {
+//    if (lastActivity != null && lastActivity.isStepping()) {
+//      lastActivity.terminate(PActivity.TERMINATE_WITHOUT_FINISHING);
+//      lastActivity = null;
+//    }
+//    if (super.addActivity(activity)) {
+//      lastActivity = activity;
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
 
   public boolean isEmpty() {
     return getBoundsReference().isEmpty();

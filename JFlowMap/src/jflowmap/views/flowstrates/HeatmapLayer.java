@@ -360,9 +360,18 @@ public class HeatmapLayer extends PLayer {
 
       @Override
       public void mouseClicked(PInputEvent event) {
-        if (event.isControlDown()) {
-          flowstratesView.setEgdeForSimilaritySorting(node(event).getEdge());
-        }
+//        if (event.isControlDown()) {
+//          flowstratesView.setEgdeForSimilaritySorting(node(event).getEdge());
+//        }
+        HeatmapCell cell = node(event);
+        Edge edge = cell.getEdge();
+        FlowMapGraph fmg = cell.getFlowMapGraph();
+
+        String srcId = fmg.getSourceNodeId(edge);
+        String targetId = fmg.getTargetNodeId(edge);
+
+        flowstratesView.getMapLayer(FlowEndpoint.ORIGIN).focusOnNode(srcId);
+        flowstratesView.getMapLayer(FlowEndpoint.DEST).focusOnNode(targetId);
       }
     };
   }

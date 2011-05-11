@@ -19,22 +19,19 @@
 package jflowmap;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.plaf.FontUIResource;
 
 import jflowmap.util.SwingUtils;
 
 import org.apache.log4j.Logger;
 
 import at.fhj.utils.swing.JMsgPane;
+import edu.umd.cs.piccolo.util.PDebug;
 
 /**
  * @author Ilya Boyandin
@@ -46,11 +43,24 @@ public class JFlowMapMain {
   public static boolean IS_OS_MAC = getOSMatches("Mac");
   public static final String OS_NAME = System.getProperty("os.name");
 
+  private static void enableDebugging() {
+    PDebug.debugThreads = true;
+//    PDebug.debugBounds = true;
+//    PDebug.debugFullBounds = true;
+    PDebug.debugPaintCalls = true;
+//    PDebug.debugPrintFrameRate = true;
+//    PDebug.debugPrintUsedMemory = true;
+//    PDebug.debugRegionManagement = true;
+  }
+
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
       System.out.println("Usage: java -jar jflowmap.jar [--fullscreen] <view-config.jfmv>");
       System.exit(0);
     }
+
+//    enableDebugging();
+
 
     final String configLocation;
     final boolean fullscreenMode;
@@ -65,7 +75,7 @@ public class JFlowMapMain {
 
     logger.info(">>> Starting JFlowMap");
 
-    initFonts();
+//    initFonts();
 
 //    initSystemLF();
 
@@ -120,6 +130,7 @@ public class JFlowMapMain {
 //    showMainFrame();
   }
 
+  /*
   private static void initFonts() {
     final float scale = .9f;
     UIDefaults defaults = UIManager.getDefaults();
@@ -138,6 +149,7 @@ public class JFlowMapMain {
                 ));
          } } }
   }
+  */
 
   private static void showMainFrame() {
     if (!IS_OS_MAC) {

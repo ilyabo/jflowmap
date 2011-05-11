@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.ColorSchemes;
@@ -97,7 +98,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private final FlowMapGraph flowMapGraph;
   // private final PScrollPane scrollPane;
 
-  private final JPanel controlPanel;
+  private JPanel controlPanel;
   private ValueType valueType = ValueType.VALUE;
   private int maxVisibleTuples;
 
@@ -106,15 +107,16 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
-  private final FlowLinesLayerNode flowLinesLayerNode;
+  private FlowLinesLayerNode flowLinesLayerNode;
 
   private List<Edge> visibleEdges;
   private Predicate<Edge> customEdgeFilter;
 
-  private final HeatmapLayer heatmapLayer;
+  private HeatmapLayer heatmapLayer;
 
-  private final MapLayer originMapLayer;
-  private final MapLayer destMapLayer;
+  private final AreaMap areaMap;
+  private MapLayer originMapLayer;
+  private MapLayer destMapLayer;
 
   private boolean focusOnVisibleRows = true;
 
@@ -133,7 +135,8 @@ public class FlowstratesView extends AbstractCanvasView {
   private SeqStat valueStat;
 
 
-  public FlowstratesView(FlowMapGraph fmg, AreaMap areaMap, AggLayersBuilder aggregator,
+
+  public FlowstratesView(FlowMapGraph fmg, final AreaMap areaMap, AggLayersBuilder aggregator,
       int maxVisibleTuples, MapProjection proj) {
 
     logger.info("Opening flowstrates view");
@@ -141,7 +144,7 @@ public class FlowstratesView extends AbstractCanvasView {
     this.flowMapGraph = fmg;
     this.maxVisibleTuples = maxVisibleTuples;
     this.mapProjection = proj;
-
+    this.areaMap = areaMap;
 
     if (aggregator == null) {
       aggregator = new DefaultAggLayersBuilder();
@@ -157,6 +160,16 @@ public class FlowstratesView extends AbstractCanvasView {
     FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightDiffAttr());
     FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
 
+    beforeInitialize();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initialize();
+      }
+    });
+  }
+
+  private void beforeInitialize() {
     VisualCanvas canvas = getVisualCanvas();
     canvas.setAutoFitOnBoundsChange(false);
     canvas.setBackground(style.getBackgroundColor());
@@ -183,10 +196,10 @@ public class FlowstratesView extends AbstractCanvasView {
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
-    heatmapLayer = new HeatmapLayer(this);
+    heatmapLayer = new HeatmapLayer(FlowstratesView.this);
 
-    originMapLayer = new MapLayer(this, areaMap, FlowEndpoint.ORIGIN);
-    destMapLayer = new MapLayer(this, areaMap, FlowEndpoint.DEST);
+    originMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.ORIGIN);
+    destMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.DEST);
 
     addCaption(originMapLayer.getMapLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
@@ -200,23 +213,28 @@ public class FlowstratesView extends AbstractCanvasView {
     canvasLayer.addChild(destMapLayer.getMapLayerCamera());
 
 
-    flowLinesLayerNode = new FlowLinesLayerNode(this);
+    flowLinesLayerNode = new FlowLinesLayerNode(FlowstratesView.this);
     getCamera().addChild(flowLinesLayerNode);
 
 
-    controlPanel = new FlowstratesControlPanel(this);
+    controlPanel = new FlowstratesControlPanel(FlowstratesView.this);
 
     // scrollPane = new PScrollPane(canvas);
     // scrollPane.setHorizontalScrollBarPolicy(PScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     // scrollPane.setVerticalScrollBarPolicy(PScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-    this.valueStat = stdValueStat();
+    FlowstratesView.this.valueStat = stdValueStat();
 
-    legend = new FlowstratesLegend(this);
+    legend = new FlowstratesLegend(FlowstratesView.this);
     heatmapLayer.getHeatmapCamera().addChild(legend);
+  }
 
+  /**
+   * This method must run in EDT
+   */
+  private void initialize() {
     resetVisibleEdges();
-
+//  getVisualCanvas().repaint();
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {

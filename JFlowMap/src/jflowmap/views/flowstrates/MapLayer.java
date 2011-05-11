@@ -80,6 +80,7 @@ public class MapLayer extends PLayer {
   private final Lasso lasso;
   private PInputEventListener centroidMouseListener;
   private boolean centroidsOpaque = true;
+  private Rectangle2D centroidsBounds;
 
 
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoint s) {
@@ -532,34 +533,37 @@ public class MapLayer extends PLayer {
     }
   }
 
+
   Rectangle2D centroidsBounds() {
-    Rectangle2D.Double b = new Rectangle2D.Double();
-    boolean first = true;
-    for (Centroid c : nodeIdsToCentroids.values()) {
-      double x = c.getOrigX();
-      double y = c.getOrigY();
-      if (first) {
-        b.x = x;
-        b.y = y;
-        first = false;
-      } else {
-        if (x < b.x) {
+    if (centroidsBounds == null) {
+      Rectangle2D.Double b = new Rectangle2D.Double();
+      boolean first = true;
+      for (Centroid c : nodeIdsToCentroids.values()) {
+        double x = c.getOrigX();
+        double y = c.getOrigY();
+        if (first) {
           b.x = x;
-        }
-        if (x > b.getMaxX()) {
-          b.width = x - b.x;
-        }
-        if (y < b.y) {
           b.y = y;
-        }
-        if (y > b.getMaxY()) {
-          b.height = y - b.y;
+          first = false;
+        } else {
+          if (x < b.x) {
+            b.x = x;
+          }
+          if (x > b.getMaxX()) {
+            b.width = x - b.x;
+          }
+          if (y < b.y) {
+            b.y = y;
+          }
+          if (y > b.getMaxY()) {
+            b.height = y - b.y;
+          }
         }
       }
+      // getVisualAreaMapCamera(s).localToView(b);
+      centroidsBounds = b;
     }
-    // getVisualAreaMapCamera(s).localToView(b);
-
-    return b;
+    return centroidsBounds;
   }
 
 
@@ -622,6 +626,46 @@ public class MapLayer extends PLayer {
       selectedNodes = null;
       updateCentroidColors();
       return true;
+    }
+  }
+
+  public void focusOnNode(String nodeId) {
+    focusOnNodes(Arrays.asList(nodeId));
+  }
+
+  public void focusOnNodes(Iterable<String> nodeIds) {
+    Rectangle2D rect = null;
+
+    for (String nodeId : nodeIds) {
+      Centroid c = nodeIdsToCentroids.get(nodeId);
+      if (c != null) {
+        if (rect == null) {
+          rect = new Rectangle2D.Double(c.getOrigX(), c.getOrigY(), 0, 0);
+        } else {
+          rect.add(c.getOrigX(), c.getOrigY());
+        }
+      }
+
+      VisualArea va = visualAreaMap.getVisualAreaBy(nodeId);
+      if (va != null) {
+        if (rect == null) {
+          rect = va.getBoundingBox();
+        } else {
+          rect.add(va.getBoundingBox());
+        }
+      }
+    }
+
+    if (rect != null) {
+      GeomUtils.growRectInPlaceByRelativeSize(rect, 1.5, 1.5, 1.5, 1.5);
+
+      Rectangle2D fullbb = getVisualAreaMap().getBoundingBox();
+      if (GeomUtils.area(rect) > GeomUtils.area(fullbb)) {
+        rect = fullbb;
+      }
+
+      getMapLayerCamera().animateViewToCenterBounds(rect, true, 500);
+//      PiccoloUtils.animateViewToPaddedBounds(getMapLayerCamera(), rect, new Insets(20, 20, 20, 20), 500);
     }
   }
 

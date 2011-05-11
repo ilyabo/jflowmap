@@ -21,6 +21,7 @@ package jflowmap.models.map;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import jflowmap.geo.MapProjection;
@@ -44,15 +45,21 @@ public class Area {
   private final Polygon[] polygons;
 
   public Area(String id, String name, Iterable<Polygon> polygons) {
-    this.id = id;
-    this.name = name;
-    this.polygons = Iterables.toArray(polygons, Polygon.class);
+    this(id, name, Iterables.toArray(polygons, Polygon.class), false);
   }
 
   public Area(String id, String name, Polygon[] polygons) {
+    this(id, name, polygons, true);
+  }
+
+  private Area(String id, String name, Polygon[] polygons, boolean clone) {
     this.id = id;
     this.name = name;
-    this.polygons = polygons.clone();
+    if (clone) {
+      this.polygons = polygons.clone();
+    } else {
+      this.polygons = polygons;
+    }
   }
 
   public String getId() {
@@ -86,6 +93,23 @@ public class Area {
       }
     }
     return path;
+  }
+
+  public Rectangle2D asBoundingBox(MapProjection proj) {
+    Rectangle2D.Double bb = null;
+    for (Polygon poly : polygons) {
+      for (Point2D point : poly.getPoints()) {
+        Point2D p = proj.project(point.getX(), point.getY());
+        if (bb == null) {
+          bb = new Rectangle2D.Double(p.getX(), p.getY(), 0, 0);
+        } else {
+          if (!bb.contains(p)) {
+            bb.add(p);
+          }
+        }
+      }
+    }
+    return bb;
   }
 
   public static Area fromGeometry(String id, String name, Geometry g) {
