@@ -66,7 +66,7 @@ public class PButton extends PPath {
 
   private static final Color ARMED_PAINT = new Color(170, 170, 170);
   private static final Color ARMED_STROKE_PAINT =  new Color(150, 150, 150);
-  private static final Color ARMED_TEXT_PAINT = ROLLOVER_TEXT_PAINT;
+  private static final Color ARMED_TEXT_PAINT = Color.white;
 
   private static final double ARCW = 20;
   private static final double ARCH = 40;
