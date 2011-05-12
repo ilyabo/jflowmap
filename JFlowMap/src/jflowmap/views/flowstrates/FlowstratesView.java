@@ -271,8 +271,22 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void createButtons() {
+    PBoxLayoutNode buttonPanel0 = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+    PNodes.setPosition(buttonPanel0, 4, 4);
+    getVisualCanvas().getLayer().addChild(buttonPanel0);
+    buttonPanel0.addChild(new PButton(" < ", false));
+    buttonPanel0.addChild(new PButton(" > ", false));
+
+
+
     buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
-//    PNodes.setPosition(buttonPanel, 4, 4);
+
+    final PButton explainButton = new PButton("EXPLAIN", true);
+    buttonPanel.addChild(explainButton);
+
+
+    getVisualCanvas().getLayer().addChild(buttonPanel);
+
     final PButton linesButton = new PButton("LINES", true);
     linesButton.setPressed(true);
     linesButton.addInputEventListener(new PBasicInputEventHandler() {
@@ -295,7 +309,6 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     });
     buttonPanel.addChild(diffButton);
-    getVisualCanvas().getLayer().addChild(buttonPanel);
   }
 
   public void resetVisibleEdges() {

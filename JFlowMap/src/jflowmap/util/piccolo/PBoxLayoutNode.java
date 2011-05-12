@@ -67,7 +67,7 @@ public class PBoxLayoutNode extends PNode {
 //    }
 
     PBounds boxb = getBounds();
-    double xOffset = boxb.x, yOffset = boxb.y;
+    double x = boxb.x, y = boxb.y;
     for (PNode child : PNodes.childrenOf(this)) {
       PBounds b = child.getFullBoundsReference();
       double w = b.width;
@@ -75,10 +75,12 @@ public class PBoxLayoutNode extends PNode {
 //      if (equalSize) {
 //        w = maxSize;
 //      }
-      child.setBounds(xOffset, yOffset, w, h);
-      xOffset += axis.dx(w, h, spacing);
-      yOffset += axis.dy(w, h, spacing);
+      child.setBounds(x, y, w, h);
+      x += axis.dx(w, h, spacing);
+      y += axis.dy(w, h, spacing);
     }
+
+    super.setBounds(boxb.x, boxb.y, x - boxb.x, y - boxb.y);
   }
 
 //  private double maxSize() {
@@ -94,7 +96,6 @@ public class PBoxLayoutNode extends PNode {
 
   @Override
   public boolean setBounds(double x, double y, double width, double height) {
-    System.out.println("PBoxLayoutNode.setBounds(): " + x + "," + y);
 //    double dx = x - getX();
 //    double dy = y - getY();
     if (super.setBounds(x, y, width, height)) {

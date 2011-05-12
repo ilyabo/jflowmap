@@ -20,8 +20,11 @@ package jflowmap;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
@@ -34,7 +37,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import jflowmap.data.ViewConfig;
+import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
+import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.VisualCanvas;
 
 import org.apache.log4j.Logger;
@@ -56,11 +61,14 @@ public class ViewLoader {
   public static final ImageIcon LOADING_ICON = new ImageIcon(
       JFlowMapMain.class.getResource("resources/loading.gif"));
 
+  private static final Font LOADING_TEXT_FONT = new Font("Sans Serif", Font.PLAIN, 11);
+
   public static void loadView(final String viewConfigLocation, final Container parent)
     throws Exception
   {
     final JLabel loadingLabel = new JLabel(" Opening '" +
         FileUtils.getFilename(viewConfigLocation) + "'...", LOADING_ICON, JLabel.CENTER);
+    loadingLabel.setFont(LOADING_TEXT_FONT);
     parent.add(loadingLabel);
 
 //    view = (IView) Worker.post(new Task() {
@@ -127,17 +135,29 @@ public class ViewLoader {
 
   private static void createControls(final Container parent, VisualCanvas canvas,
       final JComponent controls) {
-    final PButton button = new PButton("Settings", true);
-    final PCamera ccam = canvas.getCamera();
-    ccam.addChild(button);
 
+
+    final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+    buttonPanel.addChild(createSettingsButton(parent, controls));
+
+    final PButton helpBut = new PButton(" ? ", true);
+    buttonPanel.addChild(helpBut);
+
+
+    final PCamera ccam = canvas.getCamera();
     ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         PBounds b = ccam.getBoundsReference();
-        button.setPosition(b.getMaxX() - button.getWidth() - 4, 4);
+        PNodes.setPosition(buttonPanel, b.getMaxX() - buttonPanel.getFullBoundsReference().width - 4, 4);
       }
     });
+    ccam.addChild(buttonPanel);
+
+  }
+
+  private static PButton createSettingsButton(final Container parent, final JComponent controls) {
+    final PButton settingsBut = new PButton("Settings", true);
 
     Window win = SwingUtilities.windowForComponent(parent);
     final JDialog dialog = new JDialog(win, "Settings");
@@ -147,18 +167,30 @@ public class ViewLoader {
     dialog.setLocation((int)b.getMaxX() - dialog.getWidth(), (int)b.getMaxY() - dialog.getHeight());
     dialog.setResizable(false);
 
-    button.addInputEventListener(new PBasicInputEventHandler() {
+    settingsBut.addInputEventListener(new PBasicInputEventHandler() {
        @Override
        public void mouseClicked(PInputEvent event) {
-         if (button.isPressed()) {
+         if (settingsBut.isPressed()) {
            dialog.setVisible(true);
            dialog.toFront();
            dialog.requestFocus();
+           dialog.addWindowListener(new WindowAdapter() {
+             @Override
+            public void windowDeactivated(WindowEvent e) {
+               if (!settingsBut.isArmed()) {
+                 settingsBut.setPressed(false);
+               }
+             }
+             @Override
+             public void windowClosed(WindowEvent e) {
+             }
+           });
          } else {
            dialog.setVisible(false);
          }
        }
      });
-  }
 
+    return settingsBut;
+  }
 }
