@@ -82,7 +82,6 @@ public class MapLayer extends PLayer {
   private boolean centroidsOpaque = true;
   private Rectangle2D centroidsBounds;
 
-
   public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoint s) {
     this.flowstratesView = flowstratesView;
     this.endpoint = s;
@@ -90,14 +89,14 @@ public class MapLayer extends PLayer {
     geoLayerCamera = new PCamera();
     geoLayerCamera.addLayer(this);
 
-    visualAreaMap = new VisualAreaMap(
-        flowstratesView.getMapColorScheme(), areaMap, flowstratesView.getMapProjection());
+    visualAreaMap = new VisualAreaMap(flowstratesView.getMapColorScheme(), areaMap,
+        flowstratesView.getMapProjection());
 
     addChild(visualAreaMap);
     geoLayerCamera.setPaint(visualAreaMap.getPaint());
 
     createCentroids();
-    addMouseOverListenersToMaps(visualAreaMap);  // must be after createCentroids
+    addMouseOverListenersToMaps(visualAreaMap); // must be after createCentroids
 
     visualAreaMap.setBounds(visualAreaMap.getFullBoundsReference()); // enable mouse ev.
 
@@ -162,12 +161,12 @@ public class MapLayer extends PLayer {
       }
       c.setOpaque(true);
     } else {
-//        boolean vis = false;
-//        VisualArea va = getVisualAreaMap().getVisualAreaBy(c.getNodeId());
-//        if (va != null) {
-//          vis = va.getFullBoundsReference().contains(c.getLabelNode().getBoundsReference());
-//        }
-//        c.setVisible(vis);
+      // boolean vis = false;
+      // VisualArea va = getVisualAreaMap().getVisualAreaBy(c.getNodeId());
+      // if (va != null) {
+      // vis = va.getFullBoundsReference().contains(c.getLabelNode().getBoundsReference());
+      // }
+      // c.setVisible(vis);
       c.setOpaque(false);
     }
   }
@@ -180,16 +179,14 @@ public class MapLayer extends PLayer {
     // sort centroids so that more important are shown first
     Iterable<Node> nodes = CollectionUtils.sort(
         flowMapGraph.nodesHavingEdges(endpoint.dir()),
-        Collections.reverseOrder(
-            FlowMapNodeTotals.createMaxNodeWeightTotalsComparator(
-                flowMapGraph, endpoint.dir())));
+        Collections.reverseOrder(FlowMapNodeTotals.createMaxNodeWeightTotalsComparator(flowMapGraph,
+            endpoint.dir())));
 
     centroidMouseListener = createCentroidMouseListener();
 
     Iterable<Node> nodesWithCoords = Iterables.filter(nodes, haveCoordsPredicate());
     Iterable<Node> nodesWithoutCoords = flowMapGraph.sortByAttr(
-        Iterables.filter(nodes, Predicates.not(haveCoordsPredicate())),
-        flowMapGraph.getNodeLabelAttr());
+        Iterables.filter(nodes, Predicates.not(haveCoordsPredicate())), flowMapGraph.getNodeLabelAttr());
 
     createCentroidsForNodesWithCoords(nodesWithCoords);
     createCentroidsAndAreasForNodesWithoutCoords(nodesWithoutCoords);
@@ -199,8 +196,7 @@ public class MapLayer extends PLayer {
     FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
 
     for (Node node : nodesWithCoords) {
-      Point2D p = visualAreaMap.getMapProjection().project(
-          node.getDouble(fmg.getNodeLonAttr()),
+      Point2D p = visualAreaMap.getMapProjection().project(node.getDouble(fmg.getNodeLonAttr()),
           node.getDouble(fmg.getNodeLatAttr()));
 
       createCentroid(node, p.getX(), p.getY());
@@ -210,7 +206,6 @@ public class MapLayer extends PLayer {
   private void createCentroidsAndAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
     Rectangle2D bounds = centroidsBounds();
     FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
-
 
     int num = Iterables.size(nodesWithoutCoords);
     if (num > 0) {
@@ -224,7 +219,7 @@ public class MapLayer extends PLayer {
 
       for (Node node : nodesWithoutCoords) {
         final int numInThisRow = (cnt >= (num - r) ? r : numPerRow);
-        double hcentering = (bounds.getWidth() - (numInThisRow - 1) * rwidth)/2;
+        double hcentering = (bounds.getWidth() - (numInThisRow - 1) * rwidth) / 2;
 
         double x = hcentering + bounds.getMinX() + (cnt % numPerRow) * rwidth;
         double y = bounds.getMaxY() + topMargin + Math.floor(cnt / numPerRow) * rheight;
@@ -233,17 +228,13 @@ public class MapLayer extends PLayer {
         String nodeId = fmg.getNodeId(node);
         String label = fmg.getNodeLabel(node);
 
-        Rectangle2D rect = new Rectangle2D.Double(x - rwidth/2, y - rheight/3, rwidth, rheight);
+        Rectangle2D rect = new Rectangle2D.Double(x - rwidth / 2, y - rheight / 3, rwidth, rheight);
         rect = GeomUtils.growRectByRelativeSize(rect, -0.05, -0.1, -0.05, -0.1);
 
-        Polygon polygon = new Polygon(
-            new Point2D[] {
-                new Point2D.Double(rect.getX(), rect.getY()),
-                new Point2D.Double(rect.getMaxX(), rect.getY()),
-                new Point2D.Double(rect.getMaxX(), rect.getMaxY()),
-                new Point2D.Double(rect.getX(), rect.getMaxY()),
-                new Point2D.Double(rect.getX(), rect.getY())
-            });
+        Polygon polygon = new Polygon(new Point2D[] { new Point2D.Double(rect.getX(), rect.getY()),
+            new Point2D.Double(rect.getMaxX(), rect.getY()),
+            new Point2D.Double(rect.getMaxX(), rect.getMaxY()),
+            new Point2D.Double(rect.getX(), rect.getMaxY()), new Point2D.Double(rect.getX(), rect.getY()) });
 
         visualAreaMap.addArea(new Area(nodeId, label, Arrays.asList(polygon)), MapProjections.NONE);
 
@@ -257,10 +248,8 @@ public class MapLayer extends PLayer {
 
     String nodeId = flowMapGraph.getNodeId(node);
     String nodeLabel = flowMapGraph.getNodeLabel(node);
-    Centroid c = new Centroid(
-        nodeId, nodeLabel, x, y, CENTROID_DOT_SIZE,
-        flowstratesView.getStyle().getMapAreaCentroidPaint(),
-        flowstratesView);
+    Centroid c = new Centroid(nodeId, nodeLabel, x, y, CENTROID_DOT_SIZE, flowstratesView.getStyle()
+        .getMapAreaCentroidPaint(), flowstratesView);
     // c.setPickable(false);
 
     c.addInputEventListener(centroidMouseListener);
@@ -277,7 +266,7 @@ public class MapLayer extends PLayer {
         double lon = node.getDouble(fmg.getNodeLonAttr());
         double lat = node.getDouble(fmg.getNodeLatAttr());
 
-        return !((Double.isNaN(lon)  ||  lon == 0)  &&  (Double.isNaN(lat)  ||  lat == 0));
+        return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
       }
     };
   }
@@ -320,7 +309,6 @@ public class MapLayer extends PLayer {
     return nodeIds;
   }
 
-
   Point2D getCentroidPoint(Edge edge) {
     Centroid centroid = nodeIdsToCentroids.get(getFlowMapGraph().getNodeId(endpoint.nodeOf(edge)));
     Point2D point;
@@ -344,7 +332,8 @@ public class MapLayer extends PLayer {
     return new PTypedBasicInputEventHandler<Centroid>(Centroid.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (lasso.isSelecting()) return;
+        if (lasso.isSelecting())
+          return;
 
         Centroid c = node(event);
         if (c != null) {
@@ -354,7 +343,8 @@ public class MapLayer extends PLayer {
 
       @Override
       public void mouseClicked(PInputEvent event) {
-        if (lasso.isSelecting()) return;
+        if (lasso.isSelecting())
+          return;
 
         Centroid centroid = node(event);
         if (centroid != null) {
@@ -377,9 +367,11 @@ public class MapLayer extends PLayer {
     PInputEventListener listener = new PTypedBasicInputEventHandler<VisualArea>(VisualArea.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        if (lasso.isSelecting()) return;
+        if (lasso.isSelecting())
+          return;
 
-        if (event.isControlDown()) return;
+        if (event.isControlDown())
+          return;
 
         VisualArea va = node(event);
         if (va != null) {
@@ -392,7 +384,8 @@ public class MapLayer extends PLayer {
 
       @Override
       public void mouseClicked(PInputEvent event) {
-        if (lasso.isSelecting()) return;
+        if (lasso.isSelecting())
+          return;
 
         VisualArea va = node(event);
         if (va != null) {
@@ -430,6 +423,14 @@ public class MapLayer extends PLayer {
           newSelection.add(nodeId);
         }
       } else {
+        if (selectedNodes.size() == 1 && selectedNodes.get(0).equals(nodeId)) {
+          // focusing on corresponding nodes in the opposite map when clicking on
+          // the only selected node
+          FlowEndpoint other = endpoint.opposite();
+          MapLayer otherMap = flowstratesView.getMapLayer(other);
+          otherMap.focusOnNodes(FlowMapGraph.nodeIdsOf(Nodes.nodesOfEdges(flowstratesView.getVisibleEdges(),
+              other)));
+        }
         newSelection = Arrays.asList(nodeId);
       }
     }
@@ -474,8 +475,8 @@ public class MapLayer extends PLayer {
   }
 
   public Map<String, Double> calcNodeTotalsFor(Iterable<Edge> edges, String weightAttr) {
-    return FlowMapNodeTotals.calcNodeTotalsFor(
-        getFlowMapGraph(), edges, getColumnValueAttrName(weightAttr), endpoint);
+    return FlowMapNodeTotals.calcNodeTotalsFor(getFlowMapGraph(), edges, getColumnValueAttrName(weightAttr),
+        endpoint);
   }
 
   void updateMapAreaColorsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
@@ -493,18 +494,16 @@ public class MapLayer extends PLayer {
     }
   }
 
-
   void updateOnHeatmapColumnHover(String columnAttr, boolean hover) {
     Iterable<Edge> edges;
-//    if (flowstratesView.isFilterApplied()) {
-      edges = flowstratesView.getVisibleEdges();
-//    } else {
-//      edges = getFlowMapGraph().edges();
-//    }
+    // if (flowstratesView.isFilterApplied()) {
+    edges = flowstratesView.getVisibleEdges();
+    // } else {
+    // edges = getFlowMapGraph().edges();
+    // }
     setCentroidsOpaque(!hover);
     colorizeMapAreasWithNodeTotals(edges, columnAttr, hover);
   }
-
 
   private String getColumnValueAttrName(String columnAttr) {
     ValueType vtype = flowstratesView.getValueType();
@@ -532,7 +531,6 @@ public class MapLayer extends PLayer {
       va.repaint();
     }
   }
-
 
   Rectangle2D centroidsBounds() {
     if (centroidsBounds == null) {
@@ -565,7 +563,6 @@ public class MapLayer extends PLayer {
     }
     return centroidsBounds;
   }
-
 
   void setEdgeCentroidsHighlighted(HeatmapCell hmcell, boolean highlighted) {
     Node node = getFlowMapGraph().getNodeOf(hmcell.getEdge(), endpoint);
@@ -605,7 +602,7 @@ public class MapLayer extends PLayer {
   }
 
   public boolean isNodeSelectionEmpty() {
-    return selectedNodes == null  ||  selectedNodes.isEmpty();
+    return selectedNodes == null || selectedNodes.isEmpty();
   }
 
   public boolean nodeSelectionContains(String nodeId) {
@@ -664,7 +661,7 @@ public class MapLayer extends PLayer {
       double w = rect.getWidth(), h = rect.getHeight();
 
       // Show more context for smaller areas and less for larger ones
-      double alpha = Math.min((fw - Math.min(fw, w*5))/fw, (fh - Math.min(fh, h*5))/fh);
+      double alpha = Math.min((fw - Math.min(fw, w * 5)) / fw, (fh - Math.min(fh, h * 5)) / fh);
       double growBy = 0.2 + 4.0 * Math.pow(alpha, 5);
       GeomUtils.growRectInPlaceByRelativeSize(rect, growBy, growBy, growBy, growBy);
 
