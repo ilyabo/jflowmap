@@ -58,7 +58,7 @@ public class PButton extends PPath {
 
   private static final Color ROLLOVER_PAINT = new Color(220, 220, 220);
   private static final Color ROLLOVER_STROKE_PAINT = new Color(150, 150, 150);
-  private static final Color ROLLOVER_TEXT_PAINT = DEFAULT_TEXT_PAINT;
+  private static final Color ROLLOVER_TEXT_PAINT = new Color(90, 90, 90);
 
   private static final Color ROLLOVER_PRESSED_PAINT = new Color(140, 140, 140);
   private static final Color ROLLOVER_PRESSED_STROKE_PAINT = new Color(130, 130, 130);
@@ -114,11 +114,19 @@ public class PButton extends PPath {
     }
   }
 
+  public boolean isArmed() {
+    return isArmed;
+  }
+
   public void setRollover(boolean rollover) {
     if (this.isRollover != rollover) {
       this.isRollover = rollover;
       updateColors();
     }
+  }
+
+  public boolean isRollover() {
+    return isRollover;
   }
 
   public boolean setPosition(double x, double y) {
@@ -179,10 +187,10 @@ public class PButton extends PPath {
 
       @Override
       public void mouseReleased(PInputEvent event) {
-        setArmed(false);
-        if (isToggleButton) {
+        if (isToggleButton  &&  isRollover) {
           setPressed(!isPressed);
         }
+        setArmed(false);
       }
     };
   }
