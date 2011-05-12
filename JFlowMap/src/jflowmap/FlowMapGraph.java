@@ -898,4 +898,13 @@ public class FlowMapGraph {
     return nodeAttrs;
   }
 
+  public static Iterable<String> nodeIdsOf(Iterable<Node> nodes) {
+    return Iterables.transform(nodes, new Function<Node, String>() {
+      @Override
+      public String apply(Node node) {
+        return FlowMapGraph.getIdOfNode(node);
+      }
+    });
+  }
+
 }
