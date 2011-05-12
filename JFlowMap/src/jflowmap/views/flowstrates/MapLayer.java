@@ -657,15 +657,22 @@ public class MapLayer extends PLayer {
     }
 
     if (rect != null) {
-      GeomUtils.growRectInPlaceByRelativeSize(rect, 1.5, 1.5, 1.5, 1.5);
 
-      Rectangle2D fullbb = getVisualAreaMap().getBoundingBox();
-      if (GeomUtils.area(rect) > GeomUtils.area(fullbb)) {
-        rect = fullbb;
+      Rectangle2D fbb = getVisualAreaMap().getBoundingBox();
+
+      final double fw = fbb.getWidth(), fh = fbb.getHeight();
+      double w = rect.getWidth(), h = rect.getHeight();
+
+      // Show more context for smaller areas and less for larger ones
+      double alpha = Math.min((fw - Math.min(fw, w*5))/fw, (fh - Math.min(fh, h*5))/fh);
+      double growBy = 0.2 + 4.0 * Math.pow(alpha, 5);
+      GeomUtils.growRectInPlaceByRelativeSize(rect, growBy, growBy, growBy, growBy);
+
+      if (rect.getWidth() > fw || rect.getHeight() > fh) {
+        rect = fbb;
       }
 
       getMapLayerCamera().animateViewToCenterBounds(rect, true, 500);
-//      PiccoloUtils.animateViewToPaddedBounds(getMapLayerCamera(), rect, new Insets(20, 20, 20, 20), 500);
     }
   }
 
