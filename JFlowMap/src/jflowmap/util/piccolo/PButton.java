@@ -125,6 +125,10 @@ public class PButton extends PPath {
     }
   }
 
+  public boolean isPressed() {
+    return isPressed;
+  }
+
   private void updateColors() {
     if (isArmed) {
       setPaint(ARMED_PAINT);
