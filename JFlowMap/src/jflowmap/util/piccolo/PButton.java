@@ -50,9 +50,21 @@ public class PButton extends PPath {
   private static final Color DEFAULT_STROKE_PAINT = new Color(120, 120, 120);
   private static final Color DEFAULT_TEXT_PAINT = DEFAULT_STROKE_PAINT;
 
-  private static final Color ARMED_PAINT = new Color(150, 150, 150);
-  private static final Color ARMED_STROKE_PAINT = DEFAULT_STROKE_PAINT;
-  private static final Color ARMED_TEXT_PAINT = Color.white;
+  private static final Color PRESSED_PAINT = new Color(130, 130, 130);
+  private static final Color PRESSED_STROKE_PAINT = DEFAULT_STROKE_PAINT;
+  private static final Color PRESSED_TEXT_PAINT = Color.white;
+
+  private static final Color ROLLOVER_PAINT = new Color(220, 220, 220);
+  private static final Color ROLLOVER_STROKE_PAINT = new Color(150, 150, 150);
+  private static final Color ROLLOVER_TEXT_PAINT = DEFAULT_TEXT_PAINT;
+
+  private static final Color ROLLOVER_PRESSED_PAINT = new Color(140, 140, 140);
+  private static final Color ROLLOVER_PRESSED_STROKE_PAINT = new Color(130, 130, 130);
+  private static final Color ROLLOVER_PRESSED_TEXT_PAINT = PRESSED_TEXT_PAINT;
+
+  private static final Color ARMED_PAINT = new Color(170, 170, 170);
+  private static final Color ARMED_STROKE_PAINT =  new Color(150, 150, 150);
+  private static final Color ARMED_TEXT_PAINT = ROLLOVER_TEXT_PAINT;
 
   private static final double ARCW = 10;
   private static final double ARCH = 20;
@@ -62,9 +74,19 @@ public class PButton extends PPath {
 
   private final PText textNode;
   private boolean isArmed = false;
+  private boolean isRollover = false;
+  private boolean isPressed = false;
+
+  private final boolean isToggleButton;
 
   public PButton(String text) {
+    this(text, false);
+  }
+
+  public PButton(String text, boolean toggle) {
     super(new RoundRectangle2D.Double(0, 0, 100, 100, ARCW, ARCH));
+
+    this.isToggleButton = toggle;
 
     textNode = new PText(text.toUpperCase());
     textNode.setFont(FONT);
@@ -85,20 +107,44 @@ public class PButton extends PPath {
     }
   }
 
+  public void setRollover(boolean rollover) {
+    if (this.isRollover != rollover) {
+      this.isRollover = rollover;
+      updateColors();
+    }
+  }
+
   public boolean setPosition(double x, double y) {
     return setBounds(x, y, getWidth(), getHeight());
+  }
+
+  public void setPressed(boolean isPressed) {
+    if (this.isPressed != isPressed) {
+      this.isPressed = isPressed;
+      updateColors();
+    }
   }
 
   private void updateColors() {
     if (isArmed) {
       setPaint(ARMED_PAINT);
       setStrokePaint(ARMED_STROKE_PAINT);
-      textNode.setPaint(ARMED_PAINT);
       textNode.setTextPaint(ARMED_TEXT_PAINT);
+    } else if (isRollover  &&  !isPressed) {
+      setPaint(ROLLOVER_PAINT);
+      setStrokePaint(ROLLOVER_STROKE_PAINT);
+      textNode.setTextPaint(ROLLOVER_TEXT_PAINT);
+    } else if (isRollover  &&  isPressed) {
+      setPaint(ROLLOVER_PRESSED_PAINT);
+      setStrokePaint(ROLLOVER_PRESSED_STROKE_PAINT);
+      textNode.setTextPaint(ROLLOVER_PRESSED_TEXT_PAINT);
+    } else if (isPressed) {
+      setPaint(PRESSED_PAINT);
+      setStrokePaint(PRESSED_STROKE_PAINT);
+      textNode.setTextPaint(PRESSED_TEXT_PAINT);
     } else {
       setPaint(DEFAULT_PAINT);
       setStrokePaint(DEFAULT_STROKE_PAINT);
-      textNode.setPaint(DEFAULT_PAINT);
       textNode.setTextPaint(DEFAULT_TEXT_PAINT);
     }
   }
@@ -107,12 +153,25 @@ public class PButton extends PPath {
     return new PBasicInputEventHandler() {
       @Override
       public void mouseEntered(PInputEvent event) {
-        setArmed(true);
+        setRollover(true);
       }
 
       @Override
       public void mouseExited(PInputEvent event) {
+        setRollover(false);
+      }
+
+      @Override
+      public void mousePressed(PInputEvent event) {
+        setArmed(true);
+      }
+
+      @Override
+      public void mouseReleased(PInputEvent event) {
         setArmed(false);
+        if (isToggleButton) {
+          setPressed(!isPressed);
+        }
       }
     };
   }
