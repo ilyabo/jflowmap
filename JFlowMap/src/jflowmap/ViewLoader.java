@@ -127,14 +127,15 @@ public class ViewLoader {
 
   private static void createControls(final Container parent, VisualCanvas canvas,
       final JComponent controls) {
-    final PButton button = new PButton("Settings");
+    final PButton button = new PButton("Settings", true);
     final PCamera ccam = canvas.getCamera();
     ccam.addChild(button);
+
     ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         PBounds b = ccam.getBoundsReference();
-        button.setPosition(b.getMaxX() - button.getWidth() - 2, 2);
+        button.setPosition(b.getMaxX() - button.getWidth() - 4, 4);
       }
     });
 
@@ -149,9 +150,13 @@ public class ViewLoader {
     button.addInputEventListener(new PBasicInputEventHandler() {
        @Override
        public void mouseClicked(PInputEvent event) {
-        dialog.setVisible(true);
-        dialog.toFront();
-        dialog.requestFocus();
+         if (button.isPressed()) {
+           dialog.setVisible(true);
+           dialog.toFront();
+           dialog.requestFocus();
+         } else {
+           dialog.setVisible(false);
+         }
        }
      });
   }
