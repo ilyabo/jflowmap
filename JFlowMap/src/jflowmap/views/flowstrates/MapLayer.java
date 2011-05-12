@@ -665,8 +665,11 @@ public class MapLayer extends PLayer {
       double growBy = 0.2 + 4.0 * Math.pow(alpha, 5);
       GeomUtils.growRectInPlaceByRelativeSize(rect, growBy, growBy, growBy, growBy);
 
-      if (rect.getWidth() > fw || rect.getHeight() > fh) {
-        rect = fbb;
+      if (rect.getWidth() > fw) {
+        rect.setRect(fbb.getX(), rect.getY(), fbb.getWidth(), rect.getHeight());
+      }
+      if (rect.getHeight() > fh) {
+        rect.setRect(rect.getX(), fbb.getY(), rect.getWidth(), fbb.getHeight());
       }
 
       getMapLayerCamera().animateViewToCenterBounds(rect, true, 500);
