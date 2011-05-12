@@ -48,6 +48,8 @@ import jflowmap.geo.MapProjection;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.AreaMap;
 import jflowmap.util.ColorUtils;
+import jflowmap.util.piccolo.PBoxLayoutNode;
+import jflowmap.util.piccolo.PButton;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.VisualCanvas;
@@ -65,6 +67,7 @@ import com.google.common.collect.Lists;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
@@ -133,6 +136,8 @@ public class FlowstratesView extends AbstractCanvasView {
   private final MapProjection mapProjection;
 
   private SeqStat valueStat;
+
+  private PBoxLayoutNode buttonPanel;
 
 
 
@@ -239,6 +244,7 @@ public class FlowstratesView extends AbstractCanvasView {
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
+          layoutChildren();
           fitInView();
         }
       }
@@ -260,6 +266,36 @@ public class FlowstratesView extends AbstractCanvasView {
     originMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     destMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
+
+    createButtons();
+  }
+
+  private void createButtons() {
+    buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+//    PNodes.setPosition(buttonPanel, 4, 4);
+    final PButton linesButton = new PButton("LINES", true);
+    linesButton.setPressed(true);
+    linesButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        getFlowLinesLayerNode().setShowFlowLines(linesButton.isPressed());
+      }
+    });
+    buttonPanel.addChild(linesButton);
+
+    final PButton diffButton = new PButton("DIFF", true);
+    diffButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (diffButton.isPressed()) {
+          setValueType(ValueType.DIFF);
+        } else {
+          setValueType(ValueType.VALUE);
+        }
+      }
+    });
+    buttonPanel.addChild(diffButton);
+    getVisualCanvas().getLayer().addChild(buttonPanel);
   }
 
   public void resetVisibleEdges() {
@@ -640,22 +676,29 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   public void fitInView() {
-    layoutCameraNode(originMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
-    layoutCameraNode(heatmapLayer.getHeatmapCamera(), 0, 0, .40, 1.0);
-    layoutCameraNode(destMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
-
     if (!fitInViewOnce) {
       fitMapsInView();
     }
     flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
 
+    /*
+     * getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
+     */
+  }
+
+  private void layoutChildren() {
+    layoutCameraNode(originMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
+    layoutCameraNode(heatmapLayer.getHeatmapCamera(), 0, 0, .40, 1.0);
+    layoutCameraNode(destMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
+
+    PBounds heatmapBounds = heatmapLayer.getHeatmapCamera().getBounds();
+    PNodes.setPosition(buttonPanel, heatmapBounds.x, heatmapBounds.y + 4);
+
     PBounds lb = legend.getFullBoundsReference();
     PBounds vb = getCamera().getViewBounds();
     PNodes.moveTo(legend, legend.getX(), (vb.getMaxY() - lb.getHeight()) - lb.getY() - LEGEND_MARGIN_BOTTOM);
 
-    /*
-     * getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
-     */
+    flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
   }
 
   private void fitMapsInView() {

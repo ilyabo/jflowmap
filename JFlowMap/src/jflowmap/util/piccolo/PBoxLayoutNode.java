@@ -31,38 +31,78 @@ public class PBoxLayoutNode extends PNode {
      * Specifies that children should be laid out left to right.
      */
     X {
-      @Override public double dx(double width, double height) { return width; }
-      @Override public double dy(double width, double height) { return 0; }
+      @Override double dx(double w, double h, double sp) { return w + sp; }
+      @Override double dy(double w, double h, double sp) { return 0; }
+//      @Override double size(PNode node) { return node.getFullBoundsReference().width; }
     },
     /**
      * Specifies that children should be laid out top to bottom.
      */
     Y {
-      @Override public double dx(double width, double height) { return 0; }
-      @Override public double dy(double width, double height) { return height; }
+      @Override double dx(double w, double h, double sp) { return 0; }
+      @Override double dy(double w, double h, double sp) { return h + sp; }
+//      @Override double size(PNode node) { return node.getFullBoundsReference().height; }
     };
 
-    public abstract double dx(double width, double height);
-    public abstract double dy(double width, double height);
+    abstract double dx(double w, double h, double sp);
+    abstract double dy(double w, double h, double sp);
+//    abstract double size(PNode node);
   }
 
   private final Axis axis;
+  private final double spacing;
+//  private final boolean equalSize;
 
-  public PBoxLayoutNode(Axis axis) {
+  public PBoxLayoutNode(Axis axis, double spacing) {
     this.axis = axis;
+    this.spacing = spacing;
+//    this.equalSize = equalSize;
   }
 
   @Override
   protected void layoutChildren() {
-    double xOffset = 0, yOffset = 0;
+//    double maxSize = Double.NaN;
+//    if (equalSize) {
+//      maxSize = maxSize();
+//    }
+
+    PBounds boxb = getBounds();
+    double xOffset = boxb.x, yOffset = boxb.y;
     for (PNode child : PNodes.childrenOf(this)) {
-      PBounds fb = child.getFullBoundsReference();
-      double width = fb.getWidth();
-      double height = fb.getHeight();
-      xOffset += axis.dx(width, height);
-      yOffset += axis.dy(width, height);
-      child.setBounds(xOffset, yOffset, width, height);
+      PBounds b = child.getFullBoundsReference();
+      double w = b.width;
+      double h = b.height;
+//      if (equalSize) {
+//        w = maxSize;
+//      }
+      child.setBounds(xOffset, yOffset, w, h);
+      xOffset += axis.dx(w, h, spacing);
+      yOffset += axis.dy(w, h, spacing);
     }
+  }
+
+//  private double maxSize() {
+//    double max = Double.NaN;
+//    for (PNode child : PNodes.childrenOf(this)) {
+//      double s = axis.size(child);
+//      if (Double.isNaN(max)  ||  s > max) {
+//        max = s;
+//      }
+//    }
+//    return max;
+//  }
+
+  @Override
+  public boolean setBounds(double x, double y, double width, double height) {
+    System.out.println("PBoxLayoutNode.setBounds(): " + x + "," + y);
+//    double dx = x - getX();
+//    double dy = y - getY();
+    if (super.setBounds(x, y, width, height)) {
+//      PNodes.moveChildrenBy(this, dx, dy);
+      layoutChildren();
+      return true;
+    }
+    return false;
   }
 
 }

@@ -170,11 +170,15 @@ public class PNodes {
     if (deep) {
       double dx = x - node.getX();
       double dy = y - node.getY();
-      for (PNode child : PNodes.childrenOf(node)) {
-        setPosition(child, child.getX() + dx, child.getY() + dy, true);
-      }
+      moveChildrenBy(node, dx, dy);
     }
     node.setBounds(x, y, node.getWidth(), node.getHeight());
+  }
+
+  public static void moveChildrenBy(PNode node, double dx, double dy) {
+    for (PNode child : PNodes.childrenOf(node)) {
+      setPosition(child, child.getX() + dx, child.getY() + dy, true);
+    }
   }
 
   public static void setPosition(PNode node, Point2D pos) {

@@ -20,7 +20,9 @@ package jflowmap.util.piccolo;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -66,8 +68,8 @@ public class PButton extends PPath {
   private static final Color ARMED_STROKE_PAINT =  new Color(150, 150, 150);
   private static final Color ARMED_TEXT_PAINT = ROLLOVER_TEXT_PAINT;
 
-  private static final double ARCW = 10;
-  private static final double ARCH = 20;
+  private static final double ARCW = 20;
+  private static final double ARCH = 40;
 
   private static final int PADDING_X = 5;
   private static final int PADDING_Y = 5;
@@ -83,13 +85,14 @@ public class PButton extends PPath {
     this(text, false);
   }
 
-  public PButton(String text, boolean toggle) {
-    super(new RoundRectangle2D.Double(0, 0, 100, 100, ARCW, ARCH));
 
+  public PButton(String text, boolean toggle) {
+    super(createShape());
     this.isToggleButton = toggle;
 
     textNode = new PText(text.toUpperCase());
     textNode.setFont(FONT);
+    textNode.setHorizontalAlignment(Component.CENTER_ALIGNMENT);
     addChild(textNode);
 
     updateBounds();
@@ -98,6 +101,10 @@ public class PButton extends PPath {
     updateColors();
 
     addInputEventListener(createMouseHandler());
+  }
+
+  private static Shape createShape() {
+    return new RoundRectangle2D.Double(0, 0, 100, 100, ARCW, ARCH);
   }
 
   private void setArmed(boolean armed) {
