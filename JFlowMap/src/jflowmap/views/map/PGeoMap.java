@@ -58,7 +58,7 @@ public class PGeoMap extends PNode {
   public Rectangle2D getBoundingBox() {
     if (boundingBox == null) {
       Rectangle2D b = null;
-      for (PMapArea va : PNodes.childrenOfType(this, PMapArea.class)) {
+      for (PGeoMapArea va : PNodes.childrenOfType(this, PGeoMapArea.class)) {
         if (b == null) {
           b = va.getBoundingBox();
         } else {
@@ -70,19 +70,19 @@ public class PGeoMap extends PNode {
     return (Rectangle2D)boundingBox.clone();
   }
 
-  public PMapArea addArea(MapArea area) {
+  public PGeoMapArea addArea(MapArea area) {
     return addArea(area, mapProjection);
   }
 
-  public PMapArea addArea(MapArea area, MapProjection proj) {
-    PMapArea visualArea = createVisualArea(area, proj);
+  public PGeoMapArea addArea(MapArea area, MapProjection proj) {
+    PGeoMapArea visualArea = createVisualArea(area, proj);
     addChild(visualArea);
     boundingBox = null;
     return visualArea;
   }
 
-  private PMapArea createVisualArea(MapArea area, MapProjection proj) {
-    return new PMapArea(this, area, proj);
+  private PGeoMapArea createVisualArea(MapArea area, MapProjection proj) {
+    return new PGeoMapArea(this, area, proj);
   }
 
   public MapProjection getMapProjection() {
@@ -94,13 +94,13 @@ public class PGeoMap extends PNode {
   }
 
   public void updateColors() {
-    for (PMapArea va : PNodes.childrenOfType(this, PMapArea.class)) {
+    for (PGeoMapArea va : PNodes.childrenOfType(this, PGeoMapArea.class)) {
       va.updateColors();
     }
   }
 
-  public PMapArea getVisualAreaBy(String id) {
-    for (PMapArea va : PNodes.childrenOfType(this, PMapArea.class)) {
+  public PGeoMapArea getVisualAreaBy(String id) {
+    for (PGeoMapArea va : PNodes.childrenOfType(this, PGeoMapArea.class)) {
       String vaid = va.getArea().getId();
       if (vaid != null  &&  id.equals(vaid)) return va;
     }

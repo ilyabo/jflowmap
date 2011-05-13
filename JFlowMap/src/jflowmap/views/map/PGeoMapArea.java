@@ -31,7 +31,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  */
-public class PMapArea extends PPath {
+public class PGeoMapArea extends PPath {
 
   private static final long serialVersionUID = 1L;
   private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
@@ -40,7 +40,7 @@ public class PMapArea extends PPath {
   private final Rectangle2D boundingBox;
 //  private PActivity lastActivity;
 
-  public PMapArea(PGeoMap visualAreaMap, MapArea area, MapProjection proj) {
+  public PGeoMapArea(PGeoMap visualAreaMap, MapArea area, MapProjection proj) {
     super(area.asPath(proj));
     this.visualAreaMap = visualAreaMap;
     this.area = area;
@@ -48,7 +48,7 @@ public class PMapArea extends PPath {
     updateColors();
   }
 
-  public PMapArea(PGeoMap visualAreaMap, MapArea area) {
+  public PGeoMapArea(PGeoMap visualAreaMap, MapArea area) {
     this(visualAreaMap, area, visualAreaMap.getMapProjection());
   }
 

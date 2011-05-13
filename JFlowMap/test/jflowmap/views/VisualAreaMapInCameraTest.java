@@ -28,7 +28,7 @@ import jflowmap.FlowMapColorSchemes;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
 import jflowmap.views.flowmap.ColorSchemeAware;
-import jflowmap.views.flowmap.PGeoMap;
+import jflowmap.views.map.PGeoMap;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.nodes.PPath;
