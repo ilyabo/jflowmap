@@ -26,9 +26,9 @@ import java.io.IOException;
 
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.geo.MapProjections;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.views.flowmap.ColorSchemeAware;
-import jflowmap.views.flowmap.VisualAreaMap;
+import jflowmap.views.flowmap.VisualGeoMap;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.nodes.PPath;
@@ -47,7 +47,7 @@ public class VisualAreaMapInCameraTest extends PFrame {
       return FlowMapColorSchemes.INVERTED.get(code);
     }
   };
-  private final VisualAreaMap map;
+  private final VisualGeoMap map;
   private final PPath redRect;
   private final PPath blueRect;
 
@@ -57,8 +57,8 @@ public class VisualAreaMapInCameraTest extends PFrame {
     PCanvas canvas = getCanvas();
     PCamera camera = canvas.getCamera();
 
-    map = new VisualAreaMap(mapColorScheme,
-        AreaMap.load("data/refugees/countries-areas-ll.xml.gz"),
+    map = new VisualGeoMap(mapColorScheme,
+        GeoMap.load("data/refugees/countries-areas-ll.xml.gz"),
         MapProjections.MERCATOR);
 
 //    PLayer layer = canvas.getLayer();

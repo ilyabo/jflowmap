@@ -25,7 +25,7 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
-import jflowmap.views.flowmap.VisualAreaMap;
+import jflowmap.views.flowmap.VisualGeoMap;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -71,7 +71,7 @@ public class Lasso extends PBasicInputEventHandler {
     if (inTarget(event)) {
       if (isSelecting()  ||
           (!wasDragged  &&  !event.isControlDown()  &&
-             (event.getPickedNode() instanceof VisualAreaMap))) {  // to support "clear selection"
+             (event.getPickedNode() instanceof VisualGeoMap))) {  // to support "clear selection"
         stop(event);
       }
     }

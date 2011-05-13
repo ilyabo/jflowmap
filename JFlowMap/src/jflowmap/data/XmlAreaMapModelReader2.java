@@ -29,7 +29,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import jflowmap.models.map.MapArea;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.models.map.Polygon;
 import prefuse.util.io.IOLib;
 
@@ -45,7 +45,7 @@ public class XmlAreaMapModelReader2 {
   private XmlAreaMapModelReader2() {
   }
 
-  public static AreaMap readMap(String location) throws IOException {
+  public static GeoMap readMap(String location) throws IOException {
     InputStream is = IOLib.streamFromString(location);
     if (is == null) {
       throw new IllegalArgumentException("Cannot load area map from '" + location + "'");
@@ -53,7 +53,7 @@ public class XmlAreaMapModelReader2 {
     return loadFrom(location, is);
   }
 
-  private static AreaMap loadFrom(String name, InputStream is) throws IOException {
+  private static GeoMap loadFrom(String name, InputStream is) throws IOException {
     XMLInputFactory inputFactory = XMLInputFactory.newInstance();
     XMLStreamReader in;
     LineNumberReader lineNumberReader = null;
@@ -110,7 +110,7 @@ public class XmlAreaMapModelReader2 {
         }
       }
 
-      return new AreaMap(name, areas);
+      return new GeoMap(name, areas);
     } catch (Exception e) {
       throw new IOException("Cannot load '" + name + "': " + e.getMessage() +
           (lineNumberReader != null ?

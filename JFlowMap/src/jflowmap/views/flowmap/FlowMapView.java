@@ -31,7 +31,7 @@ import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.geo.MapProjection;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
@@ -56,15 +56,15 @@ public class FlowMapView extends AbstractCanvasView {
   public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN = "view.flowmap.weightFilterMin";
   public static final String VIEW_CONFIG_PROP_COLOR_SCHEME = "view.flowmap.colorScheme";
 
-  public FlowMapView(FlowMapGraph fmg, AreaMap areaMap, MapProjection proj) {
+  public FlowMapView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj) {
     this(fmg, areaMap, proj, Double.NaN, null);
   }
 
-  public FlowMapView(FlowMapGraph fmg, AreaMap areaMap, MapProjection proj, double weightFilterMin,
+  public FlowMapView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj, double weightFilterMin,
       IFlowMapColorScheme colorScheme) {
     setVisualFlowMap(createVisualFlowMap(fmg, proj, fmg.getEdgeWeightAttrs().get(0)));
     if (areaMap != null) {
-      visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap, proj));
+      visualFlowMap.setAreaMap(new VisualGeoMap(visualFlowMap, areaMap, proj));
     }
     if (!Double.isNaN(weightFilterMin)) {
       getVisualFlowMap().getModel().setEdgeWeightFilterMin(weightFilterMin);
@@ -120,10 +120,10 @@ public class FlowMapView extends AbstractCanvasView {
       VisualFlowMap visualFlowMap = createVisualFlowMap(
           flowMapGraph, dataset.getMapProjection(), flowMapGraph.getEdgeWeightAttrs().get(0));
 
-      AreaMap areaMap = AreaMap.loadFor(dataset);
+      GeoMap areaMap = GeoMap.loadFor(dataset);
 
       if (areaMap != null) {
-        visualFlowMap.setAreaMap(new VisualAreaMap(visualFlowMap, areaMap, dataset.getMapProjection()));
+        visualFlowMap.setAreaMap(new VisualGeoMap(visualFlowMap, areaMap, dataset.getMapProjection()));
       }
       setVisualFlowMap(visualFlowMap);
 

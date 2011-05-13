@@ -38,14 +38,14 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  * @author Ilya Boyandin
  *     Date: 25-Sep-2009
  */
-public class AreaMap {
+public class GeoMap {
 
-  private static Logger logger = Logger.getLogger(AreaMap.class);
+  private static Logger logger = Logger.getLogger(GeoMap.class);
 
   private final String name;
   private final List<MapArea> areas;
 
-  public AreaMap(String name, List<MapArea> areas) {
+  public GeoMap(String name, List<MapArea> areas) {
     this.name = name;
     this.areas = ImmutableList.copyOf(areas);
   }
@@ -58,8 +58,8 @@ public class AreaMap {
     return areas;
   }
 
-  public static AreaMap loadFor(DatasetSpec dataset) throws IOException {
-    AreaMap areaMap = null;
+  public static GeoMap loadFor(DatasetSpec dataset) throws IOException {
+    GeoMap areaMap = null;
     if (dataset.getAreaMapFilename() != null) {
       areaMap = load(dataset.getAreaMapFilename());
     } else if (dataset.getShapefileName() != null) {
@@ -69,18 +69,18 @@ public class AreaMap {
     return areaMap;
   }
 
-  public static final AreaMap load(String filename) throws IOException {
+  public static final GeoMap load(String filename) throws IOException {
     logger.info("Loading area map '" + filename + "'");
     return XmlAreaMapModelReader2.readMap(filename);
   }
 
-  public static AreaMap asAreaMap(GeometryCollection geoms) {
+  public static GeoMap asAreaMap(GeometryCollection geoms) {
     List<MapArea> list = Lists.newArrayList();
     for (int i = 0; i < geoms.getNumGeometries(); i++) {
       Geometry g = geoms.getGeometryN(i);
       String name = (g.getUserData() != null ? g.getUserData().toString() : null);
       list.add(MapArea.fromGeometry(name, name, g));
     }
-    return new AreaMap(null, list);
+    return new GeoMap(null, list);
   }
 }

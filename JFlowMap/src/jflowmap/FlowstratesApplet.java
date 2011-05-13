@@ -24,7 +24,7 @@ import javax.swing.UIManager;
 
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.MapArea;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
 
@@ -64,7 +64,7 @@ public class FlowstratesApplet extends BaseApplet {
 
   @Override
   protected IView createView() throws Exception {
-    AreaMap areaMap = AreaMap.loadFor(getDatasetSpec());
+    GeoMap areaMap = GeoMap.loadFor(getDatasetSpec());
     String maxVisibleTuples = getParameter("maxVisibleTuples");
     String aggName = getParameter("aggLayersBuilder");
     AggLayersBuilder aggBuilder = null;
@@ -77,7 +77,7 @@ public class FlowstratesApplet extends BaseApplet {
       }
     }
     if (areaMap == null) {
-      areaMap = new AreaMap("<Empty>", Collections.<MapArea>emptyList());
+      areaMap = new GeoMap("<Empty>", Collections.<MapArea>emptyList());
     }
     return new FlowstratesView(
         getDatasetSpec().load(),

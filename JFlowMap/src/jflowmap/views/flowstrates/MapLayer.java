@@ -37,7 +37,7 @@ import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.MapArea;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.CollectionUtils;
 import jflowmap.util.Pair;
@@ -46,7 +46,7 @@ import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.VisualArea;
-import jflowmap.views.flowmap.VisualAreaMap;
+import jflowmap.views.flowmap.VisualGeoMap;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
@@ -71,7 +71,7 @@ public class MapLayer extends PLayer {
   private static final double CENTROID_DOT_SIZE = 2.0;
 
   private final PCamera geoLayerCamera;
-  private final VisualAreaMap visualAreaMap;
+  private final VisualGeoMap visualAreaMap;
   private final FlowstratesView flowstratesView;
   private final FlowEndpoint endpoint;
   private Map<String, Centroid> nodeIdsToCentroids;
@@ -82,14 +82,14 @@ public class MapLayer extends PLayer {
   private boolean centroidsOpaque = true;
   private Rectangle2D centroidsBounds;
 
-  public MapLayer(FlowstratesView flowstratesView, AreaMap areaMap, FlowEndpoint s) {
+  public MapLayer(FlowstratesView flowstratesView, GeoMap areaMap, FlowEndpoint s) {
     this.flowstratesView = flowstratesView;
     this.endpoint = s;
 
     geoLayerCamera = new PCamera();
     geoLayerCamera.addLayer(this);
 
-    visualAreaMap = new VisualAreaMap(flowstratesView.getMapColorScheme(), areaMap,
+    visualAreaMap = new VisualGeoMap(flowstratesView.getMapColorScheme(), areaMap,
         flowstratesView.getMapProjection());
 
     addChild(visualAreaMap);
@@ -113,7 +113,7 @@ public class MapLayer extends PLayer {
     return geoLayerCamera;
   }
 
-  public VisualAreaMap getVisualAreaMap() {
+  public VisualGeoMap getVisualAreaMap() {
     return visualAreaMap;
   }
 
@@ -363,7 +363,7 @@ public class MapLayer extends PLayer {
     };
   }
 
-  private void addMouseOverListenersToMaps(VisualAreaMap visualAreaMap) {
+  private void addMouseOverListenersToMaps(VisualGeoMap visualAreaMap) {
     PInputEventListener listener = new PTypedBasicInputEventHandler<VisualArea>(VisualArea.class) {
       @Override
       public void mouseEntered(PInputEvent event) {

@@ -30,7 +30,7 @@ import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.IView;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.MapArea;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.util.CollectionUtils;
 import jflowmap.util.IOUtils;
 import jflowmap.util.Pair;
@@ -125,11 +125,11 @@ public class ViewConfig {
     }
   }
 
-  private AreaMap createMap() throws IOException {
+  private GeoMap createMap() throws IOException {
     if (mapLoader != null) {
       return mapLoader.load(this);
     } else {
-      return new AreaMap("<Empty>", Collections.<MapArea>emptyList());
+      return new GeoMap("<Empty>", Collections.<MapArea>emptyList());
     }
   }
 
@@ -274,7 +274,7 @@ public class ViewConfig {
   enum ViewTypes {
     FLOWSTRATES {
       @Override
-      public IView createView(ViewConfig config, Object data, AreaMap areaMap) throws IOException {
+      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
         String aggName = config.getString(PROP_DATA_AGGREGATOR);
         AggLayersBuilder aggregator;
         if (aggName != null) {
@@ -291,7 +291,7 @@ public class ViewConfig {
     },
     FLOWMAP {
       @Override
-      public IView createView(ViewConfig config, Object data, AreaMap areaMap) throws IOException {
+      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
         return
           new FlowMapView((FlowMapGraph)data, areaMap, mapProjection(config),
               config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN, Double.NaN),
@@ -307,7 +307,7 @@ public class ViewConfig {
 //    }
     ;
 
-    public abstract IView createView(ViewConfig config, Object data, AreaMap areaMap)
+    public abstract IView createView(ViewConfig config, Object data, GeoMap areaMap)
       throws IOException;
 
     private static MapProjections mapProjection(ViewConfig config) throws IOException {
@@ -325,21 +325,21 @@ public class ViewConfig {
   enum MapLoaders {
     XML {
       @Override
-      public AreaMap load(ViewConfig config) throws IOException {
-        return AreaMap.load(config.require(PROP_MAP_XML_SRC));
+      public GeoMap load(ViewConfig config) throws IOException {
+        return GeoMap.load(config.require(PROP_MAP_XML_SRC));
       }
     },
     SHAPEFILE {
       @Override
-      public AreaMap load(ViewConfig config) throws IOException {
-        return AreaMap.asAreaMap(ShapefileReader.loadShapefile(
+      public GeoMap load(ViewConfig config) throws IOException {
+        return GeoMap.asAreaMap(ShapefileReader.loadShapefile(
             config.require(PROP_MAP_SHAPEFILE_SRC),
             config.getString(PROP_MAP_SHAPEFILE_DBFAREAIDFIELD)));
       }
     }
     ;
 
-    public abstract AreaMap load(ViewConfig config) throws IOException;
+    public abstract GeoMap load(ViewConfig config) throws IOException;
   }
 
 }

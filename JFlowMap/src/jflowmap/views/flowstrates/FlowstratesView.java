@@ -46,7 +46,7 @@ import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjection;
 import jflowmap.geom.GeomUtils;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.util.ColorUtils;
 import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
@@ -117,7 +117,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private HeatmapLayer heatmapLayer;
 
-  private final AreaMap areaMap;
+  private final GeoMap areaMap;
   private MapLayer originMapLayer;
   private MapLayer destMapLayer;
 
@@ -141,7 +141,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
 
 
-  public FlowstratesView(FlowMapGraph fmg, final AreaMap areaMap, AggLayersBuilder aggregator,
+  public FlowstratesView(FlowMapGraph fmg, final GeoMap areaMap, AggLayersBuilder aggregator,
       int maxVisibleTuples, MapProjection proj) {
 
     logger.info("Opening flowstrates view");

@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.MapArea;
-import jflowmap.models.map.AreaMap;
+import jflowmap.models.map.GeoMap;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 import edu.umd.cs.piccolo.PNode;
@@ -30,19 +30,19 @@ import edu.umd.cs.piccolo.PNode;
 /**
  * @author Ilya Boyandin
  */
-public class VisualAreaMap extends PNode {
+public class VisualGeoMap extends PNode {
 
   private static final long serialVersionUID = 1L;
   private final ColorSchemeAware colorSchemaAware;
-  private final AreaMap mapModel;
+  private final GeoMap mapModel;
   private final MapProjection mapProjection;
   private Rectangle2D boundingBox;
 
-  public VisualAreaMap(VisualAreaMap toCopy) {
+  public VisualGeoMap(VisualGeoMap toCopy) {
     this(toCopy.getColorSchemaAware(), toCopy.mapModel, toCopy.mapProjection);
   }
 
-  public VisualAreaMap(ColorSchemeAware cs, AreaMap mapModel, MapProjection proj) {
+  public VisualGeoMap(ColorSchemeAware cs, GeoMap mapModel, MapProjection proj) {
     this.mapModel = mapModel;
     this.colorSchemaAware = cs;
     this.mapProjection = proj;
