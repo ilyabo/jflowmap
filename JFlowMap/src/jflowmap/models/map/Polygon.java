@@ -22,6 +22,7 @@ import java.awt.geom.Point2D;
 import java.util.Arrays;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
 
 /**
  * @author Ilya Boyandin
@@ -29,33 +30,38 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 public class Polygon {
 
-  private final Point2D[] points;
+  private final Point2D[] exteriorPoints;
 
   public Polygon(Point2D[] points) {
-    this.points = points.clone();
+    this.exteriorPoints = points.clone();
   }
 
   public boolean isEmpty() {
-    return points.length == 0;
+    return exteriorPoints.length == 0;
   }
 
   public Point2D[] getPoints() {
-    return points.clone();
+    return exteriorPoints.clone();
   }
 
   public static Polygon convert(com.vividsolutions.jts.geom.Polygon poly) {
-    Coordinate[] coords = poly.getCoordinates();
+    // TODO: load interior points as well
+    return new Polygon(points(poly.getExteriorRing()));
+  }
+
+  private static Point2D[] points(LineString exterior) {
+    Coordinate[] coords = exterior.getCoordinates();
     Point2D[] points = new Point2D[coords.length];
     for (int i = 0; i < coords.length; i++) {
       Coordinate c = coords[i];
       points[i] = new Point2D.Double(c.x, c.y);
     }
-    return new Polygon(points);
+    return points;
   }
 
   @Override
   public String toString() {
-    return "Polygon [points=" + Arrays.toString(points) + "]";
+    return "Polygon [points=" + Arrays.toString(exteriorPoints) + "]";
   }
 
 }
