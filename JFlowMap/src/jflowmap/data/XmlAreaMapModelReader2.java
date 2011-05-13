@@ -28,7 +28,7 @@ import java.util.List;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import jflowmap.models.map.Area;
+import jflowmap.models.map.MapArea;
 import jflowmap.models.map.AreaMap;
 import jflowmap.models.map.Polygon;
 import prefuse.util.io.IOLib;
@@ -61,7 +61,7 @@ public class XmlAreaMapModelReader2 {
       lineNumberReader = new LineNumberReader(new InputStreamReader(is, charset));
       in = inputFactory.createXMLStreamReader(lineNumberReader);
 
-      List<Area> areas = Lists.newArrayList();
+      List<MapArea> areas = Lists.newArrayList();
       List<Polygon> polygons = Lists.newArrayList();
 
       String areaId = null;
@@ -103,7 +103,7 @@ public class XmlAreaMapModelReader2 {
             if (tag.equals("areas")) {
               break OUTER;
             } else if (tag.equals("area")) {
-              areas.add(new Area(areaId, "", polygons));
+              areas.add(new MapArea(areaId, "", polygons));
             }
 
             break;

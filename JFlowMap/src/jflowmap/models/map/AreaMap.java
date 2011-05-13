@@ -43,9 +43,9 @@ public class AreaMap {
   private static Logger logger = Logger.getLogger(AreaMap.class);
 
   private final String name;
-  private final List<Area> areas;
+  private final List<MapArea> areas;
 
-  public AreaMap(String name, List<Area> areas) {
+  public AreaMap(String name, List<MapArea> areas) {
     this.name = name;
     this.areas = ImmutableList.copyOf(areas);
   }
@@ -54,7 +54,7 @@ public class AreaMap {
     return name;
   }
 
-  public Collection<Area> getAreas() {
+  public Collection<MapArea> getAreas() {
     return areas;
   }
 
@@ -75,11 +75,11 @@ public class AreaMap {
   }
 
   public static AreaMap asAreaMap(GeometryCollection geoms) {
-    List<Area> list = Lists.newArrayList();
+    List<MapArea> list = Lists.newArrayList();
     for (int i = 0; i < geoms.getNumGeometries(); i++) {
       Geometry g = geoms.getGeometryN(i);
       String name = (g.getUserData() != null ? g.getUserData().toString() : null);
-      list.add(Area.fromGeometry(name, name, g));
+      list.add(MapArea.fromGeometry(name, name, g));
     }
     return new AreaMap(null, list);
   }

@@ -23,7 +23,7 @@ import java.util.Collections;
 import javax.swing.UIManager;
 
 import jflowmap.geo.MapProjections;
-import jflowmap.models.map.Area;
+import jflowmap.models.map.MapArea;
 import jflowmap.models.map.AreaMap;
 import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
@@ -77,7 +77,7 @@ public class FlowstratesApplet extends BaseApplet {
       }
     }
     if (areaMap == null) {
-      areaMap = new AreaMap("<Empty>", Collections.<Area>emptyList());
+      areaMap = new AreaMap("<Empty>", Collections.<MapArea>emptyList());
     }
     return new FlowstratesView(
         getDatasetSpec().load(),

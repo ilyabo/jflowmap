@@ -23,7 +23,7 @@ import java.awt.Paint;
 import java.awt.geom.Rectangle2D;
 
 import jflowmap.geo.MapProjection;
-import jflowmap.models.map.Area;
+import jflowmap.models.map.MapArea;
 import jflowmap.views.ColorCodes;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;
@@ -35,11 +35,11 @@ public class VisualArea extends PPath {
   private static final long serialVersionUID = 1L;
   private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
   private final VisualAreaMap visualAreaMap;
-  private final Area area;
+  private final MapArea area;
   private final Rectangle2D boundingBox;
 //  private PActivity lastActivity;
 
-  public VisualArea(VisualAreaMap visualAreaMap, Area area, MapProjection proj) {
+  public VisualArea(VisualAreaMap visualAreaMap, MapArea area, MapProjection proj) {
     super(area.asPath(proj));
     this.visualAreaMap = visualAreaMap;
     this.area = area;
@@ -47,11 +47,11 @@ public class VisualArea extends PPath {
     updateColors();
   }
 
-  public VisualArea(VisualAreaMap visualAreaMap, Area area) {
+  public VisualArea(VisualAreaMap visualAreaMap, MapArea area) {
     this(visualAreaMap, area, visualAreaMap.getMapProjection());
   }
 
-  public Area getArea() {
+  public MapArea getArea() {
     return area;
   }
 

@@ -36,7 +36,7 @@ import jflowmap.data.Nodes;
 import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
-import jflowmap.models.map.Area;
+import jflowmap.models.map.MapArea;
 import jflowmap.models.map.AreaMap;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.CollectionUtils;
@@ -236,7 +236,7 @@ public class MapLayer extends PLayer {
             new Point2D.Double(rect.getMaxX(), rect.getMaxY()),
             new Point2D.Double(rect.getX(), rect.getMaxY()), new Point2D.Double(rect.getX(), rect.getY()) });
 
-        visualAreaMap.addArea(new Area(nodeId, label, Arrays.asList(polygon)), MapProjections.NONE);
+        visualAreaMap.addArea(new MapArea(nodeId, label, Arrays.asList(polygon)), MapProjections.NONE);
 
         cnt++;
       }

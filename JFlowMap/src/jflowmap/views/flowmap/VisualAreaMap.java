@@ -21,7 +21,7 @@ package jflowmap.views.flowmap;
 import java.awt.geom.Rectangle2D;
 
 import jflowmap.geo.MapProjection;
-import jflowmap.models.map.Area;
+import jflowmap.models.map.MapArea;
 import jflowmap.models.map.AreaMap;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
@@ -46,7 +46,7 @@ public class VisualAreaMap extends PNode {
     this.mapModel = mapModel;
     this.colorSchemaAware = cs;
     this.mapProjection = proj;
-    for (Area area : mapModel.getAreas()) {
+    for (MapArea area : mapModel.getAreas()) {
       if (!area.isEmpty()) {
         addArea(area);
       }
@@ -69,18 +69,18 @@ public class VisualAreaMap extends PNode {
     return (Rectangle2D)boundingBox.clone();
   }
 
-  public VisualArea addArea(Area area) {
+  public VisualArea addArea(MapArea area) {
     return addArea(area, mapProjection);
   }
 
-  public VisualArea addArea(Area area, MapProjection proj) {
+  public VisualArea addArea(MapArea area, MapProjection proj) {
     VisualArea visualArea = createVisualArea(area, proj);
     addChild(visualArea);
     boundingBox = null;
     return visualArea;
   }
 
-  private VisualArea createVisualArea(Area area, MapProjection proj) {
+  private VisualArea createVisualArea(MapArea area, MapProjection proj) {
     return new VisualArea(this, area, proj);
   }
 

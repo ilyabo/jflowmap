@@ -36,23 +36,23 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Ilya Boyandin
  *     Date: 25-Sep-2009
  */
-public class Area {
+public class MapArea {
 
-  private static Logger logger = Logger.getLogger(Area.class);
+  private static Logger logger = Logger.getLogger(MapArea.class);
 
   private final String id;
   private final String name;
   private final Polygon[] polygons;
 
-  public Area(String id, String name, Iterable<Polygon> polygons) {
+  public MapArea(String id, String name, Iterable<Polygon> polygons) {
     this(id, name, Iterables.toArray(polygons, Polygon.class), false);
   }
 
-  public Area(String id, String name, Polygon[] polygons) {
+  public MapArea(String id, String name, Polygon[] polygons) {
     this(id, name, polygons, true);
   }
 
-  private Area(String id, String name, Polygon[] polygons, boolean clone) {
+  private MapArea(String id, String name, Polygon[] polygons, boolean clone) {
     this.id = id;
     this.name = name;
     if (clone) {
@@ -112,7 +112,7 @@ public class Area {
     return bb;
   }
 
-  public static Area fromGeometry(String id, String name, Geometry g) {
+  public static MapArea fromGeometry(String id, String name, Geometry g) {
     List<Polygon> list = Lists.newArrayList();
 
     if (g.getGeometryType().equals("Polygon")) {
@@ -125,7 +125,7 @@ public class Area {
       logger.warn("Skipping unsupported geometry type: " + g.getGeometryType());
     }
 
-    return new Area(id, name, list);
+    return new MapArea(id, name, list);
   }
 
 }

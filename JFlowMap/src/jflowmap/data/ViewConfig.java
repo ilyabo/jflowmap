@@ -29,7 +29,7 @@ import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.IView;
 import jflowmap.geo.MapProjections;
-import jflowmap.models.map.Area;
+import jflowmap.models.map.MapArea;
 import jflowmap.models.map.AreaMap;
 import jflowmap.util.CollectionUtils;
 import jflowmap.util.IOUtils;
@@ -129,7 +129,7 @@ public class ViewConfig {
     if (mapLoader != null) {
       return mapLoader.load(this);
     } else {
-      return new AreaMap("<Empty>", Collections.<Area>emptyList());
+      return new AreaMap("<Empty>", Collections.<MapArea>emptyList());
     }
   }
 
