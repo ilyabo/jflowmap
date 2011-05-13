@@ -30,7 +30,7 @@ import edu.umd.cs.piccolo.PNode;
 /**
  * @author Ilya Boyandin
  */
-public class VisualGeoMap extends PNode {
+public class PGeoMap extends PNode {
 
   private static final long serialVersionUID = 1L;
   private final ColorSchemeAware colorSchemaAware;
@@ -38,11 +38,11 @@ public class VisualGeoMap extends PNode {
   private final MapProjection mapProjection;
   private Rectangle2D boundingBox;
 
-  public VisualGeoMap(VisualGeoMap toCopy) {
+  public PGeoMap(PGeoMap toCopy) {
     this(toCopy.getColorSchemaAware(), toCopy.mapModel, toCopy.mapProjection);
   }
 
-  public VisualGeoMap(ColorSchemeAware cs, GeoMap mapModel, MapProjection proj) {
+  public PGeoMap(ColorSchemeAware cs, GeoMap mapModel, MapProjection proj) {
     this.mapModel = mapModel;
     this.colorSchemaAware = cs;
     this.mapProjection = proj;

@@ -34,12 +34,12 @@ public class VisualArea extends PPath {
 
   private static final long serialVersionUID = 1L;
   private static final PFixedWidthStroke mapStroke = new PFixedWidthStroke(1);
-  private final VisualGeoMap visualAreaMap;
+  private final PGeoMap visualAreaMap;
   private final MapArea area;
   private final Rectangle2D boundingBox;
 //  private PActivity lastActivity;
 
-  public VisualArea(VisualGeoMap visualAreaMap, MapArea area, MapProjection proj) {
+  public VisualArea(PGeoMap visualAreaMap, MapArea area, MapProjection proj) {
     super(area.asPath(proj));
     this.visualAreaMap = visualAreaMap;
     this.area = area;
@@ -47,7 +47,7 @@ public class VisualArea extends PPath {
     updateColors();
   }
 
-  public VisualArea(VisualGeoMap visualAreaMap, MapArea area) {
+  public VisualArea(PGeoMap visualAreaMap, MapArea area) {
     this(visualAreaMap, area, visualAreaMap.getMapProjection());
   }
 

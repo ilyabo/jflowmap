@@ -119,7 +119,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private double euclideanClusterDistanceThreshold;
   private List<VisualNodeCluster> visualNodeClusters;
   private Map<VisualNode, VisualNodeCluster> nodesToClusters;
-  private VisualGeoMap areaMap;
+  private PGeoMap areaMap;
   private double euclideanMaxNodeDistance;
   // endOf clustering fields
   private boolean bundled;
@@ -193,7 +193,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
-  public VisualGeoMap getAreaMap() {
+  public PGeoMap getAreaMap() {
     return areaMap;
   }
 
@@ -274,7 +274,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     updateNodePositions();
   }
 
-  public void setAreaMap(VisualGeoMap areaMap) {
+  public void setAreaMap(PGeoMap areaMap) {
     if (this.areaMap != null) {
       removeChild(this.areaMap);
     }
@@ -983,7 +983,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph, mapProjection,
         flowWeightAttr);
     if (areaMap != null) {
-      clusteredFlowMap.setAreaMap(new VisualGeoMap(areaMap));
+      clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
     }
     clusteredFlowMap.setOriginalVisualFlowMap(this);
     jFlowMap.setVisualFlowMap(clusteredFlowMap);

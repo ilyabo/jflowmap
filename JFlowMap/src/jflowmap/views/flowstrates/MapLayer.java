@@ -46,7 +46,7 @@ import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.flowmap.VisualArea;
-import jflowmap.views.flowmap.VisualGeoMap;
+import jflowmap.views.flowmap.PGeoMap;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
@@ -71,7 +71,7 @@ public class MapLayer extends PLayer {
   private static final double CENTROID_DOT_SIZE = 2.0;
 
   private final PCamera geoLayerCamera;
-  private final VisualGeoMap visualAreaMap;
+  private final PGeoMap visualAreaMap;
   private final FlowstratesView flowstratesView;
   private final FlowEndpoint endpoint;
   private Map<String, Centroid> nodeIdsToCentroids;
@@ -89,7 +89,7 @@ public class MapLayer extends PLayer {
     geoLayerCamera = new PCamera();
     geoLayerCamera.addLayer(this);
 
-    visualAreaMap = new VisualGeoMap(flowstratesView.getMapColorScheme(), areaMap,
+    visualAreaMap = new PGeoMap(flowstratesView.getMapColorScheme(), areaMap,
         flowstratesView.getMapProjection());
 
     addChild(visualAreaMap);
@@ -113,7 +113,7 @@ public class MapLayer extends PLayer {
     return geoLayerCamera;
   }
 
-  public VisualGeoMap getVisualAreaMap() {
+  public PGeoMap getVisualAreaMap() {
     return visualAreaMap;
   }
 
@@ -363,7 +363,7 @@ public class MapLayer extends PLayer {
     };
   }
 
-  private void addMouseOverListenersToMaps(VisualGeoMap visualAreaMap) {
+  private void addMouseOverListenersToMaps(PGeoMap visualAreaMap) {
     PInputEventListener listener = new PTypedBasicInputEventHandler<VisualArea>(VisualArea.class) {
       @Override
       public void mouseEntered(PInputEvent event) {

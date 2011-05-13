@@ -64,7 +64,7 @@ public class FlowMapView extends AbstractCanvasView {
       IFlowMapColorScheme colorScheme) {
     setVisualFlowMap(createVisualFlowMap(fmg, proj, fmg.getEdgeWeightAttrs().get(0)));
     if (areaMap != null) {
-      visualFlowMap.setAreaMap(new VisualGeoMap(visualFlowMap, areaMap, proj));
+      visualFlowMap.setAreaMap(new PGeoMap(visualFlowMap, areaMap, proj));
     }
     if (!Double.isNaN(weightFilterMin)) {
       getVisualFlowMap().getModel().setEdgeWeightFilterMin(weightFilterMin);
@@ -123,7 +123,7 @@ public class FlowMapView extends AbstractCanvasView {
       GeoMap areaMap = GeoMap.loadFor(dataset);
 
       if (areaMap != null) {
-        visualFlowMap.setAreaMap(new VisualGeoMap(visualFlowMap, areaMap, dataset.getMapProjection()));
+        visualFlowMap.setAreaMap(new PGeoMap(visualFlowMap, areaMap, dataset.getMapProjection()));
       }
       setVisualFlowMap(visualFlowMap);
 
