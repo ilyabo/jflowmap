@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views.flowmap;
+package jflowmap.views.map;
 
 import java.awt.geom.Rectangle2D;
 
@@ -25,6 +25,7 @@ import jflowmap.models.map.MapArea;
 import jflowmap.models.map.GeoMap;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
+import jflowmap.views.flowmap.ColorSchemeAware;
 import edu.umd.cs.piccolo.PNode;
 
 /**
@@ -57,7 +58,7 @@ public class PGeoMap extends PNode {
   public Rectangle2D getBoundingBox() {
     if (boundingBox == null) {
       Rectangle2D b = null;
-      for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+      for (PMapArea va : PNodes.childrenOfType(this, PMapArea.class)) {
         if (b == null) {
           b = va.getBoundingBox();
         } else {
@@ -69,19 +70,19 @@ public class PGeoMap extends PNode {
     return (Rectangle2D)boundingBox.clone();
   }
 
-  public VisualArea addArea(MapArea area) {
+  public PMapArea addArea(MapArea area) {
     return addArea(area, mapProjection);
   }
 
-  public VisualArea addArea(MapArea area, MapProjection proj) {
-    VisualArea visualArea = createVisualArea(area, proj);
+  public PMapArea addArea(MapArea area, MapProjection proj) {
+    PMapArea visualArea = createVisualArea(area, proj);
     addChild(visualArea);
     boundingBox = null;
     return visualArea;
   }
 
-  private VisualArea createVisualArea(MapArea area, MapProjection proj) {
-    return new VisualArea(this, area, proj);
+  private PMapArea createVisualArea(MapArea area, MapProjection proj) {
+    return new PMapArea(this, area, proj);
   }
 
   public MapProjection getMapProjection() {
@@ -93,13 +94,13 @@ public class PGeoMap extends PNode {
   }
 
   public void updateColors() {
-    for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+    for (PMapArea va : PNodes.childrenOfType(this, PMapArea.class)) {
       va.updateColors();
     }
   }
 
-  public VisualArea getVisualAreaBy(String id) {
-    for (VisualArea va : PNodes.childrenOfType(this, VisualArea.class)) {
+  public PMapArea getVisualAreaBy(String id) {
+    for (PMapArea va : PNodes.childrenOfType(this, PMapArea.class)) {
       String vaid = va.getArea().getId();
       if (vaid != null  &&  id.equals(vaid)) return va;
     }

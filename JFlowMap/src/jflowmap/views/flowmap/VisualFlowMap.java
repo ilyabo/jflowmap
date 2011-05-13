@@ -53,6 +53,7 @@ import jflowmap.geom.Point;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
 import jflowmap.views.PTooltip;
+import jflowmap.views.map.PGeoMap;
 
 import org.apache.log4j.Logger;
 

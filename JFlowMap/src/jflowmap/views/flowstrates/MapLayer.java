@@ -45,8 +45,8 @@ import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.flowmap.ColorSchemeAware;
-import jflowmap.views.flowmap.VisualArea;
-import jflowmap.views.flowmap.PGeoMap;
+import jflowmap.views.map.PGeoMap;
+import jflowmap.views.map.PMapArea;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 
@@ -364,7 +364,7 @@ public class MapLayer extends PLayer {
   }
 
   private void addMouseOverListenersToMaps(PGeoMap visualAreaMap) {
-    PInputEventListener listener = new PTypedBasicInputEventHandler<VisualArea>(VisualArea.class) {
+    PInputEventListener listener = new PTypedBasicInputEventHandler<PMapArea>(PMapArea.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
         if (lasso.isSelecting())
@@ -373,7 +373,7 @@ public class MapLayer extends PLayer {
         if (event.isControlDown())
           return;
 
-        VisualArea va = node(event);
+        PMapArea va = node(event);
         if (va != null) {
           String areaId = va.getArea().getId();
           if (nodeIdsToCentroids.containsKey(areaId)) {
@@ -387,7 +387,7 @@ public class MapLayer extends PLayer {
         if (lasso.isSelecting())
           return;
 
-        VisualArea va = node(event);
+        PMapArea va = node(event);
         if (va != null) {
           String areaId = va.getArea().getId();
           if (nodeIdsToCentroids.containsKey(areaId)) {
@@ -398,14 +398,14 @@ public class MapLayer extends PLayer {
 
       @Override
       public void mouseExited(PInputEvent event) {
-        VisualArea va = node(event);
+        PMapArea va = node(event);
         if (va != null) {
           String areaId = va.getArea().getId();
           setNodeHighlighted(areaId, false);
         }
       }
     };
-    for (VisualArea va : PNodes.childrenOfType(visualAreaMap, VisualArea.class)) {
+    for (PMapArea va : PNodes.childrenOfType(visualAreaMap, PMapArea.class)) {
       va.addInputEventListener(listener);
     }
   }
@@ -444,7 +444,7 @@ public class MapLayer extends PLayer {
   private void colorizeMapArea(String areaId, double value, boolean hover, SeqStat valueStat) {
     Centroid c = nodeIdsToCentroids.get(areaId);
     if (c != null) {
-      VisualArea area = visualAreaMap.getVisualAreaBy(areaId);
+      PMapArea area = visualAreaMap.getVisualAreaBy(areaId);
       if (area != null && !area.isEmpty()) {
         Color color;
         if (hover) {
@@ -512,7 +512,7 @@ public class MapLayer extends PLayer {
   }
 
   void setVisualAreaMapHighlighted(String nodeId, boolean highlighted) {
-    VisualArea va = visualAreaMap.getVisualAreaBy(nodeId);
+    PMapArea va = visualAreaMap.getVisualAreaBy(nodeId);
     FlowstratesStyle style = flowstratesView.getStyle();
 
     if (va != null) {
@@ -643,7 +643,7 @@ public class MapLayer extends PLayer {
         }
       }
 
-      VisualArea va = visualAreaMap.getVisualAreaBy(nodeId);
+      PMapArea va = visualAreaMap.getVisualAreaBy(nodeId);
       if (va != null) {
         if (rect == null) {
           rect = va.getBoundingBox();

@@ -35,6 +35,7 @@ import jflowmap.models.map.GeoMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
+import jflowmap.views.map.PGeoMap;
 
 import org.apache.log4j.Logger;
 
