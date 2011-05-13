@@ -82,11 +82,11 @@ public class RefugeeAggLayersBuilder extends DefaultAggLayersBuilder {
           );
 
 
-      builder.addAggregationLayer("Origin/All", "Origin",
-          builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "Origin")
-              .withCustomValueAggregator(
-                  labelAttr,
-                  createAllForAllLabelsAggregator()));
+//      builder.addAggregationLayer("Origin/All", "Origin",
+//          builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "Origin")
+//              .withCustomValueAggregator(
+//                  labelAttr,
+//                  createAllForAllLabelsAggregator()));
 
   //    builder.addAggregationLayer("Dest/All", "Dest",
   //        builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "Dest")

@@ -309,6 +309,56 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     });
     buttonPanel.addChild(diffButton);
+
+
+    final PButton groupByOriginButton = new PButton("BY ORIGIN", true);
+    final PButton groupByDestButton = new PButton(" BY DEST ", true);
+    final PButton allToAllButton = new PButton("GROUP ALL", true);
+    buttonPanel.addChild(new PText("   "));
+    buttonPanel.addChild(groupByOriginButton);
+    buttonPanel.addChild(groupByDestButton);
+    buttonPanel.addChild(allToAllButton);
+
+    groupByOriginButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (groupByOriginButton.isPressed()) {
+          groupByDestButton.setPressed(false);
+          allToAllButton.setPressed(false);
+          setSelectedAggLayer(DefaultAggLayersBuilder.BY_ORIGIN_LAYER);
+        } else {
+          setSelectedAggLayer(null);
+        }
+      }
+    });
+
+
+    groupByDestButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (groupByDestButton.isPressed()) {
+          groupByOriginButton.setPressed(false);
+          allToAllButton.setPressed(false);
+          setSelectedAggLayer(DefaultAggLayersBuilder.BY_DEST_LAYER);
+        } else {
+          setSelectedAggLayer(null);
+        }
+      }
+    });
+
+    allToAllButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (allToAllButton.isPressed()) {
+          groupByOriginButton.setPressed(false);
+          groupByDestButton.setPressed(false);
+          setSelectedAggLayer(DefaultAggLayersBuilder.ALL_TO_ALL_LAYER);
+        } else {
+          setSelectedAggLayer(null);
+        }
+      }
+    });
+
   }
 
   public void resetVisibleEdges() {

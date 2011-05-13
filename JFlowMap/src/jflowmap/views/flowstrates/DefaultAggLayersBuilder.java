@@ -1,9 +1,10 @@
 package jflowmap.views.flowstrates;
 
+import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.FlowMapGraphAggLayers.Builder;
-import jflowmap.FlowEndpoint;
+import jflowmap.data.FlowMapGraphEdgeAggregator;
 import jflowmap.data.FlowMapGraphEdgeAggregator.AggEntity;
 import jflowmap.data.FlowMapGraphEdgeAggregator.GroupFunctions;
 import jflowmap.data.FlowMapGraphEdgeAggregator.ValueAggregator;
@@ -13,6 +14,10 @@ import prefuse.data.Tuple;
  * @author Ilya Boyandin
  */
 public class DefaultAggLayersBuilder implements AggLayersBuilder {
+
+  public static final String BY_DEST_LAYER = "Dest";
+  public static final String BY_ORIGIN_LAYER = "Origin";
+  public static final String ALL_TO_ALL_LAYER = "All-to-all";
 
   @Override
   public FlowMapGraphAggLayers build(FlowMapGraph flowMapGraph) {
@@ -27,19 +32,25 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
 //    builder.addAggregationLayer("Dest", null, FlowMapGraphEdgeAggregator.GroupFunctions.TARGET_NODE);
 
     String labelAttr = flowMapGraph.getNodeLabelAttr();
-    builder.addAggregationLayer("Origin", null,
+    builder.addAggregationLayer(BY_ORIGIN_LAYER, null,
         builder.edgeAggregatorFor(GroupFunctions.SRC_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
               oneSideNodeLabelsAggregator(FlowEndpoint.ORIGIN, labelAttr, "ALL"))
           );
 
-    builder.addAggregationLayer("Dest", null,
+    builder.addAggregationLayer(BY_DEST_LAYER, null,
         builder.edgeAggregatorFor(GroupFunctions.TARGET_NODE, null)
           .withCustomValueAggregator(
               labelAttr,
               oneSideNodeLabelsAggregator(FlowEndpoint.DEST, labelAttr, "ALL"))
           );
+
+    builder.addAggregationLayer(ALL_TO_ALL_LAYER, "Origin",
+        builder.edgeAggregatorFor(FlowMapGraphEdgeAggregator.GroupFunctions.MERGE_ALL, "Origin")
+            .withCustomValueAggregator(
+                labelAttr,
+                createAllForAllLabelsAggregator()));
 
     return builder;
   }
