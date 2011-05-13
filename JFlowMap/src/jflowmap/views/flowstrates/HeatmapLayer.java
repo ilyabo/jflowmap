@@ -264,7 +264,7 @@ public class HeatmapLayer extends PLayer {
 
   public void fitHeatMapInView() {
     PBounds heatmapBounds = heatmapNode.getFullBounds();
-    if (heatmapBounds.height > heatmapBounds.width * 7) {
+    if (heatmapBounds.height > heatmapBounds.width * 10) {
       PBounds camb = heatmapCamera.getViewBounds();
       heatmapBounds.height = heatmapBounds.width * (camb.height / camb.width);
     }
