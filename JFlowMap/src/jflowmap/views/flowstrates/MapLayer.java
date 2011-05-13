@@ -662,7 +662,7 @@ public class MapLayer extends PLayer {
 
       // Show more context for smaller areas and less for larger ones
       double alpha = Math.min((fw - Math.min(fw, w * 5)) / fw, (fh - Math.min(fh, h * 5)) / fh);
-      double growBy = 0.2 + 4.0 * Math.pow(alpha, 5);
+      double growBy = 0.4 + 4.0 * Math.pow(alpha, 5);
       GeomUtils.growRectInPlaceByRelativeSize(rect, growBy, growBy, growBy, growBy);
 
       if (rect.getWidth() > fw) {
