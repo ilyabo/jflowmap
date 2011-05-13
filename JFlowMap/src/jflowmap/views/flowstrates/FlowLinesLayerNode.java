@@ -62,9 +62,11 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   public void setFlowLinesColoringMode(FlowLinesColoringMode flowLinesColoringMode) {
-    this.flowLinesColoringMode = flowLinesColoringMode;
-    updateFlowLinesPalette();
-    updateFlowLineColors();
+    if (this.flowLinesColoringMode != flowLinesColoringMode) {
+      this.flowLinesColoringMode = flowLinesColoringMode;
+      updateFlowLinesPalette();
+      updateFlowLineColors();
+    }
   }
 
   public void setShowFlowLines(boolean showFlowLines) {

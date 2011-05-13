@@ -36,8 +36,8 @@ import jflowmap.data.Nodes;
 import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
-import jflowmap.models.map.MapArea;
 import jflowmap.models.map.GeoMap;
+import jflowmap.models.map.MapArea;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.CollectionUtils;
 import jflowmap.util.Pair;
@@ -587,6 +587,9 @@ public class MapLayer extends PLayer {
         return nodeId.equals(getFlowMapGraph().getNodeId(node));
       }
     };
+
+    flowstratesView.getFlowLinesLayerNode().setFlowLinesColoringMode(FlowLinesColoringMode.of(endpoint));
+
     for (Edge e : endpoint.filterByNodePredicate(flowstratesView.getVisibleEdges(), acceptNodes)) {
       Pair<FlowLine, FlowLine> pair = flowstratesView.getFlowLinesLayerNode().getFlowLinesOf(e);
       if (pair != null) {
