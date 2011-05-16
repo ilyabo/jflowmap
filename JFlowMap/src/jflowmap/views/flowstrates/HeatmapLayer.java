@@ -326,12 +326,7 @@ public class HeatmapLayer extends PLayer {
         cell.setStroke(style.getSelectedTimelineCellStroke());
         cell.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
 
-        // highlight flow lines
-        Pair<FlowLine, FlowLine> lines = lines(event);
-        if (lines != null) {
-          lines.first().setHighlighted(true);
-          lines.second().setHighlighted(true);
-        }
+        flowstratesView.getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), true);
 
         updateMapsOnHeatmapCellHover(cell, true);
       }
@@ -344,17 +339,9 @@ public class HeatmapLayer extends PLayer {
         cell.setStroke(style.getTimelineCellStroke());
         cell.setStrokePaint(style.getTimelineCellStrokeColor());
 
-        Pair<FlowLine, FlowLine> lines = lines(event);
-        if (lines != null) {
-          lines.first().setHighlighted(false);
-          lines.second().setHighlighted(false);
-        }
+        flowstratesView.getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), false);
 
         updateMapsOnHeatmapCellHover(cell, false);
-      }
-
-      private Pair<FlowLine, FlowLine> lines(PInputEvent event) {
-        return flowstratesView.getFlowLinesLayerNode().getFlowLinesOf(node(event).getEdge());
       }
 
 

@@ -116,8 +116,12 @@ public class FlowLinesLayerNode extends PNode {
     }
   }
 
-  Pair<FlowLine, FlowLine> getFlowLinesOf(Edge edge) {
-    return edgesToLines.get(edge);
+  public void setFlowLinesOfEdgeHighlighted(Edge edge, boolean highlighted) {
+    Pair<FlowLine, FlowLine> lines = edgesToLines.get(edge);
+    if (lines != null) {
+      lines.first().setHighlighted(highlighted);
+      lines.second().setHighlighted(highlighted);
+    }
   }
 
 

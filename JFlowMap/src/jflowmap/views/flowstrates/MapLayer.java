@@ -40,7 +40,6 @@ import jflowmap.models.map.GeoMap;
 import jflowmap.models.map.MapArea;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.CollectionUtils;
-import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
@@ -589,18 +588,12 @@ public class MapLayer extends PLayer {
       }
     };
 
-    flowstratesView.getFlowLinesLayerNode().setFlowLinesColoringMode(FlowLinesColoringMode.of(endpoint));
+    FlowLinesLayerNode flowLinesLayer = flowstratesView.getFlowLinesLayerNode();
+
+    flowLinesLayer.setFlowLinesColoringMode(FlowLinesColoringMode.of(endpoint));
 
     for (Edge e : endpoint.filterByNodePredicate(flowstratesView.getVisibleEdges(), acceptNodes)) {
-      Pair<FlowLine, FlowLine> pair = flowstratesView.getFlowLinesLayerNode().getFlowLinesOf(e);
-      if (pair != null) {
-        pair.first().setHighlighted(highlighted);
-        pair.second().setHighlighted(highlighted);
-        // if (showFlowtiLinesForHighligtedNodesOnly) {
-        // pair.first().setVisible(highlighted);
-        // pair.second().setVisible(highlighted);
-        // }
-      }
+      flowLinesLayer.setFlowLinesOfEdgeHighlighted(e, highlighted);
     }
     setVisualAreaMapHighlighted(nodeId, highlighted);
   }
