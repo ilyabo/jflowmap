@@ -288,7 +288,7 @@ public class FlowstratesView extends AbstractCanvasView {
     getVisualCanvas().getLayer().addChild(buttonPanel);
 
     final PButton linesButton = new PButton("LINES", true);
-    linesButton.setPressed(true);
+    linesButton.setPressed(flowLinesLayerNode.getShowFlowLines());
     linesButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {

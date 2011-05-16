@@ -51,7 +51,7 @@ public class FlowLinesLayerNode extends PNode {
   private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.ORIGIN;
   private Map<String, Color> flowLinesPalette;
 
-  private boolean showFlowLines = true;
+  private boolean showFlowLines = false;
 
   public FlowLinesLayerNode(FlowstratesView flowstratesView) {
     this.flowstratesView = flowstratesView;
@@ -67,6 +67,10 @@ public class FlowLinesLayerNode extends PNode {
       updateFlowLinesPalette();
       updateFlowLineColors();
     }
+  }
+
+  public boolean getShowFlowLines() {
+    return showFlowLines;
   }
 
   public void setShowFlowLines(boolean showFlowLines) {
