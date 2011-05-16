@@ -428,6 +428,7 @@ public class MapLayer extends PLayer {
           // the only selected node
           FlowEndpoint other = endpoint.opposite();
           MapLayer otherMap = flowstratesView.getMapLayer(other);
+          focusOnNode(nodeId);
           otherMap.focusOnNodes(FlowMapGraph.nodeIdsOf(Nodes.nodesOfEdges(flowstratesView.getVisibleEdges(),
               other)));
         }
