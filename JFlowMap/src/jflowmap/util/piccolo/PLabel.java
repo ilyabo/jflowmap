@@ -31,6 +31,7 @@ public class PLabel extends PNode {
   public PLabel(String text) {
     this.textNode = new PText(text);
     textNode.setFont(FONT);
+    textNode.setPickable(false);
     pad = 5;
     this.rectNode = PPath.createRoundRectangle(
         -pad, -pad, (float) textNode.getWidth() + 2 * pad,
