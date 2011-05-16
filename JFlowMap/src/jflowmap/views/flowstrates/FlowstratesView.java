@@ -250,7 +250,7 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     });
 
-    PropertyChangeListener linesUpdater = new PropertyChangeListener() {
+    PropertyChangeListener linesUpdater = new PropertyChangeListener() { 
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();

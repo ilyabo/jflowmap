@@ -182,23 +182,25 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   private void updateFlowLine(int row, Edge edge, FlowLine line, PText label, FlowEndpoint ep) {
-    PCamera hmcam = flowstratesView.getHeatmapLayer().getHeatmapCamera();
-    PBounds viewBounds = hmcam.getViewBounds();
+    PCamera heatMapCamera = flowstratesView.getHeatmapLayer().getHeatmapCamera();
+    PBounds heatMapViewBounds = heatMapCamera.getViewBounds();
 
     MapLayer mapLayer = flowstratesView.getMapLayer(ep);
 
-    Point2D p0 = mapLayer.getCentroidPoint(edge);
-    boolean visible = (p0 != null  &&  mapLayer.getMapLayerCamera().getViewBounds().contains(p0));
+    Point2D centrp = mapLayer.getCentroidPoint(edge);
+    boolean visibile = (centrp != null  &&  mapLayer.isPointVisible(centrp));
 
-    if (visible) {
+    if (visibile) {
+
       Point2D.Double p = flowstratesView.getHeatmapLayer().getHeatmapFlowLineInPoint(row, ep);
-      visible = (visible  &&  viewBounds.contains(p));
-      if (visible) {
-        mapLayer.getMapLayerCamera().viewToLocal(p0);
-        hmcam.viewToLocal(p);
-        Rectangle2D lb = hmcam.viewToLocal(label.getBounds());
+      visibile = (visibile  &&  heatMapViewBounds.contains(p));
 
-        line.setPoint(0, p0.getX(), p0.getY());
+      if (visibile) {
+        mapLayer.getMapLayerCamera().viewToLocal(centrp);
+        heatMapCamera.viewToLocal(p);
+        Rectangle2D lb = heatMapCamera.viewToLocal(label.getBounds());
+
+        line.setPoint(0, centrp.getX(), centrp.getY());
 
         double x1 = p.x;
         double y1 = p.y + lb.getHeight() / 2;
@@ -214,9 +216,9 @@ public class FlowLinesLayerNode extends PNode {
         line.setPoint(2, x2, y2);
       }
     }
-    line.setVisible(visible);
-    line.setPickable(false);
+    line.setVisible(visibile);
   }
+
 
   void updateFlowLinesPalette() {
     if (flowLinesColoringMode == FlowLinesColoringMode.SAME_COLOR) {

@@ -319,6 +319,10 @@ public class MapLayer extends PLayer {
     return point;
   }
 
+  public boolean isPointVisible(Point2D p) {
+    return getMapLayerCamera().getViewBounds().contains(p);
+  }
+
   void updateCentroidColors() {
     for (Map.Entry<String, Centroid> e : nodeIdsToCentroids.entrySet()) {
       String nodeId = e.getKey();
