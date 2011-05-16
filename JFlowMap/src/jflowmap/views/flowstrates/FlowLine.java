@@ -18,6 +18,7 @@ class FlowLine extends PLine {
   public FlowLine() {
 //    this.color = color;
 //    this.highlightedColor = highlightedColor;
+    setPickable(false);
     setStroke(STROKE);
     for (int i = 0; i < 3; i++) {
       addPoint(i, 0, 0);
