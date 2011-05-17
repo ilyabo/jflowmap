@@ -26,6 +26,11 @@ class FlowLine extends PLine {
     updateColor();
   }
 
+  public void reset() {
+    setVisible(true);
+    setHighlighted(false);
+  }
+
   public boolean isHighlighted() {
     return isHighlighted;
   }

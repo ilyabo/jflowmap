@@ -54,6 +54,7 @@ public class FlowLinesLayerNode extends PNode {
   private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.ORIGIN;
   private Map<String, Color> flowLinesPalette;
   private final List<FlowLine> flowLinePool = Lists.newArrayList();
+  private final Set<Edge> highlightedEdges = Sets.newLinkedHashSet();
 
   private boolean showFlowLines = false;
 
@@ -107,16 +108,17 @@ public class FlowLinesLayerNode extends PNode {
     if (showFlowLines) {
       for (Edge e : flowstratesView.getVisibleEdges()) {
         Pair<Color, Color> colors = getFlowLineColors(e);
-        updateFlowLineColors(edgesToOriginLines.get(e), colors);
-        updateFlowLineColors(edgesToDestLines.get(e), colors);
+        updateFlowLineColors(e, edgesToOriginLines.get(e), colors);
+        updateFlowLineColors(e, edgesToDestLines.get(e), colors);
       }
     }
   }
 
-  private void updateFlowLineColors(FlowLine flowLine, Pair<Color, Color> colors) {
+  private void updateFlowLineColors(Edge e, FlowLine flowLine, Pair<Color, Color> colors) {
     if (flowLine != null) {
       flowLine.setColor(colors.first());
       flowLine.setHighlightedColor(colors.second());
+      flowLine.setHighlighted((highlightedEdges.contains(e)));
     }
   }
 
@@ -129,6 +131,14 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   public void setFlowLinesOfEdgeHighlighted(Edge edge, boolean highlighted) {
+    if (highlighted) {
+      if (!highlightedEdges.contains(edge)) {
+        highlightedEdges.add(edge);
+      }
+    } else {
+      highlightedEdges.remove(edge);
+    }
+
     FlowLine originLine = edgesToOriginLines.get(edge);
     if (originLine != null) {
       originLine.setHighlighted(highlighted);
@@ -256,14 +266,14 @@ public class FlowLinesLayerNode extends PNode {
     if (line == null) {
       if (!flowLinePool.isEmpty()) {
         line = flowLinePool.remove(flowLinePool.size() - 1);
-        line.setVisible(true);
+        line.reset();
       } else {
         line = new FlowLine();
       }
       addChild(line);
       map.put(edge, line);
     }
-    updateFlowLineColors(getEdgesToFlowLinesMap(ep).get(edge), getFlowLineColors(edge));
+    updateFlowLineColors(edge, getEdgesToFlowLinesMap(ep).get(edge), getFlowLineColors(edge));
     return line;
   }
 

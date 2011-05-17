@@ -67,7 +67,7 @@ public class HeatmapLayer extends PLayer {
   private final PPath columnHighlightRect;
   private final PNode heatmapNode;
   final FlowstratesView flowstratesView;
-  private Map<Edge, Pair<PText, PText>> edgesToLabels;
+  private final Map<Edge, Pair<PText, PText>> edgesToLabels = Maps.newHashMap();
   private SeqStat weightAttrTotalsStat = null;
 
   public HeatmapLayer(FlowstratesView flowstratesView) {
@@ -190,7 +190,7 @@ public class HeatmapLayer extends PLayer {
 
     int row = 0, maxCol = 0;
 
-    edgesToLabels = Maps.newHashMap();
+    edgesToLabels.clear();
 
     for (Edge edge : flowstratesView.getVisibleEdges()) {
       int col = 0;
