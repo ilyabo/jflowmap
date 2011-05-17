@@ -42,7 +42,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return FLOW_CIRCLE_COLOR;
   }
 
-  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(0f, 0f, 0f, .05f);
+  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(70, 208, 243);
 //  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(200, 200, 200);
   @Override
   public Color getFlowLineColor() {

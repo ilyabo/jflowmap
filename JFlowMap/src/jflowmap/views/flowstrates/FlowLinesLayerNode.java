@@ -95,11 +95,15 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   private void updateFlowLineColorsOnly() {
-    for (Edge e : flowstratesView.getVisibleEdges()) {
-      /*if (showAllFlowLines  ||  highlightedEdges.contains(e))*/ {
-        updateFlowLineColors(e, FlowEndpoint.ORIGIN);
-        updateFlowLineColors(e, FlowEndpoint.DEST);
-      }
+    Iterable<Edge> edges;
+    if (showAllFlowLines) {
+      edges = flowstratesView.getVisibleEdges();
+    } else {
+      edges = highlightedEdges;
+    }
+    for (Edge e : edges) {
+      updateFlowLineColors(e, FlowEndpoint.ORIGIN);
+      updateFlowLineColors(e, FlowEndpoint.DEST);
     }
   }
 
@@ -181,9 +185,15 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   void updateFlowLines() {
-    List<Edge> visibleEdges = flowstratesView.getVisibleEdges();
-    for (int row = 0, size = visibleEdges.size(); row < size; row++) {
-      updateFlowLinesOf(row, visibleEdges.get(row));
+    if (showAllFlowLines) {
+      List<Edge> visibleEdges = flowstratesView.getVisibleEdges();
+      for (int row = 0, size = visibleEdges.size(); row < size; row++) {
+        updateFlowLinesOf(row, visibleEdges.get(row));
+      }
+    } else {
+      for (Edge e : highlightedEdges) {
+        updateFlowLinesOf(e);
+      }
     }
   }
 
