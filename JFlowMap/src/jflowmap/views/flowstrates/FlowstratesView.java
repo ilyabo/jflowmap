@@ -28,6 +28,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -63,6 +64,7 @@ import prefuse.util.ColorLib;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
@@ -113,6 +115,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private FlowLinesLayerNode flowLinesLayerNode;
 
   private List<Edge> visibleEdges;
+  private Map<Edge, Integer> visibleEdgeToIndex;
   private Predicate<Edge> customEdgeFilter;
 
   private HeatmapLayer heatmapLayer;
@@ -250,7 +253,7 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     });
 
-    PropertyChangeListener linesUpdater = new PropertyChangeListener() { 
+    PropertyChangeListener linesUpdater = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
@@ -258,7 +261,7 @@ public class FlowstratesView extends AbstractCanvasView {
           originMapLayer.updateCentroids();
           destMapLayer.updateCentroids();
 
-          flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
+          flowLinesLayerNode.updateFlowLines();
           // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
         }
       }
@@ -288,11 +291,11 @@ public class FlowstratesView extends AbstractCanvasView {
     getVisualCanvas().getLayer().addChild(buttonPanel);
 
     final PButton linesButton = new PButton("LINES", true);
-    linesButton.setPressed(flowLinesLayerNode.getShowFlowLines());
+    linesButton.setPressed(flowLinesLayerNode.getShowAllFlowLines());
     linesButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        getFlowLinesLayerNode().setShowFlowLines(linesButton.isPressed());
+        getFlowLinesLayerNode().setShowAllFlowLines(linesButton.isPressed());
       }
     });
     buttonPanel.addChild(linesButton);
@@ -363,6 +366,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public void resetVisibleEdges() {
     this.visibleEdges = null;
+    this.visibleEdgeToIndex = null;
     resetValueStat();
     heatmapLayer.renewHeatmap();
     getFlowLinesLayerNode().renewFlowLines();
@@ -516,11 +520,32 @@ public class FlowstratesView extends AbstractCanvasView {
       visibleEdges = edges;
       visibleEdgesStats = null;
 
-      flowLinesLayerNode.updateFlowLinesPalette();
+      flowLinesLayerNode.updatePalette();
     }
 
     return visibleEdges;
   }
+
+  public int getVisibleEdgeIndex(Edge edge) {
+    Integer idx = getOrInitVisibleEdgesToIndex().get(edge);
+    if (idx == null) {
+      return -1;
+    }
+    return idx;
+  }
+
+  private Map<Edge, Integer> getOrInitVisibleEdgesToIndex() {
+    if (visibleEdgeToIndex == null) {
+      Map<Edge, Integer> map = Maps.newHashMap();
+      int row = 0;
+      for (Edge e : getVisibleEdges()) {
+        map.put(e, row++);
+      }
+      visibleEdgeToIndex = map;
+    }
+    return visibleEdgeToIndex;
+  }
+
 
   public void setValueType(ValueType valueType) {
     if (this.valueType != valueType) {
@@ -742,7 +767,7 @@ public class FlowstratesView extends AbstractCanvasView {
     if (!fitInViewOnce) {
       fitMapsInView();
     }
-    flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
+    flowLinesLayerNode.updateFlowLines();
 
     /*
      * getVisualCanvas().setViewZoomPoint(camera.getViewBounds().getCenter2D());
@@ -761,7 +786,7 @@ public class FlowstratesView extends AbstractCanvasView {
     PBounds vb = getCamera().getViewBounds();
     PNodes.moveTo(legend, legend.getX(), (vb.getMaxY() - lb.getHeight()) - lb.getY() - LEGEND_MARGIN_BOTTOM);
 
-    flowLinesLayerNode.updateFlowLinePositionsAndVisibility();
+    flowLinesLayerNode.updateFlowLines();
   }
 
   private void fitMapsInView() {

@@ -153,7 +153,7 @@ public class HeatmapLayer extends PLayer {
           columnHighlightRect.setVisible(false);
           updateMapsOnHeatmapColumnHover(label.getName(), false);
 
-          flowstratesView.getFlowLinesLayerNode().updateFlowLinePositionsAndVisibility();
+          flowstratesView.getFlowLinesLayerNode().updateFlowLines();
         }
       });
       col++;

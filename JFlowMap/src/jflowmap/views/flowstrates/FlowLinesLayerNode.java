@@ -56,7 +56,7 @@ public class FlowLinesLayerNode extends PNode {
   private final List<FlowLine> flowLinePool = Lists.newArrayList();
   private final Set<Edge> highlightedEdges = Sets.newLinkedHashSet();
 
-  private boolean showFlowLines = false;
+  private boolean showAllFlowLines = false;
 
   public FlowLinesLayerNode(FlowstratesView flowstratesView) {
     this.flowstratesView = flowstratesView;
@@ -69,18 +69,18 @@ public class FlowLinesLayerNode extends PNode {
   public void setFlowLinesColoringMode(FlowLinesColoringMode flowLinesColoringMode) {
     if (this.flowLinesColoringMode != flowLinesColoringMode) {
       this.flowLinesColoringMode = flowLinesColoringMode;
-      updateFlowLinesPalette();
-      updateFlowLineColors();
+      updatePalette();
+      updateFlowLineColorsOnly();
     }
   }
 
-  public boolean getShowFlowLines() {
-    return showFlowLines;
+  public boolean getShowAllFlowLines() {
+    return showAllFlowLines;
   }
 
-  public void setShowFlowLines(boolean showFlowLines) {
-    if (this.showFlowLines != showFlowLines) {
-      this.showFlowLines = showFlowLines;
+  public void setShowAllFlowLines(boolean showFlowLines) {
+    if (this.showAllFlowLines != showFlowLines) {
+      this.showAllFlowLines = showFlowLines;
       renewFlowLines();
     }
   }
@@ -91,22 +91,12 @@ public class FlowLinesLayerNode extends PNode {
     edgesToOriginLines.clear();
     edgesToDestLines.clear();
 
-    if (showFlowLines) {
-      /*
-      for (Edge edge : flowstratesView.getVisibleEdges()) {
-        edgesToOriginLines.put(edge, createFlowLine());
-        edgesToDestLines.put(edge, createFlowLine());
-      }
-      */
-
-      updateFlowLineColors();
-      updateFlowLinePositionsAndVisibility();
-    }
+    updateFlowLines();
   }
 
-  private void updateFlowLineColors() {
-    if (showFlowLines) {
-      for (Edge e : flowstratesView.getVisibleEdges()) {
+  private void updateFlowLineColorsOnly() {
+    for (Edge e : flowstratesView.getVisibleEdges()) {
+      /*if (showAllFlowLines  ||  highlightedEdges.contains(e))*/ {
         updateFlowLineColors(e, FlowEndpoint.ORIGIN);
         updateFlowLineColors(e, FlowEndpoint.DEST);
       }
@@ -148,6 +138,8 @@ public class FlowLinesLayerNode extends PNode {
     if (destLine != null) {
       destLine.setHighlighted(highlighted);
     }
+
+    updateFlowLinesOf(edge);
   }
 
   private Color getFlowLineColor(Edge edge) {
@@ -188,59 +180,62 @@ public class FlowLinesLayerNode extends PNode {
     }
   }
 
-  void updateFlowLinePositionsAndVisibility() {
-    if (showFlowLines) {
-      int row = 0;
-
-      for (Edge edge : flowstratesView.getVisibleEdges()) {
-        Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
-
-        updateFlowLine(row, edge, labels.first(), FlowEndpoint.ORIGIN);
-        updateFlowLine(row, edge, labels.second(), FlowEndpoint.DEST);
-
-        row++;
-      }
-
-//      repaint();
+  void updateFlowLines() {
+    List<Edge> visibleEdges = flowstratesView.getVisibleEdges();
+    for (int row = 0, size = visibleEdges.size(); row < size; row++) {
+      updateFlowLinesOf(row, visibleEdges.get(row));
     }
   }
 
+  private void updateFlowLinesOf(Edge edge) {
+    updateFlowLinesOf(flowstratesView.getVisibleEdgeIndex(edge), edge);
+  }
+
+  private void updateFlowLinesOf(int row, Edge edge) {
+    Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
+
+    updateFlowLine(row, edge, labels.first(), FlowEndpoint.ORIGIN);
+    updateFlowLine(row, edge, labels.second(), FlowEndpoint.DEST);
+  }
+
   private void updateFlowLine(int row, Edge edge, PText label, FlowEndpoint ep) {
-
-    PCamera heatMapCamera = flowstratesView.getHeatmapLayer().getHeatmapCamera();
-    PBounds heatMapViewBounds = heatMapCamera.getViewBounds();
-
-    MapLayer mapLayer = flowstratesView.getMapLayer(ep);
-
-    Point2D centrp = mapLayer.getCentroidPoint(edge);
-    boolean visible = (centrp != null  &&  mapLayer.isPointVisible(centrp));
-
+    boolean visible = (showAllFlowLines  ||  highlightedEdges.contains(edge));
     if (visible) {
-      Point2D.Double p = flowstratesView.getHeatmapLayer().getHeatmapFlowLineInPoint(row, ep);
-      visible = (visible  &&  heatMapViewBounds.contains(p));
+      PCamera heatMapCamera = flowstratesView.getHeatmapLayer().getHeatmapCamera();
+      PBounds heatMapViewBounds = heatMapCamera.getViewBounds();
+
+      MapLayer mapLayer = flowstratesView.getMapLayer(ep);
+
+      Point2D centrp = mapLayer.getCentroidPoint(edge);
+      visible = (centrp != null  &&  mapLayer.isPointVisible(centrp));
 
       if (visible) {
-        mapLayer.getMapLayerCamera().viewToLocal(centrp);
-        heatMapCamera.viewToLocal(p);
-        Rectangle2D lb = heatMapCamera.viewToLocal(label.getBounds());
+        Point2D.Double p = flowstratesView.getHeatmapLayer().getHeatmapFlowLineInPoint(row, ep);
+        visible = (visible  &&  heatMapViewBounds.contains(p));
 
-        FlowLine line = getOrCreateFlowLine(edge, ep);
-        line.setPoint(0, centrp.getX(), centrp.getY());
+        if (visible) {
+          mapLayer.getMapLayerCamera().viewToLocal(centrp);
+          heatMapCamera.viewToLocal(p);
+          Rectangle2D lb = heatMapCamera.viewToLocal(label.getBounds());
 
-        double x1 = p.x;
-        double y1 = p.y + lb.getHeight() / 2;
-        if (ep == FlowEndpoint.ORIGIN) {
-          x1 -= lb.getWidth();
-        } else {
-          x1 += lb.getWidth();
+          FlowLine line = getOrCreateFlowLine(edge, ep);
+          line.setPoint(0, centrp.getX(), centrp.getY());
+
+          double x1 = p.x;
+          double y1 = p.y + lb.getHeight() / 2;
+          if (ep == FlowEndpoint.ORIGIN) {
+            x1 -= lb.getWidth();
+          } else {
+            x1 += lb.getWidth();
+          }
+          line.setPoint(1, x1, y1);
+
+          double x2 = p.x;
+          double y2 = y1;
+          line.setPoint(2, x2, y2);
+
+          line.setVisible(true);
         }
-        line.setPoint(1, x1, y1);
-
-        double x2 = p.x;
-        double y2 = y1;
-        line.setPoint(2, x2, y2);
-
-        line.setVisible(true);
       }
     }
 
@@ -270,40 +265,46 @@ public class FlowLinesLayerNode extends PNode {
       }
       addChild(line);
       map.put(edge, line);
-      updateFlowLineColors(edge, ep);
     }
+    updateFlowLineColors(edge, ep);
     return line;
   }
 
 
-  void updateFlowLinesPalette() {
+  void updatePalette() {
     if (flowLinesColoringMode == FlowLinesColoringMode.SAME_COLOR) {
       if (flowLinesPalette != null)
         flowLinesPalette.clear();
       return;
     }
+    createPaletteForNodes(getNodeIdsToColorBy());
+  }
 
-    FlowMapGraph flowMapGraph = flowstratesView.getFlowMapGraph();
+  private void createPaletteForNodes(Set<String> nodeIds) {
+    flowLinesPalette = new HashMap<String, Color>(nodeIds.size());
+    Color[] palette = ColorUtils.createCategoryColors(nodeIds.size(), FLOW_LINES_ALPHA);
+    int i = 0;
+    for (String nodeId : nodeIds) {
+      flowLinesPalette.put(nodeId, palette[i++]);
+    }
+  }
+
+  private Set<String> getNodeIdsToColorBy() {
+    FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
 
     Set<String> ids = Sets.newHashSet();
     for (Edge e : flowstratesView.getVisibleEdges()) {
-
       switch (flowLinesColoringMode) {
         case ORIGIN:
-          ids.add(flowMapGraph.getSourceNodeId(e));
+          ids.add(fmg.getSourceNodeId(e));
           break;
 
         case DEST:
-          ids.add(flowMapGraph.getTargetNodeId(e));
+          ids.add(fmg.getTargetNodeId(e));
           break;
       }
     }
-    flowLinesPalette = new HashMap<String, Color>(ids.size());
-    Color[] palette = ColorUtils.createCategoryColors(ids.size(), FLOW_LINES_ALPHA);
-    int i = 0;
-    for (String origin : ids) {
-      flowLinesPalette.put(origin, palette[i++]);
-    }
+    return ids;
   }
 
 }
