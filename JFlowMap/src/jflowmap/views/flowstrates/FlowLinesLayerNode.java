@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import jflowmap.util.ColorUtils;
 import jflowmap.util.Pair;
 import prefuse.data.Edge;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -51,6 +53,7 @@ public class FlowLinesLayerNode extends PNode {
   private final FlowstratesView flowstratesView;
   private FlowLinesColoringMode flowLinesColoringMode = FlowLinesColoringMode.ORIGIN;
   private Map<String, Color> flowLinesPalette;
+  private final List<FlowLine> flowLinePool = Lists.newArrayList();
 
   private boolean showFlowLines = false;
 
@@ -98,12 +101,6 @@ public class FlowLinesLayerNode extends PNode {
       updateFlowLineColors();
       updateFlowLinePositionsAndVisibility();
     }
-  }
-
-  private FlowLine createFlowLine() {
-    FlowLine line = new FlowLine();
-    addChild(line);
-    return line;
   }
 
   private void updateFlowLineColors() {
@@ -248,6 +245,8 @@ public class FlowLinesLayerNode extends PNode {
     FlowLine line = getEdgesToFlowLinesMap(ep).remove(edge);
     if (line != null) {
       removeChild(line);
+      flowLinePool.add(line);
+      // TODO: clean if there are too many objects
     }
   }
 
@@ -255,7 +254,13 @@ public class FlowLinesLayerNode extends PNode {
     Map<Edge, FlowLine> map = getEdgesToFlowLinesMap(ep);
     FlowLine line = map.get(edge);
     if (line == null) {
-      line = createFlowLine();
+      if (!flowLinePool.isEmpty()) {
+        line = flowLinePool.remove(flowLinePool.size() - 1);
+        line.setVisible(true);
+      } else {
+        line = new FlowLine();
+      }
+      addChild(line);
       map.put(edge, line);
     }
     updateFlowLineColors(getEdgesToFlowLinesMap(ep).get(edge), getFlowLineColors(edge));
