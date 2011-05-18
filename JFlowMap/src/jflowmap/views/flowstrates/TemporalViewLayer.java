@@ -19,13 +19,12 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.geom.Point2D.Double;
+import java.awt.geom.Rectangle2D;
 
 import jflowmap.FlowEndpoint;
-import jflowmap.util.Pair;
 import prefuse.data.Edge;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
-import edu.umd.cs.piccolo.nodes.PText;
 
 /**
  * @author Ilya Boyandin
@@ -57,7 +56,7 @@ public abstract class TemporalViewLayer extends PLayer {
 
   public abstract void fitInView();
 
-  public abstract Pair<PText, PText> getEdgeLabels(Edge edge);
+  public abstract Rectangle2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep);
 
   public abstract Double getFlowLineInPoint(int row, FlowEndpoint ep);
 

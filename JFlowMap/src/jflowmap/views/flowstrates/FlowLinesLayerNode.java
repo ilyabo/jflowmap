@@ -29,7 +29,6 @@ import java.util.Set;
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import jflowmap.util.ColorUtils;
-import jflowmap.util.Pair;
 import prefuse.data.Edge;
 
 import com.google.common.collect.Lists;
@@ -38,7 +37,6 @@ import com.google.common.collect.Sets;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -209,14 +207,11 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   private void updateFlowLinesOf(int row, Edge edge) {
-    Pair<PText, PText> labels = flowstratesView.getTemporalLayer().getEdgeLabels(edge);
-    if (labels != null) {
-      updateFlowLine(row, edge, labels.first(), FlowEndpoint.ORIGIN);
-      updateFlowLine(row, edge, labels.second(), FlowEndpoint.DEST);
-    }
+    updateFlowLine(row, edge, FlowEndpoint.ORIGIN);
+    updateFlowLine(row, edge, FlowEndpoint.DEST);
   }
 
-  private void updateFlowLine(int row, Edge edge, PText label, FlowEndpoint ep) {
+  private void updateFlowLine(int row, Edge edge, FlowEndpoint ep) {
     boolean visible = (showAllFlowLines  ||  highlightedEdges.contains(edge));
     if (visible) {
       PCamera heatMapCamera = flowstratesView.getTemporalLayer().getCamera();
@@ -234,7 +229,9 @@ public class FlowLinesLayerNode extends PNode {
         if (visible) {
           mapLayer.getMapLayerCamera().viewToLocal(centrp);
           heatMapCamera.viewToLocal(p);
-          Rectangle2D lb = heatMapCamera.viewToLocal(label.getBounds());
+
+          Rectangle2D lb = heatMapCamera.viewToLocal(
+              flowstratesView.getTemporalLayer().getEdgeLabelBounds(edge, ep));
 
           FlowLine line = getOrCreateFlowLine(edge, ep);
           line.setPoint(0, centrp.getX(), centrp.getY());

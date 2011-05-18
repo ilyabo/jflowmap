@@ -21,6 +21,7 @@ package jflowmap.views.flowstrates;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 
@@ -88,8 +89,13 @@ public class HeatmapLayer extends TemporalViewLayer {
   }
 
   @Override
-  public Pair<PText, PText> getEdgeLabels(Edge edge) {
-    return edgesToLabels.get(edge);
+  public Rectangle2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep) {
+    Pair<PText, PText> labels = edgesToLabels.get(edge);
+    switch (ep) {
+    case ORIGIN: return labels.first().getBounds();
+    case DEST: return labels.second().getBounds();
+    default: throw new AssertionError();
+    }
   }
 
   private void createColumnLabels() {
