@@ -224,7 +224,7 @@ public class FlowLinesLayerNode extends PNode {
 
       if (visible) {
         Point2D.Double p = flowstratesView.getTemporalLayer().getFlowLineInPoint(row, ep);
-        visible = (visible  &&  heatMapViewBounds.contains(p));
+        visible = (p != null  &&  heatMapViewBounds.contains(p));
 
         if (visible) {
           mapLayer.getMapLayerCamera().viewToLocal(centrp);

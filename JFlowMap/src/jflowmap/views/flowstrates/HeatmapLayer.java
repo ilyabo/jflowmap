@@ -40,6 +40,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -259,13 +260,17 @@ public class HeatmapLayer extends TemporalViewLayer {
 
   @Override
   public void fitInView() {
-    PBounds heatmapBounds = heatmapNode.getFullBounds();
-    if (heatmapBounds.height > heatmapBounds.width * 10) {
-      PBounds camb = getCamera().getViewBounds();
-      heatmapBounds.height = heatmapBounds.width * (camb.height / camb.width);
-    }
-    getCamera().setViewBounds(GeomUtils.growRectByRelativeSize(heatmapBounds, .025, .1, .025, .1));
+    fitBoundsInCameraView(heatmapNode.getFullBounds(), getCamera());
   }
+
+  public static void fitBoundsInCameraView(PBounds bounds, PCamera camera) {
+    if (bounds.height > bounds.width * 10) {
+      PBounds camb = camera.getViewBounds();
+      bounds.height = bounds.width * (camb.height / camb.width);
+    }
+    camera.setViewBounds(GeomUtils.growRectByRelativeSize(bounds, .025, .1, .025, .1));
+  }
+
 
   void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
     MapLayer originMap = getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN);

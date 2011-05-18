@@ -204,10 +204,11 @@ public class FlowstratesView extends AbstractCanvasView {
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
-    temporalLayer = new HeatmapLayer(this);
 
     originMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.ORIGIN);
     destMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.DEST);
+
+    temporalLayer = new FastHeatmapLayer(this);
 
     addCaption(originMapLayer.getMapLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
@@ -520,7 +521,9 @@ public class FlowstratesView extends AbstractCanvasView {
       visibleEdges = edges;
       visibleEdgesStats = null;
 
-      flowLinesLayerNode.updatePalette();
+      if (flowLinesLayerNode != null) {
+        flowLinesLayerNode.updatePalette();
+      }
     }
 
     return visibleEdges;
@@ -558,7 +561,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return valueType;
   }
 
-  public double getEdgeWeightValue(Edge edge, String attr) {
+  public double getValue(Edge edge, String attr) {
     ValueType vtype = getValueType();
     FlowMapAttrSpec attrSpec = getFlowMapGraph().getAttrSpec();
 

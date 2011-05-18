@@ -493,7 +493,7 @@ public class MapLayer extends PLayer {
       colorizeMapAreasWithNodeTotals(edges, attr, hover);
 
     } else {
-      double value = flowstratesView.getEdgeWeightValue(edge, attr);
+      double value = flowstratesView.getValue(edge, attr);
       colorizeMapArea(flowstratesView.getAggLayers().getNodeId(edge, endpoint), value, hover);
     }
   }

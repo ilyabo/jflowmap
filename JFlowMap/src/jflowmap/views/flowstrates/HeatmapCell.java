@@ -62,9 +62,7 @@ class HeatmapCell extends PPath {
   }
 
   public double getValue() {
-    ValueType valueType = heatmapLayer.getFlowstratesView().getValueType();
-    String attr = valueType.getColumnValueAttr(flowMapGraph.getAttrSpec(), weightAttr);
-    return getEdge().getDouble(attr);
+    return heatmapLayer.getFlowstratesView().getValue(edge, weightAttr);
   }
 
   public void updateColor() {
