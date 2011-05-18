@@ -39,8 +39,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
-import edu.umd.cs.piccolo.PCamera;
-import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -52,7 +50,7 @@ import edu.umd.cs.piccolo.util.PBounds;
 /**
  * @author Ilya Boyandin
  */
-public class HeatmapLayer extends PLayer {
+public class HeatmapLayer extends TemporalViewLayer {
 
   static final double cellWidth = 40;
   static final double cellHeight = 40;
@@ -62,47 +60,34 @@ public class HeatmapLayer extends PLayer {
   private final PInputEventListener heatmapCellTooltipListener;
   private final PInputEventListener heatmapCellHoverListener;
 
-  private final PCamera heatmapCamera;
   private final PPath columnHighlightRect;
   private final PNode heatmapNode;
-  final FlowstratesView flowstratesView;
   private final Map<Edge, Pair<PText, PText>> edgesToLabels = Maps.newHashMap();
   private SeqStat weightAttrTotalsStat = null;
 
   public HeatmapLayer(FlowstratesView flowstratesView) {
-    this.flowstratesView = flowstratesView;
-    heatmapCamera = new PCamera();
-    heatmapCamera.addLayer(this);
+    super(flowstratesView);
 
     heatmapNode = new PNode();
     addChild(heatmapNode);
 
     columnHighlightRect = PPaths.rect(0, 0, 1, 1);
     columnHighlightRect.setPaint(null);
-    FlowstratesStyle style = flowstratesView.getStyle();
+    FlowstratesStyle style = getFlowstratesView().getStyle();
     columnHighlightRect.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
     columnHighlightRect.setStroke(style.getSelectedTimelineCellStroke());
-//    columnHighlightRect.setStrokePaint(Color.cyan);
     columnHighlightRect.setVisible(false);
     addChild(columnHighlightRect);
 
-    heatmapCellTooltipListener = flowstratesView.createTooltipListener(HeatmapCell.class);
+    heatmapCellTooltipListener = getFlowstratesView().createTooltipListener(HeatmapCell.class);
     heatmapCellHoverListener = createHeatMapCellHoverListener();
-
-  }
-
-  public FlowstratesView getFlowstratesView() {
-    return flowstratesView;
   }
 
   public FlowMapGraph getFlowMapGraph() {
-    return flowstratesView.getFlowMapGraph();
+    return getFlowstratesView().getFlowMapGraph();
   }
 
-  public PCamera getHeatmapCamera() {
-    return heatmapCamera;
-  }
-
+  @Override
   public Pair<PText, PText> getEdgeLabels(Edge edge) {
     return edgesToLabels.get(edge);
   }
@@ -144,7 +129,7 @@ public class HeatmapLayer extends PLayer {
           columnHighlightRect.setVisible(true);
           columnHighlightRect.repaint();
 
-          flowstratesView.getFlowLinesLayerNode().hideAllFlowLines();
+          getFlowstratesView().getFlowLinesLayerNode().hideAllFlowLines();
         }
 
         @Override
@@ -153,7 +138,7 @@ public class HeatmapLayer extends PLayer {
           columnHighlightRect.setVisible(false);
           updateMapsOnHeatmapColumnHover(label.getName(), false);
 
-          flowstratesView.getFlowLinesLayerNode().updateFlowLines();
+          getFlowstratesView().getFlowLinesLayerNode().updateFlowLines();
         }
       });
       col++;
@@ -163,7 +148,8 @@ public class HeatmapLayer extends PLayer {
   /**
    * @return The point in the heatmap camera view coords.
    */
-  Point2D.Double getHeatmapFlowLineInPoint(int row, FlowEndpoint ep) {
+  @Override
+  public Point2D.Double getFlowLineInPoint(int row, FlowEndpoint ep) {
     switch (ep) {
 
     case ORIGIN:
@@ -183,7 +169,8 @@ public class HeatmapLayer extends PLayer {
     return row * HeatmapLayer.cellHeight;
   }
 
-  public void renewHeatmap() {
+  @Override
+  public void renew() {
     resetWeightAttrTotals();
 
     heatmapNode.removeAllChildren();
@@ -192,7 +179,7 @@ public class HeatmapLayer extends PLayer {
 
     edgesToLabels.clear();
 
-    for (Edge edge : flowstratesView.getVisibleEdges()) {
+    for (Edge edge : getFlowstratesView().getVisibleEdges()) {
       int col = 0;
 
       double y = getTupleY(row);
@@ -210,7 +197,7 @@ public class HeatmapLayer extends PLayer {
 
         HeatmapCell cell = new HeatmapCell(
             this, x, y, cellWidth, cellHeight, weightAttr,
-            flowstratesView.getAggLayers().getFlowMapGraphOf(edge), edge);
+            getFlowstratesView().getAggLayers().getFlowMapGraphOf(edge), edge);
 
         cell.addInputEventListener(heatmapCellHoverListener);
         // if (!Double.isNaN(cell.getWeight())) {
@@ -240,6 +227,7 @@ public class HeatmapLayer extends PLayer {
     repaint();
   }
 
+  @Override
   public void resetWeightAttrTotals() {
     weightAttrTotalsStat = null;
   }
@@ -256,24 +244,26 @@ public class HeatmapLayer extends PLayer {
         });
   }
 
-  void updateHeatmapColors() {
+  @Override
+  public void updateColors() {
     for (HeatmapCell cell : PNodes.childrenOfType(heatmapNode, HeatmapCell.class)) {
       cell.updateColor();
     }
   }
 
-  public void fitHeatMapInView() {
+  @Override
+  public void fitInView() {
     PBounds heatmapBounds = heatmapNode.getFullBounds();
     if (heatmapBounds.height > heatmapBounds.width * 10) {
-      PBounds camb = heatmapCamera.getViewBounds();
+      PBounds camb = getCamera().getViewBounds();
       heatmapBounds.height = heatmapBounds.width * (camb.height / camb.width);
     }
-    heatmapCamera.setViewBounds(GeomUtils.growRectByRelativeSize(heatmapBounds, .025, .1, .025, .1));
+    getCamera().setViewBounds(GeomUtils.growRectByRelativeSize(heatmapBounds, .025, .1, .025, .1));
   }
 
   void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
-    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoint.ORIGIN);
-    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoint.DEST);
+    MapLayer originMap = getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN);
+    MapLayer destMap = getFlowstratesView().getMapLayer(FlowEndpoint.DEST);
 
     originMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
     destMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
@@ -283,12 +273,12 @@ public class HeatmapLayer extends PLayer {
   }
 
   void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
-    MapLayer originMap = flowstratesView.getMapLayer(FlowEndpoint.ORIGIN);
-    MapLayer destMap = flowstratesView.getMapLayer(FlowEndpoint.DEST);
+    MapLayer originMap = getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN);
+    MapLayer destMap = getFlowstratesView().getMapLayer(FlowEndpoint.DEST);
 
-    List<Edge> edges = flowstratesView.getVisibleEdges();
+    List<Edge> edges = getFlowstratesView().getVisibleEdges();
 
-    SeqStat wstat = flowstratesView.getValueStat();
+    SeqStat wstat = getFlowstratesView().getValueStat();
 
     if (hover) {
       if (weightAttrTotalsStat == null) {
@@ -301,9 +291,9 @@ public class HeatmapLayer extends PLayer {
         }
         weightAttrTotalsStat = wstat;
       }
-      flowstratesView.setValueStat(weightAttrTotalsStat);
+      getFlowstratesView().setValueStat(weightAttrTotalsStat);
     } else {
-      flowstratesView.resetValueStat();
+      getFlowstratesView().resetValueStat();
     }
 
 
@@ -319,14 +309,14 @@ public class HeatmapLayer extends PLayer {
       public void mouseEntered(PInputEvent event) {
         HeatmapCell cell = node(event);
 
-        FlowstratesStyle style = flowstratesView.getStyle();
+        FlowstratesStyle style = getFlowstratesView().getStyle();
 
         // highlight cell
         cell.moveToFront();
         cell.setStroke(style.getSelectedTimelineCellStroke());
         cell.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
 
-        flowstratesView.getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), true);
+        getFlowstratesView().getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), true);
 
         updateMapsOnHeatmapCellHover(cell, true);
       }
@@ -334,12 +324,12 @@ public class HeatmapLayer extends PLayer {
       @Override
       public void mouseExited(PInputEvent event) {
         HeatmapCell cell = node(event);
-        FlowstratesStyle style = flowstratesView.getStyle();
+        FlowstratesStyle style = getFlowstratesView().getStyle();
 
         cell.setStroke(style.getTimelineCellStroke());
         cell.setStrokePaint(style.getTimelineCellStrokeColor());
 
-        flowstratesView.getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), false);
+        getFlowstratesView().getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), false);
 
         updateMapsOnHeatmapCellHover(cell, false);
       }
@@ -348,7 +338,7 @@ public class HeatmapLayer extends PLayer {
       @Override
       public void mouseClicked(PInputEvent event) {
 //        if (event.isControlDown()) {
-//          flowstratesView.setEgdeForSimilaritySorting(node(event).getEdge());
+//          getFlowstratesView().setEgdeForSimilaritySorting(node(event).getEdge());
 //        }
         HeatmapCell cell = node(event);
         Edge edge = cell.getEdge();
@@ -357,8 +347,8 @@ public class HeatmapLayer extends PLayer {
         String srcId = fmg.getSourceNodeId(edge);
         String targetId = fmg.getTargetNodeId(edge);
 
-        flowstratesView.getMapLayer(FlowEndpoint.ORIGIN).focusOnNode(srcId);
-        flowstratesView.getMapLayer(FlowEndpoint.DEST).focusOnNode(targetId);
+        getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN).focusOnNode(srcId);
+        getFlowstratesView().getMapLayer(FlowEndpoint.DEST).focusOnNode(targetId);
       }
     };
   }

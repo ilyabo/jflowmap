@@ -118,7 +118,7 @@ public class FlowstratesView extends AbstractCanvasView {
   private Map<Edge, Integer> visibleEdgeToIndex;
   private Predicate<Edge> customEdgeFilter;
 
-  private HeatmapLayer heatmapLayer;
+  private TemporalViewLayer temporalLayer;
 
   private final GeoMap areaMap;
   private MapLayer originMapLayer;
@@ -204,20 +204,20 @@ public class FlowstratesView extends AbstractCanvasView {
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
-    heatmapLayer = new HeatmapLayer(FlowstratesView.this);
+    temporalLayer = new HeatmapLayer(this);
 
     originMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.ORIGIN);
     destMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.DEST);
 
     addCaption(originMapLayer.getMapLayerCamera(), "Origins");
     if (SHOW_TIME_CAPTION) {
-      addCaption(heatmapLayer.getHeatmapCamera(), "Time");
+      addCaption(temporalLayer.getCamera(), "Time");
     }
     addCaption(destMapLayer.getMapLayerCamera(), "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();
     canvasLayer.addChild(originMapLayer.getMapLayerCamera());
-    canvasLayer.addChild(heatmapLayer.getHeatmapCamera());
+    canvasLayer.addChild(temporalLayer.getCamera());
     canvasLayer.addChild(destMapLayer.getMapLayerCamera());
 
 
@@ -234,7 +234,7 @@ public class FlowstratesView extends AbstractCanvasView {
     FlowstratesView.this.valueStat = stdValueStat();
 
     legend = new FlowstratesLegend(FlowstratesView.this);
-    heatmapLayer.getHeatmapCamera().addChild(legend);
+    temporalLayer.getCamera().addChild(legend);
   }
 
   /**
@@ -268,7 +268,7 @@ public class FlowstratesView extends AbstractCanvasView {
     };
     originMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
     destMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
-    heatmapLayer.getHeatmapCamera().addPropertyChangeListener(linesUpdater);
+    temporalLayer.getCamera().addPropertyChangeListener(linesUpdater);
 
     createButtons();
   }
@@ -368,19 +368,19 @@ public class FlowstratesView extends AbstractCanvasView {
     this.visibleEdges = null;
     this.visibleEdgeToIndex = null;
     resetValueStat();
-    heatmapLayer.renewHeatmap();
+    temporalLayer.renew();
     getFlowLinesLayerNode().renewFlowLines();
     updateLegend();
   }
 
   void updateColors() {
-    heatmapLayer.updateHeatmapColors();
+    temporalLayer.updateColors();
     updateLegend();
     getVisualCanvas().repaint();
   }
 
-  public HeatmapLayer getHeatmapLayer() {
-    return heatmapLayer;
+  public TemporalViewLayer getTemporalLayer() {
+    return temporalLayer;
   }
 
   public MapLayer getMapLayer(FlowEndpoint ep) {
@@ -659,7 +659,7 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setValueStat(SeqStat wstat) {
     if (!wstat.equals(valueStat)) {
       this.valueStat = wstat;
-      heatmapLayer.resetWeightAttrTotals();
+      temporalLayer.resetWeightAttrTotals();
       updateColors();
     }
   }
@@ -748,10 +748,10 @@ public class FlowstratesView extends AbstractCanvasView {
 
   @Override
   protected Point2D getTooltipPosition(PNode node) {
-    if (PNodes.getRootAncestor(node) == heatmapLayer) {
+    if (PNodes.getRootAncestor(node) == temporalLayer) {
       PBounds bounds = node.getGlobalBounds();
-      heatmapLayer.getHeatmapCamera().viewToLocal(bounds);
-      heatmapLayer.getHeatmapCamera().localToGlobal(bounds);
+      temporalLayer.getCamera().viewToLocal(bounds);
+      temporalLayer.getCamera().localToGlobal(bounds);
       return new Point2D.Double(bounds.getMaxX(), bounds.getMaxY());
     } else {
       return super.getTooltipPosition(node);
@@ -776,10 +776,10 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private void layoutChildren() {
     layoutCameraNode(originMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
-    layoutCameraNode(heatmapLayer.getHeatmapCamera(), 0, 0, .40, 1.0);
+    layoutCameraNode(temporalLayer.getCamera(), 0, 0, .40, 1.0);
     layoutCameraNode(destMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
 
-    PBounds heatmapBounds = heatmapLayer.getHeatmapCamera().getBounds();
+    PBounds heatmapBounds = temporalLayer.getCamera().getBounds();
     PNodes.setPosition(buttonPanel, heatmapBounds.x, heatmapBounds.y + 4);
 
     PBounds lb = legend.getFullBoundsReference();
@@ -798,7 +798,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   void fitHeatmapInView() {
-    heatmapLayer.fitHeatMapInView();
+    temporalLayer.fitInView();
   }
 
   private void fitInCameraView(MapLayer layer) {

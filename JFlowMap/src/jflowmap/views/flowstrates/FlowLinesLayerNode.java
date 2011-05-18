@@ -209,16 +209,17 @@ public class FlowLinesLayerNode extends PNode {
   }
 
   private void updateFlowLinesOf(int row, Edge edge) {
-    Pair<PText, PText> labels = flowstratesView.getHeatmapLayer().getEdgeLabels(edge);
-
-    updateFlowLine(row, edge, labels.first(), FlowEndpoint.ORIGIN);
-    updateFlowLine(row, edge, labels.second(), FlowEndpoint.DEST);
+    Pair<PText, PText> labels = flowstratesView.getTemporalLayer().getEdgeLabels(edge);
+    if (labels != null) {
+      updateFlowLine(row, edge, labels.first(), FlowEndpoint.ORIGIN);
+      updateFlowLine(row, edge, labels.second(), FlowEndpoint.DEST);
+    }
   }
 
   private void updateFlowLine(int row, Edge edge, PText label, FlowEndpoint ep) {
     boolean visible = (showAllFlowLines  ||  highlightedEdges.contains(edge));
     if (visible) {
-      PCamera heatMapCamera = flowstratesView.getHeatmapLayer().getHeatmapCamera();
+      PCamera heatMapCamera = flowstratesView.getTemporalLayer().getCamera();
       PBounds heatMapViewBounds = heatMapCamera.getViewBounds();
 
       MapLayer mapLayer = flowstratesView.getMapLayer(ep);
@@ -227,7 +228,7 @@ public class FlowLinesLayerNode extends PNode {
       visible = (centrp != null  &&  mapLayer.isPointVisible(centrp));
 
       if (visible) {
-        Point2D.Double p = flowstratesView.getHeatmapLayer().getHeatmapFlowLineInPoint(row, ep);
+        Point2D.Double p = flowstratesView.getTemporalLayer().getFlowLineInPoint(row, ep);
         visible = (visible  &&  heatMapViewBounds.contains(p));
 
         if (visible) {
