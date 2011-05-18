@@ -39,7 +39,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 public class PTooltip extends PPath {
 
   private static final long serialVersionUID = 4699401260245122226L;
-  private static final Color DEFAULT_PAINT = new Color(0, 213, 213, 220);
+  private static final Color DEFAULT_PAINT = new Color(0, 55, 80, 225);
   private static final Color DEFAULT_TEXT_PAINT = Color.white;
   private static final Color DEFAULT_STROKE_PAINT = new Color(0, 0, 0, 100);
   private static final BasicStroke DEFAULT_STROKE = new BasicStroke(.5f);
