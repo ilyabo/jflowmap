@@ -42,14 +42,14 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return FLOW_CIRCLE_COLOR;
   }
 
-  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(70, 208, 243);
+  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(70, 208, 243, 50);
 //  private static final Color MAP_TO_MATRIX_LINE_COLOR = new Color(200, 200, 200);
   @Override
   public Color getFlowLineColor() {
     return MAP_TO_MATRIX_LINE_COLOR;
   }
 
-  private static final Color MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR = new Color(0f, 0f, .7f, .5f);
+  private static final Color MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR = new Color(70, 208, 243, 150);
   @Override
   public Color getFlowLineHighlightedColor() {
     return MAP_TO_MATRIX_LINE_HIGHLIGHTED_COLOR;
@@ -135,7 +135,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return TIMELINE_CELL_STROKE;
   }
 
-  private static final Stroke SELECTED_TIMELINE_CELL_STROKE = new PFixedWidthStroke(3);
+  private static final Stroke SELECTED_TIMELINE_CELL_STROKE = new PFixedWidthStroke(1);
   @Override
   public Stroke getSelectedTimelineCellStroke() {
     return SELECTED_TIMELINE_CELL_STROKE;
@@ -147,7 +147,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return TIMELINE_CELL_STROKE_COLOR;
   }
 
-  private static final Color SELECTED_TIMELINE_CELL_STROKE_COLOR = new Color(255, 128, 64);
+  private static final Color SELECTED_TIMELINE_CELL_STROKE_COLOR = Color.cyan;
   @Override
   public Color getHeatmapSelectedCellStrokeColor() {
     return SELECTED_TIMELINE_CELL_STROKE_COLOR;

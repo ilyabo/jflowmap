@@ -148,26 +148,33 @@ public class FlowLinesLayerNode extends PNode {
 
   private Color getFlowLineColor(Edge edge) {
     FlowstratesStyle style = flowstratesView.getStyle();
-    FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
-
-    switch (flowLinesColoringMode) {
-    case SAME_COLOR: return style.getFlowLineColor();
-    case ORIGIN: return flowLinesPalette.get(fmg.getSourceNodeId(edge));
-    case DEST: return flowLinesPalette.get(fmg.getTargetNodeId(edge));
+    if (showAllFlowLines) {
+      FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
+      switch (flowLinesColoringMode) {
+        case SAME_COLOR: return style.getFlowLineColor();
+        case ORIGIN: return flowLinesPalette.get(fmg.getSourceNodeId(edge));
+        case DEST: return flowLinesPalette.get(fmg.getTargetNodeId(edge));
+      }
+      throw new AssertionError();
+    } else {
+      return style.getFlowLineColor();
     }
-    throw new AssertionError();
   }
 
   private Color getFlowLineHighlightedColor(Edge edge) {
     FlowstratesStyle style = flowstratesView.getStyle();
-    FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
+      if (showAllFlowLines) {
+      FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
 
-    switch (flowLinesColoringMode) {
-    case SAME_COLOR: return style.getFlowLineHighlightedColor();
-    case ORIGIN: return ColorUtils.setAlpha(flowLinesPalette.get(fmg.getSourceNodeId(edge)), 255);
-    case DEST: return ColorUtils.setAlpha(flowLinesPalette.get(fmg.getTargetNodeId(edge)), 255);
+      switch (flowLinesColoringMode) {
+        case SAME_COLOR: return style.getFlowLineHighlightedColor();
+        case ORIGIN: return ColorUtils.setAlpha(flowLinesPalette.get(fmg.getSourceNodeId(edge)), 255);
+        case DEST: return ColorUtils.setAlpha(flowLinesPalette.get(fmg.getTargetNodeId(edge)), 255);
+      }
+      throw new AssertionError();
+    } else {
+      return style.getFlowLineHighlightedColor();
     }
-    throw new AssertionError();
   }
 
   void hideAllFlowLines() {

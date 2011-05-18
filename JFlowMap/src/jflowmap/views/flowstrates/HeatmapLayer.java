@@ -48,7 +48,6 @@ import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  * @author Ilya Boyandin
@@ -79,10 +78,11 @@ public class HeatmapLayer extends PLayer {
     addChild(heatmapNode);
 
     columnHighlightRect = PPaths.rect(0, 0, 1, 1);
-    columnHighlightRect.setStroke(new PFixedWidthStroke(1));
     columnHighlightRect.setPaint(null);
-//    columnHighlightRect.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
-    columnHighlightRect.setStrokePaint(Color.cyan);
+    FlowstratesStyle style = flowstratesView.getStyle();
+    columnHighlightRect.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
+    columnHighlightRect.setStroke(style.getSelectedTimelineCellStroke());
+//    columnHighlightRect.setStrokePaint(Color.cyan);
     columnHighlightRect.setVisible(false);
     addChild(columnHighlightRect);
 

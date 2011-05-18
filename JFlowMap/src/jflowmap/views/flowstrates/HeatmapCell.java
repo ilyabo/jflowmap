@@ -92,19 +92,27 @@ class HeatmapCell extends PPath {
   public String getTooltipLabels() {
     return
       weightAttr + ":" + "\n" +
-      flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr) + ":" + "\n" +
-      flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr) + ":";
+      flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr) + ":"; // + "\n" +
+      //flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr) + ":";
   }
 
   public String getTooltipValues() {
     double weight = edge.getDouble(weightAttr);
     double weightDiff = edge.getDouble(flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr));
-    double weightRelDiff = edge.getDouble(
-        flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr));
+//    double weightRelDiff = edge.getDouble(
+//        flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr));
     return
-      NUMBER_FORMAT.format(weight) + "\n" +
-      NUMBER_FORMAT.format(weightDiff) + "\n" +
-      NUMBER_FORMAT.format(weightRelDiff);
+      fmt(weight) + "\n" +
+      fmt(weightDiff) /* + "\n" +
+      fmt(weightRelDiff)*/;
+  }
+
+  private String fmt(double weight) {
+    if (Double.isNaN(weight)) {
+      return "n/a";
+    } else {
+      return NUMBER_FORMAT.format(weight);
+    }
   }
 
 }
