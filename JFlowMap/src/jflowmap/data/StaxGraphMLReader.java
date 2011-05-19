@@ -58,12 +58,6 @@ public class StaxGraphMLReader {
   public static Logger logger = Logger.getLogger(StaxGraphMLReader.class);
 
   private static final String DEFAULT_CHARSET = "utf-8";
-  public static final String GRAPH_CLIENT_PROPERTY__ID = "id";
-  private static final String SRC = FlowMapGraph.GRAPH_EDGE_SOURCE_NODE_COLUMN;
-  private static final String TRG = FlowMapGraph.GRAPH_EDGE_TARGET_NODE_COLUMN;
-  private static final String SRC_TEMP_ID = SRC + "_id";
-  private static final String TRG_TEMP_ID = TRG + "_id";
-
   private static final String NAMESPACE = null; //  "http://graphml.graphdrawing.org/xmlns"
 
   private String charset = DEFAULT_CHARSET;
@@ -109,14 +103,6 @@ public class StaxGraphMLReader {
 
   public static FlowMapGraph readFlowMapGraph(String location, FlowMapAttrSpec attrSpec) throws IOException {
     return new FlowMapGraph(readFirstGraph(location), attrSpec);
-  }
-
-  public static boolean isNodeSelfAttr(String attrName) {
-    return !attrName.equals(FlowMapGraph.GRAPH_NODE_ID_COLUMN);
-  }
-
-  public static boolean isEdgeSelfAttr(String attrName) {
-    return !attrName.equals(SRC_TEMP_ID)  &&  !attrName.equals(TRG_TEMP_ID);
   }
 
   public Iterable<Graph> readFromStream(InputStream is) throws IOException {
@@ -171,8 +157,8 @@ public class StaxGraphMLReader {
 
               int ri = edgeTable.addRow();
 
-              edgeTable.setString(ri, SRC_TEMP_ID, in.getAttributeValue(NAMESPACE, "source"));
-              edgeTable.setString(ri, TRG_TEMP_ID, in.getAttributeValue(NAMESPACE, "target"));
+              edgeTable.setString(ri, FlowMapGraph.SRC_TEMP_ID, in.getAttributeValue(NAMESPACE, "source"));
+              edgeTable.setString(ri, FlowMapGraph.TRG_TEMP_ID, in.getAttributeValue(NAMESPACE, "target"));
 
               readData(in, edgeTable, ri, "edge");
             }
@@ -189,24 +175,24 @@ public class StaxGraphMLReader {
               while (rows.hasNext()) {
                 int ri = rows.nextInt();
 
-                String src = edgeTable.getString(ri, SRC_TEMP_ID);
+                String src = edgeTable.getString(ri, FlowMapGraph.SRC_TEMP_ID);
                 if (!nodeIdToIndex.containsKey(src)) {
                   throw new IOException(
                     "Tried to create edge with source node id=" + src
                     + " which does not exist.");
                 }
-                edgeTable.setInt(ri, SRC, nodeIdToIndex.get(src));
+                edgeTable.setInt(ri, FlowMapGraph.SRC, nodeIdToIndex.get(src));
 
-                String trg = edgeTable.getString(ri, TRG_TEMP_ID);
+                String trg = edgeTable.getString(ri, FlowMapGraph.TRG_TEMP_ID);
                 if (!nodeIdToIndex.containsKey(trg)) {
                   throw new IOException(
                     "Tried to create edge with target node id=" + trg
                     + " which does not exist.");
                 }
-                edgeTable.setInt(ri, TRG, nodeIdToIndex.get(trg));
+                edgeTable.setInt(ri, FlowMapGraph.TRG, nodeIdToIndex.get(trg));
               }
-              edgeTable.removeColumn(SRC_TEMP_ID);
-              edgeTable.removeColumn(TRG_TEMP_ID);
+              edgeTable.removeColumn(FlowMapGraph.SRC_TEMP_ID);
+              edgeTable.removeColumn(FlowMapGraph.TRG_TEMP_ID);
 
 
               // Finally, create the graph
@@ -275,10 +261,10 @@ public class StaxGraphMLReader {
     nodeSchema = new Schema();
     nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_ID_COLUMN, String.class);
     edgeSchema = new Schema();
-    edgeSchema.addColumn(SRC, int.class);
-    edgeSchema.addColumn(TRG, int.class);
-    edgeSchema.addColumn(SRC_TEMP_ID, String.class);
-    edgeSchema.addColumn(TRG_TEMP_ID, String.class);
+    edgeSchema.addColumn(FlowMapGraph.SRC, int.class);
+    edgeSchema.addColumn(FlowMapGraph.TRG, int.class);
+    edgeSchema.addColumn(FlowMapGraph.SRC_TEMP_ID, String.class);
+    edgeSchema.addColumn(FlowMapGraph.TRG_TEMP_ID, String.class);
   }
 
   private void readKey(XMLStreamReader in) throws IOException {

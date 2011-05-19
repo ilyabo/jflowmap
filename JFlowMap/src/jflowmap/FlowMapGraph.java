@@ -76,6 +76,11 @@ public class FlowMapGraph {
 
   private static final String SUBDIVISION_POINTS_ATTR_NAME = "_subdivp";
 
+  public static final String SRC = GRAPH_EDGE_SOURCE_NODE_COLUMN;
+  public static final String TRG = GRAPH_EDGE_TARGET_NODE_COLUMN;
+  public static final String SRC_TEMP_ID = SRC + "_id";
+  public static final String TRG_TEMP_ID = TRG + "_id";
+
   private final Graph graph;
   private final FlowMapAttrSpec attrSpec;
   private final FlowMapStats stats;
@@ -869,7 +874,7 @@ public class FlowMapGraph {
       @Override
       public boolean apply(String attr) {
         return
-          StaxGraphMLReader.isNodeSelfAttr(attr)  &&
+          FlowMapGraph.isNodeSelfAttr(attr)  &&
           (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);
       }
     });
@@ -880,7 +885,7 @@ public class FlowMapGraph {
       @Override
       public boolean apply(String attr) {
         return
-          StaxGraphMLReader.isEdgeSelfAttr(attr) &&
+          FlowMapGraph.isEdgeSelfAttr(attr) &&
           (ofType == null  ||  graph.getNodeTable().getColumnType(attr) == ofType);
       }
     });
@@ -905,6 +910,14 @@ public class FlowMapGraph {
         return FlowMapGraph.getIdOfNode(node);
       }
     });
+  }
+
+  public static boolean isNodeSelfAttr(String attrName) {
+    return !attrName.equals(GRAPH_NODE_ID_COLUMN);
+  }
+
+  public static boolean isEdgeSelfAttr(String attrName) {
+    return !attrName.equals(SRC_TEMP_ID)  &&  !attrName.equals(TRG_TEMP_ID);
   }
 
 }
