@@ -21,7 +21,7 @@ public class EdgeListFlowMapStats extends AbstractFlowMapStats {
   private EdgeListFlowMapStats(Iterable<Edge> edges, FlowMapAttrSpec attrSpec) {
     super(attrSpec);
     this.edges = ImmutableList.copyOf(edges);
-    this.nodes = Nodes.nodesOfEdges(edges);
+    this.nodes = Nodes.distinctNodesOfEdges(edges);
   }
 
   @Override

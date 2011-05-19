@@ -19,16 +19,25 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.Color;
-import java.awt.geom.Point2D.Double;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 import java.util.List;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
 import prefuse.data.Edge;
+import prefuse.data.Node;
 import at.fhjoanneum.cgvis.data.IColorForValue;
 import at.fhjoanneum.cgvis.data.IDataValues;
+import at.fhjoanneum.cgvis.plots.FloatingLabelsNode;
+import at.fhjoanneum.cgvis.plots.FloatingLabelsNode.LabelIterator;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
+
+import edu.umd.cs.piccolo.nodes.PPath;
 
 /**
  * @author Ilya Boyandin
@@ -37,16 +46,36 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
   private MosaicPlotNode mosaicPlotNode;
   private final IColorForValue colorForValue;
+  private final FloatingLabelsNode attrLabelsNode;
+  private final FloatingLabelsNode originLabelsNode;
+
+  PPath ppath;
+  private final FloatingLabelsNode destLabelsNode;
 
   public FastHeatmapLayer(FlowstratesView flowstratesView) {
     super(flowstratesView);
     colorForValue = createColorForValue();
+
+
     renew();
+
+    getCamera().setComponent(getFlowstratesView().getVisualCanvas());
+
+    originLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.ORIGIN));
+    destLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.DEST));
+    attrLabelsNode = new FloatingLabelsNode(true, createAttrsLabelIterator());
+    getCamera().addChild(originLabelsNode);
+    getCamera().addChild(destLabelsNode);
+    getCamera().addChild(attrLabelsNode);
+
+    originLabelsNode.addDisjointNode(attrLabelsNode);
+    destLabelsNode.addDisjointNode(attrLabelsNode);
   }
 
   @Override
   public void renew() {
     removeAllChildren();
+//    getCamera().removeAllChildren();
 
     IDataValues data = getDataValues();
     FlowstratesView fs = getFlowstratesView();
@@ -110,8 +139,97 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   }
 
   @Override
-  public Double getFlowLineInPoint(int row, FlowEndpoint ep) {
+  public Point2D getFlowLineInPoint(int row, FlowEndpoint ep) {
     return null;
   }
+
+  private LabelIterator createAttrsLabelIterator() {
+    return new LabelIterator() {
+
+      Iterator<String> it = null;
+      int attrIndex = 0;
+      double pos;
+
+      public double getPosition() {
+        return pos;
+      }
+
+      public double getSize() {
+        return mosaicPlotNode.getCellWidth();
+      }
+
+      public boolean hasNext() {
+        return it.hasNext();
+      }
+
+      public String next() {
+        String label = it.next();
+        pos =
+          mosaicPlotNode.getBoundsReference().getX() +
+          attrIndex * (mosaicPlotNode.getCellWidth() + mosaicPlotNode.getCellSpacing());
+
+        attrIndex++;
+        return label;
+      }
+
+      public void reset() {
+        pos = Double.NaN;
+        attrIndex = 0;
+        it = attrs().iterator();
+      }
+
+      private List<String> attrs() {
+        return getFlowstratesView().getFlowMapGraph().getEdgeWeightAttrs();
+      }
+    };
+  }
+
+  private LabelIterator createNodeLabelIterator(final FlowEndpoint ep) {
+    return new LabelIterator() {
+
+      Iterator<String> it = null;
+      int index = 0;
+      double pos;
+
+      public double getPosition() {
+        return pos;
+      }
+
+      public double getSize() {
+        return mosaicPlotNode.getCellHeight();
+      }
+
+      public boolean hasNext() {
+        return it.hasNext();
+      }
+
+      public String next() {
+        String label = it.next();
+        pos =
+          mosaicPlotNode.getBoundsReference().getY() +
+          index * (mosaicPlotNode.getCellHeight() + mosaicPlotNode.getCellSpacing());
+
+        index++;
+        return label;
+      }
+
+      public void reset() {
+        pos = Double.NaN;
+        index = 0;
+        List<Edge> edges = getFlowstratesView().getVisibleEdges();
+        final FlowMapGraph fmg = getFlowstratesView().getFlowMapGraph();
+        it = Iterators.transform(edges.iterator(), new Function<Edge, String>() {
+          @Override
+          public String apply(Edge e) {
+            Node node = ep.nodeOf(e);
+            return fmg.getNodeLabel(node);
+          }
+        });
+      }
+    };
+  }
+
+
+
 
 }

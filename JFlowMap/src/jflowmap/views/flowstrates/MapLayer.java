@@ -432,7 +432,7 @@ public class MapLayer extends PLayer {
           FlowEndpoint other = endpoint.opposite();
           MapLayer otherMap = flowstratesView.getMapLayer(other);
           focusOnNode(nodeId);
-          otherMap.focusOnNodes(FlowMapGraph.nodeIdsOf(Nodes.nodesOfEdges(flowstratesView.getVisibleEdges(),
+          otherMap.focusOnNodes(Nodes.nodeIdsOf(Nodes.distinctNodesOfEdges(flowstratesView.getVisibleEdges(),
               other)));
         }
         newSelection = Arrays.asList(nodeId);
@@ -472,7 +472,7 @@ public class MapLayer extends PLayer {
   private void colorizeMapAreasWithNodeTotals(Iterable<Edge> edges, String weightAttr, boolean hover) {
     Map<String, Double> totals = calcNodeTotalsFor(edges, weightAttr);
 
-    for (Node node : Nodes.nodesOfEdges(edges, endpoint)) {
+    for (Node node : Nodes.distinctNodesOfEdges(edges, endpoint)) {
       String nodeId = getFlowMapGraph().getNodeId(node);
       colorizeMapArea(nodeId, totals.get(nodeId), hover);
     }

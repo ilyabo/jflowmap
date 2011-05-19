@@ -223,7 +223,7 @@ public class FlowLinesLayerNode extends PNode {
       visible = (centrp != null  &&  mapLayer.isPointVisible(centrp));
 
       if (visible) {
-        Point2D.Double p = flowstratesView.getTemporalLayer().getFlowLineInPoint(row, ep);
+        Point2D p = flowstratesView.getTemporalLayer().getFlowLineInPoint(row, ep);
         visible = (p != null  &&  heatMapViewBounds.contains(p));
 
         if (visible) {
@@ -236,8 +236,8 @@ public class FlowLinesLayerNode extends PNode {
           FlowLine line = getOrCreateFlowLine(edge, ep);
           line.setPoint(0, centrp.getX(), centrp.getY());
 
-          double x1 = p.x;
-          double y1 = p.y + lb.getHeight() / 2;
+          double x1 = p.getX();
+          double y1 = p.getY() + lb.getHeight() / 2;
           if (ep == FlowEndpoint.ORIGIN) {
             x1 -= lb.getWidth();
           } else {
@@ -245,7 +245,7 @@ public class FlowLinesLayerNode extends PNode {
           }
           line.setPoint(1, x1, y1);
 
-          double x2 = p.x;
+          double x2 = p.getX();
           double y2 = y1;
           line.setPoint(2, x2, y2);
 

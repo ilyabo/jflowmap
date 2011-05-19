@@ -95,7 +95,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 23);
 
-  private static final boolean SHOW_TIME_CAPTION = false;
+//  private static final boolean SHOW_TIME_CAPTION = true;
 
   private boolean interpolateColors = true;
 
@@ -211,14 +211,15 @@ public class FlowstratesView extends AbstractCanvasView {
     temporalLayer = new FastHeatmapLayer(this);
 
     addCaption(originMapLayer.getMapLayerCamera(), "Origins");
-    if (SHOW_TIME_CAPTION) {
-      addCaption(temporalLayer.getCamera(), "Time");
-    }
+//    if (SHOW_TIME_CAPTION) {
+//      addCaption(temporalLayer.getCamera(), "Time");
+//    }
+    addCaption(temporalLayer.getCamera(), " ");
     addCaption(destMapLayer.getMapLayerCamera(), "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();
+    canvasLayer.addChild(temporalLayer.getCamera()); // should come first so that lasso shows above it
     canvasLayer.addChild(originMapLayer.getMapLayerCamera());
-    canvasLayer.addChild(temporalLayer.getCamera());
     canvasLayer.addChild(destMapLayer.getMapLayerCamera());
 
 
@@ -235,7 +236,7 @@ public class FlowstratesView extends AbstractCanvasView {
     FlowstratesView.this.valueStat = stdValueStat();
 
     legend = new FlowstratesLegend(FlowstratesView.this);
-    temporalLayer.getCamera().addChild(legend);
+    getCamera().addChild(legend);
   }
 
   /**
@@ -783,7 +784,7 @@ public class FlowstratesView extends AbstractCanvasView {
     layoutCameraNode(destMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
 
     PBounds heatmapBounds = temporalLayer.getCamera().getBounds();
-    PNodes.setPosition(buttonPanel, heatmapBounds.x, heatmapBounds.y + 4);
+    PNodes.setPosition(buttonPanel, heatmapBounds.x + 5, /*heatmapBounds.y +*/ 4);
 
     PBounds lb = legend.getFullBoundsReference();
     PBounds vb = getCamera().getViewBounds();

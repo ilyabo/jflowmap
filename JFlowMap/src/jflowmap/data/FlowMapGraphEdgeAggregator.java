@@ -143,8 +143,8 @@ public class FlowMapGraphEdgeAggregator {
     for (Object group : groups.keySet()) {
       Collection<Edge> edges = groups.get(group);
       Edge newEdge = aggGraph.addEdge(
-          aggregateNodes(Nodes.nodesOfEdges(edges, FlowEndpoint.ORIGIN), AggEntity.SOURCE_NODE),
-          aggregateNodes(Nodes.nodesOfEdges(edges, FlowEndpoint.DEST), AggEntity.TARGET_NODE));
+          aggregateNodes(Nodes.distinctNodesOfEdges(edges, FlowEndpoint.ORIGIN), AggEntity.SOURCE_NODE),
+          aggregateNodes(Nodes.distinctNodesOfEdges(edges, FlowEndpoint.DEST), AggEntity.TARGET_NODE));
 
       aggregateEdges(edges, newEdge);
 

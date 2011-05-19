@@ -18,7 +18,7 @@
 
 package jflowmap.views.flowstrates;
 
-import java.awt.geom.Point2D.Double;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import jflowmap.FlowEndpoint;
@@ -58,6 +58,6 @@ public abstract class TemporalViewLayer extends PLayer {
 
   public abstract Rectangle2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep);
 
-  public abstract Double getFlowLineInPoint(int row, FlowEndpoint ep);
+  public abstract Point2D getFlowLineInPoint(int row, FlowEndpoint ep);
 
 }
