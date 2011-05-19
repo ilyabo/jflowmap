@@ -57,18 +57,23 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     super(flowstratesView);
     colorForValue = createColorForValue();
 
-
     renew();
 
     getCamera().setComponent(getFlowstratesView().getVisualCanvas());
 
+
     originLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.ORIGIN));
     originLabelsNode.setAnchorLabelsToEnd(true);
-    destLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.DEST));
-    originLabelsNode.setAnchorLabelsToEnd(false);
-    attrLabelsNode = new FloatingLabelsNode(true, createAttrsLabelIterator());
+    originLabelsNode.setPaint(Color.white);
     getCamera().addChild(originLabelsNode);
+
+    destLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.DEST));
+    destLabelsNode.setPaint(Color.white);
+    destLabelsNode.setAnchorLabelsToEnd(false);
     getCamera().addChild(destLabelsNode);
+
+    attrLabelsNode = new FloatingLabelsNode(true, createAttrsLabelIterator());
+    attrLabelsNode.setPaint(Color.white);
     getCamera().addChild(attrLabelsNode);
 
     originLabelsNode.addDisjointNode(attrLabelsNode);
