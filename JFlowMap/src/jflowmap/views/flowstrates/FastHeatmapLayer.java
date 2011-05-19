@@ -44,6 +44,7 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 public class FastHeatmapLayer extends TemporalViewLayer {
 
+  private static final int MAX_NODE_NAME_LENGTH = 18;
   private MosaicPlotNode mosaicPlotNode;
   private final IColorForValue colorForValue;
   private final FloatingLabelsNode attrLabelsNode;
@@ -62,7 +63,9 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     getCamera().setComponent(getFlowstratesView().getVisualCanvas());
 
     originLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.ORIGIN));
+    originLabelsNode.setAnchorLabelsToEnd(true);
     destLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.DEST));
+    originLabelsNode.setAnchorLabelsToEnd(false);
     attrLabelsNode = new FloatingLabelsNode(true, createAttrsLabelIterator());
     getCamera().addChild(originLabelsNode);
     getCamera().addChild(destLabelsNode);
@@ -222,7 +225,11 @@ public class FastHeatmapLayer extends TemporalViewLayer {
           @Override
           public String apply(Edge e) {
             Node node = ep.nodeOf(e);
-            return fmg.getNodeLabel(node);
+            String name = fmg.getNodeLabel(node);
+            if (name.length() > MAX_NODE_NAME_LENGTH) {
+              name = name.substring(0, MAX_NODE_NAME_LENGTH - 2) + ".";
+            }
+            return name;
           }
         });
       }
