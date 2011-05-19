@@ -127,8 +127,8 @@ public class Lasso extends PBasicInputEventHandler {
   }
 
   private boolean inTarget(PInputEvent event) {
-    return camera.localToGlobal(camera.viewToLocal(camera.getViewBounds())).contains(
-        event.getCanvasPosition());
+    return true;
+//    return camera.localToGlobal(camera.getBounds()).contains(event.getCanvasPosition());
   }
 
   private void start() {
