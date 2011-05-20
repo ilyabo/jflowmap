@@ -172,7 +172,13 @@ public final class GeomUtils {
   }
 
   public static Rectangle2D growRect(Rectangle2D rect, double top, double right, double bottom, double left) {
-    return new Rectangle2D.Double(
+    Rectangle2D r = new Rectangle2D.Double(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    growRectInPlace(r, top, right, bottom, left);
+    return r;
+  }
+
+  public static void growRectInPlace(Rectangle2D rect, double top, double right, double bottom, double left) {
+    rect.setRect(
         rect.getX() - left,
         rect.getY() - top,
         rect.getWidth() + left + right,
