@@ -19,13 +19,18 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.Color;
+import java.awt.Insets;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
+import jflowmap.util.piccolo.PNodes;
+import jflowmap.util.piccolo.PiccoloUtils;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import at.fhjoanneum.cgvis.data.IColorForValue;
@@ -37,20 +42,21 @@ import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 
-import edu.umd.cs.piccolo.nodes.PPath;
+import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
 public class FastHeatmapLayer extends TemporalViewLayer {
 
+  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 230);
   private static final int MAX_NODE_NAME_LENGTH = 18;
-  private MosaicPlotNode mosaicPlotNode;
+  private MosaicPlotNode heatmapNode;
   private final IColorForValue colorForValue;
   private final FloatingLabelsNode attrLabelsNode;
   private final FloatingLabelsNode originLabelsNode;
 
-  PPath ppath;
   private final FloatingLabelsNode destLabelsNode;
 
   public FastHeatmapLayer(FlowstratesView flowstratesView) {
@@ -61,23 +67,29 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
     getCamera().setComponent(getFlowstratesView().getVisualCanvas());
 
-
-    originLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.ORIGIN));
-    originLabelsNode.setAnchorLabelsToEnd(true);
-    originLabelsNode.setPaint(Color.white);
-    getCamera().addChild(originLabelsNode);
-
-    destLabelsNode = new FloatingLabelsNode(false, createNodeLabelIterator(FlowEndpoint.DEST));
-    destLabelsNode.setPaint(Color.white);
-    destLabelsNode.setAnchorLabelsToEnd(false);
-    getCamera().addChild(destLabelsNode);
-
-    attrLabelsNode = new FloatingLabelsNode(true, createAttrsLabelIterator());
-    attrLabelsNode.setPaint(Color.white);
-    getCamera().addChild(attrLabelsNode);
+    originLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.ORIGIN), true);
+    destLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.DEST), false);
+    attrLabelsNode = createFloatingLabels(true, createAttrsLabelIterator(), false);
 
     originLabelsNode.addDisjointNode(attrLabelsNode);
     destLabelsNode.addDisjointNode(attrLabelsNode);
+
+    getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        adjustFloatingLabelsPositions();
+      }
+    });
+  }
+
+  private FloatingLabelsNode createFloatingLabels(
+      boolean isHorizontal, LabelIterator it, boolean anchorLabelsToEnd) {
+    FloatingLabelsNode node = new FloatingLabelsNode(isHorizontal, it);
+    node.setAnchorLabelsToEnd(anchorLabelsToEnd);
+    node.setPaint(FLOATING_LABELS_BG);
+    node.setPickable(false);
+    getCamera().addChild(node);
+    return node;
   }
 
   @Override
@@ -87,13 +99,13 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
     IDataValues data = getDataValues();
     FlowstratesView fs = getFlowstratesView();
-    mosaicPlotNode = new MosaicPlotNode(data, fs.getVisualCanvas(), colorForValue);
+    heatmapNode = new MosaicPlotNode(data, fs.getVisualCanvas(), colorForValue);
 
     Color missingColor = fs.getStyle().getMissingValueColor();
-    mosaicPlotNode.setMissingValueColor1(missingColor);
-    mosaicPlotNode.setMissingValueColor2(missingColor);
+    heatmapNode.setMissingValueColor1(missingColor);
+    heatmapNode.setMissingValueColor2(missingColor);
 
-    addChild(mosaicPlotNode);
+    addChild(heatmapNode);
   }
 
   private IColorForValue createColorForValue() {
@@ -136,9 +148,45 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   public void resetWeightAttrTotals() {
   }
 
+  private void adjustFloatingLabelsPositions() {
+    PBounds cb = getCamera().getBoundsReference();
+
+    PBounds hb = heatmapNode.getBounds();
+    getCamera().viewToLocal(hb);
+
+    PNodes.setPosition(attrLabelsNode, cb.getX(),
+        cb.getY() + Math.max(0, hb.getMinY() - cb.getMinY() - attrLabelsNode.getHeight()));
+    PNodes.setPosition(originLabelsNode,
+        cb.getMinX() + Math.max(0, hb.getMinX() - cb.getMinX() - originLabelsNode.getWidth()),
+        cb.getY());
+
+    PNodes.setPosition(destLabelsNode,
+        cb.getMaxX() - Math.max(destLabelsNode.getWidth(), cb.getMaxX() - hb.getMaxX()),
+        cb.getY());
+  }
+
   @Override
   public void fitInView() {
-    HeatmapLayer.fitBoundsInCameraView(mosaicPlotNode.getFullBounds(), getCamera());
+    PCamera camera = getCamera();
+    PBounds b = heatmapNode.getFullBounds();  // to be adjusted
+
+    // margins to ensure there is enough space for the floating labels
+    Insets m = new Insets(
+        (int)attrLabelsNode.getHeight(), (int)originLabelsNode.getWidth(),
+        0, (int)destLabelsNode.getWidth());
+
+
+    if (b.height > b.width * 10) {  // if the height of the heatmap is much larger than width,
+                                    // show only a part of the heatmap
+      PBounds cb = camera.getBounds();
+      cb.setRect(                 // subtract margins to have the proper aspect ratio
+          cb.x + m.left, cb.y + m.top,
+          cb.width - m.left - m.right, cb.height - m.top - m.bottom);
+      camera.localToView(cb);
+      b.height = b.width * (cb.height / cb.width) * 1.2;
+    }
+
+    PiccoloUtils.animateViewToPaddedBounds(camera, b, m, 0);
   }
 
   @Override
@@ -163,7 +211,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       }
 
       public double getSize() {
-        return mosaicPlotNode.getCellWidth();
+        return heatmapNode.getCellWidth();
       }
 
       public boolean hasNext() {
@@ -173,8 +221,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       public String next() {
         String label = it.next();
         pos =
-          mosaicPlotNode.getBoundsReference().getX() +
-          attrIndex * (mosaicPlotNode.getCellWidth() + mosaicPlotNode.getCellSpacing());
+          heatmapNode.getBoundsReference().getX() +
+          attrIndex * (heatmapNode.getCellWidth() + heatmapNode.getCellSpacing());
 
         attrIndex++;
         return label;
@@ -204,7 +252,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       }
 
       public double getSize() {
-        return mosaicPlotNode.getCellHeight();
+        return heatmapNode.getCellHeight();
       }
 
       public boolean hasNext() {
@@ -214,8 +262,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       public String next() {
         String label = it.next();
         pos =
-          mosaicPlotNode.getBoundsReference().getY() +
-          index * (mosaicPlotNode.getCellHeight() + mosaicPlotNode.getCellSpacing());
+          heatmapNode.getBoundsReference().getY() +
+          index * (heatmapNode.getCellHeight() + heatmapNode.getCellSpacing());
 
         index++;
         return label;

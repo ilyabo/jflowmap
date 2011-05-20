@@ -263,10 +263,12 @@ public class HeatmapLayer extends TemporalViewLayer {
     fitBoundsInCameraView(heatmapNode.getFullBounds(), getCamera());
   }
 
-  public static void fitBoundsInCameraView(PBounds bounds, PCamera camera) {
-    if (bounds.height > bounds.width * 10) {
+  private static void fitBoundsInCameraView(Rectangle2D bounds, PCamera camera) {
+    if (bounds.getHeight() > bounds.getWidth() * 10) {
       PBounds camb = camera.getViewBounds();
-      bounds.height = bounds.width * (camb.height / camb.width);
+      bounds = new Rectangle2D.Double(
+          bounds.getX(), bounds.getY(), bounds.getWidth(),
+          bounds.getWidth() * (camb.height / camb.width));
     }
     camera.setViewBounds(GeomUtils.growRectByRelativeSize(bounds, .025, .1, .025, .1));
   }
