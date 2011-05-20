@@ -19,8 +19,8 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.Color;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -230,7 +230,7 @@ public class FlowLinesLayerNode extends PNode {
           mapLayer.getMapLayerCamera().viewToLocal(centrp);
           heatMapCamera.viewToLocal(p);
 
-          Rectangle2D lb = heatMapCamera.viewToLocal(
+          Dimension2D lb = heatMapCamera.viewToLocal(
               flowstratesView.getTemporalLayer().getEdgeLabelBounds(edge, ep));
 
           FlowLine line = getOrCreateFlowLine(edge, ep);

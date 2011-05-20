@@ -762,7 +762,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private boolean fitInViewOnce = false;
-  private RowOrderings rowOrdering = RowOrderings.SRC_VPOS;
+  private RowOrderings rowOrdering = RowOrderings.MAX_MAGNITUDE_IN_ROW;
   private FlowMapStats visibleEdgesStats;
 
   @Override

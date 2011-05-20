@@ -19,20 +19,24 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Insets;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
+import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PiccoloUtils;
 import prefuse.data.Edge;
-import prefuse.data.Node;
 import at.fhjoanneum.cgvis.data.IColorForValue;
 import at.fhjoanneum.cgvis.data.IDataValues;
 import at.fhjoanneum.cgvis.plots.FloatingLabelsNode;
@@ -40,17 +44,19 @@ import at.fhjoanneum.cgvis.plots.FloatingLabelsNode.LabelIterator;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolo.util.PDimension;
 
 /**
  * @author Ilya Boyandin
  */
 public class FastHeatmapLayer extends TemporalViewLayer {
 
-  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 230);
+  private static final Font NODE_LABELS_FONT = new Font("Arial", Font.PLAIN, 10);
+  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 220);
   private static final int MAX_NODE_NAME_LENGTH = 18;
   private MosaicPlotNode heatmapNode;
   private final IColorForValue colorForValue;
@@ -58,17 +64,22 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   private final FloatingLabelsNode originLabelsNode;
 
   private final FloatingLabelsNode destLabelsNode;
+  private Pair<List<String>,List<String>> nodeLabels;
+  private final FontMetrics nodeLabelsFontMetrics;
 
   public FastHeatmapLayer(FlowstratesView flowstratesView) {
     super(flowstratesView);
     colorForValue = createColorForValue();
+    nodeLabelsFontMetrics = getFlowstratesView().getVisualCanvas().getFontMetrics(NODE_LABELS_FONT);
 
     renew();
 
     getCamera().setComponent(getFlowstratesView().getVisualCanvas());
 
     originLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.ORIGIN), true);
+    originLabelsNode.setFont(NODE_LABELS_FONT);
     destLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.DEST), false);
+    destLabelsNode.setFont(NODE_LABELS_FONT);
     attrLabelsNode = createFloatingLabels(true, createAttrsLabelIterator(), false);
 
     originLabelsNode.addDisjointNode(attrLabelsNode);
@@ -77,7 +88,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        adjustFloatingLabelsPositions();
+        adjustFloatingLabelNodePositions();
       }
     });
   }
@@ -96,6 +107,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   public void renew() {
     removeAllChildren();
 //    getCamera().removeAllChildren();
+
+    nodeLabels = null;
 
     IDataValues data = getDataValues();
     FlowstratesView fs = getFlowstratesView();
@@ -148,7 +161,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   public void resetWeightAttrTotals() {
   }
 
-  private void adjustFloatingLabelsPositions() {
+  private void adjustFloatingLabelNodePositions() {
     PBounds cb = getCamera().getBoundsReference();
 
     PBounds hb = heatmapNode.getBounds();
@@ -190,13 +203,71 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   }
 
   @Override
-  public Rectangle2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep) {
-    return null;
+  public Dimension2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep) {
+//    int index = getFlowstratesView().getVisibleEdgeIndex(edge);
+    String label = getFlowMapGraph().getNodeLabel(ep.nodeOf(edge));
+    PDimension d = new PDimension(
+        SwingUtilities.computeStringWidth(nodeLabelsFontMetrics, label),
+        nodeLabelsFontMetrics.getAscent());
+    getCamera().localToView(d);
+    return d;
   }
 
   @Override
   public Point2D getFlowLineInPoint(int row, FlowEndpoint ep) {
-    return null;
+    switch (ep) {
+
+    case ORIGIN:
+      PBounds ob = originLabelsNode.getBounds();
+      getCamera().localToView(ob);
+      return new Point2D.Double(ob.getMaxX(), calcNodeLabelYPos(row) + heatmapNode.getCellHeight()/2.0);
+
+    case DEST:
+      PBounds db = destLabelsNode.getBounds();
+      getCamera().localToView(db);
+      return new Point2D.Double(db.getMinX(), calcNodeLabelYPos(row) + heatmapNode.getCellHeight()/2.0);
+
+    default:
+      throw new AssertionError();
+    }
+  }
+
+  double getTupleY(int row) {
+    return row * heatmapNode.getCellHeight();
+  }
+
+  private List<String> getNodeLabels(FlowEndpoint ep) {
+    if (nodeLabels == null) {
+      nodeLabels = Pair.of(nodeLabels(FlowEndpoint.ORIGIN), nodeLabels(FlowEndpoint.DEST));
+    }
+
+    switch (ep) {
+    case ORIGIN: return nodeLabels.first();
+    case DEST: return nodeLabels.second();
+    default: throw new AssertionError();
+    }
+  }
+
+  private List<String> nodeLabels(final FlowEndpoint ep) {
+    List<Edge> edges = getFlowstratesView().getVisibleEdges();
+    final FlowMapGraph fmg = getFlowstratesView().getFlowMapGraph();
+
+    return Lists.transform(edges, new Function<Edge, String>() {
+      @Override public String apply(Edge e) { return shorten(fmg.getNodeLabel(ep.nodeOf(e))); }
+    });
+  }
+
+  private double calcNodeLabelYPos(int index) {
+    return
+      heatmapNode.getBoundsReference().getY() +
+      index * (heatmapNode.getCellHeight() + heatmapNode.getCellSpacing());
+  }
+
+  private static String shorten(String name) {
+    if (name.length() > MAX_NODE_NAME_LENGTH) {
+      name = name.substring(0, MAX_NODE_NAME_LENGTH - 2) + ".";
+    }
+    return name;
   }
 
   private LabelIterator createAttrsLabelIterator() {
@@ -261,9 +332,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
       public String next() {
         String label = it.next();
-        pos =
-          heatmapNode.getBoundsReference().getY() +
-          index * (heatmapNode.getCellHeight() + heatmapNode.getCellSpacing());
+        pos = calcNodeLabelYPos(index);
 
         index++;
         return label;
@@ -272,24 +341,10 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       public void reset() {
         pos = Double.NaN;
         index = 0;
-        List<Edge> edges = getFlowstratesView().getVisibleEdges();
-        final FlowMapGraph fmg = getFlowstratesView().getFlowMapGraph();
-        it = Iterators.transform(edges.iterator(), new Function<Edge, String>() {
-          @Override
-          public String apply(Edge e) {
-            Node node = ep.nodeOf(e);
-            String name = fmg.getNodeLabel(node);
-            if (name.length() > MAX_NODE_NAME_LENGTH) {
-              name = name.substring(0, MAX_NODE_NAME_LENGTH - 2) + ".";
-            }
-            return name;
-          }
-        });
+        it = getNodeLabels(ep).iterator();
       }
+
     };
   }
-
-
-
 
 }

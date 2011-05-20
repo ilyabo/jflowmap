@@ -20,6 +20,7 @@ package jflowmap.views.flowstrates;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -85,16 +86,12 @@ public class HeatmapLayer extends TemporalViewLayer {
     heatmapCellHoverListener = createHeatMapCellHoverListener();
   }
 
-  public FlowMapGraph getFlowMapGraph() {
-    return getFlowstratesView().getFlowMapGraph();
-  }
-
   @Override
-  public Rectangle2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep) {
+  public Dimension2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep) {
     Pair<PText, PText> labels = edgesToLabels.get(edge);
     switch (ep) {
-    case ORIGIN: return labels.first().getBounds();
-    case DEST: return labels.second().getBounds();
+    case ORIGIN: return labels.first().getBounds().getSize();
+    case DEST: return labels.second().getBounds().getSize();
     default: throw new AssertionError();
     }
   }
