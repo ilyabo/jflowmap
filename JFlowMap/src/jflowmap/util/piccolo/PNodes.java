@@ -141,20 +141,21 @@ public class PNodes {
 
 
   /**
+   *
    * @param bounds Bounds to align the node within.
-   * @param halign -1 - stick to left side, 0 - center, 1 - stick to right side
-   * @param valign -1 - stick to top side, 0 - middle, 1 - stick to bottom side
+   * @param halign Component.LEFT_ALIGNMENT or RIGHT_ALIGNMENT
+   * @param valign Component.TOP_ALIGNMENT or BOTTOM_ALIGNMENT
    * @param hsizePropoption 0..1 Proportion of the width of the bounds which the node should take
    * @param vsizeProportion 0..1 Proportion of the height of the bounds which the node should take
    */
   public static void alignNodeInBounds_bySetBounds(PNode node, Rectangle2D bounds,
-      double halign, double valign, double hsizeProportion, double vsizeProportion) {
+      float halign, float valign, double hsizeProportion, double vsizeProportion) {
 
     double width = bounds.getWidth() * hsizeProportion;
     double height = bounds.getHeight() * vsizeProportion;
 
-    double x = MathUtils.between(bounds.getMinX(), bounds.getMaxX() - width, (halign + 1)/2);
-    double y = MathUtils.between(bounds.getMinY(), bounds.getMaxY() - height, (valign + 1)/2);
+    double x = MathUtils.between(bounds.getMinX(), bounds.getMaxX() - width, halign);
+    double y = MathUtils.between(bounds.getMinY(), bounds.getMaxY() - height, valign);
 
     node.setBounds(x, y, width, height);
   }

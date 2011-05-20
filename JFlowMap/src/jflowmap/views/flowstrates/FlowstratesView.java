@@ -20,6 +20,7 @@ package jflowmap.views.flowstrates;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -257,20 +258,18 @@ public class FlowstratesView extends AbstractCanvasView {
 
     PropertyChangeListener linesUpdater = new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
-          hideTooltip();
+        hideTooltip();
 
-          originMapLayer.updateCentroids();
-          destMapLayer.updateCentroids();
+        originMapLayer.updateCentroids();
+        destMapLayer.updateCentroids();
 
-          flowLinesLayerNode.updateFlowLines();
-          // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
-        }
+        flowLinesLayerNode.updateFlowLines();
+        // getVisualCanvas().setViewZoomPoint(getCamera().getViewBounds().getCenter2D());
       }
     };
-    originMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
-    destMapLayer.getMapLayerCamera().addPropertyChangeListener(linesUpdater);
-    temporalLayer.getCamera().addPropertyChangeListener(linesUpdater);
+    originMapLayer.getMapLayerCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, linesUpdater);
+    destMapLayer.getMapLayerCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, linesUpdater);
+    temporalLayer.getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, linesUpdater);
 
     createButtons();
   }
@@ -779,9 +778,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void layoutChildren() {
-    layoutCameraNode(originMapLayer.getMapLayerCamera(), -1, -1, .30, .96);
-    layoutCameraNode(temporalLayer.getCamera(), 0, 0, .40, 1.0);
-    layoutCameraNode(destMapLayer.getMapLayerCamera(), +1, -1, .30, .96);
+    layoutCameraNode(originMapLayer.getMapLayerCamera(), Component.LEFT_ALIGNMENT, Component.TOP_ALIGNMENT, .30, .96);
+    layoutCameraNode(temporalLayer.getCamera(), Component.CENTER_ALIGNMENT, Component.CENTER_ALIGNMENT, .40, 1.0);
+    layoutCameraNode(destMapLayer.getMapLayerCamera(), Component.RIGHT_ALIGNMENT, Component.TOP_ALIGNMENT, .30, .96);
 
     PBounds heatmapBounds = temporalLayer.getCamera().getBounds();
     PNodes.setPosition(buttonPanel, heatmapBounds.x + 5, /*heatmapBounds.y +*/ 4);
@@ -811,7 +810,7 @@ public class FlowstratesView extends AbstractCanvasView {
     layer.getMapLayerCamera().setViewBounds(nb);
   }
 
-  private void layoutCameraNode(PCamera camera, double halign, double valign, double hsizeProportion,
+  private void layoutCameraNode(PCamera camera, float halign, float valign, double hsizeProportion,
       double vsizeProportion) {
 
     PBounds globalViewBounds = getCamera().getViewBounds();
