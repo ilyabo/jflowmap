@@ -143,8 +143,8 @@ public class PNodes {
   /**
    *
    * @param bounds Bounds to align the node within.
-   * @param halign Component.LEFT_ALIGNMENT or RIGHT_ALIGNMENT
-   * @param valign Component.TOP_ALIGNMENT or BOTTOM_ALIGNMENT
+   * @param halign PCanvas.LEFT_ALIGNMENT or RIGHT_ALIGNMENT
+   * @param valign PCanvas.TOP_ALIGNMENT or BOTTOM_ALIGNMENT
    * @param hsizePropoption 0..1 Proportion of the width of the bounds which the node should take
    * @param vsizeProportion 0..1 Proportion of the height of the bounds which the node should take
    */

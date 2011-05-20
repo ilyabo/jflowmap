@@ -20,7 +20,6 @@ package jflowmap.views.flowstrates;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -68,6 +67,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -778,9 +778,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void layoutChildren() {
-    layoutCameraNode(originMapLayer.getMapLayerCamera(), Component.LEFT_ALIGNMENT, Component.TOP_ALIGNMENT, .30, .96);
-    layoutCameraNode(temporalLayer.getCamera(), Component.CENTER_ALIGNMENT, Component.CENTER_ALIGNMENT, .40, 1.0);
-    layoutCameraNode(destMapLayer.getMapLayerCamera(), Component.RIGHT_ALIGNMENT, Component.TOP_ALIGNMENT, .30, .96);
+    layoutCameraNode(originMapLayer.getMapLayerCamera(), PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, .96);
+    layoutCameraNode(temporalLayer.getCamera(), PCanvas.CENTER_ALIGNMENT, PCanvas.CENTER_ALIGNMENT, .40, 1.0);
+    layoutCameraNode(destMapLayer.getMapLayerCamera(), PCanvas.RIGHT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, .96);
 
     PBounds heatmapBounds = temporalLayer.getCamera().getBounds();
     PNodes.setPosition(buttonPanel, heatmapBounds.x + 5, /*heatmapBounds.y +*/ 4);
