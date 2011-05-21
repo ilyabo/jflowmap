@@ -208,7 +208,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 //    int index = getFlowstratesView().getVisibleEdgeIndex(edge);
     String label = getFlowMapGraph().getNodeLabel(ep.nodeOf(edge));
     PDimension d = new PDimension(
-        SwingUtilities.computeStringWidth(nodeLabelsFontMetrics, label) + 7,
+        SwingUtilities.computeStringWidth(nodeLabelsFontMetrics, label) +
+        (ep == FlowEndpoint.ORIGIN ? 7 : 2),
         nodeLabelsFontMetrics.getAscent());
     getCamera().localToView(d);
     return d;
