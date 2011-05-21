@@ -77,9 +77,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     getCamera().setComponent(getFlowstratesView().getVisualCanvas());
 
     originLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.ORIGIN), true);
-    originLabelsNode.setFont(NODE_LABELS_FONT);
     destLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.DEST), false);
-    destLabelsNode.setFont(NODE_LABELS_FONT);
     attrLabelsNode = createFloatingLabels(true, createAttrsLabelIterator(), false);
 
     originLabelsNode.addDisjointNode(attrLabelsNode);
@@ -95,12 +93,15 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
   private FloatingLabelsNode createFloatingLabels(
       boolean isHorizontal, LabelIterator it, boolean anchorLabelsToEnd) {
-    FloatingLabelsNode node = new FloatingLabelsNode(isHorizontal, it);
-    node.setAnchorLabelsToEnd(anchorLabelsToEnd);
-    node.setPaint(FLOATING_LABELS_BG);
-    node.setPickable(false);
-    getCamera().addChild(node);
-    return node;
+    FloatingLabelsNode labels = new FloatingLabelsNode(isHorizontal, it);
+    labels.setFont(NODE_LABELS_FONT);
+    labels.setAnchorLabelsToEnd(anchorLabelsToEnd);
+    labels.setMarginBefore(anchorLabelsToEnd ? 0 : 3);
+    labels.setMarginAfter(anchorLabelsToEnd ? 3 : 0);
+    labels.setPaint(FLOATING_LABELS_BG);
+    labels.setPickable(false);
+    getCamera().addChild(labels);
+    return labels;
   }
 
   @Override
@@ -207,7 +208,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 //    int index = getFlowstratesView().getVisibleEdgeIndex(edge);
     String label = getFlowMapGraph().getNodeLabel(ep.nodeOf(edge));
     PDimension d = new PDimension(
-        SwingUtilities.computeStringWidth(nodeLabelsFontMetrics, label),
+        SwingUtilities.computeStringWidth(nodeLabelsFontMetrics, label) + 7,
         nodeLabelsFontMetrics.getAscent());
     getCamera().localToView(d);
     return d;
@@ -219,11 +220,13 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
     case ORIGIN:
       PBounds ob = originLabelsNode.getBounds();
+      ob.x -= 3;
       getCamera().localToView(ob);
       return new Point2D.Double(ob.getMaxX(), calcNodeLabelYPos(row) + heatmapNode.getCellHeight()/2.0);
 
     case DEST:
       PBounds db = destLabelsNode.getBounds();
+      db.x += 3;
       getCamera().localToView(db);
       return new Point2D.Double(db.getMinX(), calcNodeLabelYPos(row) + heatmapNode.getCellHeight()/2.0);
 
@@ -253,7 +256,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     final FlowMapGraph fmg = getFlowstratesView().getFlowMapGraph();
 
     return Lists.transform(edges, new Function<Edge, String>() {
-      @Override public String apply(Edge e) { return shorten(fmg.getNodeLabel(ep.nodeOf(e))); }
+      @Override public String apply(Edge e) { return /*shorten*/(fmg.getNodeLabel(ep.nodeOf(e))); }
     });
   }
 
