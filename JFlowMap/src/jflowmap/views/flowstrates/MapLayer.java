@@ -483,17 +483,14 @@ public class MapLayer extends PLayer {
         endpoint);
   }
 
-  void updateMapAreaColorsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
-    Edge edge = cell.getEdge();
-    String attr = cell.getWeightAttr();
-
+  void updateMapAreaColorsOnHeatmapCellHover(Edge edge, String weightAttr, boolean hover) {
     if (FlowMapGraphEdgeAggregator.isAggregate(edge)) {
 
       List<Edge> edges = FlowMapGraphEdgeAggregator.getBaseAggregateList(edge);
-      colorizeMapAreasWithNodeTotals(edges, attr, hover);
+      colorizeMapAreasWithNodeTotals(edges, weightAttr, hover);
 
     } else {
-      double value = flowstratesView.getValue(edge, attr);
+      double value = flowstratesView.getValue(edge, weightAttr);
       colorizeMapArea(flowstratesView.getAggLayers().getNodeId(edge, endpoint), value, hover);
     }
   }
@@ -568,8 +565,13 @@ public class MapLayer extends PLayer {
     return centroidsBounds;
   }
 
-  void setEdgeCentroidsHighlighted(HeatmapCell hmcell, boolean highlighted) {
-    Node node = getFlowMapGraph().getNodeOf(hmcell.getEdge(), endpoint);
+  void updateOnHeatmapCellHover(Edge edge, String weightAttr, boolean hover) {
+    updateMapAreaColorsOnHeatmapCellHover(edge, weightAttr, hover);
+    setEdgeEndpointCentroidHighlighted(edge, hover);
+  }
+
+  void setEdgeEndpointCentroidHighlighted(Edge edge, boolean highlighted) {
+    Node node = getFlowMapGraph().getNodeOf(edge, endpoint);
     Centroid c = nodeIdsToCentroids.get(getFlowMapGraph().getNodeId(node));
     if (c != null) {
       c.setHighlighted(highlighted);

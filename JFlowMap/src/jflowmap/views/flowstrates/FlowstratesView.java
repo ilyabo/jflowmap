@@ -541,6 +541,9 @@ public class FlowstratesView extends AbstractCanvasView {
     return getVisibleEdges().get(index);
   }
 
+  public String getEdgeWeightAttr(int index) {
+    return getFlowMapGraph().getEdgeWeightAttrs().get(index);
+  }
 
   private Map<Edge, Integer> getOrInitVisibleEdgesToIndex() {
     if (visibleEdgeToIndex == null) {

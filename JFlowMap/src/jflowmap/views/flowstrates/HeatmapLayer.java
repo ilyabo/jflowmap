@@ -272,14 +272,13 @@ public class HeatmapLayer extends TemporalViewLayer {
 
 
   void updateMapsOnHeatmapCellHover(HeatmapCell cell, boolean hover) {
-    MapLayer originMap = getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN);
-    MapLayer destMap = getFlowstratesView().getMapLayer(FlowEndpoint.DEST);
+    updateMapsOnHeatmapCellHover(cell.getEdge(), cell.getWeightAttr(), hover);
+  }
 
-    originMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
-    destMap.updateMapAreaColorsOnHeatmapCellHover(cell, hover);
-
-    originMap.setEdgeCentroidsHighlighted(cell, hover);
-    destMap.setEdgeCentroidsHighlighted(cell, hover);
+  void updateMapsOnHeatmapCellHover(Edge edge, String weightAttr, boolean hover) {
+    FlowstratesView fs = getFlowstratesView();
+    fs.getMapLayer(FlowEndpoint.ORIGIN).updateOnHeatmapCellHover(edge, weightAttr, hover);
+    fs.getMapLayer(FlowEndpoint.DEST).updateOnHeatmapCellHover(edge, weightAttr, hover);
   }
 
   void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {

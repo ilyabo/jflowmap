@@ -36,7 +36,6 @@ import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
-
 /**
  * @author Ilya Boyandin
  */
@@ -50,50 +49,46 @@ public class FastHeatmapCursor extends PNode {
     setPickable(false);
 
     final PCamera camera = heatmapLayer.getCamera();
-    camera.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS,
-        new PropertyChangeListener() {
-          public void propertyChange(PropertyChangeEvent evt) {
-            // adjust cursor bounds
-            setBounds(camera.getBoundsReference());
-          }
-        }
-    );
-    camera.addInputEventListener(
-        new PTypedBasicInputEventHandler<MosaicPlotNode>(MosaicPlotNode.class) {
-          @Override
-          public void mouseEntered(PInputEvent event) {
-            setSelectedCell(cell(event));
-          }
+    camera.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        // adjust cursor bounds
+        setBounds(camera.getBoundsReference());
+      }
+    });
+    camera.addInputEventListener(new PTypedBasicInputEventHandler<MosaicPlotNode>(MosaicPlotNode.class) {
+      @Override
+      public void mouseEntered(PInputEvent event) {
+        setHighlightedCell(cell(event));
+      }
 
-          @Override
-          public void mouseMoved(PInputEvent event) {
-            setSelectedCell(cell(event));
-          }
+      @Override
+      public void mouseMoved(PInputEvent event) {
+        setHighlightedCell(cell(event));
+      }
 
-          @Override
-          public void mouseExited(PInputEvent event) {
-            setSelectedCell(null);
-          }
+      @Override
+      public void mouseExited(PInputEvent event) {
+        setHighlightedCell(null);
+      }
 
-          @Override
-          public void mouseClicked(PInputEvent event) {
-            focusOnCell(cell(event));
-          }
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        focusOnCell(cell(event));
+      }
 
-          private Point cell(PInputEvent event) {
-            Point2D pos = event.getCanvasPosition();
-            heatmapLayer.getCamera().localToView(pos);
-            return heatmapLayer.getHeatmapNode().pointToCell(pos);
-          }
-        }
-    );
+      private Point cell(PInputEvent event) {
+        Point2D pos = event.getCanvasPosition();
+        heatmapLayer.getCamera().localToView(pos);
+        return heatmapLayer.getHeatmapNode().pointToCell(pos);
+      }
+    });
   }
 
   private void focusOnCell(Point cell) {
     if (cell != null) {
-      FlowstratesView fs = heatmapLayer.getFlowstratesView();
+      FlowstratesView fs = getFlowstratesView();
       FlowMapGraph fmg = fs.getFlowMapGraph();
-      Edge edge = fs.getVisibleEdge(cell.y);
+      Edge edge = edgeOf(cell);
 
       String originId = fmg.getSourceNodeId(edge);
       String destId = fmg.getTargetNodeId(edge);
@@ -103,25 +98,43 @@ public class FastHeatmapCursor extends PNode {
     }
   }
 
-  private void setSelectedCell(Point newCell) {
+  private void setHighlightedCell(Point newCell) {
     if (newCell != cell) {
       if (cell != null) {
-        setEdgeLinesVisible(cell.y, false);  // hide previously shown line
+        setEdgeLinesVisible(cell, false); // hide previously shown line
       }
 
-      boolean visible = (newCell != null);
-      setVisible(visible);
       if (newCell != null) {
-        setEdgeLinesVisible(newCell.y, visible);
+        setEdgeLinesVisible(newCell, true);
+        setVisible(true);
+      } else {
+        setVisible(false);
       }
       cell = newCell;
       repaint();
     }
   }
 
-  private void setEdgeLinesVisible(int index, boolean visible) {
-    FlowstratesView fs = heatmapLayer.getFlowstratesView();
-    fs.getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(fs.getVisibleEdge(index), visible);
+  private void setEdgeLinesVisible(Point cell, boolean visible) {
+    FlowstratesView fs = getFlowstratesView();
+    Edge edge = edgeOf(cell);
+    String weightAttr = weightAttr(cell);
+    fs.getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(edge, visible);
+    fs.getMapLayer(FlowEndpoint.ORIGIN).updateOnHeatmapCellHover(edge, weightAttr, visible);
+    fs.getMapLayer(FlowEndpoint.DEST).updateOnHeatmapCellHover(edge, weightAttr, visible);
+  }
+
+  private String weightAttr(Point cell) {
+    int index = cell.x;
+    return getFlowstratesView().getEdgeWeightAttr(index);
+  }
+
+  private Edge edgeOf(Point cell) {
+    return getFlowstratesView().getVisibleEdge(cell.y);
+  }
+
+  private FlowstratesView getFlowstratesView() {
+    return heatmapLayer.getFlowstratesView();
   }
 
   private Rectangle cellToRect(Point cell) {
@@ -148,33 +161,24 @@ public class FastHeatmapCursor extends PNode {
       final Rectangle2D cellRect = cellToRect(cell);
 
       /*
-      // draw the lines
-      {
-        final PBounds cb = camera.getBounds();
-
-        camera.localToView(cb);
-        final int cx = (int) Math.round(cb.x);
-        final int cy = (int) Math.round(cb.y);
-        final int cw = (int) Math.round(cb.width);
-        final int ch = (int) Math.round(cb.height);
-
-        final AffineTransform oldTransform = g2.getTransform();
-        g2.transform(camera.getViewTransform());
-
-        final int y = (int) cellRect.getY();
-        final int x = (int) cellRect.getX();
-        final int w = (int) cellRect.getWidth();
-        final int h = (int) cellRect.getHeight();
-
-        g2.setColor(COL_ROW_HIGHLIGHT_COLOR);
-        g2.fillRect(x, cy - 1, w, y - cy + 1);
-        g2.fillRect(x, y + h, w, ch - (y - cy));
-        g2.fillRect(cx - 1, y, x - cx + 1, h);
-        g2.fillRect(x + w, y, cw - (x - cx), h);
-
-        g2.setTransform(oldTransform);
-      }
-      */
+       * // draw the lines { final PBounds cb = camera.getBounds();
+       *
+       * camera.localToView(cb); final int cx = (int) Math.round(cb.x); final int cy = (int)
+       * Math.round(cb.y); final int cw = (int) Math.round(cb.width); final int ch = (int)
+       * Math.round(cb.height);
+       *
+       * final AffineTransform oldTransform = g2.getTransform();
+       * g2.transform(camera.getViewTransform());
+       *
+       * final int y = (int) cellRect.getY(); final int x = (int) cellRect.getX(); final int w =
+       * (int) cellRect.getWidth(); final int h = (int) cellRect.getHeight();
+       *
+       * g2.setColor(COL_ROW_HIGHLIGHT_COLOR); g2.fillRect(x, cy - 1, w, y - cy + 1); g2.fillRect(x,
+       * y + h, w, ch - (y - cy)); g2.fillRect(cx - 1, y, x - cx + 1, h); g2.fillRect(x + w, y, cw -
+       * (x - cx), h);
+       *
+       * g2.setTransform(oldTransform); }
+       */
 
       // draw the small cell-bounding rectangle
       {
@@ -189,13 +193,12 @@ public class FastHeatmapCursor extends PNode {
         if (h < 1)
           h = 1;
 
-        FlowstratesStyle style = heatmapLayer.getFlowstratesView().getStyle();
+        FlowstratesStyle style = getFlowstratesView().getStyle();
         g2.setStroke(style.getHeatmapSelectedCellStroke());
         g2.setColor(style.getHeatmapSelectedCellStrokeColor());
         g2.drawRect(x, y, w - 1, h - 1);
       }
     }
   }
-
 
 }
