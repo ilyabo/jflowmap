@@ -537,6 +537,11 @@ public class FlowstratesView extends AbstractCanvasView {
     return idx;
   }
 
+  public Edge getVisibleEdge(int index) {
+    return getVisibleEdges().get(index);
+  }
+
+
   private Map<Edge, Integer> getOrInitVisibleEdgesToIndex() {
     if (visibleEdgeToIndex == null) {
       Map<Edge, Integer> map = Maps.newHashMap();

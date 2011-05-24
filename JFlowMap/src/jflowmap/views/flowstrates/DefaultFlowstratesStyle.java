@@ -135,9 +135,9 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return TIMELINE_CELL_STROKE;
   }
 
-  private static final Stroke SELECTED_TIMELINE_CELL_STROKE = new PFixedWidthStroke(1);
+  private static final Stroke SELECTED_TIMELINE_CELL_STROKE = new PFixedWidthStroke(2);
   @Override
-  public Stroke getSelectedTimelineCellStroke() {
+  public Stroke getHeatmapSelectedCellStroke() {
     return SELECTED_TIMELINE_CELL_STROKE;
   }
 

@@ -42,7 +42,7 @@ public interface FlowstratesStyle {
 //
 //  int[] getDivergingValueColors();
 
-  Stroke getSelectedTimelineCellStroke();
+  Stroke getHeatmapSelectedCellStroke();
 
   Color getHeatmapSelectedCellStrokeColor();
 

@@ -89,6 +89,15 @@ public class FastHeatmapLayer extends TemporalViewLayer {
         adjustFloatingLabelNodePositions();
       }
     });
+
+    FastHeatmapCursor cursor = new FastHeatmapCursor(this);
+    getCamera().addChild(cursor);
+    cursor.moveToBack();
+
+  }
+
+  public MosaicPlotNode getHeatmapNode() {
+    return heatmapNode;
   }
 
   private FloatingLabelsNode createFloatingLabels(
@@ -99,7 +108,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     labels.setMarginBefore(anchorLabelsToEnd ? 0 : 3);
     labels.setMarginAfter(anchorLabelsToEnd ? 3 : 0);
     labels.setPaint(FLOATING_LABELS_BG);
-    labels.setPickable(false);
+//    labels.setPickable(false);
     getCamera().addChild(labels);
     return labels;
   }

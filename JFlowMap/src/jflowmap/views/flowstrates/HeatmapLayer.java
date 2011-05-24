@@ -78,7 +78,7 @@ public class HeatmapLayer extends TemporalViewLayer {
     columnHighlightRect.setPaint(null);
     FlowstratesStyle style = getFlowstratesView().getStyle();
     columnHighlightRect.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
-    columnHighlightRect.setStroke(style.getSelectedTimelineCellStroke());
+    columnHighlightRect.setStroke(style.getHeatmapSelectedCellStroke());
     columnHighlightRect.setVisible(false);
     addChild(columnHighlightRect);
 
@@ -323,7 +323,7 @@ public class HeatmapLayer extends TemporalViewLayer {
 
         // highlight cell
         cell.moveToFront();
-        cell.setStroke(style.getSelectedTimelineCellStroke());
+        cell.setStroke(style.getHeatmapSelectedCellStroke());
         cell.setStrokePaint(style.getHeatmapSelectedCellStrokeColor());
 
         getFlowstratesView().getFlowLinesLayerNode().setFlowLinesOfEdgeHighlighted(cell.getEdge(), true);
