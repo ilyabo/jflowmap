@@ -76,9 +76,9 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
     getCamera().setComponent(getFlowstratesView().getVisualCanvas());
 
-    originLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.ORIGIN), true);
-    destLabelsNode = createFloatingLabels(false, createNodeLabelIterator(FlowEndpoint.DEST), false);
-    attrLabelsNode = createFloatingLabels(true, createAttrsLabelIterator(), false);
+    originLabelsNode = createFloatingLabels(createNodeLabelIterator(FlowEndpoint.ORIGIN), true);
+    destLabelsNode = createFloatingLabels(createNodeLabelIterator(FlowEndpoint.DEST), false);
+    attrLabelsNode = createAttrFloatingLabels(); // true, createAttrsLabelIterator(), false);
 
     originLabelsNode.addDisjointNode(attrLabelsNode);
     destLabelsNode.addDisjointNode(attrLabelsNode);
@@ -100,9 +100,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     return heatmapNode;
   }
 
-  private FloatingLabelsNode createFloatingLabels(
-      boolean isHorizontal, LabelIterator it, boolean anchorLabelsToEnd) {
-    FloatingLabelsNode labels = new FloatingLabelsNode(isHorizontal, it);
+  private FloatingLabelsNode createFloatingLabels(LabelIterator it, boolean anchorLabelsToEnd) {
+    FloatingLabelsNode labels = new FloatingLabelsNode(false, it);
     labels.setFont(NODE_LABELS_FONT);
     labels.setAnchorLabelsToEnd(anchorLabelsToEnd);
     labels.setMarginBefore(anchorLabelsToEnd ? 0 : 3);
@@ -112,6 +111,14 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     getCamera().addChild(labels);
     return labels;
   }
+
+  private FloatingLabelsNode createAttrFloatingLabels() {
+    FloatingLabelsNode labels = new FloatingLabelsNode(true, createAttrsLabelIterator());
+    labels.setPaint(FLOATING_LABELS_BG);
+    getCamera().addChild(labels);
+    return labels;
+  }
+
 
   @Override
   public void renew() {
@@ -177,8 +184,9 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     PBounds hb = heatmapNode.getBounds();
     getCamera().viewToLocal(hb);
 
-    PNodes.setPosition(attrLabelsNode, cb.getX(),
+    PNodes.setPosition(attrLabelsNode, cb.getX() + 1,
         cb.getY() + Math.max(0, hb.getMinY() - cb.getMinY() - attrLabelsNode.getHeight()));
+
     PNodes.setPosition(originLabelsNode,
         cb.getMinX() + Math.max(0, hb.getMinX() - cb.getMinX() - originLabelsNode.getWidth()),
         cb.getY());
