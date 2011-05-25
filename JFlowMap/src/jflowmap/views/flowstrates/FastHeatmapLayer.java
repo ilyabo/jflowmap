@@ -39,8 +39,8 @@ import jflowmap.util.piccolo.PiccoloUtils;
 import prefuse.data.Edge;
 import at.fhjoanneum.cgvis.data.IColorForValue;
 import at.fhjoanneum.cgvis.data.IDataValues;
-import at.fhjoanneum.cgvis.plots.FloatingLabelsNode;
-import at.fhjoanneum.cgvis.plots.FloatingLabelsNode.LabelIterator;
+import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelIterator;
+import at.fhjoanneum.cgvis.plots.PaintedFloatingLabelsNode;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 
 import com.google.common.base.Function;
@@ -60,10 +60,10 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   private static final int MAX_NODE_NAME_LENGTH = 18;
   private MosaicPlotNode heatmapNode;
   private final IColorForValue colorForValue;
-  private final FloatingLabelsNode attrLabelsNode;
-  private final FloatingLabelsNode originLabelsNode;
+  private final PaintedFloatingLabelsNode attrLabelsNode;
+  private final PaintedFloatingLabelsNode originLabelsNode;
 
-  private final FloatingLabelsNode destLabelsNode;
+  private final PaintedFloatingLabelsNode destLabelsNode;
   private Pair<List<String>,List<String>> nodeLabels;
   private final FontMetrics nodeLabelsFontMetrics;
 
@@ -100,8 +100,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     return heatmapNode;
   }
 
-  private FloatingLabelsNode createFloatingLabels(LabelIterator it, boolean anchorLabelsToEnd) {
-    FloatingLabelsNode labels = new FloatingLabelsNode(false, it);
+  private PaintedFloatingLabelsNode createFloatingLabels(LabelIterator it, boolean anchorLabelsToEnd) {
+    PaintedFloatingLabelsNode labels = new PaintedFloatingLabelsNode(false, it);
     labels.setFont(NODE_LABELS_FONT);
     labels.setAnchorLabelsToEnd(anchorLabelsToEnd);
     labels.setMarginBefore(anchorLabelsToEnd ? 0 : 3);
@@ -112,8 +112,8 @@ public class FastHeatmapLayer extends TemporalViewLayer {
     return labels;
   }
 
-  private FloatingLabelsNode createAttrFloatingLabels() {
-    FloatingLabelsNode labels = new FloatingLabelsNode(true, createAttrsLabelIterator());
+  private PaintedFloatingLabelsNode createAttrFloatingLabels() {
+    PaintedFloatingLabelsNode labels = new PaintedFloatingLabelsNode(true, createAttrsLabelIterator());
     labels.setPaint(FLOATING_LABELS_BG);
     getCamera().addChild(labels);
     return labels;
@@ -298,11 +298,11 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       int attrIndex = 0;
       double pos;
 
-      public double getPosition() {
+      public double getItemPosition() {
         return pos;
       }
 
-      public double getSize() {
+      public double getItemSize() {
         return heatmapNode.getCellWidth();
       }
 
@@ -329,6 +329,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       private List<String> attrs() {
         return getFlowstratesView().getFlowMapGraph().getEdgeWeightAttrs();
       }
+
     };
   }
 
@@ -339,11 +340,11 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       int index = 0;
       double pos;
 
-      public double getPosition() {
+      public double getItemPosition() {
         return pos;
       }
 
-      public double getSize() {
+      public double getItemSize() {
         return heatmapNode.getCellHeight();
       }
 
