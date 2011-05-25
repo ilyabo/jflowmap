@@ -860,4 +860,8 @@ public class FlowstratesView extends AbstractCanvasView {
     changes.firePropertyChange(Properties.NODE_SELECTION.name(), old, nodeIds);
   }
 
+  public List<String> getEdgeWeightAttrs() {
+    return flowMapGraph.getEdgeWeightAttrs();
+  }
+
 }

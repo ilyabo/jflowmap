@@ -101,20 +101,11 @@ public class HeatmapLayer extends TemporalViewLayer {
     // String cp = StringUtils.getCommonPrefix(attrNames.toArray(new String[attrNames.size()]));
     int col = 0;
     for (String attr : attrNames) {
-      // attr = attr.substring(cp.length());
-      PLabel label = new PLabel(attr);
-      label.setName(attr);
-      label.setFont(HEATMAP_COLUMN_LABELS_FONT);
+      PLabel label = createColumnLabelNode(col, attr);
       PBounds b = label.getFullBoundsReference();
-      double x = col * cellWidth; // + (cellWidth - b.getWidth()) / 2;
-      double y = -b.getHeight() / 1.5;
-      label.setPaint(Color.white);
-      label.rotateAboutPoint(-Math.PI * .65 / 2, x, y);
-      label.setX(x);
-      label.setY(y);
-//      label.setX(5 + col * 6.3);
-//      label.setY(col * cellWidth + (cellWidth - b.getWidth()) / 2);
-//      label.translate(5, col * cellWidth + (cellWidth - b.getWidth()) / 2);
+      label.setX(col * cellWidth);
+      label.setY(-b.getHeight() / 1.5);
+      label.rotateAboutPoint(-Math.PI * .65 / 2, label.getX(), label.getY());
       heatmapNode.addChild(label);
 
       label.addInputEventListener(new PBasicInputEventHandler() {
@@ -147,6 +138,14 @@ public class HeatmapLayer extends TemporalViewLayer {
       });
       col++;
     }
+  }
+
+  private PLabel createColumnLabelNode(int col, String weightAttr) {
+    PLabel label = new PLabel(weightAttr);
+    label.setName(weightAttr);
+    label.setFont(HEATMAP_COLUMN_LABELS_FONT);
+    label.setPaint(Color.white);
+    return label;
   }
 
   /**
