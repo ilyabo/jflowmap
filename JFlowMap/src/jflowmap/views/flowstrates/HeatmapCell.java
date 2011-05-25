@@ -19,12 +19,9 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.geom.Rectangle2D;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 import jflowmap.FlowMapGraph;
 import prefuse.data.Edge;
-import prefuse.data.Node;
 import edu.umd.cs.piccolo.nodes.PPath;
 
 /**
@@ -32,7 +29,6 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 class HeatmapCell extends PPath {
 
-  private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance();
 
   private final HeatmapLayer heatmapLayer;
   private final String weightAttr;
@@ -67,50 +63,6 @@ class HeatmapCell extends PPath {
 
   public void updateColor() {
     setPaint(heatmapLayer.getFlowstratesView().getColorFor(getValue()));
-  }
-
-  public String getTooltipHeader() {
-    // return tuple.getSrcNodeId() + "->" + tuple.getTargetNodeId() +
-    // " " + FlowMapGraph.getGraphId(edge.getGraph());
-    Node src = edge.getSourceNode();
-    Node target = edge.getTargetNode();
-    String nodeLabelAttr = flowMapGraph.getNodeLabelAttr();
-
-    String origin = src.getString(nodeLabelAttr);
-    String dest = target.getString(nodeLabelAttr);
-
-    if (origin.length() > 75) origin = origin.substring(0, 75) + "...";
-    if (dest.length() > 75) dest = dest.substring(0, 75) + "...";
-
-    return
-      //FlowMapGraph.getGraphId(edge.getGraph()) + ": " +
-        origin + " -> " + dest;
-  }
-
-  public String getTooltipLabels() {
-    return
-      weightAttr + ":" + "\n" +
-      flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr) + ":"; // + "\n" +
-      //flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr) + ":";
-  }
-
-  public String getTooltipValues() {
-    double weight = edge.getDouble(weightAttr);
-    double weightDiff = edge.getDouble(flowMapGraph.getAttrSpec().getFlowWeightDiffAttr(weightAttr));
-//    double weightRelDiff = edge.getDouble(
-//        flowMapGraph.getAttrSpec().getFlowWeightRelativeDiffAttr(weightAttr));
-    return
-      fmt(weight) + "\n" +
-      fmt(weightDiff) /* + "\n" +
-      fmt(weightRelDiff)*/;
-  }
-
-  private String fmt(double weight) {
-    if (Double.isNaN(weight)) {
-      return "n/a";
-    } else {
-      return NUMBER_FORMAT.format(weight);
-    }
   }
 
 }

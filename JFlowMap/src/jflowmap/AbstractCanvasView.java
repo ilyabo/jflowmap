@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.PTooltip;
 import jflowmap.views.VisualCanvas;
+import jflowmap.views.flowstrates.TooltipText;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -82,9 +83,12 @@ public abstract class AbstractCanvasView implements IView {
     return tooltipBox;
   }
 
-  protected void showTooltip(PNode node, String header, String labels, String values) {
-    Point2D pos = getTooltipPosition(node);
-    tooltipBox.setText(header, labels, values);
+  public void showTooltip(PNode node, TooltipText text) {
+    showTooltip(getTooltipPosition(node), text);
+  }
+
+  public void showTooltip(Point2D pos, TooltipText text) {
+    tooltipBox.setText(text.getHeader(), text.getLabels(), text.getValues());
     tooltipBox.showTooltipAt(pos.getX(), pos.getY(), 0, 0);
     tooltipBox.moveToFront();
   }
@@ -94,19 +98,11 @@ public abstract class AbstractCanvasView implements IView {
     return new Point2D.Double(bounds.getMaxX(), bounds.getMaxY());
   }
 
-  protected void hideTooltip() {
+  public void hideTooltip() {
     tooltipBox.setVisible(false);
   }
 
-  protected String getTooltipHeaderFor(PNode node) {
-    return null;
-  }
-
-  protected String getTooltipLabelsFor(PNode node) {
-    return null;
-  }
-
-  protected String getTooltipValuesFor(PNode node) {
+  protected TooltipText getTooltipTextFor(PNode node) {
     return null;
   }
 
@@ -116,8 +112,8 @@ public abstract class AbstractCanvasView implements IView {
       @Override
       public void mouseEntered(PInputEvent event) {
         T node = node(event);
-        showTooltip(node, getTooltipHeaderFor(node),
-            getTooltipLabelsFor(node), getTooltipValuesFor(node));
+        TooltipText tt = getTooltipTextFor(node);
+        showTooltip(node, tt);
       }
 
       @Override

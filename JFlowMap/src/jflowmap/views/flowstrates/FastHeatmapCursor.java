@@ -107,12 +107,24 @@ public class FastHeatmapCursor extends PNode {
       if (newCell != null) {
         setEdgeLinesVisible(newCell, true);
         setVisible(true);
+        showTooltipFor(newCell);
       } else {
         setVisible(false);
+        getFlowstratesView().hideTooltip();
       }
       cell = newCell;
       repaint();
     }
+  }
+
+  private void showTooltipFor(Point cell) {
+    Rectangle r = cellToRect(cell);
+    Point2D pos = new Point2D.Double(r.getMaxX(), r.getMaxY());
+    heatmapLayer.getCamera().viewToLocal(pos);
+
+    FlowstratesView fs = getFlowstratesView();
+    fs.showTooltip(pos, new TooltipText(fs.getFlowMapGraph(),
+        fs.getVisibleEdge(cell.y), fs.getEdgeWeightAttr(cell.x)));
   }
 
   private void setEdgeLinesVisible(Point cell, boolean visible) {

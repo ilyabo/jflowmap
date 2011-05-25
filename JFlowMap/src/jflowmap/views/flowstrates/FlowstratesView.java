@@ -210,6 +210,7 @@ public class FlowstratesView extends AbstractCanvasView {
     destMapLayer = new MapLayer(FlowstratesView.this, areaMap, FlowEndpoint.DEST);
 
     temporalLayer = new FastHeatmapLayer(this);
+//    temporalLayer = new HeatmapLayer(this);
 
     addCaption(originMapLayer.getMapLayerCamera(), "Origins");
 //    if (SHOW_TIME_CAPTION) {
@@ -743,21 +744,6 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   @Override
-  protected String getTooltipHeaderFor(PNode node) {
-    return ((HeatmapCell) node).getTooltipHeader();
-  }
-
-  @Override
-  protected String getTooltipLabelsFor(PNode node) {
-    return ((HeatmapCell) node).getTooltipLabels();
-  }
-
-  @Override
-  protected String getTooltipValuesFor(PNode node) {
-    return ((HeatmapCell) node).getTooltipValues();
-  }
-
-  @Override
   protected Point2D getTooltipPosition(PNode node) {
     if (PNodes.getRootAncestor(node) == temporalLayer) {
       PBounds bounds = node.getGlobalBounds();
@@ -816,6 +802,15 @@ public class FlowstratesView extends AbstractCanvasView {
     Rectangle2D nb = layer.centroidsBounds();
     GeomUtils.growRectInPlaceByRelativeSize(nb, .2, .2, .2, .2);
     layer.getMapLayerCamera().setViewBounds(nb);
+  }
+
+  @Override
+  protected TooltipText getTooltipTextFor(PNode node) {
+    if (node instanceof HeatmapCell) {
+      HeatmapCell cell = (HeatmapCell)node;
+      return new TooltipText(getFlowMapGraph(), cell.getEdge(), cell.getWeightAttr());
+    }
+    return super.getTooltipTextFor(node);
   }
 
   private void layoutCameraNode(PCamera camera, float halign, float valign, double hsizeProportion,

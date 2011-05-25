@@ -20,6 +20,8 @@ package jflowmap.views.flowstrates;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
@@ -31,6 +33,8 @@ import edu.umd.cs.piccolo.PLayer;
  * @author Ilya Boyandin
  */
 public abstract class TemporalViewLayer extends PLayer {
+
+  static final NumberFormat TOOLTIP_NUMBER_FORMAT = DecimalFormat.getNumberInstance();
 
   private final FlowstratesView flowstratesView;
   private final PCamera camera;
