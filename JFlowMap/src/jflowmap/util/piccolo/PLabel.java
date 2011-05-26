@@ -4,17 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
 public class PLabel extends PNode {
 
-  private static final Color NON_SEL_LABEL_BG = Color.white; // new Color(153, 153, 153);
+  private static final Color DEFAULT_LABEL_BG = Color.white; // new Color(153, 153, 153);
+  private Color labelBackground = DEFAULT_LABEL_BG; // new Color(153, 153, 153);
   private static final Color SEL_LABEL_BG = new Color(215, 48, 39);
   private static final Color PRESSED_SEL_LABEL_BG = new Color(225, 58, 49);
   private static final Color NON_SEL_LABEL_FG = Color.black;
@@ -24,21 +25,25 @@ public class PLabel extends PNode {
 
   private final PText textNode;
   private final PPath rectNode;
-  private int pad = 5;
+  private final int pad;
   private final float arcWidth = 5;
   private final float arcHeight = 5;
 
   public PLabel(String text) {
+    this(text, 5);
+  }
+
+  public PLabel(String text, int pad) {
     this.textNode = new PText(text);
     textNode.setFont(FONT);
     textNode.setPickable(false);
-    pad = 5;
+    this.pad = pad;
+    PBounds textb = textNode.getFullBoundsReference();
     this.rectNode = PPath.createRoundRectangle(
-        -pad, -pad, (float) textNode.getWidth() + 2 * pad,
-        (float) textNode.getHeight() + 2 * pad, arcWidth, arcHeight
+        -pad, -pad, (float) textb.getWidth() + 2 * pad,
+        (float) textb.getHeight() + 2 * pad, arcWidth, arcHeight
         );
 
-    rectNode.setPaint(NON_SEL_LABEL_BG);
     textNode.setTextPaint(NON_SEL_LABEL_FG);
 
     rectNode.setStroke(null);
@@ -46,42 +51,40 @@ public class PLabel extends PNode {
     addChild(textNode);
     onBoundsChanged();
 
-    addInputEventListener(new PBasicInputEventHandler() {
+    addInputEventListener(new PTypedBasicInputEventHandler<PLabel>(PLabel.class) {
       @Override
       public void mouseEntered(PInputEvent event) {
-        PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-        if (label != null) {
-          label.getTextNode().setTextPaint(SEL_LABEL_FG);
-          label.getRectNode().setPaint(SEL_LABEL_BG);
-          repaint();
-        }
+        PLabel label = node(event);
+        label.getTextNode().setTextPaint(SEL_LABEL_FG);
+        label.getRectNode().setPaint(SEL_LABEL_BG);
+        label.moveToFront();
+        repaint();
       }
       @Override
       public void mouseExited(PInputEvent event) {
-        PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-        if (label != null) {
-          label.getTextNode().setTextPaint(NON_SEL_LABEL_FG);
-          label.getRectNode().setPaint(NON_SEL_LABEL_BG);
-          repaint();
-        }
+        PLabel label = node(event);
+        label.getTextNode().setTextPaint(NON_SEL_LABEL_FG);
+        label.getRectNode().setPaint(labelBackground);
+        repaint();
       }
       @Override
       public void mousePressed(PInputEvent event) {
-        PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-        if (label != null) {
-          label.getRectNode().setPaint(PRESSED_SEL_LABEL_BG);
-          repaint();
-        }
+        PLabel label = node(event);
+        label.getRectNode().setPaint(PRESSED_SEL_LABEL_BG);
+        repaint();
       }
       @Override
       public void mouseReleased(PInputEvent event) {
-        PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
-        if (label != null) {
-          label.getRectNode().setPaint(SEL_LABEL_BG);
-          repaint();
-        }
+        PLabel label = node(event);
+        label.getRectNode().setPaint(SEL_LABEL_BG);
+        repaint();
       }
     });
+  }
+
+  public void setLabelBackground(Color labelBackground) {
+    this.labelBackground = labelBackground;
+    rectNode.setPaint(labelBackground);
   }
 
   @Override
@@ -113,4 +116,5 @@ public class PLabel extends PNode {
   public void setFont(Font font) {
     textNode.setFont(font);
   }
+
 }
