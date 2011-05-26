@@ -222,7 +222,7 @@ public class DefaultFlowstratesStyle implements FlowstratesStyle {
     return MAP_AREA_HIGHLIGHTED_CENTROID_PAINT;
   }
 
-  private static final Color MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_PAINT = new Color(244, 242, 46, 200);
+  private static final Color MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_PAINT = new Color(255, 245, 181, 200);
   @Override
   public Color getMapAreaHighlightedCentroidLabelColor() {
     return MAP_AREA_HIGHLIGHTED_CENTROID_LABEL_PAINT;
