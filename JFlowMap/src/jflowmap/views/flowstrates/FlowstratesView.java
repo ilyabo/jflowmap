@@ -145,12 +145,12 @@ public class FlowstratesView extends AbstractCanvasView {
 
 
 
-  public FlowstratesView(FlowMapGraph fmg, final GeoMap areaMap, AggLayersBuilder aggregator,
+  public FlowstratesView(FlowMapGraph flowMapGraph, final GeoMap areaMap, AggLayersBuilder aggregator,
       int maxVisibleTuples, MapProjection proj) {
 
     logger.info("Opening flowstrates view");
 
-    this.flowMapGraph = fmg;
+    this.flowMapGraph = flowMapGraph;
     this.maxVisibleTuples = maxVisibleTuples;
     this.mapProjection = proj;
     this.areaMap = areaMap;
@@ -158,16 +158,17 @@ public class FlowstratesView extends AbstractCanvasView {
     if (aggregator == null) {
       aggregator = new DefaultAggLayersBuilder();
     }
-    this.layers = aggregator.build(fmg);
+    this.layers = aggregator.build(flowMapGraph);
 
-    for (FlowMapGraph fmgg : layers.getFlowMapGraphs()) {
-      fmgg.addEdgeWeightDifferenceColumns();
-      fmgg.addEdgeWeightRelativeDifferenceColumns();
+    for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
+      fmg.addEdgeWeightDifferenceColumns();
+      fmg.addEdgeWeightRelativeDifferenceColumns();
+
+      FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg);
+      FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightDiffAttr());
+      FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
     }
 
-    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg);
-    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightDiffAttr());
-    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
 
     beforeInitialize();
     SwingUtilities.invokeLater(new Runnable() {
@@ -276,18 +277,18 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void createButtons() {
-    PBoxLayoutNode buttonPanel0 = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
-    PNodes.setPosition(buttonPanel0, 4, 4);
-    getVisualCanvas().getLayer().addChild(buttonPanel0);
-    buttonPanel0.addChild(new PButton(" < ", false));
-    buttonPanel0.addChild(new PButton(" > ", false));
+//    PBoxLayoutNode buttonPanel0 = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+//    PNodes.setPosition(buttonPanel0, 4, 4);
+//    getVisualCanvas().getLayer().addChild(buttonPanel0);
+//    buttonPanel0.addChild(new PButton(" < ", false));
+//    buttonPanel0.addChild(new PButton(" > ", false));
 
 
 
     buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
 
-    final PButton explainButton = new PButton("EXPLAIN", true);
-    buttonPanel.addChild(explainButton);
+//    final PButton explainButton = new PButton("EXPLAIN", true);
+//    buttonPanel.addChild(explainButton);
 
 
     getVisualCanvas().getLayer().addChild(buttonPanel);
@@ -772,9 +773,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void layoutChildren() {
-    layoutCameraNode(originMapLayer.getMapLayerCamera(), PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, .96);
+    layoutCameraNode(originMapLayer.getMapLayerCamera(), PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, 1.0);
     layoutCameraNode(temporalLayer.getCamera(), PCanvas.CENTER_ALIGNMENT, PCanvas.CENTER_ALIGNMENT, .40, 1.0);
-    layoutCameraNode(destMapLayer.getMapLayerCamera(), PCanvas.RIGHT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, .96);
+    layoutCameraNode(destMapLayer.getMapLayerCamera(), PCanvas.RIGHT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, 1.0);
 
     PBounds heatmapBounds = temporalLayer.getCamera().getBounds();
     PNodes.setPosition(buttonPanel, heatmapBounds.x + 5, /*heatmapBounds.y +*/ 4);
@@ -834,6 +835,7 @@ public class FlowstratesView extends AbstractCanvasView {
     PNodes.alignNodeInBounds_bySetBounds(camera, globalViewBounds, halign, valign, hsizeProportion,
         vsizeProportion);
     camera.setViewBounds(viewBounds);
+
 
     // align caption
     if (caption != null) {

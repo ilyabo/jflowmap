@@ -48,17 +48,20 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
 
 /**
  * @author Ilya Boyandin
  */
-public class FastHeatmapLayer extends TemporalViewLayer {
+public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
+  private static final Color LABEL_BACKGROUND = new Color(255, 255, 255, 0);
   private static final Font NODE_LABELS_FONT = new Font("Arial", Font.PLAIN, 10);
   private static final Font ATTR_LABELS_FONT = NODE_LABELS_FONT;
-  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 220);
+  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 245);
   private MosaicPlotNode heatmapNode;
   private final IColorForValue colorForValue;
   private final InteractiveFloatingLabelsNode attrLabelsNode;
@@ -113,7 +116,14 @@ public class FastHeatmapLayer extends TemporalViewLayer {
   }
 
   private InteractiveFloatingLabelsNode createAttrFloatingLabels() {
-    InteractiveFloatingLabelsNode labels = new InteractiveFloatingLabelsNode(true, createAttrsLabelIterator());
+    InteractiveFloatingLabelsNode labels = new InteractiveFloatingLabelsNode(true, createPNodeAttrsLabelIterator());
+//    PaintedFloatingLabelsNode labels = new PaintedFloatingLabelsNode(
+//        true, createStringAttrsLabelIterator());
+//    labels.setRotateHorizLabels(true);
+//    labels.setAnchorLabelsToEnd(false);
+//    labels.setFont(NODE_LABELS_FONT);
+    labels.setMarginBefore(3);
+    labels.setMarginAfter(0);
     labels.setPaint(FLOATING_LABELS_BG);
     getCamera().addChild(labels);
     return labels;
@@ -284,7 +294,7 @@ public class FastHeatmapLayer extends TemporalViewLayer {
       index * (heatmapNode.getCellHeight() + heatmapNode.getCellSpacing());
   }
 
-  private LabelIterator<PLabel> createAttrsLabelIterator() {
+  private LabelIterator<PLabel> createPNodeAttrsLabelIterator() {
 
     final List<PLabel> labels = createAttrLabels();
 
@@ -327,23 +337,44 @@ public class FastHeatmapLayer extends TemporalViewLayer {
 
   private List<PLabel> createAttrLabels() {
     List<PLabel> labels = Lists.newArrayList();
+
     for (String attr : getFlowstratesView().getEdgeWeightAttrs()) {
-      PLabel label = new PLabel(attr);
+      PLabel label = new PLabel(attr, new Insets(4, 3, 1, -3));
+      label.setLabelBackground(LABEL_BACKGROUND);
       label.setName(attr);
       label.setFont(ATTR_LABELS_FONT);
       label.setPaint(Color.white);
-//      label.rotateInPlace(-Math.PI * .65 / 2);
-//      label.setY(-label.getFullBoundsReference().getHeight() / 1.5);
-//      label.rotateAboutPoint(-Math.PI * .65 / 2, 0, 0);
-
-//      double y = -label.getFullBoundsReference().getHeight() / 1.5;
-//      label.setY(y);
-//      PBounds fb = label.getFullBoundsReference();
-//      label.rotateAboutPoint(-Math.PI / 180,
-//          fb.getCenterX(),
-//          fb.getCenterY());
-
+      label.rotateInPlace(-Math.PI / 4);
       labels.add(label);
+
+      label.addInputEventListener(new PBasicInputEventHandler() {
+        @Override
+        public void mouseEntered(PInputEvent event) {
+          PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
+          label.moveToFront();
+          final String attr = label.getName();
+
+          updateMapsOnHeatmapColumnHover(attr, true);
+
+//          columnHighlightRect.setBounds(
+//              GeomUtils.growRect(PNodes.fullBoundsOf(cells), 2));
+//          columnHighlightRect.moveToFront();
+//          columnHighlightRect.setVisible(true);
+//          columnHighlightRect.repaint();
+
+          getFlowstratesView().getFlowLinesLayerNode().hideAllFlowLines();
+        }
+
+        @Override
+        public void mouseExited(PInputEvent event) {
+          PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
+//          columnHighlightRect.setVisible(false);
+          updateMapsOnHeatmapColumnHover(label.getName(), false);
+
+          getFlowstratesView().getFlowLinesLayerNode().updateFlowLines();
+        }
+      });
+
     }
     return labels;
   }

@@ -69,4 +69,5 @@ public abstract class TemporalViewLayer extends PLayer {
 
   public abstract Point2D getFlowLineInPoint(int row, FlowEndpoint ep);
 
+
 }

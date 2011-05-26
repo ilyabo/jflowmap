@@ -95,6 +95,8 @@ public class FastHeatmapCursor extends PNode {
 
       fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNode(originId);
       fs.getMapLayer(FlowEndpoint.DEST).focusOnNode(destId);
+
+      showTooltipFor(cell);
     }
   }
 

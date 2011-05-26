@@ -30,12 +30,12 @@ import edu.umd.cs.piccolo.nodes.PPath;
 class HeatmapCell extends PPath {
 
 
-  private final HeatmapLayer heatmapLayer;
+  private final SimpleHeatmapLayer heatmapLayer;
   private final String weightAttr;
   private final FlowMapGraph flowMapGraph;
   private final Edge edge; // can be null
 
-  public HeatmapCell(HeatmapLayer layer, double x, double y,
+  public HeatmapCell(SimpleHeatmapLayer layer, double x, double y,
       double cellWidth, double cellHeight, String weightAttr, FlowMapGraph fmg, Edge edge) {
     super(new Rectangle2D.Double(x, y, cellWidth, cellHeight), null);
     this.heatmapLayer = layer;

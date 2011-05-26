@@ -18,6 +18,9 @@
 
 package jflowmap.views.flowstrates;
 
+import static jflowmap.data.FlowMapGraphEdgeAggregator.getAggregateList;
+import static jflowmap.data.FlowMapGraphEdgeAggregator.isAggregate;
+
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
@@ -61,6 +64,7 @@ import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -153,21 +157,22 @@ public class MapLayer extends PLayer {
   }
 
   private void updateCentroid(Centroid c, RectSet occupied) {
-    if (centroidsOpaque) {
+//    if (centroidsOpaque) {
       c.updateInCamera(geoLayerCamera);
       if (c.getVisible()) {
         c.getLabelNode().setVisible(occupied.addIfNotIntersects(c.getCollisionBounds()));
       }
-      c.setOpaque(true);
-    } else {
+      c.setOpaque(centroidsOpaque);
+//      c.setOpaque(true);
+//    } else {
       // boolean vis = false;
       // VisualArea va = getVisualAreaMap().getVisualAreaBy(c.getNodeId());
       // if (va != null) {
       // vis = va.getFullBoundsReference().contains(c.getLabelNode().getBoundsReference());
       // }
       // c.setVisible(vis);
-      c.setOpaque(false);
-    }
+//      c.setOpaque(false);
+//    }
   }
 
   private void createCentroids() {
@@ -568,6 +573,9 @@ public class MapLayer extends PLayer {
   void updateOnHeatmapCellHover(Edge edge, String weightAttr, boolean hover) {
     updateMapAreaColorsOnHeatmapCellHover(edge, weightAttr, hover);
     setEdgeEndpointCentroidHighlighted(edge, hover);
+    if (isAggregate(edge)  &&  getAggregateList(edge).size() > 1) {
+      setCentroidsOpaque(!hover);
+    }
   }
 
   void setEdgeEndpointCentroidHighlighted(Edge edge, boolean highlighted) {
@@ -634,7 +642,7 @@ public class MapLayer extends PLayer {
   }
 
   public void focusOnNodes(Iterable<String> nodeIds) {
-    Rectangle2D rect = null;
+    Rectangle2D.Double rect = null;
 
     for (String nodeId : nodeIds) {
       Centroid c = nodeIdsToCentroids.get(nodeId);
@@ -649,7 +657,7 @@ public class MapLayer extends PLayer {
       PGeoMapArea va = visualAreaMap.getVisualAreaBy(nodeId);
       if (va != null) {
         if (rect == null) {
-          rect = va.getBoundingBox();
+          rect = new PBounds(va.getBoundingBox());
         } else {
           rect.add(va.getBoundingBox());
         }
@@ -664,15 +672,29 @@ public class MapLayer extends PLayer {
       double w = rect.getWidth(), h = rect.getHeight();
 
       // Show more context for smaller areas and less for larger ones
+      final double minGrowth = 1.4;
+      final double maxGrowth = 4.4;
       double alpha = Math.min((fw - Math.min(fw, w * 5)) / fw, (fh - Math.min(fh, h * 5)) / fh);
-      double growBy = 0.4 + 4.0 * Math.pow(alpha, 5);
+      double growBy = minGrowth + (maxGrowth - minGrowth) * Math.pow(alpha, 5);
       GeomUtils.growRectInPlaceByRelativeSize(rect, growBy, growBy, growBy, growBy);
 
-      if (rect.getWidth() > fw) {
-        rect.setRect(fbb.getX(), rect.getY(), fbb.getWidth(), rect.getHeight());
+
+//      if (rect.x < fbb.getX()) {
+//        rect.x = fbb.getX();
+//      }
+//      if (rect.y < fbb.getY()) {
+//        rect.y = fbb.getY();
+//      }
+
+      if (rect.width > fbb.getMaxY()) {
+        rect.x = fbb.getX();
+        rect.width = fbb.getWidth();
+//        rect.setRect(fbb.getX(), rect.y, fbb.getWidth(), rect.height);
       }
-      if (rect.getHeight() > fh) {
-        rect.setRect(rect.getX(), fbb.getY(), rect.getWidth(), fbb.getHeight());
+      if (rect.getMaxX() > fbb.getMaxX()) {
+        rect.y = fbb.getY();
+        rect.height = fbb.getHeight();
+//        rect.setRect(rect.x, fbb.getY(), rect.width, fbb.getHeight());
       }
 
       getMapLayerCamera().animateViewToCenterBounds(rect, true, 500);

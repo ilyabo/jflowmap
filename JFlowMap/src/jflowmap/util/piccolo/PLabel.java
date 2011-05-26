@@ -2,6 +2,7 @@ package jflowmap.util.piccolo;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Insets;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -25,24 +26,24 @@ public class PLabel extends PNode {
 
   private final PText textNode;
   private final PPath rectNode;
-  private final int pad;
+  private final Insets pad;
   private final float arcWidth = 5;
   private final float arcHeight = 5;
 
   public PLabel(String text) {
-    this(text, 5);
+    this(text, new Insets(5, 5, 5, 5));
   }
 
-  public PLabel(String text, int pad) {
+  public PLabel(String text, Insets pad) {
     this.textNode = new PText(text);
     textNode.setFont(FONT);
     textNode.setPickable(false);
     this.pad = pad;
     PBounds textb = textNode.getFullBoundsReference();
     this.rectNode = PPath.createRoundRectangle(
-        -pad, -pad, (float) textb.getWidth() + 2 * pad,
-        (float) textb.getHeight() + 2 * pad, arcWidth, arcHeight
-        );
+        -pad.left, -pad.top, (float) textb.getWidth() + pad.left + pad.right,
+        (float) textb.getHeight() + pad.top + pad.bottom, arcWidth, arcHeight
+    );
 
     textNode.setTextPaint(NON_SEL_LABEL_FG);
 
@@ -99,10 +100,10 @@ public class PLabel extends PNode {
   private void onBoundsChanged() {
     textNode.setBounds(getBoundsReference());
     rectNode.setBounds(
-        -pad + textNode.getX(),
-        -pad + textNode.getY(),
-        (float) textNode.getWidth() + 2 * pad,
-        (float) textNode.getHeight() + 2 * pad);
+        -pad.left + textNode.getX(),
+        -pad.top + textNode.getY(),
+        (float) textNode.getWidth() + pad.left + pad.right,
+        (float) textNode.getHeight() + pad.top + pad.bottom);
   }
 
   public PText getTextNode() {

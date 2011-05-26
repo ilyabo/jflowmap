@@ -28,7 +28,6 @@ import java.util.Map;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
-import jflowmap.data.SeqStat;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PLabel;
@@ -53,7 +52,7 @@ import edu.umd.cs.piccolo.util.PBounds;
 /**
  * @author Ilya Boyandin
  */
-public class HeatmapLayer extends TemporalViewLayer {
+public class SimpleHeatmapLayer extends AbstractHeatmapLayer {
 
   static final double cellWidth = 40;
   static final double cellHeight = 40;
@@ -66,9 +65,8 @@ public class HeatmapLayer extends TemporalViewLayer {
   private final PPath columnHighlightRect;
   private final PNode heatmapNode;
   private final Map<Edge, Pair<PText, PText>> edgesToLabels = Maps.newHashMap();
-  private SeqStat weightAttrTotalsStat = null;
 
-  public HeatmapLayer(FlowstratesView flowstratesView) {
+  public SimpleHeatmapLayer(FlowstratesView flowstratesView) {
     super(flowstratesView);
 
     heatmapNode = new PNode();
@@ -156,12 +154,12 @@ public class HeatmapLayer extends TemporalViewLayer {
     switch (ep) {
 
     case ORIGIN:
-      return new Point2D.Double(-10, getTupleY(row) + HeatmapLayer.cellHeight / 2);
+      return new Point2D.Double(-10, getTupleY(row) + SimpleHeatmapLayer.cellHeight / 2);
 
     case DEST:
       int numCols = getFlowMapGraph().getEdgeWeightAttrsCount();
       return new Point2D.Double(
-          10 + HeatmapLayer.cellWidth * numCols, getTupleY(row) + HeatmapLayer.cellHeight / 2);
+          10 + SimpleHeatmapLayer.cellWidth * numCols, getTupleY(row) + SimpleHeatmapLayer.cellHeight / 2);
 
     default:
       throw new AssertionError();
@@ -169,7 +167,7 @@ public class HeatmapLayer extends TemporalViewLayer {
   }
 
   double getTupleY(int row) {
-    return row * HeatmapLayer.cellHeight;
+    return row * SimpleHeatmapLayer.cellHeight;
   }
 
   @Override
@@ -230,11 +228,6 @@ public class HeatmapLayer extends TemporalViewLayer {
     repaint();
   }
 
-  @Override
-  public void resetWeightAttrTotals() {
-    weightAttrTotalsStat = null;
-  }
-
   private Iterable<HeatmapCell> getHeatMapColumnCells(final String attr) {
     return
       Iterables.filter(
@@ -278,37 +271,6 @@ public class HeatmapLayer extends TemporalViewLayer {
     FlowstratesView fs = getFlowstratesView();
     fs.getMapLayer(FlowEndpoint.ORIGIN).updateOnHeatmapCellHover(edge, weightAttr, hover);
     fs.getMapLayer(FlowEndpoint.DEST).updateOnHeatmapCellHover(edge, weightAttr, hover);
-  }
-
-  void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
-    MapLayer originMap = getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN);
-    MapLayer destMap = getFlowstratesView().getMapLayer(FlowEndpoint.DEST);
-
-    List<Edge> edges = getFlowstratesView().getVisibleEdges();
-
-    SeqStat wstat = getFlowstratesView().getValueStat();
-
-    if (hover) {
-      if (weightAttrTotalsStat == null) {
-         for (String attr : getFlowMapGraph().getEdgeWeightAttrs()) {
-          // "merge" the value stats with the max value of the sums, to construct a color
-          // scale in which we can represent the totals for the nodes
-          wstat = wstat
-              .mergeWith(originMap.calcNodeTotalsFor(edges, attr).values())
-              .mergeWith(destMap.calcNodeTotalsFor(edges, attr).values());
-        }
-        weightAttrTotalsStat = wstat;
-      }
-      getFlowstratesView().setValueStat(weightAttrTotalsStat);
-    } else {
-      getFlowstratesView().resetValueStat();
-    }
-
-
-    originMap.updateOnHeatmapColumnHover(columnAttr, hover);
-    destMap.updateOnHeatmapColumnHover(columnAttr, hover);
-
-    //updateHeatmapColors();
   }
 
   PTypedBasicInputEventHandler<HeatmapCell> createHeatMapCellHoverListener() {
