@@ -112,7 +112,7 @@ public class MapLayer extends PLayer {
     return endpoint;
   }
 
-  public PCamera getMapLayerCamera() {
+  public PCamera getCamera() {
     return geoLayerCamera;
   }
 
@@ -283,7 +283,7 @@ public class MapLayer extends PLayer {
       flowstratesView.fireNodeSelectionChanged(old, nodeIds);
       flowstratesView.updateVisibleEdges();
       updateCentroidColors();
-      flowstratesView.fitHeatmapInView();
+      flowstratesView.getTemporalLayer().fitInView(false);
     }
   }
 
@@ -325,7 +325,7 @@ public class MapLayer extends PLayer {
   }
 
   public boolean isPointVisible(Point2D p) {
-    return getMapLayerCamera().getViewBounds().contains(p);
+    return getCamera().getViewBounds().contains(p);
   }
 
   void updateCentroidColors() {
@@ -697,7 +697,7 @@ public class MapLayer extends PLayer {
 //        rect.setRect(rect.x, fbb.getY(), rect.width, fbb.getHeight());
       }
 
-      getMapLayerCamera().animateViewToCenterBounds(rect, true, 500);
+      getCamera().animateViewToCenterBounds(rect, true, FlowstratesView.fitInViewDuration(true));
     }
   }
 

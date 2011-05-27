@@ -198,4 +198,26 @@ public class PNodes {
     return union;
   }
 
+  /**
+   * @param halign PCanvas.LEFT_ALIGNMENT or RIGHT_ALIGNMENT
+   * @param valign PCanvas.TOP_ALIGNMENT or BOTTOM_ALIGNMENT
+   */
+  public static void anchorNodeToBounds(PNode node, PBounds bounds,
+      float halign, float valign, int padx, int pady) {
+    PBounds b = node.getFullBoundsReference();
+    PNodes.setPosition(node,
+        bounds.x + (bounds.width - b.width) * halign - padx * (halign * 2 - 1),
+        bounds.y + (bounds.height - b.height) * valign - pady * (valign * 2 - 1)
+        );
+  }
+
+  /**
+   * @param halign PCanvas.LEFT_ALIGNMENT or RIGHT_ALIGNMENT
+   * @param valign PCanvas.TOP_ALIGNMENT or BOTTOM_ALIGNMENT
+   */
+  public static void anchorNodeToBoundsOf(PNode node, PNode anchorToNode,
+      float halign, float valign, int padx, int pady) {
+    anchorNodeToBounds(node, anchorToNode.getBoundsReference(), halign, valign, padx, pady);
+  }
+
 }

@@ -248,18 +248,18 @@ public class SimpleHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   @Override
-  public void fitInView() {
-    fitBoundsInCameraView(heatmapNode.getFullBounds(), getCamera());
-  }
-
-  private static void fitBoundsInCameraView(Rectangle2D bounds, PCamera camera) {
+  public void fitInView(boolean animate) {
+    Rectangle2D bounds = heatmapNode.getFullBounds();
+    PCamera camera = getCamera();
     if (bounds.getHeight() > bounds.getWidth() * 10) {
       PBounds camb = camera.getViewBounds();
       bounds = new Rectangle2D.Double(
           bounds.getX(), bounds.getY(), bounds.getWidth(),
           bounds.getWidth() * (camb.height / camb.width));
     }
-    camera.setViewBounds(GeomUtils.growRectByRelativeSize(bounds, .025, .1, .025, .1));
+    camera.animateViewToCenterBounds(
+        GeomUtils.growRectByRelativeSize(bounds, .025, .1, .025, .1), true,
+        FlowstratesView.fitInViewDuration(animate));
   }
 
 

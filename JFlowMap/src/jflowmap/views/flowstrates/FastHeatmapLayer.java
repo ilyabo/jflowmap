@@ -250,7 +250,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   @Override
-  public void fitInView() {
+  public void fitInView(boolean animate) {
     PCamera camera = getCamera();
     PBounds b = heatmapNode.getFullBounds();  // to be adjusted
 
@@ -270,7 +270,8 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       b.height = b.width * (cb.height / cb.width) * 1.2;
     }
 
-    PiccoloUtils.animateViewToPaddedBounds(camera, b, m, 0);
+    PiccoloUtils.animateViewToPaddedBounds(camera, b, m,
+        FlowstratesView.fitInViewDuration(animate));
   }
 
   @Override

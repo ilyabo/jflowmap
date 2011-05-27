@@ -63,7 +63,7 @@ public abstract class TemporalViewLayer extends PLayer {
 
   public abstract void resetWeightAttrTotals();
 
-  public abstract void fitInView();
+  public abstract void fitInView(boolean animate);
 
   public abstract Dimension2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep);
 

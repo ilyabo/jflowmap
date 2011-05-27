@@ -227,7 +227,7 @@ public class FlowLinesLayerNode extends PNode {
         visible = (p != null  &&  heatMapViewBounds.contains(p));
 
         if (visible) {
-          mapLayer.getMapLayerCamera().viewToLocal(centrp);
+          mapLayer.getCamera().viewToLocal(centrp);
           heatMapCamera.viewToLocal(p);
 
           Dimension2D lb = heatMapCamera.viewToLocal(
