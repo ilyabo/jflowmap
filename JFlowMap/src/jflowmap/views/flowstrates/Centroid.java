@@ -1,7 +1,9 @@
 package jflowmap.views.flowstrates;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -12,6 +14,7 @@ import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * @author Ilya Boyandin
@@ -173,5 +176,15 @@ class Centroid extends PPath {
     p.setLocation(p.getX() - size/2, p.getY() - size/2);
     PNodes.setPosition(this, p);
   }
+
+  @Override
+  public void fullPaint(PPaintContext paintContext) {
+    Graphics2D g2 = paintContext.getGraphics();
+    Shape oldClip = g2.getClip();
+    g2.setClip(getParent().getBounds());
+    super.fullPaint(paintContext);
+    g2.setClip(oldClip);
+  }
+
 
 }
