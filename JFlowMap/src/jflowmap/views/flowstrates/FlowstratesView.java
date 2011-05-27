@@ -222,7 +222,7 @@ public class FlowstratesView extends AbstractCanvasView {
 //    if (SHOW_TIME_CAPTION) {
 //      addCaption(temporalLayer.getCamera(), "Time");
 //    }
-    addCaption(temporalLayer.getCamera(), "Time");
+    addCaption(temporalLayer.getCamera(), " ");
     addCaption(destMapLayer.getCamera(), "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();
@@ -428,6 +428,20 @@ public class FlowstratesView extends AbstractCanvasView {
 
 
 
+  }
+
+  private void anchorButtonPanels() {
+    PNodes.setPosition(mainButtonPanel, temporalLayer.getCamera().getBounds().x + 5, 4);
+
+//    PNodes.anchorNodeToBoundsOf(mainButtonPanel, temporalLayer.getCamera(),
+//        PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, 5, 5);
+
+    PNodes.anchorNodeToBoundsOf(originsMapButtonPanel, originMapLayer.getCamera(),
+        PCanvas.RIGHT_ALIGNMENT, PCanvas.BOTTOM_ALIGNMENT, 5, 5);
+    PNodes.anchorNodeToBoundsOf(destMapButtonPanel, destMapLayer.getCamera(),
+        PCanvas.RIGHT_ALIGNMENT, PCanvas.BOTTOM_ALIGNMENT, 5, 5);
+    PNodes.anchorNodeToBoundsOf(temporalViewButtonPanel, temporalLayer.getCamera(),
+        PCanvas.RIGHT_ALIGNMENT, PCanvas.BOTTOM_ALIGNMENT, 5, 5);
   }
 
   public void resetVisibleEdges() {
@@ -844,17 +858,7 @@ public class FlowstratesView extends AbstractCanvasView {
     layoutCameraNode(destMapLayer.getCamera(), PCanvas.RIGHT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, .30, 1.0);
 
 
-    PNodes.setPosition(mainButtonPanel, temporalLayer.getCamera().getBounds().x + 5, 4);
-
-//    PNodes.anchorNodeToBoundsOf(mainButtonPanel, temporalLayer.getCamera(),
-//        PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, 5, 5);
-
-    PNodes.anchorNodeToBoundsOf(originsMapButtonPanel, originMapLayer.getCamera(),
-        PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, 5, 5);
-    PNodes.anchorNodeToBoundsOf(destMapButtonPanel, destMapLayer.getCamera(),
-        PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, 5, 5);
-    PNodes.anchorNodeToBoundsOf(temporalViewButtonPanel, temporalLayer.getCamera(),
-        PCanvas.LEFT_ALIGNMENT, PCanvas.TOP_ALIGNMENT, 5, 5);
+    anchorButtonPanels();
 
 
     PBounds lb = legend.getFullBoundsReference();

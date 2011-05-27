@@ -230,7 +230,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
   @Override
   public void updateColors() {
-    renew();
+    renew();  // TODO: just repaint the heatmap
   }
 
   private void adjustFloatingLabelNodePositions() {
