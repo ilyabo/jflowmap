@@ -15,12 +15,32 @@ public class SwingUtils {
   private SwingUtils() {
   }
 
-  public static void makeFullscreen(Frame frame) {
+  /**
+   * Exclusive mode is only available if <code>isFullScreenSupported</code>
+   * returns <code>true</code>.
+   *
+   * Exclusive mode implies:
+   * <ul>
+   * <li>Windows cannot overlap the full-screen window.  All other application
+   * windows will always appear beneath the full-screen window in the Z-order.
+   * <li>There can be only one full-screen window on a device at any time,
+   * so calling this method while there is an existing full-screen Window
+   * will cause the existing full-screen window to
+   * return to windowed mode.
+   * <li>Input method windows are disabled.  It is advisable to call
+   * <code>Component.enableInputMethods(false)</code> to make a component
+   * a non-client of the input method framework.
+   * </ul>
+   */
+  public static void makeFullscreen(Frame frame, boolean attemptExclusiveMode) {
     maximize(frame);
     frame.setUndecorated(true);
+    frame.setLocation(0, 0);
     frame.setResizable(false);
-    GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-    gd.setFullScreenWindow(frame);
+    if (attemptExclusiveMode) {
+      GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+      gd.setFullScreenWindow(frame);
+    }
   }
 
   public static void maximize(Frame frame) {

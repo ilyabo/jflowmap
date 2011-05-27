@@ -118,7 +118,7 @@ public class FlowMapToImageRenderer extends JFrame {
   }
 
   public void makeFullscreen() {
-    SwingUtils.makeFullscreen(this);
+    SwingUtils.makeFullscreen(this, false);
   }
 
   public void setPaddingX(int paddingX) {

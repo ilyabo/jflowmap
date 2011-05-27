@@ -101,7 +101,7 @@ public class JFlowMapMain {
 //        });
 
         if (fullscreenMode) {
-          SwingUtils.makeFullscreen(frame);
+          SwingUtils.makeFullscreen(frame, false);
         } else {
           SwingUtils.maximize(frame);
         }
