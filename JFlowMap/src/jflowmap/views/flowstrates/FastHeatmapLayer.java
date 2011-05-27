@@ -177,6 +177,8 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
   @Override
   public void renew() {
+    super.renew();
+
     removeAllChildren();
 //    getCamera().removeAllChildren();
 
@@ -227,10 +229,6 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   @Override
   public void updateColors() {
     renew();
-  }
-
-  @Override
-  public void resetWeightAttrTotals() {
   }
 
   private void adjustFloatingLabelNodePositions() {

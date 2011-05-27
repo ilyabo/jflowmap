@@ -44,6 +44,11 @@ public abstract class AbstractHeatmapLayer extends TemporalViewLayer {
     weightAttrTotalsStat = null;
   }
 
+  @Override
+  public void renew() {
+    resetWeightAttrTotals();
+  }
+
   void updateMapsOnHeatmapColumnHover(String columnAttr, boolean hover) {
     MapLayer originMap = getFlowstratesView().getMapLayer(FlowEndpoint.ORIGIN);
     MapLayer destMap = getFlowstratesView().getMapLayer(FlowEndpoint.DEST);

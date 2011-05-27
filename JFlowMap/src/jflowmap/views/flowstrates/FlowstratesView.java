@@ -725,14 +725,17 @@ public class FlowstratesView extends AbstractCanvasView {
     }
     double val = wstats.normalizer().normalizeLogAroundZero(value, true);
               // wstats.normalizeAroundZero(
-    if (val < -1.0 || val > 1.0) {
-      return Color.green;
-    }
     if (wstats.getMin() < 0  &&  wstats.getMax() > 0) {
+      if (val < -1.0 || val > 1.0) {
+        return Color.green;  // out of color scale
+      }
       // use diverging color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(divergingColorScheme.getColors(),
           val, -1.0, 1.0, 255, interpolateColors));
     } else {
+      if (val < 0.0 || val > 1.0) {
+        return Color.green;
+      }
       // use sequential color scheme
       return ColorLib.getColor(ColorUtils.colorFromMap(sequentialColorScheme.getColors(),
           val, 0.0, 1.0, 255, interpolateColors));

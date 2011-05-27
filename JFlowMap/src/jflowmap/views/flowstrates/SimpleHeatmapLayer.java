@@ -172,7 +172,7 @@ public class SimpleHeatmapLayer extends AbstractHeatmapLayer {
 
   @Override
   public void renew() {
-    resetWeightAttrTotals();
+    super.renew();
 
     heatmapNode.removeAllChildren();
 
