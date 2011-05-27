@@ -567,7 +567,7 @@ public class MapLayer extends PLayer {
       // getVisualAreaMapCamera(s).localToView(b);
       centroidsBounds = b;
     }
-    return centroidsBounds;
+    return new PBounds(centroidsBounds);
   }
 
   void updateOnHeatmapCellHover(Edge edge, String weightAttr, boolean hover) {
