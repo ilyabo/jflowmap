@@ -140,8 +140,8 @@ public class ViewLoader {
     final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
     buttonPanel.addChild(createSettingsButton(parent, controls));
 
-    final PButton helpBut = new PButton(" ? ", true);
-    buttonPanel.addChild(helpBut);
+//    final PButton helpBut = new PButton(" ? ", true);
+//    buttonPanel.addChild(helpBut);
 
 
     final PCamera ccam = canvas.getCamera();
