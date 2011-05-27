@@ -18,6 +18,9 @@
 
 package jflowmap.views.flowstrates;
 
+import static jflowmap.data.FlowMapGraphEdgeAggregator.getAggregateList;
+import static jflowmap.data.FlowMapGraphEdgeAggregator.isAggregate;
+
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -28,6 +31,7 @@ import java.beans.PropertyChangeListener;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
+import jflowmap.data.Nodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import prefuse.data.Edge;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
@@ -90,11 +94,16 @@ public class FastHeatmapCursor extends PNode {
       FlowMapGraph fmg = fs.getFlowMapGraph();
       Edge edge = edgeOf(cell);
 
-      String originId = fmg.getSourceNodeId(edge);
-      String destId = fmg.getTargetNodeId(edge);
+      if (isAggregate(edge)) {
+        fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNodes(
+            Nodes.nodeIdsOfEdges(getAggregateList(edge), FlowEndpoint.ORIGIN));
 
-      fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNode(originId);
-      fs.getMapLayer(FlowEndpoint.DEST).focusOnNode(destId);
+        fs.getMapLayer(FlowEndpoint.DEST).focusOnNodes(
+            Nodes.nodeIdsOfEdges(getAggregateList(edge), FlowEndpoint.DEST));
+      } else {
+        fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNode(fmg.getSourceNodeId(edge));
+        fs.getMapLayer(FlowEndpoint.DEST).focusOnNode(fmg.getTargetNodeId(edge));
+      }
 
       showTooltipFor(cell);
     }

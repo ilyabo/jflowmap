@@ -47,6 +47,14 @@ public class Nodes {
     });
   }
 
+  public static Iterable<String> nodeIdsOfEdges(Iterable<Edge> edges, final FlowEndpoint ep) {
+    return Iterables.transform(edges, new Function<Edge, String>() {
+      public String apply(Edge e) {
+        return FlowMapGraph.getIdOfNode((ep.nodeOf(e)));
+      }
+    });
+  }
+
   /**
    * @return List of distinct nodes for the given list of edges
    */
