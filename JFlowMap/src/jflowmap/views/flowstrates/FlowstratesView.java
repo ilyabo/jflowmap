@@ -217,7 +217,7 @@ public class FlowstratesView extends AbstractCanvasView {
 //    if (SHOW_TIME_CAPTION) {
 //      addCaption(temporalLayer.getCamera(), "Time");
 //    }
-    addCaption(temporalLayer.getCamera(), " ");
+    addCaption(temporalLayer.getCamera(), "Time");
     addCaption(destMapLayer.getMapLayerCamera(), "Destinations");
 
     PLayer canvasLayer = canvas.getLayer();

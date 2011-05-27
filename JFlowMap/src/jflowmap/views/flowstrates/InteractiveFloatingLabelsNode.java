@@ -7,15 +7,19 @@ import jflowmap.util.piccolo.PLabel;
 import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
-import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
  */
 public class InteractiveFloatingLabelsNode extends AbstractFloatingLabelsNode<PLabel> {
 
-  public InteractiveFloatingLabelsNode(boolean isHorizontal, LabelIterator<PLabel> it) {
+  private final LabelPositioner<PLabel> labelPositioner;
+
+  public InteractiveFloatingLabelsNode(boolean isHorizontal,
+      LabelIterator<PLabel> it, LabelPositioner<PLabel> labelPositioner) {
     super(isHorizontal, it);
+
+    this.labelPositioner = labelPositioner;
 
     it.reset();
     while (it.hasNext()) {
@@ -36,7 +40,6 @@ public class InteractiveFloatingLabelsNode extends AbstractFloatingLabelsNode<PL
         positionLabels();
       }
     });
-
   }
 
   @Override
@@ -55,27 +58,8 @@ public class InteractiveFloatingLabelsNode extends AbstractFloatingLabelsNode<PL
     return label.getTextNode().getFullBoundsReference().getWidth() / 1.5;
   }
 
-  private void positionLabels() {
-    positionLabels(new LabelPositioner<PLabel>() {
-
-      @Override
-      public void showSpacer(int x, int y) {
-        // TODO: maybe show a "..." node somewhere
-      }
-
-      @Override
-      public void showLabel(PLabel label, int index, int x, int y) {
-        PBounds fb = label.getFullBoundsReference();
-        label.setOffset(x - fb.width/2, getBoundsReference().getMaxY() - fb.height*0.37);
-        label.setVisible(true);
-      }
-
-      @Override
-      public void hideLabel(PLabel label, int count) {
-        label.setVisible(false);
-      }
-
-    });
+  public void positionLabels() {
+    positionLabels(labelPositioner);
   }
 
 }

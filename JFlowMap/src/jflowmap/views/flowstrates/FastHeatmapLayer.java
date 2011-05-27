@@ -21,7 +21,9 @@ package jflowmap.views.flowstrates;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Shape;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
@@ -41,6 +43,7 @@ import prefuse.data.Edge;
 import at.fhjoanneum.cgvis.data.IColorForValue;
 import at.fhjoanneum.cgvis.data.IDataValues;
 import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelIterator;
+import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelPositioner;
 import at.fhjoanneum.cgvis.plots.PaintedFloatingLabelsNode;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 
@@ -52,6 +55,7 @@ import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
+import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * @author Ilya Boyandin
@@ -61,7 +65,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   private static final Color LABEL_BACKGROUND = new Color(255, 255, 255, 0);
   private static final Font NODE_LABELS_FONT = new Font("Arial", Font.PLAIN, 10);
   private static final Font ATTR_LABELS_FONT = NODE_LABELS_FONT;
-  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 245);
+  private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 255);
   private MosaicPlotNode heatmapNode;
   private final IColorForValue colorForValue;
   private final InteractiveFloatingLabelsNode attrLabelsNode;
@@ -83,20 +87,20 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     destLabelsNode = createFloatingLabels(createNodeLabelIterator(FlowEndpoint.DEST), false);
     attrLabelsNode = createAttrFloatingLabels(); // true, createAttrsLabelIterator(), false);
 
-    originLabelsNode.addDisjointNode(attrLabelsNode);
-    destLabelsNode.addDisjointNode(attrLabelsNode);
+//    originLabelsNode.addDisjointNode(attrLabelsNode);
+//    destLabelsNode.addDisjointNode(attrLabelsNode);
 
     getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         adjustFloatingLabelNodePositions();
+        attrLabelsNode.positionLabels();
       }
     });
 
     FastHeatmapCursor cursor = new FastHeatmapCursor(this);
     getCamera().addChild(cursor);
     cursor.moveToBack();
-
   }
 
   public MosaicPlotNode getHeatmapNode() {
@@ -104,7 +108,18 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   private PaintedFloatingLabelsNode createFloatingLabels(LabelIterator<String> it, boolean anchorLabelsToEnd) {
-    PaintedFloatingLabelsNode labels = new PaintedFloatingLabelsNode(false, it);
+    PaintedFloatingLabelsNode labels = new PaintedFloatingLabelsNode(false, it) {
+      @Override
+      protected void paint(PPaintContext pc) {
+        // workaround to avoid one line of empty space which showes up
+        // mysteriously between the floating label panels when using disjoint nodes
+        Graphics2D g2 = pc.getGraphics();
+        Shape oldClip = g2.getClip();
+        g2.setClip(getBounds());
+        super.paint(pc);
+        g2.setClip(oldClip);
+      }
+    };
     labels.setFont(NODE_LABELS_FONT);
     labels.setAnchorLabelsToEnd(anchorLabelsToEnd);
     labels.setMarginBefore(anchorLabelsToEnd ? 0 : 3);
@@ -116,7 +131,37 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   private InteractiveFloatingLabelsNode createAttrFloatingLabels() {
-    InteractiveFloatingLabelsNode labels = new InteractiveFloatingLabelsNode(true, createPNodeAttrsLabelIterator());
+    LabelIterator<PLabel> itr = createPNodeAttrsLabelIterator();
+    LabelPositioner<PLabel> posr = new LabelPositioner<PLabel>() {
+
+      @Override
+      public void showSpacer(int x, int y) {
+        // TODO: maybe show a "..." node somewhere
+      }
+
+      @Override
+      public void showLabel(PLabel label, int index, int x, int y) {
+        PBounds panelb = label.getParent().getBoundsReference();
+        PBounds fb = label.getFullBoundsReference();
+        label.setOffset(x - fb.width/2, panelb.getMaxY() - fb.height*0.37);
+
+        Point2D tb = label.getOffset()  ; //getFullBoundsReference();
+        if (tb.getX() + fb.width*.6 < originLabelsNode.getBoundsReference().getMaxX() ||
+            tb.getX() + fb.width*.1 > destLabelsNode.getBoundsReference().getX()) {
+          label.setTransparency(.1f);
+        } else {
+          label.setTransparency(1f);
+        }
+        label.setVisible(true);
+      }
+
+      @Override
+      public void hideLabel(PLabel label, int count) {
+        label.setVisible(false);
+      }
+
+    };
+    InteractiveFloatingLabelsNode labels = new InteractiveFloatingLabelsNode(true, itr, posr);
 //    PaintedFloatingLabelsNode labels = new PaintedFloatingLabelsNode(
 //        true, createStringAttrsLabelIterator());
 //    labels.setRotateHorizLabels(true);
