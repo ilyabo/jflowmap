@@ -42,9 +42,9 @@ import jflowmap.util.piccolo.PiccoloUtils;
 import prefuse.data.Edge;
 import at.fhjoanneum.cgvis.data.IColorForValue;
 import at.fhjoanneum.cgvis.data.IDataValues;
+import at.fhjoanneum.cgvis.plots.PaintedFloatingLabelsNode;
 import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelIterator;
 import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelPositioner;
-import at.fhjoanneum.cgvis.plots.PaintedFloatingLabelsNode;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 
 import com.google.common.base.Function;
@@ -149,8 +149,10 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
         if (tb.getX() + fb.width*.6 < originLabelsNode.getBoundsReference().getMaxX() ||
             tb.getX() + fb.width*.1 > destLabelsNode.getBoundsReference().getX()) {
           label.setTransparency(.1f);
+          label.setPickable(false);
         } else {
           label.setTransparency(1f);
+          label.setPickable(true);
         }
         label.setVisible(true);
       }
