@@ -97,6 +97,14 @@ public class PLabel extends PNode {
     return rv;
   }
 
+  @Override
+  public void setPickable(boolean isPickable) {
+    super.setPickable(isPickable);
+    for (PNode node : PNodes.childrenOf(this)) {
+      node.setPickable(isPickable);
+    }
+  }
+
   private void onBoundsChanged() {
     textNode.setBounds(getBoundsReference());
     rectNode.setBounds(
