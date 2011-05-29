@@ -274,7 +274,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   @Override
-  public void fitInView(boolean animate) {
+  public void fitInView(boolean animate, boolean whole) {
     PCamera camera = getCamera();
 
     cursor.clearHighlighted();
@@ -283,11 +283,11 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     PBounds partial = calcBoundsToFitInView();
 
     PBounds toFit;
-    if (firstTimeFitInView) {
-      toFit = partial;
-      firstTimeFitInView = false;
-
-    } else {
+//    if (firstTimeFitInView) {
+//      toFit = partial;
+//      firstTimeFitInView = false;
+//
+//    } else {
 
       PBounds current = camera.getBounds();
       addMargin(current, calcFloatingLabelInsets());
@@ -295,11 +295,17 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
       double rd = Math.abs(MathUtils.relativeDiff(current.height, full.height));
   //    System.out.println(rd + " " + current + " " + full);
-      if (rd > .5) {
-        toFit = full;
-      } else {
-        toFit = partial;
-      }
+//      if (rd > .5) {
+//        toFit = full;
+//      } else {
+//        toFit = partial;
+//      }
+//    }
+
+    if (whole) {
+      toFit = full;
+    } else {
+      toFit = partial;
     }
 
     PiccoloUtils.animateViewToPaddedBounds(camera, toFit, calcFloatingLabelInsets(),
@@ -530,5 +536,6 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
     };
   }
+
 
 }

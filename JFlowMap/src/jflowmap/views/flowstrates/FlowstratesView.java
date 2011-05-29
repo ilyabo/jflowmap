@@ -86,6 +86,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 public class FlowstratesView extends AbstractCanvasView {
 
   private static final String ACTION_FIT_IN_VIEW = "fitInView";
+  private static final String ACTION_FIT_WHOLE_IN_VIEW = "fitWholeInView";
   private static final String ACTION_CLEAR_SELECTION = "clearSelection";
 
   public static Logger logger = Logger.getLogger(FlowstratesView.class);
@@ -316,30 +317,32 @@ public class FlowstratesView extends AbstractCanvasView {
     canvas.getActionMap().put(ACTION_FIT_IN_VIEW, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if (mouseOverLayer != null) {
-              mouseOverLayer.fitInView(true);
-            }
-          }
-        });
+        if (mouseOverLayer != null) {
+          mouseOverLayer.fitInView(true, false);
+        }
       }
     });
 
-    canvas.getInputMap().put(KeyStroke.getKeyStroke("ESC"), ACTION_CLEAR_SELECTION);
+    canvas.getInputMap().put(KeyStroke.getKeyStroke("F6"), ACTION_FIT_WHOLE_IN_VIEW);
+    canvas.getActionMap().put(ACTION_FIT_WHOLE_IN_VIEW, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (mouseOverLayer != null) {
+          mouseOverLayer.fitInView(true, true);
+        }
+      }
+    });
+
+    canvas.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), ACTION_CLEAR_SELECTION);
     canvas.getActionMap().put(ACTION_CLEAR_SELECTION, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if (mouseOverLayer == originMapLayer) {
-              originMapLayer.setSelectedNodes(null);
-            }
-            if (mouseOverLayer == destMapLayer) {
-              destMapLayer.setSelectedNodes(null);
-            }
-          }
-        });
+        if (mouseOverLayer == originMapLayer) {
+          originMapLayer.setSelectedNodes(null);
+        }
+        if (mouseOverLayer == destMapLayer) {
+          destMapLayer.setSelectedNodes(null);
+        }
       }
     });
 
@@ -462,7 +465,7 @@ public class FlowstratesView extends AbstractCanvasView {
     originsFitButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        originMapLayer.fitInView(true);
+        originMapLayer.fitInView(true, false);
       }
     });
     originsMapButtonPanel.addChild(originsFitButton);
@@ -488,7 +491,7 @@ public class FlowstratesView extends AbstractCanvasView {
     destFitButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        destMapLayer.fitInView(true);
+        destMapLayer.fitInView(true, false);
       }
     });
     destMapButtonPanel.addChild(destFitButton);
@@ -504,7 +507,7 @@ public class FlowstratesView extends AbstractCanvasView {
     tempFitButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        temporalLayer.fitInView(true);
+        temporalLayer.fitInView(true, false);
       }
     });
     temporalViewButtonPanel.addChild(tempFitButton);
@@ -593,14 +596,14 @@ public class FlowstratesView extends AbstractCanvasView {
   public void setSelectedAggLayer(String layerName) {
     layers.setSelectedLayer(layerName);
     resetVisibleEdges();
-    temporalLayer.fitInView(false);
+    temporalLayer.fitInView(false, false);
   }
 
   public void setMaxVisibleTuples(int maxVisibleTuples) {
     if (this.maxVisibleTuples != maxVisibleTuples) {
       this.maxVisibleTuples = maxVisibleTuples;
       resetVisibleEdges();
-      temporalLayer.fitInView(false);
+      temporalLayer.fitInView(false, false);
     }
   }
 
@@ -632,7 +635,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
   void updateVisibleEdges() {
     resetVisibleEdges();
-    temporalLayer.fitInView(false);
+    temporalLayer.fitInView(false, false);
   }
 
   private Predicate<Edge> getEdgePredicate() {
@@ -956,9 +959,9 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fitAllInView() {
-    originMapLayer.fitInView(false);
-    temporalLayer.fitInView(false);
-    destMapLayer.fitInView(false);
+    originMapLayer.fitInView(false, false);
+    temporalLayer.fitInView(false, false);
+    destMapLayer.fitInView(false, false);
 
     fitInViewOnce = true;
   }

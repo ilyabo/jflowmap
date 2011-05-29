@@ -283,7 +283,7 @@ public class MapLayer extends PLayer implements ViewLayer {
       flowstratesView.fireNodeSelectionChanged(old, nodeIds);
       flowstratesView.updateVisibleEdges();
       updateCentroidColors();
-      flowstratesView.getTemporalLayer().fitInView(false);
+      flowstratesView.getTemporalLayer().fitInView(false, false);
     }
   }
 
@@ -711,8 +711,8 @@ public class MapLayer extends PLayer implements ViewLayer {
     return rect;
   }
 
-  public void fitInView(boolean animate) {
-    if (isNodeSelectionEmpty()) {
+  public void fitInView(boolean animate, boolean whole) {
+    if (whole  ||  isNodeSelectionEmpty()) {
       fit(centroidsBounds(), animate);
     } else {
 

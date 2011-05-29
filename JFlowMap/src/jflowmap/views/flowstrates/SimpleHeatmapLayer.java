@@ -248,10 +248,10 @@ public class SimpleHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   @Override
-  public void fitInView(boolean animate) {
+  public void fitInView(boolean animate, boolean whole) {
     Rectangle2D bounds = heatmapNode.getFullBounds();
     PCamera camera = getCamera();
-    if (bounds.getHeight() > bounds.getWidth() * 10) {
+    if (!whole  &&  bounds.getHeight() > bounds.getWidth() * 10) {
       PBounds camb = camera.getViewBounds();
       bounds = new Rectangle2D.Double(
           bounds.getX(), bounds.getY(), bounds.getWidth(),
