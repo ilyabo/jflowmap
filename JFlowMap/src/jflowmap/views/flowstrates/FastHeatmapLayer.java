@@ -291,7 +291,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
       double rd = Math.abs(MathUtils.relativeDiff(current.height, full.height));
   //    System.out.println(rd + " " + current + " " + full);
-      if (rd > .25) {
+      if (rd > .5) {
         toFit = full;
       } else {
         toFit = partial;
