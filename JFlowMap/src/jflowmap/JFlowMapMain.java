@@ -90,11 +90,9 @@ public class JFlowMapMain {
 //          public void actionPerformed(ActionEvent e) {
 //            SwingUtilities.invokeLater(new Runnable() {
 //              public void run() {
-//                JFrame newFrame = createFrame(configLocation);
-//                SwingUtils.makeFullscreen(newFrame);
-//                newFrame.setContentPane(frame.getContentPane());
 //                frame.dispose();
-//                newFrame.setVisible(true);
+//                SwingUtils.makeFullscreen(frame, false);
+//                frame.setVisible(true);
 //              }
 //            });
 //          }

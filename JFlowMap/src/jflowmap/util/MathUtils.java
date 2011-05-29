@@ -104,4 +104,18 @@ public final class MathUtils {
     }
   }
 
+  public static double relativeDiff(double a, double b) {
+    double rdiff;
+    if (b == 0) {
+      if (a == 0) {
+        rdiff = 0;
+      } else {
+        rdiff = Math.signum(a);
+      }
+    } else {
+      rdiff = (a - b) / b;
+    }
+    return rdiff;
+  }
+
 }

@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
+import jflowmap.util.MathUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PLabel;
 import jflowmap.util.piccolo.PNodes;
@@ -230,7 +231,9 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
   @Override
   public void updateColors() {
-    renew();  // TODO: just repaint the heatmap
+//    renew();  // TODO: just repaint the heatmap
+    heatmapNode.setDirty(true);
+    heatmapNode.repaint();
   }
 
   private void adjustFloatingLabelNodePositions() {
@@ -251,29 +254,74 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
         cb.getY());
   }
 
+  private static void addMargin(PBounds cb, Insets m) {
+    cb.setRect(
+        cb.x + m.left, cb.y + m.top,
+        cb.width - m.left - m.right, cb.height - m.top - m.bottom);
+  }
+
+  private boolean firstTimeFitInView = true;
+
   @Override
   public void fitInView(boolean animate) {
     PCamera camera = getCamera();
-    PBounds b = heatmapNode.getFullBounds();  // to be adjusted
 
-    // margins to ensure there is enough space for the floating labels
+
+    PBounds full = heatmapNode.getFullBounds();
+    PBounds partial = calcBoundsToFitInView();
+
+    PBounds toFit;
+    if (firstTimeFitInView) {
+      toFit = partial;
+      firstTimeFitInView = false;
+
+    } else {
+
+      PBounds current = camera.getBounds();
+      addMargin(current, calcInsetsToFitInView());
+      camera.localToView(current);
+
+      double rd = Math.abs(MathUtils.relativeDiff(current.height, full.height));
+  //    System.out.println(rd + " " + current + " " + full);
+      if (rd > .25) {
+        toFit = full;
+      } else {
+        toFit = partial;
+      }
+    }
+
+    PiccoloUtils.animateViewToPaddedBounds(camera, toFit, calcInsetsToFitInView(),
+        FlowstratesView.fitInViewDuration(animate));
+  }
+
+  private PBounds calcBoundsToFitInView() {
+    PCamera camera = getCamera();
+
+    PBounds b = heatmapNode.getFullBounds();  // to be adjusted
+    Insets m = calcInsetsToFitInView();
+
+
+    //if (b.height > b.width * 10) {  // if the height of the heatmap is much larger than width,
+                                    // show only a part of the heatmap
+      PBounds cb = camera.getBounds();
+      /*
+      cb.setRect(                 // add margins to have the proper aspect ratio
+          cb.x + m.left, cb.y + m.top,
+          cb.width - m.left - m.right, cb.height - m.top - m.bottom);
+          */
+      addMargin(cb, m);
+      camera.localToView(cb);
+      b.height = b.width * (cb.height / cb.width) * 1.0;
+    //}
+    return b;
+  }
+
+  /** Margins to ensure there is enough space for the floating labels */
+  private Insets calcInsetsToFitInView() {
     Insets m = new Insets(
         (int)attrLabelsNode.getHeight(), (int)originLabelsNode.getWidth(),
         0, (int)destLabelsNode.getWidth());
-
-
-    if (b.height > b.width * 10) {  // if the height of the heatmap is much larger than width,
-                                    // show only a part of the heatmap
-      PBounds cb = camera.getBounds();
-      cb.setRect(                 // subtract margins to have the proper aspect ratio
-          cb.x + m.left, cb.y + m.top,
-          cb.width - m.left - m.right, cb.height - m.top - m.bottom);
-      camera.localToView(cb);
-      b.height = b.width * (cb.height / cb.width) * 1.2;
-    }
-
-    PiccoloUtils.animateViewToPaddedBounds(camera, b, m,
-        FlowstratesView.fitInViewDuration(animate));
+    return m;
   }
 
   @Override
