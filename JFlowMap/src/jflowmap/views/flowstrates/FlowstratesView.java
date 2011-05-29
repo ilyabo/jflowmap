@@ -21,8 +21,8 @@ package jflowmap.views.flowstrates;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -30,8 +30,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import jflowmap.AbstractCanvasView;
@@ -61,6 +63,7 @@ import prefuse.data.Edge;
 import prefuse.util.ColorLib;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -81,6 +84,8 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  * @author Ilya Boyandin
  */
 public class FlowstratesView extends AbstractCanvasView {
+
+  private static final String ACTION_FIT_IN_VIEW = "fitInView";
 
   public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
@@ -147,6 +152,9 @@ public class FlowstratesView extends AbstractCanvasView {
   private PBoxLayoutNode destMapButtonPanel;
 
   private PBoxLayoutNode temporalViewButtonPanel;
+
+  protected ViewLayer mouseOverLayer;
+  protected List<ViewLayer> viewLayers;
 
 
 
@@ -218,6 +226,9 @@ public class FlowstratesView extends AbstractCanvasView {
     temporalLayer = new FastHeatmapLayer(this);
 //    temporalLayer = new HeatmapLayer(this);
 
+    viewLayers = ImmutableList.<ViewLayer>of(originMapLayer, temporalLayer, destMapLayer);
+
+
     addCaption(originMapLayer.getCamera(), "Origins");
 //    if (SHOW_TIME_CAPTION) {
 //      addCaption(temporalLayer.getCamera(), "Time");
@@ -245,6 +256,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
     legend = new FlowstratesLegend(FlowstratesView.this);
     getCamera().addChild(legend);
+
   }
 
   /**
@@ -279,6 +291,42 @@ public class FlowstratesView extends AbstractCanvasView {
     temporalLayer.getCamera().addPropertyChangeListener(PCamera.PROPERTY_VIEW_TRANSFORM, linesUpdater);
 
     createButtons();
+
+//  getVisualCanvas().requestFocus();
+    initKeystrokes();
+
+  }
+
+  private void initKeystrokes() {
+    getCamera().addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseMoved(PInputEvent event) {
+        for (ViewLayer layer : viewLayers) {
+          if (event.getCamera() == layer.getCamera()) {
+            mouseOverLayer = layer;
+          }
+        }
+      }
+    });
+
+    VisualCanvas canvas = getVisualCanvas();
+
+    canvas.getInputMap().put(KeyStroke.getKeyStroke("F5"), ACTION_FIT_IN_VIEW);
+    canvas.getActionMap().put(ACTION_FIT_IN_VIEW, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if (mouseOverLayer != null) {
+              mouseOverLayer.fitInView(true);
+            }
+          }
+        });
+      }
+    });
+
+//    canvas.setFocusable(true);
+//    canvas.requestFocus();
   }
 
   private void createButtons() {
@@ -388,7 +436,7 @@ public class FlowstratesView extends AbstractCanvasView {
     originsFitButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        fitMapInCameraView(originMapLayer, true);
+        originMapLayer.fitInView(true);
       }
     });
     originsMapButtonPanel.addChild(originsFitButton);
@@ -405,7 +453,7 @@ public class FlowstratesView extends AbstractCanvasView {
     destFitButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        fitMapInCameraView(destMapLayer, true);
+        destMapLayer.fitInView(true);
       }
     });
     destMapButtonPanel.addChild(destFitButton);
@@ -869,17 +917,11 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private void fitAllInView() {
-    fitMapInCameraView(originMapLayer, false);
+    originMapLayer.fitInView(false);
     temporalLayer.fitInView(false);
-    fitMapInCameraView(destMapLayer, false);
+    destMapLayer.fitInView(false);
 
     fitInViewOnce = true;
-  }
-
-  private void fitMapInCameraView(MapLayer layer, boolean animate) {
-    Rectangle2D nb = layer.centroidsBounds();
-//    GeomUtils.growRectInPlaceByRelativeSize(nb, .2, .2, .2, .2);
-    layer.getCamera().animateViewToCenterBounds(nb, true, FlowstratesView.fitInViewDuration(animate));
   }
 
   @Override

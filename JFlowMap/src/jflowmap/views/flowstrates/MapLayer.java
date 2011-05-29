@@ -69,7 +69,7 @@ import edu.umd.cs.piccolo.util.PBounds;
 /**
  * @author Ilya Boyandin
  */
-public class MapLayer extends PLayer {
+public class MapLayer extends PLayer implements ViewLayer {
 
   private static final double CENTROID_DOT_SIZE = 2.0;
 
@@ -539,10 +539,14 @@ public class MapLayer extends PLayer {
   }
 
   Rectangle2D centroidsBounds() {
+    return centroidsBounds(nodeIdsToCentroids.values());
+  }
+
+  Rectangle2D centroidsBounds(Iterable<Centroid> centroids) {
     if (centroidsBounds == null) {
       Rectangle2D.Double b = new Rectangle2D.Double();
       boolean first = true;
-      for (Centroid c : nodeIdsToCentroids.values()) {
+      for (Centroid c : centroids) {
         double x = c.getOrigX();
         double y = c.getOrigY();
         if (first) {
@@ -642,30 +646,9 @@ public class MapLayer extends PLayer {
   }
 
   public void focusOnNodes(Iterable<String> nodeIds) {
-    Rectangle2D.Double rect = null;
-
-    for (String nodeId : nodeIds) {
-      Centroid c = nodeIdsToCentroids.get(nodeId);
-      if (c != null) {
-        if (rect == null) {
-          rect = new Rectangle2D.Double(c.getOrigX(), c.getOrigY(), 0, 0);
-        } else {
-          rect.add(c.getOrigX(), c.getOrigY());
-        }
-      }
-
-      PGeoMapArea va = visualAreaMap.getVisualAreaBy(nodeId);
-      if (va != null) {
-        if (rect == null) {
-          rect = new PBounds(va.getBoundingBox());
-        } else {
-          rect.add(va.getBoundingBox());
-        }
-      }
-    }
+    Rectangle2D.Double rect = getBoundingBoxFor(nodeIds);
 
     if (rect != null) {
-
       Rectangle2D fbb = getVisualAreaMap().getBoundingBox();
 
       final double fw = fbb.getWidth(), fh = fbb.getHeight();
@@ -698,6 +681,41 @@ public class MapLayer extends PLayer {
       }
 
       getCamera().animateViewToCenterBounds(rect, true, FlowstratesView.fitInViewDuration(true));
+    }
+  }
+
+  private Rectangle2D.Double getBoundingBoxFor(Iterable<String> nodeIds) {
+    Rectangle2D.Double rect = null;
+
+    for (String nodeId : nodeIds) {
+      Centroid c = nodeIdsToCentroids.get(nodeId);
+      if (c != null) {
+        if (rect == null) {
+          rect = new Rectangle2D.Double(c.getOrigX(), c.getOrigY(), 0, 0);
+        } else {
+          rect.add(c.getOrigX(), c.getOrigY());
+        }
+      }
+
+      PGeoMapArea va = visualAreaMap.getVisualAreaBy(nodeId);
+      if (va != null) {
+        if (rect == null) {
+          rect = new PBounds(va.getBoundingBox());
+        } else {
+          rect.add(va.getBoundingBox());
+        }
+      }
+    }
+    return rect;
+  }
+
+  public void fitInView(boolean animate) {
+    if (isNodeSelectionEmpty()) {
+      Rectangle2D nb = centroidsBounds();
+      GeomUtils.growRectInPlaceByRelativeSize(nb, 0, .1, 0, .1);
+      getCamera().animateViewToCenterBounds(nb, true, FlowstratesView.fitInViewDuration(animate));
+    } else {
+      focusOnNodes(selectedNodes);
     }
   }
 

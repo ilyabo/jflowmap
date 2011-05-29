@@ -32,7 +32,7 @@ import edu.umd.cs.piccolo.PLayer;
 /**
  * @author Ilya Boyandin
  */
-public abstract class TemporalViewLayer extends PLayer {
+public abstract class TemporalViewLayer extends PLayer implements ViewLayer {
 
   static final NumberFormat TOOLTIP_NUMBER_FORMAT = DecimalFormat.getNumberInstance();
 
