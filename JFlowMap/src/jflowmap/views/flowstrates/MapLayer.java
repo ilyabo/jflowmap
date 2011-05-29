@@ -43,7 +43,6 @@ import jflowmap.models.map.GeoMap;
 import jflowmap.models.map.MapArea;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.CollectionUtils;
-import jflowmap.util.MathUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
@@ -437,9 +436,8 @@ public class MapLayer extends PLayer implements ViewLayer {
           // the only selected node
           FlowEndpoint other = endpoint.opposite();
           MapLayer otherMap = flowstratesView.getMapLayer(other);
-          focusOnNode(nodeId);
-          otherMap.focusOnNodes(Nodes.nodeIdsOf(Nodes.distinctNodesOfEdges(flowstratesView.getVisibleEdges(),
-              other)));
+//          focusOnNode(nodeId);
+          otherMap.focusOnNodesOfVisibleEdges();
         }
         newSelection = Arrays.asList(nodeId);
       }
@@ -656,8 +654,8 @@ public class MapLayer extends PLayer implements ViewLayer {
       double w = rect.getWidth(), h = rect.getHeight();
 
       // Show more context for smaller areas and less for larger ones
-      final double minGrowth = 1.4;
-      final double maxGrowth = 4.4;
+      final double minGrowth = 0.1;
+      final double maxGrowth = 3.4;
       double alpha = Math.min((fw - Math.min(fw, w * 5)) / fw, (fh - Math.min(fh, h * 5)) / fh);
       double growBy = minGrowth + (maxGrowth - minGrowth) * Math.pow(alpha, 5);
       GeomUtils.growRectInPlaceByRelativeSize(rect, growBy, growBy, growBy, growBy);
@@ -670,19 +668,22 @@ public class MapLayer extends PLayer implements ViewLayer {
 //        rect.y = fbb.getY();
 //      }
 
-      if (rect.width > fbb.getMaxY()) {
+      if (rect.width > fbb.getWidth()  /*||  rect.getMaxX() > fbb.getMaxX()*/) {
         rect.x = fbb.getX();
         rect.width = fbb.getWidth();
-//        rect.setRect(fbb.getX(), rect.y, fbb.getWidth(), rect.height);
       }
-      if (rect.getMaxX() > fbb.getMaxX()) {
+      if (rect.height > fbb.getHeight()  /*||  rect.getMaxX() > fbb.getMaxY()*/) {
         rect.y = fbb.getY();
         rect.height = fbb.getHeight();
-//        rect.setRect(rect.x, fbb.getY(), rect.width, fbb.getHeight());
       }
 
       getCamera().animateViewToCenterBounds(rect, true, FlowstratesView.fitInViewDuration(true));
     }
+  }
+
+  public void focusOnNodesOfVisibleEdges() {
+    focusOnNodes(Nodes.nodeIdsOf(
+        Nodes.distinctNodesOfEdges(flowstratesView.getVisibleEdges(), endpoint)));
   }
 
   private Rectangle2D.Double getBoundingBoxFor(Iterable<String> nodeIds) {
@@ -711,23 +712,29 @@ public class MapLayer extends PLayer implements ViewLayer {
   }
 
   public void fitInView(boolean animate) {
-    Rectangle2D boundsToFit;
     if (isNodeSelectionEmpty()) {
-      boundsToFit = centroidsBounds();
+      fit(centroidsBounds(), animate);
     } else {
 
+      /*
       PBounds current = getCamera().getViewBounds();
       Rectangle2D full = centroidsBounds();
+//      Rectangle2D sel = getBoundingBoxFor(selectedNodes);
 
-      double rd = Math.abs(MathUtils.relativeDiff(current.width, full.getWidth()));
-      if (rd > .25) {
-        boundsToFit = full;
+      double diff2full = Math.abs(MathUtils.relativeDiff(current.width, full.getWidth()));
+      if (diff2full > 0.5) {
+        fit(full, animate);
       } else {
-        boundsToFit = getBoundingBoxFor(selectedNodes);
+//        boundsToFit = getBoundingBoxFor(selectedNodes);
+        focusOnNodes(selectedNodes);
       }
+      */
+      focusOnNodes(selectedNodes);
 
-//      focusOnNodes(selectedNodes);
     }
+  }
+
+  private void fit(Rectangle2D boundsToFit, boolean animate) {
     GeomUtils.growRectInPlaceByRelativeSize(boundsToFit, 0, .1, 0, .1);
     getCamera().animateViewToCenterBounds(boundsToFit, true, FlowstratesView.fitInViewDuration(animate));
   }

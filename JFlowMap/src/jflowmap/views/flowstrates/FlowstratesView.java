@@ -86,6 +86,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 public class FlowstratesView extends AbstractCanvasView {
 
   private static final String ACTION_FIT_IN_VIEW = "fitInView";
+  private static final String ACTION_CLEAR_SELECTION = "clearSelection";
 
   public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
@@ -325,6 +326,23 @@ public class FlowstratesView extends AbstractCanvasView {
       }
     });
 
+    canvas.getInputMap().put(KeyStroke.getKeyStroke("ESC"), ACTION_CLEAR_SELECTION);
+    canvas.getActionMap().put(ACTION_CLEAR_SELECTION, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            if (mouseOverLayer == originMapLayer) {
+              originMapLayer.setSelectedNodes(null);
+            }
+            if (mouseOverLayer == destMapLayer) {
+              destMapLayer.setSelectedNodes(null);
+            }
+          }
+        });
+      }
+    });
+
 //    canvas.setFocusable(true);
 //    canvas.requestFocus();
   }
@@ -431,6 +449,14 @@ public class FlowstratesView extends AbstractCanvasView {
     originsMapButtonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
     getVisualCanvas().getLayer().addChild(originsMapButtonPanel);
 
+    PButton originsClearButton = new PButton("CLEAR");
+    originsClearButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        originMapLayer.setSelectedNodes(null);
+      }
+    });
+    originsMapButtonPanel.addChild(originsClearButton);
 
     PButton originsFitButton = new PButton("FIT");
     originsFitButton.addInputEventListener(new PBasicInputEventHandler() {
@@ -448,6 +474,15 @@ public class FlowstratesView extends AbstractCanvasView {
     destMapButtonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
     getVisualCanvas().getLayer().addChild(destMapButtonPanel);
 
+
+    PButton destClearButton = new PButton("CLEAR");
+    destClearButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        destMapLayer.setSelectedNodes(null);
+      }
+    });
+    destMapButtonPanel.addChild(destClearButton);
 
     PButton destFitButton = new PButton("FIT");
     destFitButton.addInputEventListener(new PBasicInputEventHandler() {
@@ -670,6 +705,10 @@ public class FlowstratesView extends AbstractCanvasView {
 
   public String getEdgeWeightAttr(int index) {
     return getFlowMapGraph().getEdgeWeightAttrs().get(index);
+  }
+
+  public int getEdgeWeightAttrIndex(String attr) {
+    return getFlowMapGraph().getEdgeWeightAttrs().indexOf(attr);
   }
 
   private Map<Edge, Integer> getOrInitVisibleEdgesToIndex() {

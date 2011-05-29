@@ -759,7 +759,6 @@ public class FlowMapGraph {
           prevVal = edge.getDouble(prevAttr);
           if (!Double.isNaN(prevVal)) {
             double val = edge.getDouble(attr);
-            /*
             if (prevVal == 0) {
               if (val == 0) {
                 rdiff = 0;
@@ -770,8 +769,7 @@ public class FlowMapGraph {
               rdiff = (val - prevVal) / prevVal;
               //rdiff = Math.abs(val - prevVal) / ((Math.abs(val) + Math.abs(prevVal))/2);
             }
-            */
-            rdiff = MathUtils.relativeDiff(val, prevVal);
+//            rdiff = MathUtils.relativeDiff(val, prevVal);
           }
         }
         edge.setDouble(diffAttr, rdiff);

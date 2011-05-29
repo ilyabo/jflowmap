@@ -74,6 +74,8 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   private final PaintedFloatingLabelsNode destLabelsNode;
   private Pair<List<String>,List<String>> nodeLabels;
   private final FontMetrics nodeLabelsFontMetrics;
+  private boolean firstTimeFitInView = true;
+  private final FastHeatmapCursor cursor;
 
   public FastHeatmapLayer(FlowstratesView flowstratesView) {
     super(flowstratesView);
@@ -99,7 +101,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       }
     });
 
-    FastHeatmapCursor cursor = new FastHeatmapCursor(this);
+    cursor = new FastHeatmapCursor(this);
     getCamera().addChild(cursor);
     cursor.moveToBack();
   }
@@ -170,6 +172,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 //    labels.setRotateHorizLabels(true);
 //    labels.setAnchorLabelsToEnd(false);
 //    labels.setFont(NODE_LABELS_FONT);
+    labels.setDrawSpacers(false);
     labels.setMarginBefore(3);
     labels.setMarginAfter(0);
     labels.setPaint(FLOATING_LABELS_BG);
@@ -181,6 +184,8 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   @Override
   public void renew() {
     super.renew();
+
+    firstTimeFitInView = true;
 
     removeAllChildren();
 //    getCamera().removeAllChildren();
@@ -268,12 +273,11 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     return b;
   }
 
-  private boolean firstTimeFitInView = true;
-
   @Override
   public void fitInView(boolean animate) {
     PCamera camera = getCamera();
 
+    cursor.clearHighlighted();
 
     PBounds full = heatmapNode.getFullBounds();
     PBounds partial = calcBoundsToFitInView();
@@ -462,7 +466,17 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 //          columnHighlightRect.setVisible(true);
 //          columnHighlightRect.repaint();
 
-          getFlowstratesView().getFlowLinesLayerNode().hideAllFlowLines();
+          FlowstratesView fs = getFlowstratesView();
+          fs.getFlowLinesLayerNode().hideAllFlowLines();
+
+          cursor.setHighlightedColumn(fs.getEdgeWeightAttrIndex(attr));
+        }
+
+        @Override
+        public void mouseClicked(PInputEvent event) {
+          FlowstratesView fs = getFlowstratesView();
+          fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNodesOfVisibleEdges();
+          fs.getMapLayer(FlowEndpoint.DEST).focusOnNodesOfVisibleEdges();
         }
 
         @Override
@@ -472,6 +486,8 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
           updateMapsOnHeatmapColumnHover(label.getName(), false);
 
           getFlowstratesView().getFlowLinesLayerNode().updateFlowLines();
+
+          cursor.setHighlightedColumn(-1);
         }
       });
 

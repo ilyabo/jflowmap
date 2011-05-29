@@ -100,9 +100,8 @@ public class PLabel extends PNode {
   @Override
   public void setPickable(boolean isPickable) {
     super.setPickable(isPickable);
-    for (PNode node : PNodes.childrenOf(this)) {
-      node.setPickable(isPickable);
-    }
+    rectNode.setPickable(isPickable);
+    textNode.setPickable(false);  // (otherwise it produces unnecessary mousein/out events)
   }
 
   private void onBoundsChanged() {

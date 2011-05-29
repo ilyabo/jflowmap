@@ -24,6 +24,7 @@ import static jflowmap.data.FlowMapGraphEdgeAggregator.isAggregate;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -38,6 +39,7 @@ import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
@@ -45,7 +47,8 @@ import edu.umd.cs.piccolo.util.PPaintContext;
  */
 public class FastHeatmapCursor extends PNode {
 
-  private Point cell;
+  private Point highlightedCell;
+  private int highlightedColumn = -1;
   private final FastHeatmapLayer heatmapLayer;
 
   public FastHeatmapCursor(FastHeatmapLayer layer) {
@@ -86,6 +89,8 @@ public class FastHeatmapCursor extends PNode {
         return heatmapLayer.getHeatmapNode().pointToCell(pos);
       }
     });
+
+    moveToFront();
   }
 
   private void focusOnCell(Point cell) {
@@ -109,10 +114,10 @@ public class FastHeatmapCursor extends PNode {
     }
   }
 
-  private void setHighlightedCell(Point newCell) {
-    if (newCell != cell) {
-      if (cell != null) {
-        setEdgeLinesVisible(cell, false); // hide previously shown line
+  void setHighlightedCell(Point newCell) {
+    if (newCell != highlightedCell) {
+      if (highlightedCell != null) {
+        setEdgeLinesVisible(highlightedCell, false); // hide previously shown line
       }
 
       if (newCell != null) {
@@ -123,13 +128,27 @@ public class FastHeatmapCursor extends PNode {
         setVisible(false);
         getFlowstratesView().hideTooltip();
       }
-      cell = newCell;
+      highlightedCell = newCell;
       repaint();
     }
   }
 
+  void setHighlightedColumn(int columnIndex) {
+    if (highlightedColumn != columnIndex) {
+      highlightedColumn = columnIndex;
+
+//      repaint();
+      setVisible(false); setVisible(true);  // repaint() alone does not work for some reason
+    }
+  }
+
+  public void clearHighlighted() {
+    setHighlightedColumn(-1);
+    setHighlightedCell(null);
+  }
+
   private void showTooltipFor(Point cell) {
-    Rectangle r = cellToRect(cell);
+    Rectangle2D r = cellToRect(cell);
     Point2D pos = new Point2D.Double(r.getMaxX(), r.getMaxY());
     heatmapLayer.getCamera().viewToLocal(pos);
 
@@ -160,7 +179,7 @@ public class FastHeatmapCursor extends PNode {
     return heatmapLayer.getFlowstratesView();
   }
 
-  private Rectangle cellToRect(Point cell) {
+  private Rectangle2D cellToRect(Point cell) {
     if (cell == null) {
       return null;
     }
@@ -175,53 +194,83 @@ public class FastHeatmapCursor extends PNode {
     return new Rectangle(x, y, cw, ch);
   }
 
+  private Rectangle2D columnToRect(int column) {
+    if (column < 0) {
+      return null;
+    }
+
+    /*
+
+    MosaicPlotNode heatmap = heatmapLayer.getHeatmapNode();
+    int spacing = heatmap.getCellSpacing();
+    int cw = heatmap.getCellWidth();
+//    int ch = heatmap.getCellHeight();
+    PBounds b = getVisiblePartOfHeatmapBounds(heatmap);
+
+//    final int x = ((int) heatmap.getX()) + spacing + (column * (cw + spacing));
+//    Rectangle r = new Rectangle(x, (int)b.y, cw, (int)b.height);
+
+    b.x = b.x + spacing + (column * (cw + spacing));
+    b.width = cw;
+
+    return b;
+    */
+
+    MosaicPlotNode heatmap = heatmapLayer.getHeatmapNode();
+    int spacing = heatmap.getCellSpacing();
+    int cw = heatmap.getCellWidth();
+    int ch = heatmap.getCellHeight();
+
+    final int x = ((int) heatmap.getX()) + spacing + (column * (cw + spacing));
+    final int y = ((int) heatmap.getY()) + spacing + 0;
+    final int h = spacing + (getFlowstratesView().getVisibleEdges().size() * (ch + spacing));
+
+    return new Rectangle(x, y, cw, h);
+
+  }
+
+  private PBounds getVisiblePartOfHeatmapBounds(MosaicPlotNode heatmap) {
+    PBounds b = new PBounds();
+    Rectangle.intersect(heatmap.getFullBoundsReference(), heatmapLayer.getActualViewBounds(), b);
+    return b;
+  }
+
   @Override
   protected void paint(PPaintContext paintContext) {
-    final Graphics2D g2 = paintContext.getGraphics();
+    Graphics2D g2 = paintContext.getGraphics();
+    PCamera camera = heatmapLayer.getCamera();
+    FlowstratesStyle style = getFlowstratesView().getStyle();
 
-    if (cell != null) {
-      final PCamera camera = heatmapLayer.getCamera();
-      final Rectangle2D cellRect = cellToRect(cell);
+    if (highlightedCell != null) {
+      Rectangle2D r = cellToRect(highlightedCell);
+      camera.viewToLocal(r);
 
-      /*
-       * // draw the lines { final PBounds cb = camera.getBounds();
-       *
-       * camera.localToView(cb); final int cx = (int) Math.round(cb.x); final int cy = (int)
-       * Math.round(cb.y); final int cw = (int) Math.round(cb.width); final int ch = (int)
-       * Math.round(cb.height);
-       *
-       * final AffineTransform oldTransform = g2.getTransform();
-       * g2.transform(camera.getViewTransform());
-       *
-       * final int y = (int) cellRect.getY(); final int x = (int) cellRect.getX(); final int w =
-       * (int) cellRect.getWidth(); final int h = (int) cellRect.getHeight();
-       *
-       * g2.setColor(COL_ROW_HIGHLIGHT_COLOR); g2.fillRect(x, cy - 1, w, y - cy + 1); g2.fillRect(x,
-       * y + h, w, ch - (y - cy)); g2.fillRect(cx - 1, y, x - cx + 1, h); g2.fillRect(x + w, y, cw -
-       * (x - cx), h);
-       *
-       * g2.setTransform(oldTransform); }
-       */
+      int y = (int) r.getY();
+      int x = (int) r.getX();
+      int w = (int) Math.max(r.getWidth(), 1);
+      int h = (int) Math.max(r.getHeight(), 1);
 
-      // draw the small cell-bounding rectangle
-      {
-        camera.viewToLocal(cellRect);
+      g2.setStroke(style.getHeatmapSelectedCellStroke());
+      g2.setColor(style.getHeatmapSelectedCellStrokeColor());
+      g2.drawRect(x, y, w - 1, h - 1);
+    }
 
-        final int y = (int) cellRect.getY();
-        final int x = (int) cellRect.getX();
-        int w = (int) cellRect.getWidth();
-        if (w < 1)
-          w = 1;
-        int h = (int) cellRect.getHeight();
-        if (h < 1)
-          h = 1;
+    if (highlightedColumn != -1) {
 
-        FlowstratesStyle style = getFlowstratesView().getStyle();
-        g2.setStroke(style.getHeatmapSelectedCellStroke());
-        g2.setColor(style.getHeatmapSelectedCellStrokeColor());
-        g2.drawRect(x, y, w - 1, h - 1);
-      }
+      Rectangle2D r = columnToRect(highlightedColumn);
+
+      camera.viewToLocal(r);
+
+      Shape oldClip = g2.getClip();
+      g2.setClip(camera.getBounds());
+
+      g2.setStroke(style.getHeatmapSelectedCellStroke());
+      g2.setColor(style.getHeatmapSelectedCellStrokeColor());
+      g2.drawRect((int)r.getX(), (int)r.getY(), (int)r.getWidth(), (int)r.getHeight());
+
+      g2.setClip(oldClip);
     }
   }
+
 
 }
