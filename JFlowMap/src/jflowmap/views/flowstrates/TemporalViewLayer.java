@@ -28,6 +28,7 @@ import jflowmap.FlowMapGraph;
 import prefuse.data.Edge;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -68,6 +69,10 @@ public abstract class TemporalViewLayer extends PLayer implements ViewLayer {
   public abstract Dimension2D getEdgeLabelBounds(Edge edge, FlowEndpoint ep);
 
   public abstract Point2D getFlowLineInPoint(int row, FlowEndpoint ep);
+
+  public PBounds getActualViewBounds() {
+    return getCamera().getViewBounds();
+  }
 
 
 }

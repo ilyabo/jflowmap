@@ -214,8 +214,8 @@ public class FlowLinesLayerNode extends PNode {
   private void updateFlowLine(int row, Edge edge, FlowEndpoint ep) {
     boolean visible = (showAllFlowLines  ||  highlightedEdges.contains(edge));
     if (visible) {
-      PCamera heatMapCamera = flowstratesView.getTemporalLayer().getCamera();
-      PBounds heatMapViewBounds = heatMapCamera.getViewBounds();
+      PCamera temporalViewCamera = flowstratesView.getTemporalLayer().getCamera();
+      PBounds temporalViewBounds = flowstratesView.getTemporalLayer().getActualViewBounds();
 
       MapLayer mapLayer = flowstratesView.getMapLayer(ep);
 
@@ -224,13 +224,13 @@ public class FlowLinesLayerNode extends PNode {
 
       if (visible) {
         Point2D p = flowstratesView.getTemporalLayer().getFlowLineInPoint(row, ep);
-        visible = (p != null  &&  heatMapViewBounds.contains(p));
+        visible = (p != null  &&  temporalViewBounds.contains(p));
 
         if (visible) {
           mapLayer.getCamera().viewToLocal(centrp);
-          heatMapCamera.viewToLocal(p);
+          temporalViewCamera.viewToLocal(p);
 
-          Dimension2D lb = heatMapCamera.viewToLocal(
+          Dimension2D lb = temporalViewCamera.viewToLocal(
               flowstratesView.getTemporalLayer().getEdgeLabelBounds(edge, ep));
 
           FlowLine line = getOrCreateFlowLine(edge, ep);

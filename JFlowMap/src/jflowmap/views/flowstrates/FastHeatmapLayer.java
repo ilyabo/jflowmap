@@ -260,6 +260,14 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
         cb.width - m.left - m.right, cb.height - m.top - m.bottom);
   }
 
+  @Override
+  public PBounds getActualViewBounds() {
+    PBounds b = getCamera().getBounds();
+    b.y += attrLabelsNode.getHeight();
+    getCamera().localToView(b);
+    return b;
+  }
+
   private boolean firstTimeFitInView = true;
 
   @Override
@@ -278,7 +286,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     } else {
 
       PBounds current = camera.getBounds();
-      addMargin(current, calcInsetsToFitInView());
+      addMargin(current, calcFloatingLabelInsets());
       camera.localToView(current);
 
       double rd = Math.abs(MathUtils.relativeDiff(current.height, full.height));
@@ -290,7 +298,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       }
     }
 
-    PiccoloUtils.animateViewToPaddedBounds(camera, toFit, calcInsetsToFitInView(),
+    PiccoloUtils.animateViewToPaddedBounds(camera, toFit, calcFloatingLabelInsets(),
         FlowstratesView.fitInViewDuration(animate));
   }
 
@@ -298,7 +306,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     PCamera camera = getCamera();
 
     PBounds b = heatmapNode.getFullBounds();  // to be adjusted
-    Insets m = calcInsetsToFitInView();
+    Insets m = calcFloatingLabelInsets();
 
 
     //if (b.height > b.width * 10) {  // if the height of the heatmap is much larger than width,
@@ -317,11 +325,9 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   }
 
   /** Margins to ensure there is enough space for the floating labels */
-  private Insets calcInsetsToFitInView() {
-    Insets m = new Insets(
-        (int)attrLabelsNode.getHeight(), (int)originLabelsNode.getWidth(),
+  private Insets calcFloatingLabelInsets() {
+    return new Insets((int)attrLabelsNode.getHeight(), (int)originLabelsNode.getWidth(),
         0, (int)destLabelsNode.getWidth());
-    return m;
   }
 
   @Override
