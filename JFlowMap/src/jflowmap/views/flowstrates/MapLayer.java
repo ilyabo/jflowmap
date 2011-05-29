@@ -43,6 +43,7 @@ import jflowmap.models.map.GeoMap;
 import jflowmap.models.map.MapArea;
 import jflowmap.models.map.Polygon;
 import jflowmap.util.CollectionUtils;
+import jflowmap.util.MathUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.ColorCodes;
@@ -710,13 +711,25 @@ public class MapLayer extends PLayer implements ViewLayer {
   }
 
   public void fitInView(boolean animate) {
+    Rectangle2D boundsToFit;
     if (isNodeSelectionEmpty()) {
-      Rectangle2D nb = centroidsBounds();
-      GeomUtils.growRectInPlaceByRelativeSize(nb, 0, .1, 0, .1);
-      getCamera().animateViewToCenterBounds(nb, true, FlowstratesView.fitInViewDuration(animate));
+      boundsToFit = centroidsBounds();
     } else {
-      focusOnNodes(selectedNodes);
+
+      PBounds current = getCamera().getViewBounds();
+      Rectangle2D full = centroidsBounds();
+
+      double rd = Math.abs(MathUtils.relativeDiff(current.width, full.getWidth()));
+      if (rd > .25) {
+        boundsToFit = full;
+      } else {
+        boundsToFit = getBoundingBoxFor(selectedNodes);
+      }
+
+//      focusOnNodes(selectedNodes);
     }
+    GeomUtils.growRectInPlaceByRelativeSize(boundsToFit, 0, .1, 0, .1);
+    getCamera().animateViewToCenterBounds(boundsToFit, true, FlowstratesView.fitInViewDuration(animate));
   }
 
 }
