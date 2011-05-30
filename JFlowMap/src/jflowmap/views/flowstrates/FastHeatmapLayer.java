@@ -28,6 +28,8 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,10 +37,10 @@ import javax.swing.SwingUtilities;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
-import jflowmap.util.MathUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PLabel;
 import jflowmap.util.piccolo.PNodes;
+import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.util.piccolo.PiccoloUtils;
 import prefuse.data.Edge;
 import at.fhjoanneum.cgvis.data.IColorForValue;
@@ -104,6 +106,19 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     cursor = new FastHeatmapCursor(this);
     getCamera().addChild(cursor);
     cursor.moveToBack();
+
+    originLabelsNode.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        getFlowstratesView().setRowOrdering(RowOrderings.SRC_VPOS);
+      }
+    });
+    destLabelsNode.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        getFlowstratesView().setRowOrdering(RowOrderings.TARGET_VPOS);
+      }
+    });
   }
 
   public MosaicPlotNode getHeatmapNode() {
@@ -293,7 +308,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       addMargin(current, calcFloatingLabelInsets());
       camera.localToView(current);
 
-      double rd = Math.abs(MathUtils.relativeDiff(current.height, full.height));
+//      double rd = Math.abs(MathUtils.relativeDiff(current.height, full.height));
   //    System.out.println(rd + " " + current + " " + full);
 //      if (rd > .5) {
 //        toFit = full;
@@ -458,10 +473,10 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       label.rotateInPlace(-Math.PI / 4);
       labels.add(label);
 
-      label.addInputEventListener(new PBasicInputEventHandler() {
+      label.addInputEventListener(new PTypedBasicInputEventHandler<PLabel>(PLabel.class) {
         @Override
         public void mouseEntered(PInputEvent event) {
-          PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
+          PLabel label = node(event);
           label.moveToFront();
           final String attr = label.getName();
 
@@ -481,14 +496,27 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
         @Override
         public void mouseClicked(PInputEvent event) {
+          final String attr = node(event).getName();
           FlowstratesView fs = getFlowstratesView();
           fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNodesOfVisibleEdges();
           fs.getMapLayer(FlowEndpoint.DEST).focusOnNodesOfVisibleEdges();
+
+
+          if (event.isControlDown()) {
+            fs.setRowOrdering(new RowOrdering() {
+              @Override
+              public Comparator<Edge> getComparator(FlowstratesView fs) {
+                return Collections.reverseOrder(
+                    fs.getFlowMapGraph().createMaxEdgeWeightComparator(attr));
+              }
+            });
+          }
+
         }
 
         @Override
         public void mouseExited(PInputEvent event) {
-          PLabel label = PNodes.getAncestorOfType(event.getPickedNode(), PLabel.class);
+          PLabel label = node(event);
 //          columnHighlightRect.setVisible(false);
           updateMapsOnHeatmapColumnHover(label.getName(), false);
 

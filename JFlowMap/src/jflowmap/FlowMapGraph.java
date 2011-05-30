@@ -665,12 +665,22 @@ public class FlowMapGraph {
     return createMaxEdgeWeightComparator(getEdgeWeightRelativeDiffAttrNames());
   }
 
-  private Comparator<Edge> createMaxEdgeWeightComparator(final List<String> attrs) {
+  public Comparator<Edge> createMaxEdgeWeightComparator(final String weightAttr) {
     return new Comparator<Edge>() {
       @Override
       public int compare(Edge e1, Edge e2) {
         return MathUtils.compareDoubles_smallestIsNaN(
-            getMaxAttrValue(e1, attrs), getMaxAttrValue(e2, attrs));
+            e1.getDouble(weightAttr), e2.getDouble(weightAttr));
+      }
+    };
+  }
+
+  public Comparator<Edge> createMaxEdgeWeightComparator(final List<String> weightAttrs) {
+    return new Comparator<Edge>() {
+      @Override
+      public int compare(Edge e1, Edge e2) {
+        return MathUtils.compareDoubles_smallestIsNaN(
+            getMaxAttrValue(e1, weightAttrs), getMaxAttrValue(e2, weightAttrs));
       }
     };
   }

@@ -11,7 +11,7 @@ import prefuse.data.Edge;
 /**
  * @author Ilya Boyandin
  */
-enum RowOrderings {
+enum RowOrderings implements RowOrdering {
   MAX_NODE_SUMMARIES("origin totals max") {
     @Override
     public Comparator<Edge> getComparator(FlowstratesView fs) {

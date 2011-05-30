@@ -634,8 +634,14 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   void updateVisibleEdges() {
+    updateVisibleEdges(true);
+  }
+
+  void updateVisibleEdges(boolean fitInView) {
     resetVisibleEdges();
-    temporalLayer.fitInView(false, false);
+    if (fitInView) {
+      temporalLayer.fitInView(false, false);
+    }
   }
 
   private Predicate<Edge> getEdgePredicate() {
@@ -825,7 +831,7 @@ public class FlowstratesView extends AbstractCanvasView {
     return controlPanel;
   }
 
-  public RowOrderings getRowOrdering() {
+  public RowOrdering getRowOrdering() {
     return rowOrdering;
   }
 
@@ -927,7 +933,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private boolean fitInViewOnce = false;
-  private RowOrderings rowOrdering = RowOrderings.MAX_MAGNITUDE_IN_ROW;
+  private RowOrdering rowOrdering = RowOrderings.MAX_MAGNITUDE_IN_ROW;
   private FlowMapStats visibleEdgesStats;
 
   @Override
@@ -1006,11 +1012,11 @@ public class FlowstratesView extends AbstractCanvasView {
     }
   }
 
-  public void setRowOrdering(RowOrderings rowOrder) {
+  public void setRowOrdering(RowOrdering rowOrder) {
     if (this.rowOrdering != rowOrder) {
       this.rowOrdering = rowOrder;
       flowMapGraph.setEgdeForSimilaritySorting(null);
-      updateVisibleEdges();
+      updateVisibleEdges(false);
     }
   }
 
