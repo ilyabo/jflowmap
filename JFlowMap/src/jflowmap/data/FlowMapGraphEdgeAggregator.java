@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import jflowmap.FlowMapGraph;
 import jflowmap.FlowEndpoint;
+import jflowmap.FlowMapGraph;
 
 import org.apache.log4j.Logger;
 

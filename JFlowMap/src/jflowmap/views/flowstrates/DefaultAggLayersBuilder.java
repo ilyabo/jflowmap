@@ -64,24 +64,31 @@ public class DefaultAggLayersBuilder implements AggLayersBuilder {
     };
   }
 
-  protected static ValueAggregator oneSideNodeLabelsAggregator(FlowEndpoint s, final String attr,
-      final String aggLabel) {
+  protected static ValueAggregator oneSideNodeLabelsAggregator(
+      final FlowEndpoint s, final String aggAttr, final String aggLabel) {
+    return new ValueAggregator() {
+      @Override
+      public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
+        if (entity == getAggEntityFor(s)) {
+          // the value of this aggAttr is supposed to be the same for all tuples,
+          // becase we aggregated on it, so we can use the label of the first item
+          // for the whole group
+          return tuples.iterator().next().get(aggAttr);
+        } else {
+          return aggLabel;
+        }
+      }
+    };
+  }
+
+  private static AggEntity getAggEntityFor(FlowEndpoint s) throws AssertionError {
     final AggEntity ae;
     switch (s) {
       case ORIGIN: ae = AggEntity.SOURCE_NODE; break;
       case DEST: ae = AggEntity.TARGET_NODE; break;
       default: throw new AssertionError();
     }
-    return new ValueAggregator() {
-      @Override
-      public Object aggregate(Iterable<Object> values, Iterable<Tuple> tuples, AggEntity entity) {
-        if (entity == ae) {
-          return tuples.iterator().next().get(attr);
-        } else {
-          return aggLabel;
-        }
-      }
-    };
+    return ae;
   }
 
 
