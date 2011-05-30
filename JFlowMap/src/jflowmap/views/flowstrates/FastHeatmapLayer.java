@@ -110,13 +110,19 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
     originLabelsNode.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        getFlowstratesView().setRowOrdering(RowOrderings.SRC_VPOS);
+        FlowstratesView fs = getFlowstratesView();
+        if (fs.getFlowLinesLayerNode().getShowAllFlowLines()) {
+          fs.setRowOrdering(RowOrderings.SRC_VPOS);
+        }
       }
     });
     destLabelsNode.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        getFlowstratesView().setRowOrdering(RowOrderings.TARGET_VPOS);
+        FlowstratesView fs = getFlowstratesView();
+        if (fs.getFlowLinesLayerNode().getShowAllFlowLines()) {
+          fs.setRowOrdering(RowOrderings.TARGET_VPOS);
+        }
       }
     });
   }
