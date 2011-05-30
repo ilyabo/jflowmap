@@ -76,7 +76,6 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   private final PaintedFloatingLabelsNode destLabelsNode;
   private Pair<List<String>,List<String>> nodeLabels;
   private final FontMetrics nodeLabelsFontMetrics;
-  private boolean firstTimeFitInView = true;
   private final FastHeatmapCursor cursor;
 
   public FastHeatmapLayer(FlowstratesView flowstratesView) {
@@ -206,7 +205,6 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   public void renew() {
     super.renew();
 
-    firstTimeFitInView = true;
 
     removeAllChildren();
 //    getCamera().removeAllChildren();
@@ -324,7 +322,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 //    }
 
 
-    if (!whole  &&  full.getHeight() > full.getWidth() * 10) {
+    if (!whole  /*&&  full.getHeight() > full.getWidth() * 10*/) {
       toFit = partial;
     } else {
       toFit = full;
