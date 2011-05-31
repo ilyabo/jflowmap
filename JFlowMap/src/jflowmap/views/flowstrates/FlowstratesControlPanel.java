@@ -160,6 +160,7 @@ public class FlowstratesControlPanel extends JPanel {
   }
 
 
+
   private JPanel createFilterPanel() {
     JPanel panel = createPanel();
     panel.setName("Filter by name");

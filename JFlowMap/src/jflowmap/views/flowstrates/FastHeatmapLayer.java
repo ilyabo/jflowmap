@@ -66,7 +66,7 @@ import edu.umd.cs.piccolo.util.PPaintContext;
 public class FastHeatmapLayer extends AbstractHeatmapLayer {
 
   private static final Color LABEL_BACKGROUND = new Color(255, 255, 255, 0);
-  private static final Font NODE_LABELS_FONT = new Font("Arial", Font.PLAIN, 10);
+  private static final Font NODE_LABELS_FONT = new Font("Arial", Font.PLAIN, 9);
   private static final Font ATTR_LABELS_FONT = NODE_LABELS_FONT;
   private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 255);
   private MosaicPlotNode heatmapNode;
@@ -322,7 +322,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 //    }
 
 
-    if (!whole  /*&&  full.getHeight() > full.getWidth() * 10*/) {
+    if (!whole  &&  full.getHeight() > full.getWidth() * 10) {
       toFit = partial;
     } else {
       toFit = full;
@@ -502,8 +502,6 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
         public void mouseClicked(PInputEvent event) {
           final String attr = node(event).getName();
           FlowstratesView fs = getFlowstratesView();
-          fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNodesOfVisibleEdges();
-          fs.getMapLayer(FlowEndpoint.DEST).focusOnNodesOfVisibleEdges();
 
 
           if (event.isControlDown()) {
@@ -514,6 +512,9 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
                     fs.getFlowMapGraph().createMaxEdgeWeightComparator(attr));
               }
             });
+          } else {
+            fs.getMapLayer(FlowEndpoint.ORIGIN).focusOnNodesOfVisibleEdges();
+            fs.getMapLayer(FlowEndpoint.DEST).focusOnNodesOfVisibleEdges();
           }
 
         }

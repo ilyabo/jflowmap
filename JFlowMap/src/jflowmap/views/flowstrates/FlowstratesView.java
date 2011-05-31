@@ -446,6 +446,20 @@ public class FlowstratesView extends AbstractCanvasView {
     });
 
 
+    mainButtonPanel.addChild(new PText("   "));
+
+    final PButton sortByMaxButton = new PButton("SORT ROWS", false);
+    mainButtonPanel.addChild(sortByMaxButton);
+    sortByMaxButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        setRowOrdering(RowOrderings.MAX_MAGNITUDE_IN_ROW);
+//        controlPanel.set
+      }
+    });
+
+
+
 
     //  Origins map buttons
 
