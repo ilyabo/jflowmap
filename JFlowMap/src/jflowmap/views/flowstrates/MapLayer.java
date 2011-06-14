@@ -654,7 +654,7 @@ public class MapLayer extends PLayer implements ViewLayer {
       double w = rect.getWidth(), h = rect.getHeight();
 
       // Show more context for smaller areas and less for larger ones
-      final double minGrowth = 0.1;
+      final double minGrowth = 1.1;
       final double maxGrowth = 3.4;
       double alpha = Math.min((fw - Math.min(fw, w * 5)) / fw, (fh - Math.min(fh, h * 5)) / fh);
       double growBy = minGrowth + (maxGrowth - minGrowth) * Math.pow(alpha, 5);

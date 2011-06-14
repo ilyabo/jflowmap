@@ -448,7 +448,7 @@ public class FlowstratesView extends AbstractCanvasView {
 
     mainButtonPanel.addChild(new PText("   "));
 
-    final PButton sortByMaxButton = new PButton("SORT ROWS", false);
+    final PButton sortByMaxButton = new PButton("SORT", false);
     mainButtonPanel.addChild(sortByMaxButton);
     sortByMaxButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override

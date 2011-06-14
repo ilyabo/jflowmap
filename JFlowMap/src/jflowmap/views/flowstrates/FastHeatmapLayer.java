@@ -110,7 +110,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       @Override
       public void mouseClicked(PInputEvent event) {
         FlowstratesView fs = getFlowstratesView();
-        if (fs.getFlowLinesLayerNode().getShowAllFlowLines()) {
+        /*if (fs.getFlowLinesLayerNode().getShowAllFlowLines())*/ {
           fs.setRowOrdering(RowOrderings.SRC_VPOS);
         }
       }
@@ -119,7 +119,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       @Override
       public void mouseClicked(PInputEvent event) {
         FlowstratesView fs = getFlowstratesView();
-        if (fs.getFlowLinesLayerNode().getShowAllFlowLines()) {
+        /*if (fs.getFlowLinesLayerNode().getShowAllFlowLines())*/ {
           fs.setRowOrdering(RowOrderings.TARGET_VPOS);
         }
       }
