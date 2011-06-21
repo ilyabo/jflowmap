@@ -74,7 +74,7 @@ public class MapLayer extends PLayer implements ViewLayer {
   private static final double CENTROID_DOT_SIZE = 2.0;
 
   private final PCamera geoLayerCamera;
-  private final PGeoMap visualAreaMap;
+  public final PGeoMap visualAreaMap;
   private final FlowstratesView flowstratesView;
   private final FlowEndpoint endpoint;
   private Map<String, Centroid> nodeIdsToCentroids;
@@ -208,43 +208,26 @@ public class MapLayer extends PLayer implements ViewLayer {
   }
 
   private  void createCentroidsAndAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
-    Rectangle2D bounds = visualAreaMap.getBoundingBox();
 
     FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
+    List<Rectangle2D> rects = visualAreaMap.createAreasForNodesWithoutCoords(nodesWithoutCoords);
 
-    int num = Iterables.size(nodesWithoutCoords);
-    if (num > 0) {
-      final int maxPerRow = 4;
-      int cnt = 0;
-      final int numPerRow = Math.min(maxPerRow, num);
-      final int r = num % numPerRow;
-      final double rwidth = bounds.getWidth() * 0.7 / (maxPerRow - 1);
-      final double rheight = (bounds.getHeight() / 10);
-      final double topMargin = bounds.getHeight() / 5;
+    int cnt = 0;
+    for (Node node : nodesWithoutCoords) {
+      String nodeId = fmg.getNodeId(node);
+      String label = fmg.getNodeLabel(node);
 
-      for (Node node : nodesWithoutCoords) {
-        final int numInThisRow = (cnt >= (num - r) ? r : numPerRow);
-        double hcentering = (bounds.getWidth() - (numInThisRow - 1) * rwidth) / 2;
+      Rectangle2D rect = rects.get(cnt);
 
-        double x = hcentering + bounds.getMinX() + (cnt % numPerRow) * rwidth;
-        double y = bounds.getMaxY() + topMargin + Math.floor(cnt / numPerRow) * rheight;
-        createCentroid(node, x, y);
+      createCentroid(node, rect.getCenterX(), rect.getCenterY());
 
-        String nodeId = fmg.getNodeId(node);
-        String label = fmg.getNodeLabel(node);
+      Polygon polygon = new Polygon(new Point2D[] { new Point2D.Double(rect.getX(), rect.getY()),
+          new Point2D.Double(rect.getMaxX(), rect.getY()),
+          new Point2D.Double(rect.getMaxX(), rect.getMaxY()),
+          new Point2D.Double(rect.getX(), rect.getMaxY()), new Point2D.Double(rect.getX(), rect.getY()) });
 
-        Rectangle2D rect = new Rectangle2D.Double(x - rwidth / 2, y - rheight / 3, rwidth, rheight);
-        rect = GeomUtils.growRectByRelativeSize(rect, -0.05, -0.1, -0.05, -0.1);
-
-        Polygon polygon = new Polygon(new Point2D[] { new Point2D.Double(rect.getX(), rect.getY()),
-            new Point2D.Double(rect.getMaxX(), rect.getY()),
-            new Point2D.Double(rect.getMaxX(), rect.getMaxY()),
-            new Point2D.Double(rect.getX(), rect.getMaxY()), new Point2D.Double(rect.getX(), rect.getY()) });
-
-        visualAreaMap.addArea(new MapArea(nodeId, label, Arrays.asList(polygon)), MapProjections.NONE);
-
-        cnt++;
-      }
+      visualAreaMap.addArea(new MapArea(nodeId, label, Arrays.asList(polygon)), MapProjections.NONE);
+      cnt++;
     }
   }
 

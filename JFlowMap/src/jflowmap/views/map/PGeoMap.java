@@ -19,13 +19,22 @@
 package jflowmap.views.map;
 
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
+import java.util.Collections;
+import java.util.List;
 
 import jflowmap.geo.MapProjection;
-import jflowmap.models.map.MapArea;
+import jflowmap.geom.GeomUtils;
 import jflowmap.models.map.GeoMap;
+import jflowmap.models.map.MapArea;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.flowmap.ColorSchemeAware;
+import prefuse.data.Node;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import edu.umd.cs.piccolo.PNode;
 
 /**
@@ -105,5 +114,40 @@ public class PGeoMap extends PNode {
       if (vaid != null  &&  id.equals(vaid)) return va;
     }
     return null;
+  }
+
+  public List<Rectangle2D> createAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
+    int num = Iterables.size(nodesWithoutCoords);
+    if (num <= 0) {
+      return Collections.emptyList();
+    }
+
+    List<Rectangle2D> rects = Lists.newArrayList();
+
+    int maxPerRow = 4;
+    int numPerRow = Math.min(maxPerRow, num);
+    int r = num % numPerRow;
+
+    Rectangle2D bounds = getBoundingBox();
+    double rwidth = bounds.getWidth() * 0.7 / (maxPerRow - 1);
+    double rheight = (bounds.getHeight() / 10);
+    double topMargin = bounds.getHeight() / 5;
+
+    for (int i = 0; i < num; i++) {
+      final int numInThisRow = (i >= (num - r) ? r : numPerRow);
+      double hcentering = (bounds.getWidth() - (numInThisRow - 1) * rwidth) / 2;
+
+      double x = hcentering + bounds.getMinX() + (i % numPerRow) * rwidth;
+      double y = bounds.getMaxY() + topMargin + Math.floor(i / numPerRow) * rheight;
+
+      Rectangle2D rect = new Double(x - rwidth / 2, y - rheight / 3, rwidth, rheight);
+      rect = GeomUtils.growRectByRelativeSize(rect, -0.05, -0.1, -0.05, -0.1);
+
+      rects.add(rect);
+    }
+
+    assert(rects.size() == num);
+
+    return rects;
   }
 }
