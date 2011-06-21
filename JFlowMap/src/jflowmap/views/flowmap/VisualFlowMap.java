@@ -253,23 +253,33 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
     }
 
-    Graph graph = getFlowMapGraph().getGraph();
+    FlowMapGraph fmg = getFlowMapGraph();
+
+    Graph graph = fmg.getGraph();
 
     final int numNodes = graph.getNodeCount();
     visualNodes = new ArrayList<VisualNode>();
     nodesToVisuals = new LinkedHashMap<Node, VisualNode>();
+
     for (int i = 0; i < numNodes; i++) {
       Node node = graph.getNode(i);
-      double lon = node.getDouble(getFlowMapGraph().getNodeLonAttr());
-      double lat = node.getDouble(getFlowMapGraph().getNodeLatAttr());
 
-      Point2D p = getMapProjection().project(lon, lat);
+      if (!fmg.hasCoords(node)) {
+        // TODO: create rectangles for flowmap nodes with missing coords
+        //       See FlowMapGraph.haveCoordsPredicate() and
+        //           PGeoMap.createAreasForNodesWithoutCoords(nodesWithoutCoords)
+        logger.warn("NaN coordinates passed in for node: " + node);
+      } else {
+        double lon = node.getDouble(fmg.getNodeLonAttr());
+        double lat = node.getDouble(fmg.getNodeLatAttr());
 
-      VisualNode vnode = new VisualNode(this, node, p.getX(), p.getY());
-//      nodeLayer.addChild(vnode);
-      getCamera().addChild(vnode);
-      visualNodes.add(vnode);
-      nodesToVisuals.put(node, vnode);
+        Point2D p = getMapProjection().project(lon, lat);
+
+        VisualNode vnode = new VisualNode(this, node, p.getX(), p.getY());
+        getCamera().addChild(vnode);
+        visualNodes.add(vnode);
+        nodesToVisuals.put(node, vnode);
+      }
     }
 
     updateNodePositions();
@@ -325,7 +335,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-    Graph graph = getFlowMapGraph().getGraph();
+    FlowMapGraph fmg = getFlowMapGraph();
+    Graph graph = fmg.getGraph();
 
 //    Iterator<Integer> it = graph.getEdgeTable().rows();
     @SuppressWarnings("unchecked")
@@ -350,35 +361,36 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //        );
 //      }
 
-      double value = edge.getDouble(flowWeightAttr);
-      if (Double.isNaN(value)) {
-        // Warning "Omitting edge with NaN value" Commented out: because it was slowing bundling down too much
-//        logger.warn(
-//          "Omitting edge with NaN value: " +
-//          srcNode.getString(getFlowMapGraph().getNodeLabelAttr()) + " -> " +
-//          targetNode.getString(getFlowMapGraph().getNodeLabelAttr()) +
-//          " [" + edge + "]"
-//        );
+      if (!fmg.hasCoords(srcNode)  ||  !fmg.hasCoords(targetNode)) {
+        // TODO: create rectangles for flowmap nodes with missing coords
+        //       See FlowMapGraph.haveCoordsPredicate() and
+        //           PGeoMap.createAreasForNodesWithoutCoords(nodesWithoutCoords)
+        logger.warn("NaN coordinates passed in for edge: " + edge);
+
       } else {
-        VisualNode fromNode = nodesToVisuals.get(srcNode);
-        VisualNode toNode = nodesToVisuals.get(targetNode);
 
-        VisualEdge visualEdge;
-        if (getFlowMapGraph().hasEdgeSubdivisionPoints(edge)) {
+        double value = edge.getDouble(flowWeightAttr);
+        if (!Double.isNaN(value)) {
+          VisualNode fromNode = nodesToVisuals.get(srcNode);
+          VisualNode toNode = nodesToVisuals.get(targetNode);
 
-          Iterable<Point> points = MapProjections.projectAll(
-              getFlowMapGraph().getEdgePoints(edge), getMapProjection());
+          VisualEdge visualEdge;
+          if (fmg.hasEdgeSubdivisionPoints(edge)) {
 
-          visualEdge = new BSplineVisualEdge(
-              this, edge, fromNode, toNode, points, SHOW_SPLINE_POINTS);
-        } else {
-          visualEdge = new LineVisualEdge(this, edge, fromNode, toNode);
+            Iterable<Point> points = MapProjections.projectAll(
+                fmg.getEdgePoints(edge), getMapProjection());
+
+            visualEdge = new BSplineVisualEdge(
+                this, edge, fromNode, toNode, points, SHOW_SPLINE_POINTS);
+          } else {
+            visualEdge = new LineVisualEdge(this, edge, fromNode, toNode);
+          }
+          visualEdge.update();
+          edgeLayer.addChild(visualEdge);
+
+          visualEdges.add(visualEdge);
+          edgesToVisuals.put(edge, visualEdge);
         }
-        visualEdge.update();
-        edgeLayer.addChild(visualEdge);
-
-        visualEdges.add(visualEdge);
-        edgesToVisuals.put(edge, visualEdge);
       }
     }
   }

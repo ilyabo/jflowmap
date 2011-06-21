@@ -935,12 +935,17 @@ public class FlowMapGraph {
     return new Predicate<Node>() {
       @Override
       public boolean apply(Node node) {
-        double lon = node.getDouble(getNodeLonAttr());
-        double lat = node.getDouble(getNodeLatAttr());
-
-        return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
+        return hasCoords(node);
       }
+
     };
+  }
+
+  public boolean hasCoords(Node node) {
+    double lon = node.getDouble(getNodeLonAttr());
+    double lat = node.getDouble(getNodeLatAttr());
+
+    return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
   }
 
 }
