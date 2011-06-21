@@ -931,4 +931,16 @@ public class FlowMapGraph {
     return !attrName.equals(SRC_TEMP_ID)  &&  !attrName.equals(TRG_TEMP_ID);
   }
 
+  public Predicate<Node> haveCoordsPredicate() {
+    return new Predicate<Node>() {
+      @Override
+      public boolean apply(Node node) {
+        double lon = node.getDouble(getNodeLonAttr());
+        double lat = node.getDouble(getNodeLatAttr());
+
+        return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
+      }
+    };
+  }
+
 }

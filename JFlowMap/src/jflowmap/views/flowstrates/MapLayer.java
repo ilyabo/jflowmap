@@ -178,19 +178,21 @@ public class MapLayer extends PLayer implements ViewLayer {
   private void createCentroids() {
     nodeIdsToCentroids = Maps.newLinkedHashMap();
 
-    FlowMapGraph flowMapGraph = flowstratesView.getFlowMapGraph();
+    FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
 
     // sort centroids so that more important are shown first
     Iterable<Node> nodes = CollectionUtils.sort(
-        flowMapGraph.nodesHavingEdges(endpoint.dir()),
-        Collections.reverseOrder(FlowMapNodeTotals.createMaxNodeWeightTotalsComparator(flowMapGraph,
+        fmg.nodesHavingEdges(endpoint.dir()),
+        Collections.reverseOrder(FlowMapNodeTotals.createMaxNodeWeightTotalsComparator(fmg,
             endpoint.dir())));
 
     centroidMouseListener = createCentroidMouseListener();
 
-    Iterable<Node> nodesWithCoords = Iterables.filter(nodes, haveCoordsPredicate());
-    Iterable<Node> nodesWithoutCoords = flowMapGraph.sortByAttr(
-        Iterables.filter(nodes, Predicates.not(haveCoordsPredicate())), flowMapGraph.getNodeLabelAttr());
+    Iterable<Node> nodesWithCoords = Iterables.filter(nodes, fmg.haveCoordsPredicate());
+    Iterable<Node> nodesWithoutCoords =
+      fmg.sortByAttr(
+          Iterables.filter(nodes, Predicates.not(fmg.haveCoordsPredicate())),
+          fmg.getNodeLabelAttr());
 
     createCentroidsForNodesWithCoords(nodesWithCoords);
     createCentroidsAndAreasForNodesWithoutCoords(nodesWithoutCoords);
@@ -243,20 +245,6 @@ public class MapLayer extends PLayer implements ViewLayer {
     c.addInputEventListener(centroidMouseListener);
     geoLayerCamera.addChild(c);
     nodeIdsToCentroids.put(c.getNodeId(), c);
-  }
-
-  private Predicate<Node> haveCoordsPredicate() {
-    return new Predicate<Node>() {
-      @Override
-      public boolean apply(Node node) {
-        FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
-
-        double lon = node.getDouble(fmg.getNodeLonAttr());
-        double lat = node.getDouble(fmg.getNodeLatAttr());
-
-        return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
-      }
-    };
   }
 
   void setSelectedNodes(List<String> nodeIds) {
