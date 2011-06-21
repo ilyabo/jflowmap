@@ -20,7 +20,9 @@ package jflowmap;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -188,5 +190,14 @@ public class JFlowMapMain {
     return OS_NAME.startsWith(osNamePrefix);
   }
 
+  public static ImageIcon createImageIcon(String path) {
+    URL url = JFlowMapMain.class.getResource(path);
+    if (url != null) {
+      return new ImageIcon(url);
+    } else {
+      logger.error("Couldn't find file: " + path);
+      return null;
+    }
+  }
 
 }

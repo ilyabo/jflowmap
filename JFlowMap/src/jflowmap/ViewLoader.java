@@ -58,8 +58,7 @@ public class ViewLoader {
 
   private static Logger logger = Logger.getLogger(ViewLoader.class);
 
-  public static final ImageIcon LOADING_ICON = new ImageIcon(
-      JFlowMapMain.class.getResource("resources/loading.gif"));
+  public static final ImageIcon LOADING_ICON = JFlowMapMain.createImageIcon("resources/loading.gif");
 
   private static final Font LOADING_TEXT_FONT = new Font("Sans Serif", Font.PLAIN, 11);
 
