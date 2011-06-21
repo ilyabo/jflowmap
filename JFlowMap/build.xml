@@ -60,7 +60,7 @@
 		</javac>
 		<copy todir="${path.classes}" verbose="true">
 			<fileset dir="${path.src}">
-		        <include name="**/images/*.*"/>
+				<include name="**/resources/*.*"/>
 			</fileset>
         </copy>
 	</target>
