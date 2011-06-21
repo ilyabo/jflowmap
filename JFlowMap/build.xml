@@ -2,150 +2,147 @@
 
 	<taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar" />
 
-	<property file="build.properties"/>
+	<property file="build.properties" />
 
-    <property name="app.name" value="jflowmap"/>
-    <property name="app.version" value="0.11"/>
-	<property name="dist.name" value="jflowmap-${app.version}"/>
-    <property name="cert.name" value="JFlowMap"/>
-	<property name="path.src" value="src"/>
-	<property name="path.classes" value="bin"/>
-	<property name="path.lib" value="lib"/>
-	<property name="path.build" value="demo"/>
-	<property name="mainclass" value="jflowmap.JFlowMapMain"/>
+	<property name="app.name" value="jflowmap" />
+	<property name="app.version" value="0.11" />
+	<property name="dist.name" value="jflowmap-${app.version}" />
+	<property name="cert.name" value="JFlowMap" />
+	<property name="path.src" value="src" />
+	<property name="path.classes" value="bin" />
+	<property name="path.lib" value="lib" />
+	<property name="path.build" value="demo" />
+	<property name="mainclass" value="jflowmap.JFlowMapMain" />
 
 
-   <target name="build">
-        <antcall target="_build">
-            <param name="mode" value="applet"/>
-            <param name="include.applet.meta-inf" value="true"/>
-        </antcall>
-    </target>
+	<target name="build">
+		<antcall target="_build">
+			<param name="mode" value="applet" />
+			<param name="include.applet.meta-inf" value="true" />
+		</antcall>
+	</target>
 
-    <target name="build-dist-package" depends="build">
-        <delete failonerror="false" file="${dist.name}.zip"/>
-        <zip destfile="${dist.name}.zip">
-            <zipfileset dir="demo"
-                prefix="${dist.name}/"
-                includes="**"
-                excludes="data-proprietary/**, JFlowMap.log, java.policy.applet"/>
-        </zip>
-    </target>
+	<target name="build-dist-package" depends="build">
+		<delete failonerror="false" file="${dist.name}.zip" />
+		<zip destfile="${dist.name}.zip">
+			<zipfileset dir="demo" prefix="${dist.name}/" includes="**" excludes="data-proprietary/**, JFlowMap.log, java.policy.applet" />
+		</zip>
+	</target>
 
 	<target name="_build" depends="mkdirs, compile, make-jar, proguard, add-manifest" />
 
-    
+
 	<path id="libs-classpath">
-        <fileset dir="${path.lib}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
+		<fileset dir="${path.lib}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
 	<path id="master-classpath">
-        <fileset dir="${path.lib}">
-            <include name="*.jar"/>
-        </fileset>
-        <pathelement path="${path.classes}"/>
+		<fileset dir="${path.lib}">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement path="${path.classes}" />
 	</path>
 
 	<target name="mkdirs">
-		<mkdir dir="${path.classes}"/>
-		<mkdir dir="${path.build}"/>
+		<mkdir dir="${path.classes}" />
+		<mkdir dir="${path.build}" />
 	</target>
 
 	<target name="compile">
 		<javac destdir="${path.classes}" failonerror="true" debug="true" target="1.6">
-			<src path="${path.src}"/>
-			<classpath refid="master-classpath"/>
+			<src path="${path.src}" />
+			<classpath refid="master-classpath" />
 		</javac>
 		<copy todir="${path.classes}" verbose="true">
 			<fileset dir="${path.src}">
-				<include name="**/resources/*.*"/>
+				<include name="**/resources/*.*" />
 			</fileset>
-        </copy>
+		</copy>
 	</target>
 
 	<target name="clean">
 		<delete includeEmptyDirs="true">
 			<fileset dir="${path.classes}">
-				<include name="**/*.class"/>
+				<include name="**/*.class" />
 			</fileset>
 		</delete>
 	</target>
 
-	<target name="proguard">		
+	<target name="proguard">
 		<proguard configuration="proguard.cfg">
-            <libraryjar path="${java.home}/lib/rt.jar"/>
-            <injar refid="libs-classpath" filter="!META-INF/MANIFEST.MF,!extras.manifest,!**/*.jj"/>
-            <injar path="${path.build}/${app.name}-no-libs.jar"/>
-            <outjar path="${path.build}/${app.name}.jar"/>
+			<libraryjar path="${java.home}/lib/rt.jar" />
+			<injar refid="libs-classpath" filter="!META-INF/MANIFEST.MF,!extras.manifest,!**/*.jj" />
+			<injar path="${path.build}/${app.name}-no-libs.jar" />
+			<outjar path="${path.build}/${app.name}.jar" />
 		</proguard>
-		<delete file="${path.build}/${app.name}-no-libs.jar"/>
+		<delete file="${path.build}/${app.name}-no-libs.jar" />
 	</target>
-	   	
-   <target name="make-jar">
-        <copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true" failonerror="false"/>
-        <copy file="log4j-${mode}.xml" tofile="${path.build}/log4j.xml" overwrite="true" failonerror="false" />
-        <jar basedir="." jarfile="${path.build}/${app.name}-no-libs.jar">
-            <exclude name="**/*" />
-            <fileset dir="${path.classes}">
-                <include name="**/*.class"/>
-                <exclude name="**/*Test.class"/>
-                <exclude name="**/*Test$*.class"/>
-                <include name="**/res/*.*"/>
-                <include name="**/resources/*.*"/>
-            </fileset>
-            <fileset dir="${path.build}">
-                <include name="log4j.properties"/>
-                <include name="log4j.xml"/>
-            </fileset>
-            <fileset dir=".">
-                <include name="license.txt"/>
-            </fileset>
-            <fileset dir="classes-applets">
-                  <selector if="include.applet.meta-inf">
-                  	<or>
-                      <filename name="META-INF/**/*.*" />
-                    </or>
-                  </selector>
-            </fileset>
-        </jar>
-        <delete file="${path.build}/log4j.properties" quiet="true"/>
-        <delete file="${path.build}/log4j.xml" quiet="true"/>
-    </target>
+
+	<target name="make-jar">
+		<copy file="log4j-${mode}.properties" tofile="${path.build}/log4j.properties" overwrite="true" failonerror="false" />
+		<copy file="log4j-${mode}.xml" tofile="${path.build}/log4j.xml" overwrite="true" failonerror="false" />
+		<jar basedir="." jarfile="${path.build}/${app.name}-no-libs.jar">
+			<exclude name="**/*" />
+			<fileset dir="${path.classes}">
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+				<exclude name="**/*Test$*.class" />
+				<include name="**/res/*.*" />
+				<include name="**/resources/*.*" />
+			</fileset>
+			<fileset dir="${path.build}">
+				<include name="log4j.properties" />
+				<include name="log4j.xml" />
+			</fileset>
+			<fileset dir=".">
+				<include name="license.txt" />
+			</fileset>
+			<fileset dir="classes-applets">
+				<selector if="include.applet.meta-inf">
+					<or>
+						<filename name="META-INF/**/*.*" />
+					</or>
+				</selector>
+			</fileset>
+		</jar>
+		<delete file="${path.build}/log4j.properties" quiet="true" />
+		<delete file="${path.build}/log4j.xml" quiet="true" />
+	</target>
 
 	<target name="add-manifest">
-		<move file="${path.build}/${app.name}.jar" tofile="${path.build}/_${app.name}.jar"/>
+		<move file="${path.build}/${app.name}.jar" tofile="${path.build}/_${app.name}.jar" />
 		<jar basedir="." jarfile="${path.build}/${app.name}.jar">
-            <manifest>
-                <attribute name="Main-Class" value="${mainclass}" />
-            </manifest>
+			<manifest>
+				<attribute name="Main-Class" value="${mainclass}" />
+			</manifest>
 			<exclude name="**/*" />
-			<zipgroupfileset file="${path.build}/_${app.name}.jar"/>
+			<zipgroupfileset file="${path.build}/_${app.name}.jar" />
 		</jar>
-		<delete file="${path.build}/_${app.name}.jar"/>
+		<delete file="${path.build}/_${app.name}.jar" />
 	</target>
 
-    <target name="sign-cert-gen">
-        <exec executable="keytool">
-        	<arg line="-keystore ${sign.keystore.name}"/>
-            <arg line="-storepass ${sign.keystore.pass}"/>
-            <arg line="-genkey -keyalg rsa  -validity 1095"/>
-            <arg line="-alias ${app.name}"/>
-            <arg line="-keypass ${sign.keystore.pass}"/>
-            <arg line="-dname &quot;CN=Ilya Boyandin, OU=, O=University of Fribourg, L=Fribourg, C=CH&quot;"/>
-        </exec>
-    </target>
-    
-    <target name="sign">
-    	<echo>Signing ${path.build}/${app.name}.jar</echo>
-        <exec executable="jarsigner">
-            <arg line="-keystore ${sign.keystore.name}"/>
-            <arg line="-storepass ${sign.keystore.pass}"/>
-            <arg line="${path.build}/${app.name}.jar"/>
-            <arg line="${cert.name}"/>
-        </exec>
-    </target>
+	<target name="sign-cert-gen">
+		<exec executable="keytool">
+			<arg line="-keystore ${sign.keystore.name}" />
+			<arg line="-storepass ${sign.keystore.pass}" />
+			<arg line="-genkey -keyalg rsa  -validity 1095" />
+			<arg line="-alias ${app.name}" />
+			<arg line="-keypass ${sign.keystore.pass}" />
+			<arg line="-dname &quot;CN=Ilya Boyandin, OU=, O=University of Fribourg, L=Fribourg, C=CH&quot;" />
+		</exec>
+	</target>
+
+	<target name="sign">
+		<echo>Signing ${path.build}/${app.name}.jar</echo>
+		<exec executable="jarsigner">
+			<arg line="-keystore ${sign.keystore.name}" />
+			<arg line="-storepass ${sign.keystore.pass}" />
+			<arg line="${path.build}/${app.name}.jar" />
+			<arg line="${cert.name}" />
+		</exec>
+	</target>
 
 </project>
 
