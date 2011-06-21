@@ -55,7 +55,7 @@ public class JFlowMapMain {
 
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
-      System.out.println("Usage: java -jar jflowmap.jar [--fullscreen] <view-config.jfmv>");
+      System.out.println("Usage: java -jar jflowmap.jar [-fullscreen] <view-config.jfmv>");
       System.exit(0);
     }
 
