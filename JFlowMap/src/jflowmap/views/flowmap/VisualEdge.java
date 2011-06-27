@@ -24,14 +24,10 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
-
-import org.apache.log4j.Logger;
-
 import prefuse.data.Edge;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -45,10 +41,7 @@ import edu.umd.cs.piccolo.nodes.PPath;
 public abstract class VisualEdge extends PNode {
 
   private static final int MAX_EDGE_WIDTH = 100;
-
   private static final long serialVersionUID = 1L;
-
-	private static Logger logger = Logger.getLogger(VisualEdge.class);
 
   private final VisualFlowMap visualFlowMap;
   private final VisualNode sourceNode;
@@ -95,8 +88,8 @@ public abstract class VisualEdge extends PNode {
   protected Shape createSelfLoopShape() {
     Shape shape;
 
-    Double b = getSelfLoopBounds();
-    shape = new Ellipse2D.Double(b.x, b.y, b.width, b.height);
+    Rectangle2D b = getSelfLoopBounds();
+    shape = new Ellipse2D.Double(b.getX(), b.getY(), b.getWidth(), b.getHeight());
 
 ////    final double size = SELF_LOOP_CIRCLE_SIZE;
 ////    MinMax xstats = visualFlowMap.getGraphStats().getNodeXStats();
@@ -114,8 +107,6 @@ public abstract class VisualEdge extends PNode {
 //    }));
     return shape;
   }
-
-
 
   public double getSourceX() {
     return sourceNode.getValueX();
@@ -159,10 +150,14 @@ public abstract class VisualEdge extends PNode {
   }
 
   private double getSelfLoopSize(double edgeWidth) {
+    double value = getValueNormalizedForWidthScale();
+    if (Double.isNaN(value)) {
+      return 0;
+    }
     double avgLen = visualFlowMap.getStats().getEdgeLengthStats().getAvg();
     return
       avgLen / MAX_EDGE_WIDTH *
-      edgeWidth * getValueNormalizedForWidthScale();
+      edgeWidth * value;
   }
 
 //  public abstract void updateEdgeMarkerColors();
@@ -178,6 +173,7 @@ public abstract class VisualEdge extends PNode {
     double length = getEdgeLength();
 
     boolean visible =
+        !Double.isNaN(weight)  &&
         weightFilterMin <= weight && weight <= weightFilterMax  &&
         edgeLengthFilterMin <= length && length <= edgeLengthFilterMax
     ;
@@ -300,22 +296,19 @@ public abstract class VisualEdge extends PNode {
         } else {
           color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT);
         }
-//        paint = getValueColor(color, false);
         paint = color;
       } else {
         paint = createPaint();
       }
       ppath.setStrokePaint(paint);
-//      getSourceNode().setVisible(value);
-//      getTargetNode().setVisible(value);
     }
   }
 
   public void update() {
+    updateVisibility();
     updateEdgeColors();
 //    updateEdgeMarkerColors();
     updateEdgeWidth();
-    updateVisibility();
   }
 
   private static final PInputEventListener visualEdgeListener = new PBasicInputEventHandler() {

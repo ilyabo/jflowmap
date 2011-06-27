@@ -52,6 +52,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -946,6 +947,23 @@ public class FlowMapGraph {
     double lat = node.getDouble(getNodeLatAttr());
 
     return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
+  }
+
+  @SuppressWarnings("unchecked")
+  public Iterable<Edge> getEdgesSortedBy(final String flowWeightAttr) {
+    return new Iterable<Edge>() {
+      @Override
+      public Iterator<Edge> iterator() {
+        return Iterators.transform(
+            getGraph().getEdgeTable().rowsSortedBy(flowWeightAttr, true),
+            new Function<Integer, Edge>() {
+              @Override
+              public Edge apply(Integer index) {
+                return getGraph().getEdge(index);
+              }
+            });
+      }
+    };
   }
 
 }

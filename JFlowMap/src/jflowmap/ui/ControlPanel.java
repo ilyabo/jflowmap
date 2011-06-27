@@ -20,6 +20,7 @@ package jflowmap.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -27,6 +28,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -65,6 +67,7 @@ import jflowmap.views.flowmap.VisualFlowMap;
 import jflowmap.views.flowmap.VisualFlowMapModel;
 import jflowmap.views.flowmap.VisualNode;
 import jflowmap.views.flowmap.VisualNodeCluster;
+import net.miginfocom.swing.MigLayout;
 import at.fhj.utils.graphics.AxisMarks;
 import at.fhj.utils.swing.FancyTable;
 import at.fhj.utils.swing.TableSorter;
@@ -168,6 +171,7 @@ public class ControlPanel {
         this.jFlowMap = flowMap;
         this.attrSpec = attrSpec;
         $$$setupUI$$$();
+        setupUI();
 
         loadVisualFlowMap(flowMap.getVisualFlowMap());
         initUIChangeListeners();
@@ -176,6 +180,66 @@ public class ControlPanel {
         updateDirectionAffectsCompatibilityCheckBox();
         updateRepulsionSpinner();
         updateMarkersInputs();
+    }
+
+    private void setSelectedFlowWeightAttr(String selAttr) {
+      jFlowMap.setSelectedFlowWeightAttr(selAttr);
+      List<Directive> sort = flowsTableSorter.getSortingColumns();
+      flowsTableModel.setVisualFlowMap(jFlowMap.getVisualFlowMap());
+      flowsTableSorter.setSortingColumns(sort); // prevent the column sortings being reset
+    }
+
+    private void setupUI() {
+      tabbedPane1.addTab("Animation", createAnimationTab());
+    }
+
+    private JPanel createAnimationTab() {
+      JPanel panel = new JPanel(new MigLayout(
+          "fillx,insets 20", "[][][][grow][]"));
+
+      final List<String> attrs = attrSpec.getFlowWeightAttrs();
+      int selIndex = attrs.indexOf(jFlowMap.getSelectedFlowWeightAttr());
+      final JLabel selAttrLabel = new JLabel(attrs.get(selIndex));
+      selAttrLabel.setFont(new Font("Arial", Font.BOLD, 42));
+
+      JSlider attrSlider = new JSlider(0, attrs.size() - 1, selIndex);
+//      attrSlider.getModel().set
+
+      Hashtable<Integer, JComponent> labels = new Hashtable<Integer, JComponent>();
+      int size = attrs.size();
+      labels.put(0, new JLabel(attrs.get(0)));
+      labels.put(size / 2, new JLabel(attrs.get(size / 2)));
+      labels.put(size - 1, new JLabel(attrs.get(size - 1)));
+      attrSlider.setLabelTable(labels);
+      attrSlider.setMajorTickSpacing(attrs.size() < 50  ?  1  : (int)Math.ceil(attrs.size() / 50));
+      attrSlider.setPaintTicks(true);
+      attrSlider.setPaintLabels(true);
+      attrSlider.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+          JSlider slider = (JSlider)e.getSource();
+//          if (!slider.getValueIsAdjusting()) {
+            String attr = attrs.get(slider.getValue());
+            selAttrLabel.setText(attr);
+            setSelectedFlowWeightAttr(attr);
+//          }
+        }
+      });
+
+      JButton playBut = new JButton("Play");
+      playBut.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          jFlowMap.getVisualFlowMap().startFlowWeightAttrsAnimation();
+        }
+      });
+
+      panel.add(new JButton("|<<"), "aligny top");
+      panel.add(playBut, "aligny top");
+      panel.add(new JButton(">>|"), "aligny top");
+      panel.add(attrSlider, "gapx 20, growx");
+      panel.add(selAttrLabel, "gap 20, aligny top");
+      return panel;
     }
 
     public void loadVisualFlowMap(VisualFlowMap newVisualFlowMap) {
@@ -355,6 +419,8 @@ public class ControlPanel {
     }
 
     public void setData(VisualFlowMapModel data) {
+        datasetCombo.setSelectedItem(jFlowMap.getSelectedFlowWeightAttr());
+
         autoAdjustColorScaleCheckBox.setSelected(data.getAutoAdjustColorScale());
         useLogWidthScaleCheckbox.setSelected(data.getUseLogWidthScale());
         useLogColorScaleCheckbox.setSelected(data.getUseLogColorScale());
@@ -392,10 +458,8 @@ public class ControlPanel {
         datasetCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (initializing) return;
-                jFlowMap.setSelectedFlowWeightAttr((String) datasetCombo.getSelectedItem());
-                List<Directive> sort = flowsTableSorter.getSortingColumns();
-                flowsTableModel.setVisualFlowMap(jFlowMap.getVisualFlowMap());
-                flowsTableSorter.setSortingColumns(sort); // prevent the column sortings being reset
+                String selAttr = (String) datasetCombo.getSelectedItem();
+                setSelectedFlowWeightAttr(selAttr);
 //                jFlowMap.fitInView();
             }
         });
@@ -916,11 +980,11 @@ public class ControlPanel {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
-        panel1 = new JPanel();
+        panel1 = createAnimationTab();
         panel1.setLayout(new BorderLayout(0, 0));
         tabbedPane1 = new JTabbedPane();
         panel1.add(tabbedPane1, BorderLayout.CENTER);
-        final JPanel panel2 = new JPanel();
+        final JPanel panel2 = createAnimationTab();
         panel2.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:187px:noGrow,left:4dlu:noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:119px:noGrow,left:20dlu:noGrow,fill:max(d;4px):grow", "center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:min(p;200px):grow"));
         tabbedPane1.addTab("Dataset", panel2);
         panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -972,7 +1036,7 @@ public class ControlPanel {
         comboBox3 = new JComboBox();
         comboBox3.setEnabled(false);
         panel2.add(comboBox3, cc.xy(9, 7));
-        final JPanel panel3 = new JPanel();
+        final JPanel panel3 = createAnimationTab();
         panel3.setLayout(new FormLayout("right:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow(2.0),left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:20px:noGrow,left:4dlu:noGrow,right:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:p:noGrow", "center:26px:noGrow,top:4dlu:noGrow,center:24px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:5dlu:noGrow,center:d:noGrow"));
         tabbedPane1.addTab("Filter", panel3);
         panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -1006,7 +1070,7 @@ public class ControlPanel {
         panel3.add(maxLengthFilterSlider, cc.xy(11, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
         maxLengthFilterSpinner = new JSpinner();
         panel3.add(maxLengthFilterSpinner, cc.xy(13, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
-        final JPanel panel4 = new JPanel();
+        final JPanel panel4 = createAnimationTab();
         panel4.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
         panel3.add(panel4, cc.xy(5, 7));
         final JLabel label9 = new JLabel();
@@ -1014,7 +1078,7 @@ public class ControlPanel {
         panel3.add(label9, cc.xy(1, 1));
         minWeightFilterSlider = new JSlider();
         panel3.add(minWeightFilterSlider, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-        final JPanel panel5 = new JPanel();
+        final JPanel panel5 = createAnimationTab();
         panel5.setLayout(new FormLayout("fill:d:noGrow,left:p:noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:20dlu:noGrow,fill:max(d;4px):grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:24px:noGrow,top:6dlu:noGrow,top:4dlu:noGrow"));
         tabbedPane1.addTab("Scales", panel5);
         panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -1040,7 +1104,7 @@ public class ControlPanel {
         final JSeparator separator5 = new JSeparator();
         separator5.setOrientation(1);
         panel5.add(separator5, cc.xywh(6, 1, 1, 5, CellConstraints.CENTER, CellConstraints.FILL));
-        final JPanel panel6 = new JPanel();
+        final JPanel panel6 = createAnimationTab();
         panel6.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:110px:noGrow,left:4dlu:noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):grow,left:4dlu:noGrow,fill:max(m;50px):noGrow", "center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         tabbedPane1.addTab("Aesthetics", panel6);
         panel6.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -1100,7 +1164,7 @@ public class ControlPanel {
         edgeMarkerOpacityLabel = new JLabel();
         edgeMarkerOpacityLabel.setText("Direction marker opacity:");
         panel6.add(edgeMarkerOpacityLabel, cc.xy(10, 7, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-        final JPanel panel7 = new JPanel();
+        final JPanel panel7 = createAnimationTab();
         panel7.setLayout(new FormLayout("fill:d:noGrow,left:6dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:12px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:p:noGrow,left:12dlu:noGrow,fill:p:noGrow,fill:d:noGrow,left:d:noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:25px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         tabbedPane1.addTab("Edge bundling", panel7);
         panel7.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));

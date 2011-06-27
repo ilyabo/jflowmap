@@ -29,7 +29,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +49,7 @@ import jflowmap.geo.MapProjections;
 import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
+import jflowmap.util.CollectionUtils;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
 import jflowmap.views.PTooltip;
@@ -190,8 +190,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     if (!this.flowWeightAttr.equals(flowWeightAttr)) {
       this.flowWeightAttr = flowWeightAttr;
       resetClusters();
-      createVisuals();
+      resetBundling();
+//      createVisuals();
+      updateEdgeVisuals();
     }
+  }
+
+  public String getSelectedFlowWeightAttr() {
+    return flowWeightAttr;
   }
 
   public PGeoMap getAreaMap() {
@@ -328,71 +334,61 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     edgeLayer.removeAllChildren();
     clearAggregatedEdgesLayer();
 
-//    for (int i = 0; i < graph.getEdgeTable().getColumnCount(); i++) {
-//    if (logger.isDebugEnabled()) logger.debug("Field: " + graph.getEdgeTable().getColumnName(i));
-//  }
-
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-    FlowMapGraph fmg = getFlowMapGraph();
-    Graph graph = fmg.getGraph();
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
 
-//    Iterator<Integer> it = graph.getEdgeTable().rows();
-    @SuppressWarnings("unchecked")
-    Iterator<Integer> it = graph.getEdgeTable().rowsSortedBy(flowWeightAttr, true);
-
-    while (it.hasNext()) {
-      Edge edge = graph.getEdge(it.next());
-
-      Node srcNode = edge.getSourceNode();
-      Node targetNode = edge.getTargetNode();
-
-//      if (edgeVisualsForNodesFilter != null) {
-//        if (!edgeVisualsForNodesFilter.accept(srcNode)  &&  !edgeVisualsForNodesFilter.accept(targetNode)) {
-//          continue;  // skip the edge
-//        }
-//      }
-
-//      if (srcNode.equals(targetNode)) {
-//        logger.warn(
-//            "Self-loop edge: " +
-//            " [" + edge + "]"
-//        );
-//      }
-
-      if (!fmg.hasCoords(srcNode)  ||  !fmg.hasCoords(targetNode)) {
+      if (!hasCoordinates(edge)) {
         // TODO: create rectangles for flowmap nodes with missing coords
         //       See FlowMapGraph.haveCoordsPredicate() and
         //           PGeoMap.createAreasForNodesWithoutCoords(nodesWithoutCoords)
         logger.warn("NaN coordinates passed in for edge: " + edge);
 
       } else {
-
-        double value = edge.getDouble(flowWeightAttr);
-        if (!Double.isNaN(value)) {
-          VisualNode fromNode = nodesToVisuals.get(srcNode);
-          VisualNode toNode = nodesToVisuals.get(targetNode);
-
-          VisualEdge visualEdge;
-          if (fmg.hasEdgeSubdivisionPoints(edge)) {
-
-            Iterable<Point> points = MapProjections.projectAll(
-                fmg.getEdgePoints(edge), getMapProjection());
-
-            visualEdge = new BSplineVisualEdge(
-                this, edge, fromNode, toNode, points, SHOW_SPLINE_POINTS);
-          } else {
-            visualEdge = new LineVisualEdge(this, edge, fromNode, toNode);
-          }
-          visualEdge.update();
+          VisualEdge visualEdge = createVisualEdgeFor(edge);
           edgeLayer.addChild(visualEdge);
-
           visualEdges.add(visualEdge);
           edgesToVisuals.put(edge, visualEdge);
-        }
       }
     }
+  }
+
+  private boolean hasCoordinates(Edge edge) {
+    FlowMapGraph fmg = getFlowMapGraph();
+    Node srcNode = edge.getSourceNode();
+    Node targetNode = edge.getTargetNode();
+    return (fmg.hasCoords(srcNode)  &&  fmg.hasCoords(targetNode));
+  }
+
+  private void updateEdgeVisuals() {
+    for (Edge edge : CollectionUtils.reverse(getFlowMapGraph().getEdgesSortedBy(flowWeightAttr))) {
+      VisualEdge ve = edgesToVisuals.get(edge);
+      if (hasCoordinates(edge)) {
+        ve.update();
+        ve.moveToFront();  // order by attr value
+      }
+    }
+  }
+
+  private VisualEdge createVisualEdgeFor(Edge edge) {
+    FlowMapGraph fmg = getFlowMapGraph();
+
+    VisualNode fromNode = nodesToVisuals.get(edge.getSourceNode());
+    VisualNode toNode = nodesToVisuals.get(edge.getTargetNode());
+
+    VisualEdge visualEdge;
+    if (fmg.hasEdgeSubdivisionPoints(edge)) {
+
+      Iterable<Point> points = MapProjections.projectAll(
+          fmg.getEdgePoints(edge), getMapProjection());
+
+      visualEdge = new BSplineVisualEdge(this, edge, fromNode, toNode, points, SHOW_SPLINE_POINTS);
+    } else {
+      visualEdge = new LineVisualEdge(this, edge, fromNode, toNode);
+    }
+    visualEdge.update();
+    return visualEdge;
   }
 
   private PBounds getVisualNodesBounds() {
@@ -612,10 +608,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void resetBundling() {
-    bundled = false;
-    getFlowMapGraph().removeAllEdgeSubdivisionPoints();
-    createEdgeVisuals();
-    repaint();
+    if (bundled) {
+      bundled = false;
+      getFlowMapGraph().removeAllEdgeSubdivisionPoints();
+      createEdgeVisuals();
+      repaint();
+    }
   }
 
   public void bundleEdges(ForceDirectedBundlerParameters bundlerParams) {
@@ -1038,6 +1036,41 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
     }
     return null;
+  }
+
+  public void startFlowWeightAttrsAnimation() {
+//    List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
+//    int startPos = getAnimationStartPos();
+//    if (startPos == attrs.size() - 1) {
+//      return;
+//    }
+//    String nextAttr = attrs.get(startPos + 1);
+//
+////    for (int i = startPos, numAttrs = attrs.size(); i < numAttrs; i++) {
+////
+////    }
+//
+//    for (VisualEdge ve : edgesToVisuals.values()) {
+//      double prevv = ve.getEdgeWeight();
+//      double nextv = ve.getEdge().getDouble(nextAttr);
+//
+//      new PInterpolatingActivity(1000) {
+//        @Override
+//        public void setRelativeTargetValue(float zeroToOne) {
+//
+//        }
+//      };
+//    }
+
+//    getVisualEdges()
+  }
+
+  private int getAnimationStartPos() {
+    int startPos = getFlowMapGraph().getEdgeWeightAttrs().indexOf(flowWeightAttr);
+    if (startPos < 0) {
+      startPos = 0;
+    }
+    return startPos;
   }
 
 }

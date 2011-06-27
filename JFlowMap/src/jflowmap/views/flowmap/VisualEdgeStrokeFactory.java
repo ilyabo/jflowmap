@@ -34,6 +34,11 @@ public class VisualEdgeStrokeFactory {
   }
 
   public Stroke createStroke(double normalizedValue) {
+    if (Double.isNaN(normalizedValue)) {
+      // Stroke of a NaN width prevents the whole scene from rendering.
+      // Besides, the edge of a NaN value shouldn't be visible anyway.
+      return new PFixedWidthStroke(0);
+    }
     float width = (float)(1 + normalizedValue * visualFlowMap.getModel().getMaxEdgeWidth());
     return new PFixedWidthStroke(width);
 //    return new BasicStroke(width);

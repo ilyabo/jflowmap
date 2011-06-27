@@ -34,6 +34,7 @@ public class LineVisualEdge extends VisualEdge {
   public LineVisualEdge(VisualFlowMap visualFlowMap, Edge edge,
       VisualNode sourceNode, VisualNode targetNode) {
     super(visualFlowMap, edge, sourceNode, targetNode);
+
     targetNode.addIncomingEdge(this);
     sourceNode.addOutgoingEdge(this);
 

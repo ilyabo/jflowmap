@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -37,13 +38,19 @@ public class CollectionUtils {
   }
 
   /**
-   * Note: This method makes an in-memory copy of the elements.
+   * Note: This method creates an in-memory copy of the elements.
+   * This can be inefficient for large lists.
+   */
+  public static <T> Iterable<T> reverse(Iterable<T> it) {
+    return Iterables.reverse(ImmutableList.copyOf(it));
+  }
+
+  /**
+   * Note: This method creates an in-memory copy of the elements.
    * This can be inefficient for large lists.
    */
   public static <T> Iterator<T> reverse(Iterator<T> it) {
-    List<T> list = Lists.newArrayList(it);
-    Collections.reverse(list);
-    return list.iterator();
+    return Iterables.reverse(ImmutableList.copyOf(it)).iterator();
   }
 
   public static <T> Iterable<T> sort(Iterable<T> items, Comparator<T> comp) {

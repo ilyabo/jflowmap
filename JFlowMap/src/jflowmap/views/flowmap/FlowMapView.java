@@ -39,6 +39,8 @@ import jflowmap.views.map.PGeoMap;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Iterables;
+
 /**
  * @author Ilya Boyandin
  */
@@ -63,7 +65,7 @@ public class FlowMapView extends AbstractCanvasView {
 
   public FlowMapView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj, double weightFilterMin,
       IFlowMapColorScheme colorScheme) {
-    setVisualFlowMap(createVisualFlowMap(fmg, proj, fmg.getEdgeWeightAttrs().get(0)));
+    setVisualFlowMap(createVisualFlowMap(fmg, proj, Iterables.getLast(fmg.getEdgeWeightAttrs())));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new PGeoMap(visualFlowMap, areaMap, proj));
     }
@@ -136,6 +138,10 @@ public class FlowMapView extends AbstractCanvasView {
 
   public void setSelectedFlowWeightAttr(String flowWeightAttr) {
     visualFlowMap.setSelectedFlowWeightAttr(flowWeightAttr);
+  }
+
+  public String getSelectedFlowWeightAttr() {
+    return visualFlowMap.getSelectedFlowWeightAttr();
   }
 
   @Override
