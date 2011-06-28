@@ -49,7 +49,6 @@ import jflowmap.geo.MapProjections;
 import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
-import jflowmap.util.CollectionUtils;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.Legend;
 import jflowmap.views.PTooltip;
@@ -77,6 +76,7 @@ import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
@@ -362,7 +362,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateEdgeVisuals() {
-    for (Edge edge : CollectionUtils.reverse(getFlowMapGraph().getEdgesSortedBy(flowWeightAttr))) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.update();
@@ -1039,28 +1039,30 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void startFlowWeightAttrsAnimation() {
-//    List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
-//    int startPos = getAnimationStartPos();
-//    if (startPos == attrs.size() - 1) {
-//      return;
-//    }
-//    String nextAttr = attrs.get(startPos + 1);
-//
-////    for (int i = startPos, numAttrs = attrs.size(); i < numAttrs; i++) {
-////
-////    }
-//
-//    for (VisualEdge ve : edgesToVisuals.values()) {
-//      double prevv = ve.getEdgeWeight();
-//      double nextv = ve.getEdge().getDouble(nextAttr);
-//
-//      new PInterpolatingActivity(1000) {
-//        @Override
-//        public void setRelativeTargetValue(float zeroToOne) {
-//
-//        }
-//      };
-//    }
+    List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
+    int startPos = getAnimationStartPos();
+    if (startPos == attrs.size() - 1) {
+      return;
+    }
+
+
+//    for (int i = 0, leftAttrs = attrs.size() - (startPos + 1); i < leftAttrs; i++) {
+
+      final String nextAttr = attrs.get(startPos + /* i + */ 1);
+
+
+        addActivity(new PInterpolatingActivity(1000  /* / leftAttrs */) {
+          @Override
+          public void setRelativeTargetValue(float zeroToOne) {
+            for (final VisualEdge ve : edgesToVisuals.values()) {
+              final double prevv = ve.getEdgeWeight();
+              final double nextv = ve.getEdge().getDouble(nextAttr);
+              double value = prevv + (nextv - prevv) * zeroToOne;
+              ve.updateEdgeWidthTo(value);
+            }
+        }});
+//      }
+
 
 //    getVisualEdges()
   }

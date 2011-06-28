@@ -133,13 +133,17 @@ public abstract class VisualEdge extends PNode {
   }
 
   public void updateEdgeWidth() {
+    updateEdgeWidthTo(getEdgeWeight());
+  }
+
+  public void updateEdgeWidthTo(double value) {
     PPath ppath = getEdgePPath();
     if (ppath != null) {
       if (isSelfLoop) {
         ppath.setBounds(getSelfLoopBounds());
         ppath.setStroke(null);
       } else {
-        ppath.setStroke(createStroke());
+        ppath.setStroke(createStroke(normalizeForWidthScale(value)));
       }
     }
   }
@@ -150,7 +154,7 @@ public abstract class VisualEdge extends PNode {
   }
 
   private double getSelfLoopSize(double edgeWidth) {
-    double value = getValueNormalizedForWidthScale();
+    double value = normalizeForWidthScale(getEdgeWeight());
     if (Double.isNaN(value)) {
       return 0;
     }
@@ -263,8 +267,8 @@ public abstract class VisualEdge extends PNode {
     }
   }
 
-  private double getValueNormalizedForWidthScale() {
-    return visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(getEdgeWeight());
+  private double normalizeForWidthScale(double value) {
+    return visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(value);
   }
 
   private double getValueNormalizedForColorScale() {
@@ -277,8 +281,8 @@ public abstract class VisualEdge extends PNode {
         edgeLength, isSelfLoop);
   }
 
-  protected Stroke createStroke() {
-    return visualFlowMap.getVisualEdgeStrokeFactory().createStroke(getValueNormalizedForWidthScale());
+  protected Stroke createStroke(double normValue) {
+    return visualFlowMap.getVisualEdgeStrokeFactory().createStroke(normValue);
   }
 
   public void setHighlighted(boolean value, boolean showDirection, boolean asOutgoing) {

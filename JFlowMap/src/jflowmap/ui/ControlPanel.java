@@ -48,6 +48,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -217,12 +218,17 @@ public class ControlPanel {
       attrSlider.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(ChangeEvent e) {
-          JSlider slider = (JSlider)e.getSource();
-//          if (!slider.getValueIsAdjusting()) {
-            String attr = attrs.get(slider.getValue());
-            selAttrLabel.setText(attr);
-            setSelectedFlowWeightAttr(attr);
-//          }
+          final JSlider slider = (JSlider)e.getSource();
+          final String attr = attrs.get(slider.getValue());
+          selAttrLabel.setText(attr);
+          if (!slider.getValueIsAdjusting()) {
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                setSelectedFlowWeightAttr(attr);
+              }
+            });
+          }
         }
       });
 
