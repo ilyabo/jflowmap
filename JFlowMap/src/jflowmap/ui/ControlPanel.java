@@ -184,6 +184,10 @@ public class ControlPanel {
 
     private void setSelectedFlowWeightAttr(String selAttr) {
       jFlowMap.setSelectedFlowWeightAttr(selAttr);
+      updateFlowsTable();
+    }
+
+    private void updateFlowsTable() {
       List<Directive> sort = flowsTableSorter.getSortingColumns();
       flowsTableModel.setVisualFlowMap(jFlowMap.getVisualFlowMap());
       flowsTableSorter.setSortingColumns(sort); // prevent the column sortings being reset
@@ -219,7 +223,9 @@ public class ControlPanel {
           new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-              attrSlider.setValue(attrs.indexOf(evt.getNewValue()));
+              String sel = (String)evt.getNewValue();
+              attrSlider.setValue(attrs.indexOf(sel));
+              datasetCombo.setSelectedItem(sel);
             }
           });
       attrSlider.addChangeListener(new ChangeListener() {
@@ -229,7 +235,8 @@ public class ControlPanel {
           final String attr = attrs.get(slider.getValue());
           selAttrLabel.setText(attr);
           if (!slider.getValueIsAdjusting()) {
-            setSelectedFlowWeightAttr(attr);
+            jFlowMap.setSelectedFlowWeightAttr(attr);
+            // setSelectedFlowWeightAttr(attr);
           }
         }
       });
@@ -240,6 +247,7 @@ public class ControlPanel {
         public void run() {
           attrSlider.setEnabled(true);
           playStopBut.setText("Play");
+          updateFlowsTable();
         }
       };
       playStopBut.addActionListener(new ActionListener() {

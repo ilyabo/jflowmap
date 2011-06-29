@@ -983,7 +983,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private VisualFlowMap flowMapBeforeJoining = null;
-  private PInterpolatingActivity flowWeightAnimActivity;
+  private PInterpolatingActivity flowWeightAnimation;
 
   public void setOriginalVisualFlowMap(VisualFlowMap originalVisualFlowMap) {
     this.flowMapBeforeJoining = originalVisualFlowMap;
@@ -1051,7 +1051,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void startFlowWeightAttrsAnimation(final Runnable runWhenFinished) {
-    if (flowWeightAnimActivity != null   &&   flowWeightAnimActivity.isStepping()) {
+    if (flowWeightAnimation != null   &&   flowWeightAnimation.isStepping()) {
       return;
     }
 
@@ -1062,7 +1062,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    flowWeightAnimActivity = new PInterpolatingActivity(20000, 5) {
+    flowWeightAnimation = new PInterpolatingActivity(30000, 20) {
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
         for (VisualEdge ve : edgesToVisuals.values()) {
@@ -1093,18 +1093,18 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         super.activityFinished();
         if (runWhenFinished != null) {
           runWhenFinished.run();
-          flowWeightAnimActivity = null;
+          flowWeightAnimation = null;
         }
       }
     };
-    addActivity(flowWeightAnimActivity);
+    addActivity(flowWeightAnimation);
   }
 
 
   public void stopFlowWeightAttrsAnimation() {
-    if (flowWeightAnimActivity != null  &&  flowWeightAnimActivity.isStepping()) {
-      flowWeightAnimActivity.getActivityScheduler().removeActivity(flowWeightAnimActivity);
-      flowWeightAnimActivity = null;
+    if (flowWeightAnimation != null  &&  flowWeightAnimation.isStepping()) {
+      flowWeightAnimation.getActivityScheduler().removeActivity(flowWeightAnimation);
+      flowWeightAnimation = null;
     }
   }
 
