@@ -318,7 +318,7 @@ public abstract class VisualEdge extends PNode {
         }
         paint = color;
       } else {
-        paint = createPaint(normalizeForColorScale(getWidth()));
+        paint = createPaint(normalizeForColorScale(getEdgeWeight()));
       }
       ppath.setStrokePaint(paint);
     }
