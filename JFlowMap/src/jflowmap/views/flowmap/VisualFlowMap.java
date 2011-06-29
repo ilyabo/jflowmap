@@ -1112,6 +1112,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         }
       }
     };
+    flowWeightAnimation.setSlowInSlowOut(false);
     addActivity(flowWeightAnimation);
   }
 
