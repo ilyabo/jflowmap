@@ -19,6 +19,7 @@
 package jflowmap;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.Rectangle;
@@ -33,6 +34,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
@@ -80,9 +82,12 @@ public class ViewLoader {
 
 
     SwingWorker<IView, Object> worker = new SwingWorker<IView, Object>() {
+
+      ViewConfig config;
+
       @Override
       public IView doInBackground() throws IOException {
-        ViewConfig config = ViewConfig.load(viewConfigLocation);
+        config = ViewConfig.load(viewConfigLocation);
         return config.createView();
       }
 
@@ -106,7 +111,7 @@ public class ViewLoader {
 
               final JComponent controls = view.getControls();
               if (controls != null) {
-                createControls(parent, canvas, controls);
+                createControls(parent, canvas, controls, config);
               }
 
             }
@@ -133,11 +138,11 @@ public class ViewLoader {
   }
 
   private static void createControls(final Container parent, VisualCanvas canvas,
-      final JComponent controls) {
+      final JComponent controls, ViewConfig config) {
 
 
     final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
-    buttonPanel.addChild(createSettingsButton(parent, controls));
+    buttonPanel.addChild(createSettingsButton(parent, controls, config));
 
 //    final PButton helpBut = new PButton(" ? ", true);
 //    buttonPanel.addChild(helpBut);
@@ -155,7 +160,8 @@ public class ViewLoader {
 
   }
 
-  private static PButton createSettingsButton(final Container parent, final JComponent controls) {
+  private static PButton createSettingsButton(final Container parent, final JComponent controls,
+      ViewConfig config) {
     final PButton settingsBut = new PButton("Settings", true);
 
     Window win = SwingUtilities.windowForComponent(parent);
@@ -166,10 +172,17 @@ public class ViewLoader {
     dialog.setLocation((int)b.getMaxX() - dialog.getWidth(), (int)b.getMaxY() - dialog.getHeight());
     dialog.setResizable(false);
 
+    String activeTab = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_ACTIVE_TAB);
+    if (activeTab != null) {
+      setActiveTab(dialog.getContentPane(), activeTab);
+    }
+
+    dialog.setVisible(config.getBoolOrElse(ViewConfig.PROP_WINDOW_SETTINGS_SHOW, false));
+
     settingsBut.addInputEventListener(new PBasicInputEventHandler() {
        @Override
        public void mouseClicked(PInputEvent event) {
-         if (settingsBut.isPressed()) {
+         if (!dialog.isVisible()) {
            dialog.setVisible(true);
            dialog.toFront();
            dialog.requestFocus();
@@ -191,5 +204,17 @@ public class ViewLoader {
      });
 
     return settingsBut;
+  }
+
+  private static void setActiveTab(Container contentPane, String activeTab) {
+    for (Component c : contentPane.getComponents()) {
+      if (c instanceof JTabbedPane) {
+        JTabbedPane tp = (JTabbedPane)c;
+        int index = tp.indexOfTab(activeTab);
+        if (index >= 0) {
+          tp.setSelectedIndex(index);
+        }
+      }
+    }
   }
 }

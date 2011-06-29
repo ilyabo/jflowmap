@@ -7,6 +7,10 @@ view.flowmap.showNodes=false
 view.flowmap.edgeWidth=35
 view.flowmap.edgeOpacity=100
 
+window.size=800x600
+window.settings.show=true
+window.settings.activeTab=Animation
+
 data=csv
 data.csv.separator=,
 data.csv.charset=utf-8

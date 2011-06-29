@@ -57,6 +57,12 @@ public class ViewConfig {
 
   public static final String PROP_VIEW = "view";
 
+  public static final String PROP_WINDOW = "window";
+  public static final String PROP_WINDOW_SIZE = PROP_WINDOW + ".size";
+  public static final String PROP_WINDOW_SETTINGS = PROP_WINDOW + ".settings";
+  public static final String PROP_WINDOW_SETTINGS_SHOW = PROP_WINDOW_SETTINGS + ".show";
+  public static final String PROP_WINDOW_SETTINGS_ACTIVE_TAB = PROP_WINDOW_SETTINGS + ".activeTab";
+
   public static final String PROP_DATA = "data";
 
   public static final String PROP_DATA_CSV = PROP_DATA + ".csv";
