@@ -29,13 +29,15 @@ import jflowmap.FlowMapGraph;
 import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.IView;
 import jflowmap.geo.MapProjections;
-import jflowmap.models.map.MapArea;
 import jflowmap.models.map.GeoMap;
+import jflowmap.models.map.MapArea;
 import jflowmap.util.CollectionUtils;
 import jflowmap.util.IOUtils;
 import jflowmap.util.Pair;
 import jflowmap.util.PropUtils;
+import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.flowmap.FlowMapView;
+import jflowmap.views.flowmap.VisualFlowMapModel;
 import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
 
@@ -196,6 +198,10 @@ public class ViewConfig {
     return PropUtils.getDoubleOrElse(props, propName, defaultValue);
   }
 
+  public boolean getBoolOrElse(String propName, boolean defaultValue) {
+    return PropUtils.getBoolOrElse(props, propName, defaultValue);
+  }
+
   enum DataLoaders {
     CSV {
       @Override
@@ -292,11 +298,39 @@ public class ViewConfig {
     FLOWMAP {
       @Override
       public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
-        return
-          new FlowMapView((FlowMapGraph)data, areaMap, mapProjection(config),
-              config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN, Double.NaN),
-              FlowMapColorSchemes.findByName(
-                  config.getStringOrElse(FlowMapView.VIEW_CONFIG_PROP_COLOR_SCHEME, "Dark")));
+        FlowMapGraph fmg = (FlowMapGraph)data;
+
+        VisualFlowMapModel model = new VisualFlowMapModel(fmg);
+        model.setEdgeAlpha(config.getIntOrElse(FlowMapView.VIEW_CONFIG_PROP_EDGE_OPACITY, model.getEdgeAlpha()));
+        model.setMaxEdgeWidth(config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_EDGE_WIDTH, model.getMaxEdgeWidth()));
+
+        double minWeight = config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN, Double.NaN);
+        if (!Double.isNaN(minWeight)) {
+          model.setEdgeWeightFilterMin(minWeight);
+        }
+        double maxWeight = config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX, Double.NaN);
+        if (!Double.isNaN(maxWeight)) {
+          model.setEdgeWeightFilterMax(maxWeight);
+        }
+
+        double minLength = config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_LENGTH_FILTER_MIN, Double.NaN);
+        if (!Double.isNaN(minLength)) {
+          model.setEdgeLengthFilterMin(minLength);
+        }
+        double maxLength = config.getDoubleOrElse(FlowMapView.VIEW_CONFIG_PROP_LENGTH_FILTER_MAX, Double.NaN);
+        if (!Double.isNaN(maxLength)) {
+          model.setEdgeLengthFilterMax(maxLength);
+        }
+        model.setShowDirectionMarkers(config.getBoolOrElse(FlowMapView.VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS, true));
+        model.setShowNodes(config.getBoolOrElse(FlowMapView.VIEW_CONFIG_PROP_SHOW_NODES, true));
+        model.setFillEdgesWithGradient(config.getBoolOrElse(FlowMapView.VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT, true));
+
+        IFlowMapColorScheme colors = FlowMapColorSchemes.findByName(
+            config.getStringOrElse(FlowMapView.VIEW_CONFIG_PROP_COLOR_SCHEME, "Dark"));
+
+        FlowMapView flowMapView = new FlowMapView(model, areaMap, mapProjection(config), colors);
+
+        return flowMapView;
       }
     }
 //    , FLOWMAPSMALLMULTIPLES {

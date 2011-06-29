@@ -57,20 +57,23 @@ public class FlowMapView extends AbstractCanvasView {
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
   public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN = "view.flowmap.weightFilterMin";
+  public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX = "view.flowmap.weightFilterMax";
+  public static final String VIEW_CONFIG_PROP_LENGTH_FILTER_MIN = "view.flowmap.lengthFilterMin";
+  public static final String VIEW_CONFIG_PROP_LENGTH_FILTER_MAX = "view.flowmap.lengthFilterMax";
   public static final String VIEW_CONFIG_PROP_COLOR_SCHEME = "view.flowmap.colorScheme";
+  public static final String VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT = "view.flowmap.fillEdgesWithGradient";
+  public static final String VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS = "view.flowmap.showDirectionMarkers";
+  public static final String VIEW_CONFIG_PROP_SHOW_NODES = "view.flowmap.showNodes";
+  public static final String VIEW_CONFIG_PROP_EDGE_WIDTH = "view.flowmap.edgeWidth";
+  public static final String VIEW_CONFIG_PROP_EDGE_OPACITY = "view.flowmap.edgeOpacity";
 
-  public FlowMapView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj) {
-    this(fmg, areaMap, proj, Double.NaN, null);
-  }
 
-  public FlowMapView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj, double weightFilterMin,
-      IFlowMapColorScheme colorScheme) {
-    setVisualFlowMap(createVisualFlowMap(fmg, proj, Iterables.getLast(fmg.getEdgeWeightAttrs())));
+  public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme colorScheme) {
+    FlowMapGraph fmg = model.getFlowMapGraph();
+
+    setVisualFlowMap(createVisualFlowMap(model, proj, Iterables.getLast(fmg.getEdgeWeightAttrs())));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new PGeoMap(visualFlowMap, areaMap, proj));
-    }
-    if (!Double.isNaN(weightFilterMin)) {
-      getVisualFlowMap().getModel().setEdgeWeightFilterMin(weightFilterMin);
     }
     if (colorScheme != null) {
       setColorScheme(colorScheme);
@@ -118,10 +121,11 @@ public class FlowMapView extends AbstractCanvasView {
   public void load(GraphMLDatasetSpec dataset, FlowMapStats stats) {
     logger.info("> Loading flow map '" + dataset + "'");
     try {
-      FlowMapGraph flowMapGraph = FlowMapGraph.loadGraphML(dataset, stats);
+      FlowMapGraph fmg = FlowMapGraph.loadGraphML(dataset, stats);
 
       VisualFlowMap visualFlowMap = createVisualFlowMap(
-          flowMapGraph, dataset.getMapProjection(), flowMapGraph.getEdgeWeightAttrs().get(0));
+          new VisualFlowMapModel(fmg),
+          dataset.getMapProjection(), fmg.getEdgeWeightAttrs().get(0));
 
       GeoMap areaMap = GeoMap.loadFor(dataset);
 
@@ -168,9 +172,9 @@ public class FlowMapView extends AbstractCanvasView {
     return colorScheme.get(code);
   }
 
-  public VisualFlowMap createVisualFlowMap(FlowMapGraph flowMapGraph, MapProjection proj,
+  public VisualFlowMap createVisualFlowMap(VisualFlowMapModel model, MapProjection proj,
       String flowWeightAttr) {
-    return new VisualFlowMap(this, flowMapGraph, true, proj, flowWeightAttr);
+    return new VisualFlowMap(this, model, true, proj, flowWeightAttr);
   }
 
   public VisualFlowMap getVisualFlowMap() {

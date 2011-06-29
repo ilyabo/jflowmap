@@ -136,13 +136,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final MapProjection mapProjection;
 
 
-  public VisualFlowMap(FlowMapView jFlowMap, FlowMapGraph flowMapGraph, boolean showLegend,
+  public VisualFlowMap(FlowMapView jFlowMap, VisualFlowMapModel model, boolean showLegend,
       MapProjection proj, String flowWeightAttr) {
     this.jFlowMap = jFlowMap;
     this.mapProjection = proj;
     this.flowWeightAttr = flowWeightAttr;
 
-    visualFlowMapModel = new VisualFlowMapModel(flowMapGraph);
+    this.visualFlowMapModel = model;
+
 //    double minWeight = flowMapGraph.getAttrSpec().getWeightFilterMin();
 //    if (!Double.isNaN(minWeight)) {
 //      visualFlowMapModel.setEdgeWeightFilterMin(minWeight);
@@ -197,12 +198,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     String oldValue = this.flowWeightAttr;
     if (!oldValue.equals(attr)) {
       this.flowWeightAttr = attr;
+      resetClusters();
+      resetBundling();
       if (doUpdate) {
-        resetClusters();
-        resetBundling();
-  //      createVisuals();
-        updateEdgeVisuals();
+        updateVisualEdges();
       }
+      updateVisualEdgeOrdering();
       firePropertyChange(PROPERTY_CODE_FLOW_WEIGHT_ATTR, PROPERTY_FLOW_WEIGHT_ATTR, oldValue, attr);
     }
   }
@@ -372,11 +373,20 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return (fmg.hasCoords(srcNode)  &&  fmg.hasCoords(targetNode));
   }
 
-  private void updateEdgeVisuals() {
+  private void updateVisualEdges() {
     for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.update();
+//        ve.moveToFront();  // order by attr value
+      }
+    }
+  }
+
+  private void updateVisualEdgeOrdering() {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
+      VisualEdge ve = edgesToVisuals.get(edge);
+      if (hasCoordinates(edge)) {
         ve.moveToFront();  // order by attr value
       }
     }
@@ -1001,9 +1011,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //      addChild(marker);
 //    }
 
-    FlowMapGraph clusteredGraph = VisualNodeCluster.createClusteredFlowMap(
+    FlowMapGraph fmg = VisualNodeCluster.createClusteredFlowMap(
         getFlowMapGraph().getAttrSpec(), visualNodeClusters);
-    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(clusteredGraph, mapProjection,
+    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(
+        new VisualFlowMapModel(fmg), mapProjection,
         flowWeightAttr);
     if (areaMap != null) {
       clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
@@ -1013,10 +1024,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void resetClusters() {
-    removeClusterTags();
-    rootCluster = null;
-    euclideanRootCluster = null;
-    visualNodeClusters = null;
+    if (rootCluster != null) {
+      removeClusterTags();
+      rootCluster = null;
+      euclideanRootCluster = null;
+      visualNodeClusters = null;
+    }
   }
 
   public void resetJoinedNodes() {
@@ -1062,7 +1075,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    flowWeightAnimation = new PInterpolatingActivity(30000, 20) {
+    flowWeightAnimation = new PInterpolatingActivity(20000) {
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
         for (VisualEdge ve : edgesToVisuals.values()) {
@@ -1070,18 +1083,20 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           double value;
 
           double alpha = (numAttrs - 1) * zeroToOne;
-          int low_attr = (int)Math.floor(alpha);
-          int high_attr = (int)Math.ceil(alpha);
+          int lowi = (int)Math.floor(alpha);
+          int highi = (int)Math.ceil(alpha);
 
-          if (low_attr == high_attr) {
-            value = ve.getEdge().getDouble(attrs.get(low_attr));
+          if (lowi == highi) {
+            value = ve.getEdge().getDouble(attrs.get(lowi));
           } else {
-            double low = ve.getEdge().getDouble(attrs.get(low_attr));
-            double high = ve.getEdge().getDouble(attrs.get(high_attr));
-            value = low + (high - low) * (alpha - low_attr);
+            double low = ve.getEdge().getDouble(attrs.get(lowi));
+            double high = ve.getEdge().getDouble(attrs.get(highi));
+            if (Double.isNaN(low)) low = 0;
+            if (Double.isNaN(high)) high = 0;
+            value = low + (high - low) * (alpha - lowi);
           }
 
-          setSelectedFlowWeightAttr(attrs.get(low_attr), false);
+          setSelectedFlowWeightAttr(attrs.get(lowi), false);
 
           ve.updateEdgeWidthTo(value);
           ve.updateEdgeColorsTo(value);

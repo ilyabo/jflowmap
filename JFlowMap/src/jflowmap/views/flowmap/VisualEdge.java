@@ -198,6 +198,7 @@ public abstract class VisualEdge extends PNode {
 
     boolean visible =
         !Double.isNaN(weight)  &&
+        weight != 0.0  &&
         weightFilterMin <= weight && weight <= weightFilterMax  &&
         edgeLengthFilterMin <= length && length <= edgeLengthFilterMax
     ;
@@ -327,7 +328,6 @@ public abstract class VisualEdge extends PNode {
   public void update() {
 //    updateVisibility();
     updateEdgeColors();
-//    updateEdgeMarkerColors();
     updateEdgeWidth();
   }
 

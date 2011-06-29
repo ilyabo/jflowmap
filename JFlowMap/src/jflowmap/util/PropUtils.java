@@ -65,6 +65,14 @@ public class PropUtils {
     return Double.parseDouble(val.trim());
   }
 
+  public static boolean getBoolOrElse(Properties props, String propName, boolean defaultValue) {
+    String val = props.getProperty(propName);
+    if (isEmpty(val)) {
+      return defaultValue;
+    }
+    return Boolean.parseBoolean(val.trim());
+  }
+
   public static boolean isEmpty(String value) {
     return value == null  ||  value.trim().length() == 0;
   }
