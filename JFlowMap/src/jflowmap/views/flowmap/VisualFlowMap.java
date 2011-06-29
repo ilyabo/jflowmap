@@ -94,6 +94,9 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   private static final boolean SHOW_SPLINE_POINTS = false;
 
+  public static final int PROPERTY_CODE_FLOW_WEIGHT_ATTR = 1 << 11;
+  public static final String PROPERTY_FLOW_WEIGHT_ATTR = "flowWeightAttr";
+
   public enum Attributes {
     NODE_SELECTION
   }
@@ -186,13 +189,21 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     createEdgeVisuals();
   }
 
-  public void setSelectedFlowWeightAttr(String flowWeightAttr) {
-    if (!this.flowWeightAttr.equals(flowWeightAttr)) {
-      this.flowWeightAttr = flowWeightAttr;
-      resetClusters();
-      resetBundling();
-//      createVisuals();
-      updateEdgeVisuals();
+  public void setSelectedFlowWeightAttr(String attr) {
+    setSelectedFlowWeightAttr(attr, true);
+  }
+
+  private void setSelectedFlowWeightAttr(String attr, boolean doUpdate) {
+    String oldValue = this.flowWeightAttr;
+    if (!oldValue.equals(attr)) {
+      this.flowWeightAttr = attr;
+      if (doUpdate) {
+        resetClusters();
+        resetBundling();
+  //      createVisuals();
+        updateEdgeVisuals();
+      }
+      firePropertyChange(PROPERTY_CODE_FLOW_WEIGHT_ATTR, PROPERTY_FLOW_WEIGHT_ATTR, oldValue, attr);
     }
   }
 
@@ -972,6 +983,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private VisualFlowMap flowMapBeforeJoining = null;
+  private PInterpolatingActivity flowWeightAnimActivity;
 
   public void setOriginalVisualFlowMap(VisualFlowMap originalVisualFlowMap) {
     this.flowMapBeforeJoining = originalVisualFlowMap;
@@ -1038,41 +1050,63 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return null;
   }
 
-  public void startFlowWeightAttrsAnimation() {
-    List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
-    int startPos = getAnimationStartPos();
-    if (startPos == attrs.size() - 1) {
+  public void startFlowWeightAttrsAnimation(final Runnable runWhenFinished) {
+    if (flowWeightAnimActivity != null   &&   flowWeightAnimActivity.isStepping()) {
       return;
     }
 
+    final List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
 
-//    for (int i = 0, leftAttrs = attrs.size() - (startPos + 1); i < leftAttrs; i++) {
-
-      final String nextAttr = attrs.get(startPos + /* i + */ 1);
-
-
-        addActivity(new PInterpolatingActivity(1000  /* / leftAttrs */) {
-          @Override
-          public void setRelativeTargetValue(float zeroToOne) {
-            for (final VisualEdge ve : edgesToVisuals.values()) {
-              final double prevv = ve.getEdgeWeight();
-              final double nextv = ve.getEdge().getDouble(nextAttr);
-              double value = prevv + (nextv - prevv) * zeroToOne;
-              ve.updateEdgeWidthTo(value);
-            }
-        }});
-//      }
-
-
-//    getVisualEdges()
-  }
-
-  private int getAnimationStartPos() {
-    int startPos = getFlowMapGraph().getEdgeWeightAttrs().indexOf(flowWeightAttr);
-    if (startPos < 0) {
-      startPos = 0;
+    final int numAttrs = attrs.size();
+    if (numAttrs == 0) {
+      return;
     }
-    return startPos;
+
+    flowWeightAnimActivity = new PInterpolatingActivity(20000, 5) {
+      @Override
+      public void setRelativeTargetValue(float zeroToOne) {
+        for (VisualEdge ve : edgesToVisuals.values()) {
+
+          double value;
+
+          double alpha = (numAttrs - 1) * zeroToOne;
+          int low_attr = (int)Math.floor(alpha);
+          int high_attr = (int)Math.ceil(alpha);
+
+          if (low_attr == high_attr) {
+            value = ve.getEdge().getDouble(attrs.get(low_attr));
+          } else {
+            double low = ve.getEdge().getDouble(attrs.get(low_attr));
+            double high = ve.getEdge().getDouble(attrs.get(high_attr));
+            value = low + (high - low) * (alpha - low_attr);
+          }
+
+          setSelectedFlowWeightAttr(attrs.get(low_attr), false);
+
+          ve.updateEdgeWidthTo(value);
+          ve.updateEdgeColorsTo(value);
+        }
+      }
+
+      @Override
+      protected void activityFinished() {
+        super.activityFinished();
+        if (runWhenFinished != null) {
+          runWhenFinished.run();
+          flowWeightAnimActivity = null;
+        }
+      }
+    };
+    addActivity(flowWeightAnimActivity);
   }
+
+
+  public void stopFlowWeightAttrsAnimation() {
+    if (flowWeightAnimActivity != null  &&  flowWeightAnimActivity.isStepping()) {
+      flowWeightAnimActivity.getActivityScheduler().removeActivity(flowWeightAnimActivity);
+      flowWeightAnimActivity = null;
+    }
+  }
+
 
 }

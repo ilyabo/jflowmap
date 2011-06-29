@@ -48,7 +48,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -196,14 +195,14 @@ public class ControlPanel {
 
     private JPanel createAnimationTab() {
       JPanel panel = new JPanel(new MigLayout(
-          "fillx,insets 20", "[][][][grow][]"));
+          "fillx,insets 20", "[][grow][]"));
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
       int selIndex = attrs.indexOf(jFlowMap.getSelectedFlowWeightAttr());
       final JLabel selAttrLabel = new JLabel(attrs.get(selIndex));
       selAttrLabel.setFont(new Font("Arial", Font.BOLD, 42));
 
-      JSlider attrSlider = new JSlider(0, attrs.size() - 1, selIndex);
+      final JSlider attrSlider = new JSlider(0, attrs.size() - 1, selIndex);
 //      attrSlider.getModel().set
 
       Hashtable<Integer, JComponent> labels = new Hashtable<Integer, JComponent>();
@@ -215,6 +214,14 @@ public class ControlPanel {
       attrSlider.setMajorTickSpacing(attrs.size() < 50  ?  1  : (int)Math.ceil(attrs.size() / 50));
       attrSlider.setPaintTicks(true);
       attrSlider.setPaintLabels(true);
+      jFlowMap.getVisualFlowMap().addPropertyChangeListener(
+          VisualFlowMap.PROPERTY_FLOW_WEIGHT_ATTR,
+          new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+              attrSlider.setValue(attrs.indexOf(evt.getNewValue()));
+            }
+          });
       attrSlider.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -222,27 +229,36 @@ public class ControlPanel {
           final String attr = attrs.get(slider.getValue());
           selAttrLabel.setText(attr);
           if (!slider.getValueIsAdjusting()) {
-            SwingUtilities.invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                setSelectedFlowWeightAttr(attr);
-              }
-            });
+            setSelectedFlowWeightAttr(attr);
           }
         }
       });
 
-      JButton playBut = new JButton("Play");
-      playBut.addActionListener(new ActionListener() {
+      final JButton playStopBut = new JButton("Play");
+      final Runnable runWhenFinished = new Runnable() {
+        @Override
+        public void run() {
+          attrSlider.setEnabled(true);
+          playStopBut.setText("Play");
+        }
+      };
+      playStopBut.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          jFlowMap.getVisualFlowMap().startFlowWeightAttrsAnimation();
+          if (playStopBut.getText().equals("Play")) {
+            attrSlider.setEnabled(false);
+            playStopBut.setText("Stop");
+            jFlowMap.getVisualFlowMap().startFlowWeightAttrsAnimation(runWhenFinished);
+          } else {
+            jFlowMap.getVisualFlowMap().stopFlowWeightAttrsAnimation();
+            runWhenFinished.run();
+          }
         }
       });
 
-      panel.add(new JButton("|<<"), "aligny top");
-      panel.add(playBut, "aligny top");
-      panel.add(new JButton(">>|"), "aligny top");
+//      panel.add(new JButton("|<<"), "aligny top");
+      panel.add(playStopBut, "aligny top");
+//      panel.add(new JButton(">>|"), "aligny top");
       panel.add(attrSlider, "gapx 20, growx");
       panel.add(selAttrLabel, "gap 20, aligny top");
       return panel;

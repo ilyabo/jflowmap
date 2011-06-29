@@ -146,6 +146,23 @@ public abstract class VisualEdge extends PNode {
         ppath.setStroke(createStroke(normalizeForWidthScale(value)));
       }
     }
+    updateVisibilityFor(value);
+  }
+
+  public void updateEdgeColors() {
+    updateEdgeColorsTo(getEdgeWeight());
+  }
+
+  public void updateEdgeColorsTo(double value) {
+    PPath ppath = getEdgePPath();
+    if (ppath != null) {
+      double normValue = normalizeForColorScale(value);
+      if (isSelfLoop) {
+        ppath.setPaint(createPaint(normValue));
+      } else {
+        ppath.setStrokePaint(createPaint(normValue));
+      }
+    }
   }
 
   private Rectangle2D.Double getSelfLoopBounds() {
@@ -167,13 +184,16 @@ public abstract class VisualEdge extends PNode {
 //  public abstract void updateEdgeMarkerColors();
 
   public void updateVisibility() {
+    updateVisibilityFor(getEdgeWeight());
+  }
+
+  public void updateVisibilityFor(double weight) {
     final VisualFlowMapModel model = visualFlowMap.getModel();
     double weightFilterMin = model.getEdgeWeightFilterMin();
     double weightFilterMax = model.getEdgeWeightFilterMax();
 
     double edgeLengthFilterMin = model.getEdgeLengthFilterMin();
     double edgeLengthFilterMax = model.getEdgeLengthFilterMax();
-    final double weight = getEdgeWeight();
     double length = getEdgeLength();
 
     boolean visible =
@@ -183,18 +203,25 @@ public abstract class VisualEdge extends PNode {
     ;
 
     if (visible) {
-      if (visualFlowMap.hasClusters()) {
-        VisualNodeCluster srcCluster = visualFlowMap.getNodeCluster(getSourceNode());
-        VisualNodeCluster targetCluster = visualFlowMap.getNodeCluster(getTargetNode());
-
-        // TODO: why do we need these null checks here? i.e. why some countries don't have a cluster
-        visible = (srcCluster != null  &&  srcCluster.getTag().isVisible())  ||
-              (targetCluster != null  &&  targetCluster.getTag().isVisible());
-      }
+      visible = areNodeClustersVisibile();
     }
+
     setVisible(visible);
     setPickable(visible);
     setChildrenPickable(visible);
+  }
+
+  private boolean areNodeClustersVisibile() {
+    boolean visible = true;
+    if (visualFlowMap.hasClusters()) {
+      VisualNodeCluster srcCluster = visualFlowMap.getNodeCluster(getSourceNode());
+      VisualNodeCluster targetCluster = visualFlowMap.getNodeCluster(getTargetNode());
+
+      // TODO: why do we need these null checks here? i.e. why some countries don't have a cluster
+      visible = (srcCluster != null  &&  srcCluster.getTag().isVisible())  ||
+            (targetCluster != null  &&  targetCluster.getTag().isVisible());
+    }
+    return visible;
   }
 
   public Edge getEdge() {
@@ -256,28 +283,17 @@ public abstract class VisualEdge extends PNode {
     '}';
   }
 
-  public void updateEdgeColors() {
-    PPath ppath = getEdgePPath();
-    if (ppath != null) {
-      if (isSelfLoop) {
-        ppath.setPaint(createPaint());
-      } else {
-        ppath.setStrokePaint(createPaint());
-      }
-    }
-  }
-
   private double normalizeForWidthScale(double value) {
     return visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(value);
   }
 
-  private double getValueNormalizedForColorScale() {
-    return visualFlowMap.getModel().normalizeEdgeWeightForColorScale(getEdgeWeight());
+  private double normalizeForColorScale(double value) {
+    return visualFlowMap.getModel().normalizeEdgeWeightForColorScale(value);
   }
 
-  private Paint createPaint() {
+  private Paint createPaint(double normValue) {
     return visualFlowMap.getVisualEdgePaintFactory().createPaint(
-        getValueNormalizedForColorScale(), getSourceX(), getSourceY(), getTargetX(), getTargetY(),
+        normValue, getSourceX(), getSourceY(), getTargetX(), getTargetY(),
         edgeLength, isSelfLoop);
   }
 
@@ -302,14 +318,14 @@ public abstract class VisualEdge extends PNode {
         }
         paint = color;
       } else {
-        paint = createPaint();
+        paint = createPaint(normalizeForColorScale(getWidth()));
       }
       ppath.setStrokePaint(paint);
     }
   }
 
   public void update() {
-    updateVisibility();
+//    updateVisibility();
     updateEdgeColors();
 //    updateEdgeMarkerColors();
     updateEdgeWidth();

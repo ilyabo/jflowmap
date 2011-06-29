@@ -1,0 +1,15 @@
+<html>
+<head>
+<script type="text/javascript" src="http://www.java.com/js/deployJava.js"></script>
+<script type="text/javascript">
+var deployApp = function(viewconf) {
+ deployJava.runApplet(
+  {code:'jflowmap.JFlowMapApplet', width:'100%', height:'100%', archive:'jflowmap.jar'},
+  {viewConfig:viewconf, codebase_lookup:'.'}, '1.6');
+};
+</script>
+</head>
+<body style="overflow:hidden; padding:0px 0px; margin:0px 0px">
+  <script type="text/javascript">deployApp('viewconf/chile-labour-migration-fs.jfmv');</script>
+</body>
+</html>
