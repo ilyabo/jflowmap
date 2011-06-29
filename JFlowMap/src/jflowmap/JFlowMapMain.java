@@ -109,7 +109,7 @@ public class JFlowMapMain {
         frame.setVisible(true);
 
         try {
-          ViewLoader.loadView(configLocation, frame.getContentPane());
+          ViewLoader.loadView(configLocation, frame);
         } catch (Exception ex) {
           logger.error("Cannot open view", ex);
           JMsgPane.showProblemDialog(frame, ex);

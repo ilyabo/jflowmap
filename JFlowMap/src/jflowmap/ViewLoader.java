@@ -21,14 +21,18 @@ package jflowmap;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -88,7 +92,23 @@ public class ViewLoader {
       @Override
       public IView doInBackground() throws IOException {
         config = ViewConfig.load(viewConfigLocation);
+
+        adjustWindowSize(parent);
+
         return config.createView();
+      }
+
+      private void adjustWindowSize(final Container parent) {
+        String size = config.getString(ViewConfig.PROP_WINDOW_SIZE);
+        if (size != null) {
+          Matcher m = Pattern.compile("(\\d+)x(\\d+)").matcher(size);
+          if (m.matches()) {
+            Window win = getWindowFor(parent);
+            if (win != null) {
+              win.setSize(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+            }
+          }
+        }
       }
 
       @Override
@@ -164,12 +184,15 @@ public class ViewLoader {
       ViewConfig config) {
     final PButton settingsBut = new PButton("Settings", true);
 
-    Window win = SwingUtilities.windowForComponent(parent);
+    Window win = getWindowFor(parent);
     final JDialog dialog = new JDialog(win, "Settings");
     dialog.setContentPane(controls);
     dialog.pack();
     Rectangle b = win.getBounds();
-    dialog.setLocation((int)b.getMaxX() - dialog.getWidth(), (int)b.getMaxY() - dialog.getHeight());
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    dialog.setLocation(
+        (int)b.getMaxX() - dialog.getWidth(),
+        (int)Math.min(b.getMaxY(), screen.getHeight() - dialog.getHeight()));
     dialog.setResizable(false);
 
     String activeTab = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_ACTIVE_TAB);
@@ -177,7 +200,9 @@ public class ViewLoader {
       setActiveTab(dialog.getContentPane(), activeTab);
     }
 
-    dialog.setVisible(config.getBoolOrElse(ViewConfig.PROP_WINDOW_SETTINGS_SHOW, false));
+    boolean visible = config.getBoolOrElse(ViewConfig.PROP_WINDOW_SETTINGS_SHOW, false);
+    dialog.setVisible(visible);
+    settingsBut.setPressed(visible);
 
     settingsBut.addInputEventListener(new PBasicInputEventHandler() {
        @Override
@@ -204,6 +229,16 @@ public class ViewLoader {
      });
 
     return settingsBut;
+  }
+
+  private static Window getWindowFor(final Container parent) {
+    Window win;
+    if (parent instanceof Window) {
+      win = (Window)parent;
+    } else {
+      win = SwingUtilities.windowForComponent(parent);
+    }
+    return win;
   }
 
   private static void setActiveTab(Container contentPane, String activeTab) {

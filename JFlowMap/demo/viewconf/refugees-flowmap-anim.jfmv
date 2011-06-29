@@ -4,10 +4,10 @@ view.flowmap.lengthFilterMax=10
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
-view.flowmap.edgeWidth=35
+view.flowmap.edgeWidth=25
 view.flowmap.edgeOpacity=100
 
-window.size=800x600
+window.size=1024x768
 window.settings.show=true
 window.settings.activeTab=Animation
 
