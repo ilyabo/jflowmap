@@ -19,7 +19,6 @@
 package jflowmap.views.flowmap;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -50,9 +49,8 @@ public class FlowMapView extends AbstractCanvasView {
 
   public static Logger logger = Logger.getLogger(FlowMapView.class);
 
-  private ControlPanel controlPanel;
+  private final ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
-  private IFlowMapColorScheme colorScheme = FlowMapColorSchemes.LIGHT.getScheme();
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
@@ -68,30 +66,29 @@ public class FlowMapView extends AbstractCanvasView {
   public static final String VIEW_CONFIG_PROP_EDGE_OPACITY = "view.flowmap.edgeOpacity";
 
 
-  public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme colorScheme) {
+  public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme cs) {
     FlowMapGraph fmg = model.getFlowMapGraph();
 
-    setVisualFlowMap(createVisualFlowMap(model, proj, Iterables.getLast(fmg.getEdgeWeightAttrs())));
+    setVisualFlowMap(createVisualFlowMap(model, proj, Iterables.getLast(fmg.getEdgeWeightAttrs()), cs));
     if (areaMap != null) {
       visualFlowMap.setAreaMap(new PGeoMap(visualFlowMap, areaMap, proj));
     }
-    if (colorScheme != null) {
-      setColorScheme(colorScheme);
+    if (cs != null) {
+      setColorScheme(cs);
     }
     controlPanel = new ControlPanel(this, fmg.getAttrSpec());
   }
 
-  public FlowMapView(List<GraphMLDatasetSpec> datasetSpecs, boolean showControlPanel) {
-//    if (visualFlowMap == null) {
-//      return;  // an exception occured during the initialization
-//    }
-    if (datasetSpecs != null) {
-      load(datasetSpecs.get(0));
+  public FlowMapView(List<GraphMLDatasetSpec> datasets, boolean showControlPanel) {
+    if (datasets != null) {
+      load(datasets.get(0), getVisualFlowMap().getFlowMapGraph().getStats());
       getVisualCanvas().getLayer().addChild(visualFlowMap);
     }
 
     if (showControlPanel) {
       controlPanel = new ControlPanel(this, getVisualFlowMap().getFlowMapGraph().getAttrSpec());
+    } else {
+      controlPanel = null;
     }
   }
 
@@ -109,10 +106,6 @@ public class FlowMapView extends AbstractCanvasView {
     return BorderLayout.SOUTH;
   }
 
-  public void load(GraphMLDatasetSpec dataset) {
-    load(dataset, null);
-  }
-
   /**
    * Use when the stats have to be induced and not calculated (e.g. when a global mapping over
    * a number of flow maps for small multiples must be used).
@@ -125,7 +118,9 @@ public class FlowMapView extends AbstractCanvasView {
 
       VisualFlowMap visualFlowMap = createVisualFlowMap(
           new VisualFlowMapModel(fmg),
-          dataset.getMapProjection(), fmg.getEdgeWeightAttrs().get(0));
+          dataset.getMapProjection(), fmg.getEdgeWeightAttrs().get(0),
+          FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme()
+      );
 
       GeoMap areaMap = GeoMap.loadFor(dataset);
 
@@ -153,28 +148,23 @@ public class FlowMapView extends AbstractCanvasView {
     return visualFlowMap.getName();
   }
 
-  public void setColorScheme(IFlowMapColorScheme colorScheme) {
-    this.colorScheme = colorScheme;
-    getVisualCanvas().setBackground(colorScheme.get(ColorCodes.BACKGROUND));
+  public void setColorScheme(IFlowMapColorScheme cs) {
     if (visualFlowMap != null) {
-      visualFlowMap.updateColors();
+      visualFlowMap.setColorScheme(cs);
     }
     if (controlPanel != null) {
       controlPanel.updateColorScheme();
     }
+    getVisualCanvas().setBackground(cs.get(ColorCodes.BACKGROUND));
   }
 
   public IFlowMapColorScheme getColorScheme() {
-    return colorScheme;
-  }
-
-  public Color getColor(ColorCodes code) {
-    return colorScheme.get(code);
+    return visualFlowMap.getColorScheme();
   }
 
   public VisualFlowMap createVisualFlowMap(VisualFlowMapModel model, MapProjection proj,
-      String flowWeightAttr) {
-    return new VisualFlowMap(this, model, true, proj, flowWeightAttr);
+      String flowWeightAttr, IFlowMapColorScheme cs) {
+    return new VisualFlowMap(this, model, true, proj, flowWeightAttr, cs);
   }
 
   public VisualFlowMap getVisualFlowMap() {

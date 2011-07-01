@@ -61,6 +61,7 @@ import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
+import jflowmap.util.MathUtils;
 import jflowmap.util.Pair;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMap;
@@ -151,7 +152,7 @@ public class ControlPanel {
     private JLabel numberOfClustersLabel;
     private JButton resetJoinedEdgesButton;
     private JTable clustersTable;
-    private JButton aggregateEdgesButton;
+//    private JButton aggregateEdgesButton;
     private final FlowMapView jFlowMap;
     private boolean initializing;
     private ForceDirectedBundlerParameters fdBundlingParams;
@@ -684,11 +685,11 @@ public class ControlPanel {
                 updateRepulsionSpinner();
             }
         });
-        aggregateEdgesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                getVisualFlowMap().aggregateBundledEdges();
-            }
-        });
+//        aggregateEdgesButton.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                getVisualFlowMap().aggregateBundledEdges();
+//            }
+//        });
     }
 
     private void initNodeClusterListeners() {
@@ -815,6 +816,7 @@ public class ControlPanel {
         flowsTableSorter.setColumnSortable(1, true);
         flowsTableSorter.setColumnSortable(2, true);
         flowsTableSorter.setTableHeader(flowsTable.getTableHeader());
+        flowsTableSorter.setColumnComparator(Double.class, MathUtils.COMPARE_DOUBLES_SMALLEST_IS_NAN);
 
 
         // clusterNodesTable
@@ -1262,9 +1264,9 @@ public class ControlPanel {
         panel7.add(inverseQuadraticModelCheckBox, cc.xyw(11, 8, 3, CellConstraints.LEFT, CellConstraints.DEFAULT));
         final JSeparator separator11 = new JSeparator();
         panel7.add(separator11, cc.xyw(1, 7, 2, CellConstraints.FILL, CellConstraints.FILL));
-        aggregateEdgesButton = new JButton();
-        aggregateEdgesButton.setText("Aggregate edges");
-        panel7.add(aggregateEdgesButton, cc.xy(1, 8));
+//        aggregateEdgesButton = new JButton();
+//        aggregateEdgesButton.setText("Aggregate edges");
+//        panel7.add(aggregateEdgesButton, cc.xy(1, 8));
         directionAffectsCompatibilityCheckBox = new JCheckBox();
         directionAffectsCompatibilityCheckBox.setText("Direction affects compatibility");
         panel7.add(directionAffectsCompatibilityCheckBox, cc.xy(17, 1, CellConstraints.LEFT, CellConstraints.DEFAULT));

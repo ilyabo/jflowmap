@@ -20,9 +20,7 @@ package jflowmap.views.flowmap;
 
 import java.awt.Color;
 import java.awt.FontMetrics;
-import java.awt.LinearGradientPaint;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
+import java.awt.Window;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -37,19 +35,17 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import jflowmap.FlowMapGraph;
+import jflowmap.IView;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.SeqStat;
-import jflowmap.es_agg.EdgeSegment;
-import jflowmap.es_agg.EdgeSegmentAggregator;
 import jflowmap.geo.MapProjection;
 import jflowmap.geo.MapProjections;
-import jflowmap.geom.FPoint;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.views.ColorCodes;
+import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.Legend;
 import jflowmap.views.PTooltip;
 import jflowmap.views.map.PGeoMap;
@@ -71,18 +67,12 @@ import ch.unifr.dmlib.cluster.HierarchicalClusterer;
 import ch.unifr.dmlib.cluster.Linkage;
 import ch.unifr.dmlib.cluster.Linkages;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
-import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
-import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.event.PInputEventListener;
-import edu.umd.cs.piccolo.nodes.PPath;
 import edu.umd.cs.piccolo.util.PBounds;
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 /**
  * @author Ilya Boyandin
@@ -112,7 +102,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private List<VisualEdge> visualEdges;
   private Map<Node, VisualNode> nodesToVisuals;
   private Map<Edge, VisualEdge> edgesToVisuals;
-  private final FlowMapView jFlowMap;
+  private final IView view;
 
   // clustering fields
   private ClusterNode<VisualNode> rootCluster = null;
@@ -134,13 +124,15 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   private String flowWeightAttr;
   private final MapProjection mapProjection;
+  private IFlowMapColorScheme colorScheme;
 
 
-  public VisualFlowMap(FlowMapView jFlowMap, VisualFlowMapModel model, boolean showLegend,
-      MapProjection proj, String flowWeightAttr) {
-    this.jFlowMap = jFlowMap;
+  public VisualFlowMap(IView view, VisualFlowMapModel model, boolean showLegend,
+      MapProjection proj, String flowWeightAttr, IFlowMapColorScheme colorScheme) {
+    this.view = view;
     this.mapProjection = proj;
     this.flowWeightAttr = flowWeightAttr;
+    this.colorScheme = colorScheme;
 
     this.visualFlowMapModel = model;
 
@@ -248,7 +240,18 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public Color getColor(ColorCodes code) {
-    return jFlowMap.getColor(code);
+    return colorScheme.get(code);
+  }
+
+  public void setColorScheme(IFlowMapColorScheme cs) {
+    if (!this.colorScheme.equals(cs)) {
+      this.colorScheme = cs;
+      updateColors();
+    }
+  }
+
+  public IFlowMapColorScheme getColorScheme() {
+    return colorScheme;
   }
 
   public MapProjection getMapProjection() {
@@ -491,7 +494,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private String wordWrapLabel(String label, double maxWidth) {
-    FontMetrics fm = jFlowMap.getVisualCanvas().getGraphics().getFontMetrics();
+    FontMetrics fm = view.getVisualCanvas().getGraphics().getFontMetrics();
     int width = SwingUtilities.computeStringWidth(fm, label);
     if (width > maxWidth) {
       StringBuilder sb = new StringBuilder();
@@ -625,7 +628,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public PCamera getCamera() {
-    return jFlowMap.getVisualCanvas().getCamera();
+    return view.getVisualCanvas().getCamera();
   }
 
   public void resetBundling() {
@@ -648,7 +651,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           bundler.bundle(getProgressTracker());
         } catch (Exception ex) {
           logger.error("Bundling error", ex);
-          JOptionPane.showMessageDialog(jFlowMap.getVisualCanvas(),
+          JOptionPane.showMessageDialog(view.getVisualCanvas(),
               "Bundling error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
           );
         } catch (Error err) {
@@ -658,7 +661,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         return null;
       }
     };
-    ProgressDialog dialog = new ProgressDialog(jFlowMap.getParentFrame(), "Edge Bundling", worker, true);
+    Window window = SwingUtilities.getWindowAncestor(view.getVisualCanvas());
+    ProgressDialog dialog = new ProgressDialog(window, "Edge Bundling", worker, true);
     pt.addProgressListener(dialog);
     pt.addTaskCompletionListener(new TaskCompletionListener() {
       public void taskCompleted(int taskId) {
@@ -692,6 +696,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
+  /*
   public void aggregateBundledEdges() {
     if (!isBundled()) {
       return;
@@ -718,7 +723,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           repaint();
         } catch (Exception ex) {
           logger.error("Aggregation error", ex);
-          JOptionPane.showMessageDialog(jFlowMap.getVisualCanvas(),
+          JOptionPane.showMessageDialog(view.getVisualCanvas(),
               "Aggregation error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
           );
         } catch (Error err) {
@@ -729,12 +734,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
     };
     ProgressDialog dialog = new ProgressDialog(
-        jFlowMap.getParentFrame(), "Edge Segment Aggregation", worker, true);
+        SwingUtilities.getWindowAncestor(view.getVisualCanvas()), "Edge Segment Aggregation", worker, true);
     pt.addProgressListener(dialog);
     worker.start();
     dialog.setVisible(true);
   }
+  */
 
+  /*
   private void createAggregatedSegmentsVisuals(
       final List<EdgeSegment> segments) {
 //    edgeLayer.removeAllChildren();
@@ -845,6 +852,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
     };
   }
+  */
 
 
   public ClusterNode<VisualNode> getRootCluster() {
@@ -1000,27 +1008,19 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void joinClusterEdges() {
-//    for (VisualNodeCluster cluster : visualNodeClusters) {
-//      Point2D centroid = GeomUtils.centroid(
-//          Iterators.transform(
-//            cluster.iterator(), VisualNode.TRANSFORM_NODE_TO_POSITION
-//          )
-//      );
-//      PPath marker = new PPath(new Rectangle2D.Double(centroid.getX() - 4, centroid.getY() - 4, 8, 8));
-//      marker.setPaint(Color.BLUE);
-//      addChild(marker);
-//    }
-
-    FlowMapGraph fmg = VisualNodeCluster.createClusteredFlowMap(
-        getFlowMapGraph().getAttrSpec(), visualNodeClusters);
-    VisualFlowMap clusteredFlowMap = jFlowMap.createVisualFlowMap(
-        new VisualFlowMapModel(fmg), mapProjection,
-        flowWeightAttr);
-    if (areaMap != null) {
-      clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
+    if (view instanceof FlowMapView) {
+      FlowMapView flowMapView = (FlowMapView)view;
+      FlowMapGraph fmg = VisualNodeCluster.createClusteredFlowMap(
+          getFlowMapGraph().getAttrSpec(), visualNodeClusters);
+      VisualFlowMap clusteredFlowMap = flowMapView.createVisualFlowMap(
+          new VisualFlowMapModel(fmg), mapProjection,
+          flowWeightAttr, getColorScheme());
+      if (areaMap != null) {
+        clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
+      }
+      clusteredFlowMap.setOriginalVisualFlowMap(this);
+      flowMapView.setVisualFlowMap(clusteredFlowMap);
     }
-    clusteredFlowMap.setOriginalVisualFlowMap(this);
-    jFlowMap.setVisualFlowMap(clusteredFlowMap);
   }
 
   public void resetClusters() {
@@ -1033,8 +1033,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void resetJoinedNodes() {
-    if (flowMapBeforeJoining != null) {
-      jFlowMap.setVisualFlowMap(flowMapBeforeJoining);
+    if (view instanceof FlowMapView) {
+      if (flowMapBeforeJoining != null) {
+        ((FlowMapView)view).setVisualFlowMap(flowMapBeforeJoining);
+      }
     }
   }
 

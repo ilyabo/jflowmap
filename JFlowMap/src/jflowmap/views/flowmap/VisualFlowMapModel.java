@@ -18,12 +18,23 @@
 
 package jflowmap.views.flowmap;
 
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_EDGE_OPACITY;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_EDGE_WIDTH;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_LENGTH_FILTER_MAX;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_LENGTH_FILTER_MIN;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_SHOW_NODES;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX;
+import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
+import jflowmap.data.ViewConfig;
 
 /**
  * @author Ilya Boyandin
@@ -67,6 +78,34 @@ public class VisualFlowMapModel {
   public VisualFlowMapModel(FlowMapGraph flowMapGraph) {
     this.flowMapGraph = flowMapGraph;
     initFromStats();
+  }
+
+  public static VisualFlowMapModel createFor(FlowMapGraph fmg, ViewConfig config) {
+    VisualFlowMapModel model = new VisualFlowMapModel(fmg);
+    model.setEdgeAlpha(config.getIntOrElse(VIEW_CONFIG_PROP_EDGE_OPACITY, model.getEdgeAlpha()));
+    model.setMaxEdgeWidth(config.getDoubleOrElse(VIEW_CONFIG_PROP_EDGE_WIDTH, model.getMaxEdgeWidth()));
+
+    double minWeight = config.getDoubleOrElse(VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN, Double.NaN);
+    if (!Double.isNaN(minWeight)) {
+      model.setEdgeWeightFilterMin(minWeight);
+    }
+    double maxWeight = config.getDoubleOrElse(VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX, Double.NaN);
+    if (!Double.isNaN(maxWeight)) {
+      model.setEdgeWeightFilterMax(maxWeight);
+    }
+
+    double minLength = config.getDoubleOrElse(VIEW_CONFIG_PROP_LENGTH_FILTER_MIN, Double.NaN);
+    if (!Double.isNaN(minLength)) {
+      model.setEdgeLengthFilterMin(minLength);
+    }
+    double maxLength = config.getDoubleOrElse(VIEW_CONFIG_PROP_LENGTH_FILTER_MAX, Double.NaN);
+    if (!Double.isNaN(maxLength)) {
+      model.setEdgeLengthFilterMax(maxLength);
+    }
+    model.setShowDirectionMarkers(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS, true));
+    model.setShowNodes(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_NODES, true));
+    model.setFillEdgesWithGradient(config.getBoolOrElse(VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT, true));
+    return model;
   }
 
   private void initFromStats() {
@@ -353,4 +392,5 @@ public class VisualFlowMapModel {
   public double normalizeEdgeWeightForWidthScale(double edgeWeight) {
     return normalize(edgeWeight, useLogWidthScale);
   }
+
 }

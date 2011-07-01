@@ -21,6 +21,8 @@
  */
 package jflowmap.util;
 
+import java.util.Comparator;
+
 /**
  * @author ilya
  *
@@ -83,6 +85,13 @@ public final class MathUtils {
     }
     return Double.compare(d1, d2);
   }
+
+  public static Comparator<Double> COMPARE_DOUBLES_SMALLEST_IS_NAN = new Comparator<Double>() {
+    @Override
+    public int compare(Double a, Double b) {
+      return MathUtils.compareDoubles_smallestIsNaN(a, b);
+    }
+  };
 
   public static double nonNaNMin(double a, double b) {
     if (Double.isNaN(a)) {
