@@ -330,7 +330,7 @@ public class ViewConfig {
     }
 
     private static MapProjections mapProjection(ViewConfig config) throws IOException {
-      String projName = config.getStringOrElse(PROP_MAP_PROJECTION, "Mercator").toUpperCase();
+      String projName = config.getStringOrElse(PROP_MAP_PROJECTION, "None").toUpperCase();
       MapProjections proj = MapProjections.valueOf(
           projName);
       if (proj == null) {
