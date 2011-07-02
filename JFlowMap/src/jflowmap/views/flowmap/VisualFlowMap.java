@@ -97,7 +97,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final PNode edgeLayer;
 //  private final PNode nodeLayer;
 
-  private final VisualFlowMapModel visualFlowMapModel;
+  private final VisualFlowMapModel model;
   private List<VisualNode> visualNodes;
   private List<VisualEdge> visualEdges;
   private Map<Node, VisualNode> nodesToVisuals;
@@ -134,7 +134,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     this.flowWeightAttr = flowWeightAttr;
     this.colorScheme = colorScheme;
 
-    this.visualFlowMapModel = model;
+    this.model = model;
 
 //    double minWeight = flowMapGraph.getAttrSpec().getWeightFilterMin();
 //    if (!Double.isNaN(minWeight)) {
@@ -162,7 +162,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         getColor(ColorCodes.LEDGEND_TEXT), new FlowMapLegendItemProducer(this, 5));
     setLegendVisible(showLegend);
 
-    initModelChangeListeners(visualFlowMapModel);
+    initModelChangeListeners(model);
 
     getCamera().addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(PropertyChangeEvent evt) {
@@ -218,7 +218,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public FlowMapGraph getFlowMapGraph() {
-    return visualFlowMapModel.getFlowMapGraph();
+    return model.getFlowMapGraph();
   }
 
   public void setLegendVisible(boolean visible) {
@@ -435,7 +435,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public VisualFlowMapModel getModel() {
-    return visualFlowMapModel;
+    return model;
   }
 
 //  private static final Insets contentInsets = new Insets(10, 10, 10, 10);
@@ -640,15 +640,24 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
-  public void bundleEdges(ForceDirectedBundlerParameters bundlerParams) {
+  private void createBundledEdgeVisuals() {
+    createEdgeVisuals();
+    bundled = true;
+    repaint();
+  }
+
+  public void bundleEdges(final ForceDirectedBundlerParameters params) {
     final ProgressTracker pt = new ProgressTracker();
     final ForceDirectedEdgeBundler bundler = new ForceDirectedEdgeBundler(
-        getFlowMapGraph(), bundlerParams);
+        getFlowMapGraph(), params);
     ProgressWorker worker = new ProgressWorker(pt) {
       @Override
       public Object construct() {
         try {
           bundler.bundle(getProgressTracker());
+          if (!params.getUpdateViewAfterEachStep()) {
+            createBundledEdgeVisuals();
+          }
         } catch (Exception ex) {
           logger.error("Bundling error", ex);
           JOptionPane.showMessageDialog(view.getVisualCanvas(),
@@ -664,17 +673,17 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     Window window = SwingUtilities.getWindowAncestor(view.getVisualCanvas());
     ProgressDialog dialog = new ProgressDialog(window, "Edge Bundling", worker, true);
     pt.addProgressListener(dialog);
-    pt.addTaskCompletionListener(new TaskCompletionListener() {
-      public void taskCompleted(int taskId) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            createEdgeVisuals();
-            bundled = true;
-            repaint();
-          }
-        });
-      }
-    });
+    if (params.getUpdateViewAfterEachStep()) {
+      pt.addTaskCompletionListener(new TaskCompletionListener() {
+        public void taskCompleted(final int taskId) {
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              createBundledEdgeVisuals();
+            }
+          });
+        }
+      });
+    }
     worker.start();
     dialog.setVisible(true);
   }
@@ -1009,17 +1018,17 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   public void joinClusterEdges() {
     if (view instanceof FlowMapView) {
-      FlowMapView flowMapView = (FlowMapView)view;
+      FlowMapView fmview = (FlowMapView)view;
       FlowMapGraph fmg = VisualNodeCluster.createClusteredFlowMap(
           getFlowMapGraph().getAttrSpec(), visualNodeClusters);
-      VisualFlowMap clusteredFlowMap = flowMapView.createVisualFlowMap(
-          new VisualFlowMapModel(fmg), mapProjection,
+      VisualFlowMap clusteredFlowMap = fmview.createVisualFlowMap(
+          new VisualFlowMapModel(fmg, model.getViewConfig()), mapProjection,
           flowWeightAttr, getColorScheme());
       if (areaMap != null) {
         clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
       }
       clusteredFlowMap.setOriginalVisualFlowMap(this);
-      flowMapView.setVisualFlowMap(clusteredFlowMap);
+      fmview.setVisualFlowMap(clusteredFlowMap);
     }
   }
 
@@ -1124,6 +1133,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       flowWeightAnimation.getActivityScheduler().removeActivity(flowWeightAnimation);
       flowWeightAnimation = null;
     }
+  }
+
+  public ForceDirectedBundlerParameters createForceDirectedBundlerParameters() {
+    return model.createForceDirectedBundlerParameters(flowWeightAttr);
   }
 
 

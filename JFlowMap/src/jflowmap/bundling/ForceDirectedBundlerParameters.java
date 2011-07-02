@@ -46,8 +46,8 @@ public class ForceDirectedBundlerParameters {
 //  private boolean joinCloseSubdivisionPoints;
   private double repulsionAmount;
   private double subdivisionPointsCycleIncreaseRate;
-
   private final String edgeWeightAttr;
+  private boolean updateViewAfterEachStep = true;
 
   public ForceDirectedBundlerParameters(FlowMapGraph flowMapGraph, String edgeWeightAttr) {
     this.flowMapGraph = flowMapGraph;
@@ -226,42 +226,28 @@ public class ForceDirectedBundlerParameters {
     this.repulsionAmount = repulsionAmount;
   }
 
-  /**
-   * Constructs a <code>String</code> with all attributes
-   * in name = value format.
-   *
-   * @return a <code>String</code> representation
-   * of this object.
-   */
-  @Override
-  public String toString()
-  {
-    final String TAB = "  ";
 
-    String retValue = "";
-
-    retValue = "ForceDirectedBundlerParameters ( "
-      + super.toString() + TAB
-      + "numCycles = " + this.numCycles + TAB
-      + "P = " + this.P + TAB
-      + "S = " + this.S + TAB
-      + "I = " + this.I + TAB
-      + "K = " + this.K + TAB
-      + "stepDampingFactor = " + this.stepDampingFactor + TAB
-      + "edgeCompatibilityThreshold = " + this.edgeCompatibilityThreshold + TAB
-      + "directionAffectsCompatibility = " + this.directionAffectsCompatibility + TAB
-      + "binaryCompatibility = " + this.binaryCompatibility + TAB
-      + "useInverseQuadraticModel = " + this.useInverseQuadraticModel + TAB
-      + "useRepulsionForOppositeEdges = " + this.useRepulsionForOppositeEdges + TAB
-      + "useSimpleCompatibilityMeasure = " + this.useSimpleCompatibilityMeasure + TAB
-      + "edgeValueAffectsAttraction = " + this.edgeValueAffectsAttraction + TAB
-//      + "joinCloseSubdivisionPoints = " + this.joinCloseSubdivisionPoints + TAB
-      + "repulsionAmount = " + this.repulsionAmount + TAB
-      + "subdivisionPointsCycleIncreaseRate = " + this.subdivisionPointsCycleIncreaseRate + TAB
-      + " )";
-
-    return retValue;
+  public boolean getUpdateViewAfterEachStep() {
+    return updateViewAfterEachStep;
   }
+
+  public void setUpdateViewAfterEachStep(boolean updateViewAfterEachStep) {
+    this.updateViewAfterEachStep = updateViewAfterEachStep;
+  }
+
+  @Override
+  public String toString() {
+    return "ForceDirectedBundlerParameters [numCycles=" + numCycles + ", P=" + P + ", S=" + S + ", I=" + I
+        + ", K=" + K + ", stepDampingFactor=" + stepDampingFactor + ", edgeCompatibilityThreshold="
+        + edgeCompatibilityThreshold + ", directionAffectsCompatibility=" + directionAffectsCompatibility
+        + ", binaryCompatibility=" + binaryCompatibility + ", useInverseQuadraticModel="
+        + useInverseQuadraticModel + ", useRepulsionForOppositeEdges=" + useRepulsionForOppositeEdges
+        + ", useSimpleCompatibilityMeasure=" + useSimpleCompatibilityMeasure
+        + ", edgeValueAffectsAttraction=" + edgeValueAffectsAttraction + ", repulsionAmount="
+        + repulsionAmount + ", subdivisionPointsCycleIncreaseRate=" + subdivisionPointsCycleIncreaseRate
+        + ", edgeWeightAttr=" + edgeWeightAttr + ", updateViewAfterEachStep=" + updateViewAfterEachStep + "]";
+  }
+
 
 
 }

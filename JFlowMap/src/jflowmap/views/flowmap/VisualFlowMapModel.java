@@ -18,20 +18,11 @@
 
 package jflowmap.views.flowmap;
 
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_EDGE_OPACITY;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_EDGE_WIDTH;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_LENGTH_FILTER_MAX;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_LENGTH_FILTER_MIN;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_SHOW_NODES;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX;
-import static jflowmap.views.flowmap.FlowMapView.VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import jflowmap.FlowMapGraph;
+import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
 import jflowmap.data.ViewConfig;
@@ -45,6 +36,33 @@ public class VisualFlowMapModel {
   public static final String DEFAULT_NODE_Y_ATTR_NAME = "y";
   public static final String DEFAULT_EDGE_WEIGHT_ATTR_NAME = "value";
   public static final String DEFAULT_NODE_LABEL_ATTR_NAME = "label";
+
+  public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN = "view.flowmap.weightFilterMin";
+  public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX = "view.flowmap.weightFilterMax";
+  public static final String VIEW_CONFIG_PROP_LENGTH_FILTER_MIN = "view.flowmap.lengthFilterMin";
+  public static final String VIEW_CONFIG_PROP_LENGTH_FILTER_MAX = "view.flowmap.lengthFilterMax";
+  public static final String VIEW_CONFIG_PROP_COLOR_SCHEME = "view.flowmap.colorScheme";
+  public static final String VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT = "view.flowmap.fillEdgesWithGradient";
+  public static final String VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS = "view.flowmap.showDirectionMarkers";
+  public static final String VIEW_CONFIG_PROP_SHOW_NODES = "view.flowmap.showNodes";
+  public static final String VIEW_CONFIG_PROP_EDGE_WIDTH = "view.flowmap.edgeWidth";
+  public static final String VIEW_CONFIG_PROP_EDGE_OPACITY = "view.flowmap.edgeOpacity";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_UPDATE_VIEW_AFTER_EACH_STEP =
+    "view.flowmap.edgeBundling.updateViewAfterEachStep";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_NUM_OF_CYCLES =
+    "view.flowmap.edgeBundling.numberOfCycles";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_EDGE_STIFFNESS =
+    "view.flowmap.edgeBundling.edgeStiffness";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_COMPATIBILITY_THRESHOLD =
+     "view.flowmap.edgeBundling.compatibilityThreshold";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_STEP_SIZE =
+    "view.flowmap.edgeBundling.stepSize";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_STEP_DAMPING_FACTOR =
+    "view.flowmap.edgeBundling.stepDampingFactor";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_STEPS_IN_1ST_CYCLE =
+    "view.flowmap.edgeBundling.stepsIn1stCycle";
+  public static final String VIEW_CONFIG_PROP_BUNDLING_SIMPLE_COMPATIBILITY_MEASURE =
+    "view.flowmap.edgeBundling.simpleCompatibilityMeasure";
 
   private boolean autoAdjustColorScale;
   private boolean useLogColorScale = true;
@@ -74,14 +92,16 @@ public class VisualFlowMapModel {
 
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
   private final FlowMapGraph flowMapGraph;
+  private final ViewConfig config;
 
-  public VisualFlowMapModel(FlowMapGraph flowMapGraph) {
+  public VisualFlowMapModel(FlowMapGraph flowMapGraph, ViewConfig config) {
     this.flowMapGraph = flowMapGraph;
+    this.config = config;
     initFromStats();
   }
 
   public static VisualFlowMapModel createFor(FlowMapGraph fmg, ViewConfig config) {
-    VisualFlowMapModel model = new VisualFlowMapModel(fmg);
+    VisualFlowMapModel model = new VisualFlowMapModel(fmg, config);
     model.setEdgeAlpha(config.getIntOrElse(VIEW_CONFIG_PROP_EDGE_OPACITY, model.getEdgeAlpha()));
     model.setMaxEdgeWidth(config.getDoubleOrElse(VIEW_CONFIG_PROP_EDGE_WIDTH, model.getMaxEdgeWidth()));
 
@@ -105,6 +125,7 @@ public class VisualFlowMapModel {
     model.setShowDirectionMarkers(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS, true));
     model.setShowNodes(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_NODES, true));
     model.setFillEdgesWithGradient(config.getBoolOrElse(VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT, true));
+
     return model;
   }
 
@@ -391,6 +412,38 @@ public class VisualFlowMapModel {
 
   public double normalizeEdgeWeightForWidthScale(double edgeWeight) {
     return normalize(edgeWeight, useLogWidthScale);
+  }
+
+  public ForceDirectedBundlerParameters createForceDirectedBundlerParameters(String weightAttr) {
+    ForceDirectedBundlerParameters params =
+      new ForceDirectedBundlerParameters(flowMapGraph, weightAttr);
+
+    params.setUpdateViewAfterEachStep(
+        config.getBoolOrElse(VIEW_CONFIG_PROP_BUNDLING_UPDATE_VIEW_AFTER_EACH_STEP, true));
+    params.setNumCycles(
+        config.getIntOrElse(VIEW_CONFIG_PROP_BUNDLING_NUM_OF_CYCLES, params.getNumCycles()));
+    params.setK(
+        config.getDoubleOrElse(VIEW_CONFIG_PROP_BUNDLING_EDGE_STIFFNESS, params.getK()));
+    params.setEdgeCompatibilityThreshold(
+        config.getDoubleOrElse(VIEW_CONFIG_PROP_BUNDLING_COMPATIBILITY_THRESHOLD,
+            params.getEdgeCompatibilityThreshold()));
+    params.setEdgeCompatibilityThreshold(
+        config.getDoubleOrElse(VIEW_CONFIG_PROP_BUNDLING_COMPATIBILITY_THRESHOLD,
+            params.getEdgeCompatibilityThreshold()));
+    params.setS(config.getDoubleOrElse(VIEW_CONFIG_PROP_BUNDLING_STEP_SIZE, params.getS()));
+    params.setStepDampingFactor(
+        config.getDoubleOrElse(VIEW_CONFIG_PROP_BUNDLING_STEP_DAMPING_FACTOR,
+            params.getStepDampingFactor()));
+    params.setI(config.getIntOrElse(VIEW_CONFIG_PROP_BUNDLING_STEPS_IN_1ST_CYCLE, params.getI()));
+    params.setUseSimpleCompatibilityMeasure(
+        config.getBoolOrElse(VIEW_CONFIG_PROP_BUNDLING_SIMPLE_COMPATIBILITY_MEASURE,
+            params.getUseSimpleCompatibilityMeasure()));
+
+    return params;
+  }
+
+  public ViewConfig getViewConfig() {
+    return config;
   }
 
 }

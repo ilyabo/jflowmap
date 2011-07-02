@@ -54,18 +54,6 @@ public class FlowMapView extends AbstractCanvasView {
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0");
 
-  public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MIN = "view.flowmap.weightFilterMin";
-  public static final String VIEW_CONFIG_PROP_WEIGHT_FILTER_MAX = "view.flowmap.weightFilterMax";
-  public static final String VIEW_CONFIG_PROP_LENGTH_FILTER_MIN = "view.flowmap.lengthFilterMin";
-  public static final String VIEW_CONFIG_PROP_LENGTH_FILTER_MAX = "view.flowmap.lengthFilterMax";
-  public static final String VIEW_CONFIG_PROP_COLOR_SCHEME = "view.flowmap.colorScheme";
-  public static final String VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT = "view.flowmap.fillEdgesWithGradient";
-  public static final String VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS = "view.flowmap.showDirectionMarkers";
-  public static final String VIEW_CONFIG_PROP_SHOW_NODES = "view.flowmap.showNodes";
-  public static final String VIEW_CONFIG_PROP_EDGE_WIDTH = "view.flowmap.edgeWidth";
-  public static final String VIEW_CONFIG_PROP_EDGE_OPACITY = "view.flowmap.edgeOpacity";
-
-
   public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme cs) {
     FlowMapGraph fmg = model.getFlowMapGraph();
 
@@ -117,7 +105,7 @@ public class FlowMapView extends AbstractCanvasView {
       FlowMapGraph fmg = FlowMapGraph.loadGraphML(dataset, stats);
 
       VisualFlowMap visualFlowMap = createVisualFlowMap(
-          new VisualFlowMapModel(fmg),
+          new VisualFlowMapModel(fmg, null),
           dataset.getMapProjection(), fmg.getEdgeWeightAttrs().get(0),
           FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme()
       );

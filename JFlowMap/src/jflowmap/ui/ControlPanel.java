@@ -56,7 +56,6 @@ import javax.swing.table.TableColumnModel;
 
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapColorSchemes;
-import jflowmap.FlowMapGraph;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
@@ -282,9 +281,7 @@ public class ControlPanel {
         attachVisualFlowMapListeners(newVisualFlowMap);
 
         // load data
-        FlowMapGraph fmg = visualFlowMap.getFlowMapGraph();
-        fdBundlingParams = new ForceDirectedBundlerParameters(
-            fmg, visualFlowMap.getFlowWeightAttr());
+        fdBundlingParams = visualFlowMap.createForceDirectedBundlerParameters();
         if (!modelsInitialized) {
             initModelsOnce();
             modelsInitialized = true;
