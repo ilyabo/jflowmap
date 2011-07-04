@@ -18,7 +18,6 @@
 
 package jflowmap.views.flowstrates;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -802,10 +801,6 @@ public class FlowstratesView extends AbstractCanvasView {
     return flowMapGraph;
   }
 
-  private PCamera getCamera() {
-    return getVisualCanvas().getCamera();
-  }
-
   public void setShowLinesForHighligtedOnly(boolean showLinesForHighligtedOnly) {
 //    this.showFlowLinesForHighligtedNodesOnly = showLinesForHighligtedOnly;
     flowLinesLayerNode.renewFlowLines();
@@ -889,11 +884,6 @@ public class FlowstratesView extends AbstractCanvasView {
       visibleEdgesStats = EdgeListFlowMapStats.createFor(edges, flowMapGraph.getAttrSpec());
     }
     return visibleEdgesStats;
-  }
-
-  @Override
-  public String getControlsLayoutConstraint() {
-    return BorderLayout.NORTH;
   }
 
   void setEgdeForSimilaritySorting(Edge edge) {

@@ -108,12 +108,4 @@ public class FlowTimelineView extends AbstractCanvasView {
     return null;
   }
 
-  @Override
-  public String getControlsLayoutConstraint() {
-    return null;
-  }
-
-
-
-
 }

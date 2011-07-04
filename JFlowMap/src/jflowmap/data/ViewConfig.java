@@ -313,7 +313,6 @@ public class ViewConfig {
     FLOWMAPSMALLMULTIPLE {
       @Override
       public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
-
         return new FlowMapSmallMultipleView(
             VisualFlowMapModel.createFor((FlowMapGraph)data, config),
             areaMap, mapProjection(config), colorSchemeFor(config));

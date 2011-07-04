@@ -209,7 +209,7 @@ public class MapLayer extends PLayer implements ViewLayer {
     }
   }
 
-  private  void createCentroidsAndAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
+  private void createCentroidsAndAreasForNodesWithoutCoords(Iterable<Node> nodesWithoutCoords) {
 
     FlowMapGraph fmg = flowstratesView.getFlowMapGraph();
     List<Rectangle2D> rects = visualAreaMap.createAreasForNodesWithoutCoords(nodesWithoutCoords);

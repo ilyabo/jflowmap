@@ -28,6 +28,7 @@ import jflowmap.util.piccolo.PTypedBasicInputEventHandler;
 import jflowmap.views.PTooltip;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowstrates.TooltipText;
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -50,6 +51,9 @@ public abstract class AbstractCanvasView implements IView {
     this.visualCanvas.getCamera().addChild(tooltipBox);
   }
 
+  public PCamera getCamera() {
+    return getVisualCanvas().getCamera();
+  }
 
   protected VisualCanvas createVisualCanvas() {
     return new VisualCanvas();

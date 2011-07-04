@@ -149,7 +149,7 @@ public class PNodes {
    * @param vsizeProportion 0..1 Proportion of the height of the bounds which the node should take
    */
   public static void alignNodeInBounds_bySetBounds(PNode node, Rectangle2D bounds,
-      float halign, float valign, double hsizeProportion, double vsizeProportion) {
+      double halign, double valign, double hsizeProportion, double vsizeProportion) {
 
     double width = bounds.getWidth() * hsizeProportion;
     double height = bounds.getHeight() * vsizeProportion;

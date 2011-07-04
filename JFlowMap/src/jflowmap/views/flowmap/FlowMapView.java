@@ -18,7 +18,6 @@
 
 package jflowmap.views.flowmap;
 
-import java.awt.BorderLayout;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -87,11 +86,6 @@ public class FlowMapView extends AbstractCanvasView {
     } else {
       return null;
     }
-  }
-
-  @Override
-  public String getControlsLayoutConstraint() {
-    return BorderLayout.SOUTH;
   }
 
   /**

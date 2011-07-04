@@ -358,7 +358,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         // TODO: create rectangles for flowmap nodes with missing coords
         //       See FlowMapGraph.haveCoordsPredicate() and
         //           PGeoMap.createAreasForNodesWithoutCoords(nodesWithoutCoords)
-        logger.warn("NaN coordinates passed in for edge: " + edge);
+//        logger.warn("NaN coordinates passed in for edge: " + edge);
 
       } else {
           VisualEdge visualEdge = createVisualEdgeFor(edge);

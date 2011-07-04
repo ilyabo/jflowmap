@@ -31,8 +31,6 @@ public interface IView {
 
   JComponent getControls();
 
-  String getControlsLayoutConstraint();
-
   void fitInView();
 
   String getName();
