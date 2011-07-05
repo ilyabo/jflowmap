@@ -225,6 +225,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualLegend.setVisible(visible);
   }
 
+  public Legend getVisualLegend() {
+    return visualLegend;
+  }
+
+  public PTooltip getTooltipBox() {
+    return tooltipBox;
+  }
+
   public void addNodesToCamera() {
     getCamera().addChild(tooltipBox);
     getCamera().addChild(visualLegend);

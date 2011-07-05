@@ -34,15 +34,17 @@ public class ZoomHandler extends PDragSequenceEventHandler {
   private double minScale = 0;
   private double maxScale = Double.MAX_VALUE;
   private Point2D viewZoomPoint;
+  private boolean zoomByDragging = false;
   private boolean fixZoomPoint = false;
 
   public ZoomHandler() {
-    this(0, Double.MAX_VALUE);
+    this(0, Double.MAX_VALUE, false);
   }
 
-  public ZoomHandler(double minScale, double maxScale) {
+  public ZoomHandler(double minScale, double maxScale, boolean zoomByDragging) {
     this.minScale = minScale;
     this.maxScale = maxScale;
+    this.zoomByDragging = zoomByDragging;
   }
 
   public double getMaxScale() {
@@ -75,49 +77,53 @@ public class ZoomHandler extends PDragSequenceEventHandler {
   }
 
   @Override
-  public void mouseWheelRotated(PInputEvent aEvent) {
-    final PCamera camera = aEvent.getCamera();
-    final double scaleDelta = checkScaleConstraints(camera.getViewScale(),
-        1.0 - aEvent.getWheelRotation() * WHEEL_ZOOM_UNIT);
-
+  public void mouseWheelRotated(PInputEvent event) {
+    final PCamera c = event.getCamera();
     final Point2D position;
     if (viewZoomPoint != null) {
       position = viewZoomPoint;
     } else {
-      position = aEvent.getPosition();
+      position = event.getPosition();
     }
-    camera
-        .scaleViewAboutPoint(scaleDelta, position.getX(), position
-            .getY());
+    double scale = 1.0 - event.getWheelRotation() * WHEEL_ZOOM_UNIT;
+    zoom(c, scale, position);
+  }
+
+  protected void zoom(PCamera c, double scale, Point2D position) {
+    c.scaleViewAboutPoint(
+        checkScaleConstraints(c.getViewScale(), scale),
+        position.getX(), position.getY());
   }
 
   @Override
   protected void dragActivityFirstStep(PInputEvent aEvent) {
-    if (aEvent.isControlDown() && aEvent.isLeftMouseButton()) {
-      if (viewZoomPoint == null) {
-        viewZoomPoint = aEvent.getPosition();
+    if (zoomByDragging) {
+      if (aEvent.isControlDown() && aEvent.isLeftMouseButton()) {
+        if (viewZoomPoint == null) {
+          viewZoomPoint = aEvent.getPosition();
+        }
       }
     }
   }
 
   @Override
-  protected void dragActivityStep(PInputEvent aEvent) {
-    if (aEvent.isControlDown() && aEvent.isLeftMouseButton()) {
-      if (viewZoomPoint == null) {
-        viewZoomPoint = aEvent.getPosition();
-      }
-      final PCamera camera = aEvent.getCamera();
-      final double dy = -(aEvent.getCanvasPosition().getY() - getMousePressedCanvasPoint()
-          .getY());
-      final double scaleDelta = checkScaleConstraints(camera
-          .getViewScale(), 1.0 + (0.001 * dy));
+  protected void dragActivityStep(PInputEvent event) {
+    if (zoomByDragging) {
+      if (event.isControlDown() && event.isLeftMouseButton()) {
+        if (viewZoomPoint == null) {
+          viewZoomPoint = event.getPosition();
+        }
+        final PCamera c = event.getCamera();
+        final double dy = -(event.getCanvasPosition().getY() - getMousePressedCanvasPoint().getY());
+        final double scaleDelta = checkScaleConstraints(c.getViewScale(), 1.0 + (0.001 * dy));
 
-      camera.scaleViewAboutPoint(scaleDelta, viewZoomPoint.getX(),
-          viewZoomPoint.getY());
+        c.scaleViewAboutPoint(scaleDelta, viewZoomPoint.getX(),
+            viewZoomPoint.getY());
+      }
     }
   }
 
-  private double checkScaleConstraints(final double currentScale,
+  protected double checkScaleConstraints(final double currentScale,
       double scaleDelta) {
     final double newScale = currentScale * scaleDelta;
     final double minScale = getMinScale();
@@ -133,8 +139,10 @@ public class ZoomHandler extends PDragSequenceEventHandler {
 
   @Override
   protected void dragActivityFinalStep(PInputEvent aEvent) {
-    if (!fixZoomPoint) {
-      viewZoomPoint = null;
+    if (zoomByDragging) {
+      if (!fixZoomPoint) {
+        viewZoomPoint = null;
+      }
     }
   }
 

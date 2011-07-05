@@ -323,6 +323,7 @@ public abstract class VisualEdge extends PNode {
       }
       ppath.setStrokePaint(paint);
     }
+    repaint();
   }
 
   public void update() {

@@ -36,18 +36,25 @@ import edu.umd.cs.piccolo.util.PBounds;
 public class VisualCanvas extends PCanvas {
 
   private static final Dimension MIN_SIZE = new Dimension(150, 100);
-  private final ZoomHandler zoomHandler;
+  private ZoomHandler zoomHandler;
   private boolean autoFitOnBoundsChange = true;
 
   public VisualCanvas() {
     setZoomEventHandler(null);
-    zoomHandler = createZoomHandler();
-    addInputEventListener(zoomHandler);
+    setZoomHandler(createZoomHandler());
     setPanEventHandler(new PanHandler());
   }
 
   public ZoomHandler getZoomHandler() {
     return zoomHandler;
+  }
+
+  public void setZoomHandler(ZoomHandler handler) {
+    if (zoomHandler != null) {
+      removeInputEventListener(zoomHandler);
+    }
+    zoomHandler = handler;
+    addInputEventListener(zoomHandler);
   }
 
   protected ZoomHandler createZoomHandler() {
