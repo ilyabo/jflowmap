@@ -566,7 +566,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           updateEdgeWidths();
           visualLegend.update();
         } else if (prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MIN)
-            || prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MAX)) {
+            || prop.equals(VisualFlowMapModel.PROPERTY_VALUE_FILTER_MAX)
+            || prop.equals(VisualFlowMapModel.PROPERTY_SHOW_SELF_LOOPS)) {
           updateEdgeVisibility();
           // updateEdgeColors();
         } else if (prop.equals(VisualFlowMapModel.PROPERTY_EDGE_LENGTH_FILTER_MIN)

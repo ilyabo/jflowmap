@@ -2,11 +2,12 @@ view=flowmapSmallMultiple
 view.flowmap.colorScheme=Dark
 #view.flowmap.lengthFilterMax=10
 view.flowmap.weightFilterMin=1000
-#view.flowmap.fillEdgesWithGradient=false
-#view.flowmap.showDirectionMarkers=false
+view.flowmap.fillEdgesWithGradient=false
+view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
 view.flowmap.edgeWidth=10
 view.flowmap.edgeOpacity=100
+view.flowmap.showSelfLoops=false
 
 #window.size=1024x768
 window.settings.show=true

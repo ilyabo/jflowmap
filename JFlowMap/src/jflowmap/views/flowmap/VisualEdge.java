@@ -200,7 +200,8 @@ public abstract class VisualEdge extends PNode {
         !Double.isNaN(weight)  &&
         weight != 0.0  &&
         weightFilterMin <= weight && weight <= weightFilterMax  &&
-        edgeLengthFilterMin <= length && length <= edgeLengthFilterMax
+        edgeLengthFilterMin <= length && length <= edgeLengthFilterMax &&
+        (!isSelfLoop()  ||  visualFlowMap.getModel().getShowSelfLoops())
     ;
 
     if (visible) {

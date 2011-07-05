@@ -47,6 +47,7 @@ public class VisualFlowMapModel {
   public static final String VIEW_CONFIG_PROP_SHOW_NODES = "view.flowmap.showNodes";
   public static final String VIEW_CONFIG_PROP_EDGE_WIDTH = "view.flowmap.edgeWidth";
   public static final String VIEW_CONFIG_PROP_EDGE_OPACITY = "view.flowmap.edgeOpacity";
+  public static final String VIEW_CONFIG_PROP_SHOW_SELF_LOOPS = "view.flowmap.showSelfLoops";
   public static final String VIEW_CONFIG_PROP_BUNDLING_UPDATE_VIEW_AFTER_EACH_STEP =
     "view.flowmap.edgeBundling.updateViewAfterEachStep";
   public static final String VIEW_CONFIG_PROP_BUNDLING_NUM_OF_CYCLES =
@@ -69,6 +70,7 @@ public class VisualFlowMapModel {
   private boolean useLogWidthScale = false;
   private boolean showNodes = true;
   private boolean showDirectionMarkers = true;
+  private boolean showSelfLoops = true;
   private boolean fillEdgesWithGradient = true;
   private boolean useProportionalDirectionMarkers = true;
 
@@ -123,6 +125,7 @@ public class VisualFlowMapModel {
       model.setEdgeLengthFilterMax(maxLength);
     }
     model.setShowDirectionMarkers(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_DIRECTION_MARKERS, true));
+    model.setShowSelfLoops(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_SELF_LOOPS, true));
     model.setShowNodes(config.getBoolOrElse(VIEW_CONFIG_PROP_SHOW_NODES, true));
     model.setFillEdgesWithGradient(config.getBoolOrElse(VIEW_CONFIG_PROP_FILL_EDGES_WITH_GRADIENT, true));
 
@@ -319,6 +322,17 @@ public class VisualFlowMapModel {
     }
   }
 
+  public boolean getShowSelfLoops() {
+    return showSelfLoops;
+  }
+
+  public void setShowSelfLoops(boolean value) {
+    if (showSelfLoops != value) {
+      showSelfLoops = value;
+      changes.firePropertyChange(PROPERTY_SHOW_SELF_LOOPS, !value, value);
+    }
+  }
+
   public boolean getFillEdgesWithGradient() {
     return fillEdgesWithGradient;
   }
@@ -393,6 +407,7 @@ public class VisualFlowMapModel {
   public static final String PROPERTY_USE_PROPORTIONAL_DIRECTION_MARKERS = "proportionalDirMarkers";
   public static final String PROPERTY_FILL_EDGES_WITH_GRADIENT = "fillEdgesWithGradient";
   public static final String PROPERTY_SHOW_DIRECTION_MARKERS = "showDirectionMarkers";
+  public static final String PROPERTY_SHOW_SELF_LOOPS = "showSelfLoops";
   public static final String PROPERTY_SHOW_NODES = "showNodes";
   public static final String PROPERTY_NODE_SIZE = "nodeSize";
 

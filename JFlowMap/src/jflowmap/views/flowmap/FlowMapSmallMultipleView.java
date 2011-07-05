@@ -55,7 +55,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
 
   private final List<VisualFlowMapLayer> layers;
   private final VisualFlowMapModel model;
-  private final int numberOfColumns = 6;
+  private final int numberOfColumns = 7;
 
   public FlowMapSmallMultipleView(VisualFlowMapModel model, GeoMap areaMap, MapProjections proj,
       IFlowMapColorScheme cs) {
