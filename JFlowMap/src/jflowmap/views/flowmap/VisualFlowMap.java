@@ -191,11 +191,11 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
-  public void setSelectedFlowWeightAttr(String attr) {
-    setSelectedFlowWeightAttr(attr, true);
+  public void setFlowWeightAttr(String attr) {
+    setFlowWeightAttr(attr, true);
   }
 
-  private void setSelectedFlowWeightAttr(String attr, boolean doUpdate) {
+  private void setFlowWeightAttr(String attr, boolean doUpdate) {
     String oldValue = this.flowWeightAttr;
     if (!oldValue.equals(attr)) {
       this.flowWeightAttr = attr;
@@ -209,16 +209,17 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
-  public String getSelectedFlowWeightAttr() {
-    return flowWeightAttr;
+  public String getFlowWeightAttr() {
+    return getFlowWeightAttrFor(flowWeightAttr);
+  }
+
+  public String getFlowWeightAttrFor(String attr) {
+    return model.getValueType().getColumnValueAttr(
+        model.getFlowMapGraph().getAttrSpec(), attr);
   }
 
   public PGeoMap getAreaMap() {
     return areaMap;
-  }
-
-  public String getFlowWeightAttr() {
-    return flowWeightAttr;
   }
 
   @Override
@@ -372,7 +373,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getFlowWeightAttr())) {
 
       if (!hasCoordinates(edge)) {
         // TODO: create rectangles for flowmap nodes with missing coords
@@ -397,7 +398,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdges() {
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getFlowWeightAttr())) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.update();
@@ -407,7 +408,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdgeOrdering() {
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(flowWeightAttr)) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getFlowWeightAttr())) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.moveToFront();  // order by attr value
@@ -1044,7 +1045,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           getFlowMapGraph().getAttrSpec(), visualNodeClusters);
       VisualFlowMap clusteredFlowMap = fmview.createVisualFlowMap(
           new VisualFlowMapModel(fmg, model.getViewConfig()), mapProjection,
-          flowWeightAttr, getColorScheme());
+          getFlowWeightAttr(), getColorScheme());
       if (areaMap != null) {
         clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
       }
@@ -1128,7 +1129,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
             value = low + (high - low) * (alpha - lowi);
           }
 
-          setSelectedFlowWeightAttr(attrs.get(lowi), false);
+          setFlowWeightAttr(attrs.get(lowi), false);
 
           ve.updateEdgeWidthTo(value);
           ve.updateEdgeColorsTo(value);
@@ -1157,7 +1158,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public ForceDirectedBundlerParameters createForceDirectedBundlerParameters() {
-    return model.createForceDirectedBundlerParameters(flowWeightAttr);
+    return model.createForceDirectedBundlerParameters(getFlowWeightAttr());
   }
 
 

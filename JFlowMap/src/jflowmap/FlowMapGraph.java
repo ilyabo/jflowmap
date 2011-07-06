@@ -951,6 +951,9 @@ public class FlowMapGraph {
 
   @SuppressWarnings("unchecked")
   public Iterable<Edge> getEdgesSortedBy(final String flowWeightAttr) {
+    if (!getGraph().getEdgeTable().canGetDouble(flowWeightAttr)) {
+      throw new IllegalArgumentException("Now attribute '" + flowWeightAttr + "' in edge table");
+    }
     return new Iterable<Edge>() {
       @Override
       public Iterator<Edge> iterator() {

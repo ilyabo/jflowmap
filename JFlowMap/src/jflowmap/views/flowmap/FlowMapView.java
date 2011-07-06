@@ -118,11 +118,11 @@ public class FlowMapView extends AbstractCanvasView {
   }
 
   public void setSelectedFlowWeightAttr(String flowWeightAttr) {
-    visualFlowMap.setSelectedFlowWeightAttr(flowWeightAttr);
+    visualFlowMap.setFlowWeightAttr(flowWeightAttr);
   }
 
   public String getSelectedFlowWeightAttr() {
-    return visualFlowMap.getSelectedFlowWeightAttr();
+    return visualFlowMap.getFlowWeightAttr();
   }
 
   @Override

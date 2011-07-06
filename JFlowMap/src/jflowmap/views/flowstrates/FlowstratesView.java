@@ -867,7 +867,7 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private SeqStat stdValueStat() {
-    return valueType.getMinMax(getFlowMapStats());
+    return valueType.getSeqStat(getFlowMapStats());
   }
 
   private FlowMapStats getFlowMapStats() {

@@ -333,7 +333,7 @@ public class ViewConfig {
 
     private static IFlowMapColorScheme colorSchemeFor(ViewConfig config) {
       return FlowMapColorSchemes.findByName(
-          config.getStringOrElse(VisualFlowMapModel.VIEW_CONFIG_PROP_COLOR_SCHEME, "Dark"));
+          config.getStringOrElse(VisualFlowMapModel.VIEWCONF_COLOR_SCHEME, "Dark"));
     }
 
     private static MapProjections mapProjection(ViewConfig config) throws IOException {

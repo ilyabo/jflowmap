@@ -26,6 +26,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
 import jflowmap.geo.MapProjections;
@@ -105,7 +108,11 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     });
 
     fitInView();
+  }
 
+  @Override
+  public JComponent getControls() {
+    return new JPanel();
   }
 
   private ZoomHandler createZoomHandler() {
