@@ -19,9 +19,12 @@
 package jflowmap.views;
 
 import java.awt.Image;
-import java.awt.Toolkit;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import jflowmap.data.ViewConfig;
+import prefuse.util.io.IOLib;
 import edu.umd.cs.piccolo.nodes.PImage;
 import edu.umd.cs.piccolo.util.PBounds;
 
@@ -36,14 +39,26 @@ public class MapBackgroundImage {
   private final double transparency;
   private final PBounds boundingBox;
 
-  private MapBackgroundImage(String imageFilename, PBounds boundingBox,
+  private MapBackgroundImage(String location, PBounds boundingBox,
       double scale, double offsetX, double offsetY, double transparency) {
-    this.image = Toolkit.getDefaultToolkit().getImage(imageFilename);
+//    this.image = Toolkit.getDefaultToolkit().getImage(imageFilename);
+    this.image = readImage(location);
     this.scale = scale;
     this.offsetX = offsetX;
     this.offsetY = offsetY;
     this.transparency = transparency;
     this.boundingBox = boundingBox;
+  }
+
+  private Image readImage(String location) {
+    Image image;
+    try {
+      image = ImageIO.read(IOLib.streamFromString(location));
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Location '" + location + "' could nod be read: " +
+          e.getMessage());
+    }
+    return image;
   }
 
   public static MapBackgroundImage parseConfig(ViewConfig config) {
