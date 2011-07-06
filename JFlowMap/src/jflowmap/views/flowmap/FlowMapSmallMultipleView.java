@@ -19,6 +19,7 @@
 package jflowmap.views.flowmap;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -43,6 +44,7 @@ import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
 import edu.umd.cs.piccolo.nodes.PPath;
+import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -56,6 +58,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
   private final List<VisualFlowMapLayer> layers;
   private final VisualFlowMapModel model;
   private final int numberOfColumns = 7;
+
 
   public FlowMapSmallMultipleView(VisualFlowMapModel model, GeoMap areaMap, MapProjections proj,
       IFlowMapColorScheme cs) {
@@ -152,21 +155,31 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     return panHandler;
   }
 
-
   static class VisualFlowMapLayer extends PLayer {
+    private final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 20);
     private final VisualFlowMap visualFlowMap;
     private final PCamera camera;
     private final PPath pp;
+    private final PText caption;
 
     public VisualFlowMapLayer(VisualFlowMap visualFlowMap, PCamera camera) {
       this.visualFlowMap = visualFlowMap;
       this.camera = camera;
       this.camera.addLayer(this);
       this.camera.addChild(visualFlowMap.getTooltipBox());
+
+      // border
       pp = new PPath(new PBounds(0, 0, 1, 1));
       pp.setStroke(new PFixedWidthStroke(2));
       pp.setStrokePaint(Color.gray);
       camera.addChild(pp);
+
+      caption = new PText(visualFlowMap.getFlowWeightAttr());
+      caption.setFont(CAPTION_FONT);
+      caption.setTextPaint(Color.white);
+      caption.setTransparency(0.3f);
+      camera.addChild(caption);
+
       addChild(visualFlowMap);
     }
 
@@ -182,6 +195,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       PBounds viewBounds = camera.getViewBounds();
       getCamera().setBounds(x, y, w, h);
       pp.setBounds(x, y, w, h);
+      caption.setBounds(x + 3, y + (h - caption.getHeight() - 2), caption.getWidth(), caption.getHeight());
       if (!viewBounds.isEmpty()) {
         camera.setViewBounds(viewBounds);
       }

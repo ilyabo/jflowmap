@@ -1,6 +1,5 @@
 view=flowmap
 view.flowmap.colorScheme=Dark
-#view.flowmap.lengthFilterMax=10
 view.flowmap.weightFilterMin=1000
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
