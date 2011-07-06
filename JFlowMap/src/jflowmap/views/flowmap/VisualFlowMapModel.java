@@ -26,6 +26,7 @@ import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
 import jflowmap.data.ViewConfig;
+import jflowmap.views.MapBackgroundImage;
 
 /**
  * @author Ilya Boyandin
@@ -94,11 +95,13 @@ public class VisualFlowMapModel {
 
   private final PropertyChangeSupport changes = new PropertyChangeSupport(this);
   private final FlowMapGraph flowMapGraph;
+  private final MapBackgroundImage mapBackgroundImage;
   private final ViewConfig config;
 
   public VisualFlowMapModel(FlowMapGraph flowMapGraph, ViewConfig config) {
     this.flowMapGraph = flowMapGraph;
     this.config = config;
+    this.mapBackgroundImage = MapBackgroundImage.parseConfig(config);
     initFromStats();
   }
 
@@ -357,6 +360,10 @@ public class VisualFlowMapModel {
 
   public double getDirectionMarkerSize() {
     return directionMarkerSize;
+  }
+
+  public MapBackgroundImage getMapBackgroundImage() {
+    return mapBackgroundImage;
   }
 
   /**

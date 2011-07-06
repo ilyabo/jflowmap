@@ -47,6 +47,7 @@ import jflowmap.geom.Point;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.Legend;
+import jflowmap.views.MapBackgroundImage;
 import jflowmap.views.PTooltip;
 import jflowmap.views.map.PGeoMap;
 
@@ -125,9 +126,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private String flowWeightAttr;
   private final MapProjection mapProjection;
   private IFlowMapColorScheme colorScheme;
+  private PNode mapBackgroundImage;
 
 
-  public VisualFlowMap(IView view, VisualFlowMapModel model, boolean showLegend,
+  public VisualFlowMap(final IView view, VisualFlowMapModel model, boolean showLegend,
       MapProjection proj, String flowWeightAttr, IFlowMapColorScheme colorScheme) {
     this.view = view;
     this.mapProjection = proj;
@@ -172,6 +174,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
           updateNodePositions();
+          System.out.println(view.getVisualCanvas().getVisibleBounds());
         }
       }
     });
@@ -180,6 +183,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private void createVisuals() {
     createNodeVisuals();
     createEdgeVisuals();
+    MapBackgroundImage mapImage = model.getMapBackgroundImage();
+    if (mapImage != null) {
+      mapBackgroundImage = mapImage.createImageNode();
+      addChild(mapBackgroundImage);
+      mapBackgroundImage.moveToBack();
+    }
   }
 
   public void setSelectedFlowWeightAttr(String attr) {
@@ -322,6 +331,9 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     if (areaMap != null) {
       addChild(areaMap);
       areaMap.moveToBack();
+      if (mapBackgroundImage != null) {
+        mapBackgroundImage.moveToBack();
+      }
     }
   }
 

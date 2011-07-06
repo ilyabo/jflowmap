@@ -37,3 +37,7 @@ data.attrs.flow.weight.csvList=1975,1976,1977,1978,1979,\
 
 
 map.projection=WinkelTripel
+
+map.background.src=data/maps/countries/countries.png
+map.background.boundingBox=-2.722533516968113,-1.8260025298264655,5.601597416002858,3.4280609186475823
+map.background.transparency=0.5

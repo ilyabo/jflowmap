@@ -186,7 +186,6 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
         camera.setViewBounds(viewBounds);
       }
     }
-
   }
 
 

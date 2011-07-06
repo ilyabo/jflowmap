@@ -99,6 +99,14 @@ public class ViewConfig {
   public static final String PROP_MAP_SHAPEFILE_SRC = PROP_MAP_SHAPEFILE + ".src";
   public static final String PROP_MAP_SHAPEFILE_DBFAREAIDFIELD = PROP_MAP_SHAPEFILE + ".dbfAreaIdField";
 
+  public static final String PROP_MAP_BACKGROUND = PROP_MAP + ".background";
+  public static final String PROP_MAP_BACKGROUND_SRC = PROP_MAP_BACKGROUND + ".src";
+  public static final String PROP_MAP_BACKGROUND_OFFSET_X = PROP_MAP_BACKGROUND + ".offsetX";
+  public static final String PROP_MAP_BACKGROUND_OFFSET_Y = PROP_MAP_BACKGROUND + ".offsetY";
+  public static final String PROP_MAP_BACKGROUND_SCALE = PROP_MAP_BACKGROUND + ".scale";
+  public static final String PROP_MAP_BACKGROUND_TRANSPARENCY = PROP_MAP_BACKGROUND + ".transparency";
+  public static final String PROP_MAP_BACKGROUND_BOUNDING_BOX = PROP_MAP_BACKGROUND + ".boundingBox";
+
   private final Properties props;
   private final String location;
   private final ViewTypes viewType;
