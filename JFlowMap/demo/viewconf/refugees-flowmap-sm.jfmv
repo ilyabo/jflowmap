@@ -9,7 +9,7 @@ view.flowmap.edgeOpacity=100
 view.flowmap.showSelfLoops=false
 
 #window.size=1024x768
-window.settings.show=true
+#window.settings.show=true
 #window.settings.activeTab=Animation
 
 data=csv
