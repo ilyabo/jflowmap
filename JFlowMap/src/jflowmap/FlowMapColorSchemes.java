@@ -45,8 +45,10 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
     .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(0, 0, 0))
     .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(255, 255, 0))
+
     .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(0, 0, 0))
     .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(255, 255, 255))
+
     .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(0, 0, 0))
     .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
     .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(0, 0, 0))
@@ -59,6 +61,12 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(140, 140, 140, 200))
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
+
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(239, 138, 98))
+
+
     .build()),
 
     LIGHT(new EnumColorScheme.Builder("Light")
@@ -100,6 +108,11 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
       .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
+
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(239, 138, 98))
+
       .build()),
 
 /*
@@ -188,6 +201,11 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
       .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
+
+      .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
+      .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
+      .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(239, 138, 98))
+
       .build()),
 
       /*
@@ -271,6 +289,10 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
 
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(239, 138, 98))
+
   .build()),
 
 GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
@@ -309,6 +331,10 @@ GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
     .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
+
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(239, 138, 98))
 
   .build());
 

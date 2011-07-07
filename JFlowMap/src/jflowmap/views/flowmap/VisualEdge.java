@@ -143,7 +143,7 @@ public abstract class VisualEdge extends PNode {
         ppath.setBounds(getSelfLoopBounds());
         ppath.setStroke(null);
       } else {
-        ppath.setStroke(createStroke(normalizeForWidthScale(value)));
+        ppath.setStroke(createStrokeFor(normalizeForWidthScale(value)));
       }
     }
     updateVisibilityFor(value);
@@ -158,15 +158,15 @@ public abstract class VisualEdge extends PNode {
     if (ppath != null) {
       double normValue = normalizeForColorScale(value);
       if (isSelfLoop) {
-        ppath.setPaint(createPaint(normValue));
+        ppath.setPaint(createPaintFor(normValue));
       } else {
-        ppath.setStrokePaint(createPaint(normValue));
+        ppath.setStrokePaint(createPaintFor(normValue));
       }
     }
   }
 
   private Rectangle2D.Double getSelfLoopBounds() {
-    double size =  getSelfLoopSize(Math.max(1, visualFlowMap.getModel().getMaxEdgeWidth()));
+    double size = getSelfLoopSize(Math.max(1, visualFlowMap.getModel().getMaxEdgeWidth()));
     return new Rectangle2D.Double(getSourceX() - size/2, getSourceY() - size/2, size, size);
   }
 
@@ -181,13 +181,11 @@ public abstract class VisualEdge extends PNode {
       edgeWidth * value;
   }
 
-//  public abstract void updateEdgeMarkerColors();
-
   public void updateVisibility() {
     updateVisibilityFor(getEdgeWeight());
   }
 
-  public void updateVisibilityFor(double weight) {
+  public void updateVisibilityFor(double value) {
     final VisualFlowMapModel model = visualFlowMap.getModel();
     double weightFilterMin = model.getEdgeWeightFilterMin();
     double weightFilterMax = model.getEdgeWeightFilterMax();
@@ -196,10 +194,12 @@ public abstract class VisualEdge extends PNode {
     double edgeLengthFilterMax = model.getEdgeLengthFilterMax();
     double length = getEdgeLength();
 
+    double absValue = Math.abs(value);
+
     boolean visible =
-        !Double.isNaN(weight)  &&
-        weight != 0.0  &&
-        weightFilterMin <= weight && weight <= weightFilterMax  &&
+        !Double.isNaN(value)  &&
+        value != 0.0  &&
+        weightFilterMin <= absValue && absValue <= weightFilterMax  &&
         edgeLengthFilterMin <= length && length <= edgeLengthFilterMax &&
         (!isSelfLoop()  ||  visualFlowMap.getModel().getShowSelfLoops())
     ;
@@ -240,7 +240,7 @@ public abstract class VisualEdge extends PNode {
   }
 
   public double getEdgeWeight() {
-    return edge.getDouble(visualFlowMap.getFlowWeightAttr());
+    return edge.getDouble(visualFlowMap.getValueAttr());
   }
 
   public double getEdgeLength() {
@@ -286,20 +286,20 @@ public abstract class VisualEdge extends PNode {
   }
 
   private double normalizeForWidthScale(double value) {
-    return visualFlowMap.getModel().normalizeEdgeWeightForWidthScale(value);
+    return visualFlowMap.getModel().normalizeForWidthScale(value);
   }
 
   private double normalizeForColorScale(double value) {
-    return visualFlowMap.getModel().normalizeEdgeWeightForColorScale(value);
+    return visualFlowMap.getModel().normalizeForColorScale(value);
   }
 
-  private Paint createPaint(double normValue) {
+  private Paint createPaintFor(double normValue) {
     return visualFlowMap.getVisualEdgePaintFactory().createPaint(
         normValue, getSourceX(), getSourceY(), getTargetX(), getTargetY(),
         edgeLength, isSelfLoop);
   }
 
-  protected Stroke createStroke(double normValue) {
+  protected Stroke createStrokeFor(double normValue) {
     return visualFlowMap.getVisualEdgeStrokeFactory().createStroke(normValue);
   }
 
@@ -320,7 +320,7 @@ public abstract class VisualEdge extends PNode {
         }
         paint = color;
       } else {
-        paint = createPaint(normalizeForColorScale(getEdgeWeight()));
+        paint = createPaintFor(normalizeForColorScale(getEdgeWeight()));
       }
       ppath.setStrokePaint(paint);
     }

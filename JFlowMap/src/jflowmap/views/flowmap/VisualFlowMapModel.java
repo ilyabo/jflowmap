@@ -181,6 +181,10 @@ public class VisualFlowMapModel {
     return valueType;
   }
 
+  public SeqStat getValueStat() {
+    return valueType.getSeqStat(getFlowMapGraph().getStats());
+  }
+
   private void initFromStats() {
     FlowMapStats stat = flowMapGraph.getStats();
 
@@ -430,21 +434,21 @@ public class VisualFlowMapModel {
   }
 
 
-  public double normalize(double edgeWeight, boolean useLogValue) {
-    SeqStat ws = getFlowMapGraph().getStats().getEdgeWeightStats();
+  public double normalize(double value, boolean useLogValue) {
+    SeqStat ws = getValueStat();
     if (useLogValue) {
-      return ws.normalizer().normalizeLog(edgeWeight);
+      return ws.normalizer().normalizeLogAroundZero(value);
     } else {
-      return ws.normalizer().normalize(edgeWeight);
+      return ws.normalizer().normalizeAroundZero(value);
     }
   }
 
-  public double normalizeEdgeWeightForColorScale(double edgeWeight) {
-    return normalize(edgeWeight, useLogColorScale);
+  public double normalizeForColorScale(double value) {
+    return normalize(value, useLogColorScale);
   }
 
-  public double normalizeEdgeWeightForWidthScale(double edgeWeight) {
-    return normalize(edgeWeight, useLogWidthScale);
+  public double normalizeForWidthScale(double value) {
+    return normalize(value, useLogWidthScale);
   }
 
   public ForceDirectedBundlerParameters createForceDirectedBundlerParameters(String weightAttr) {

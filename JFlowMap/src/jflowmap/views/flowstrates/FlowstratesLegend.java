@@ -58,7 +58,7 @@ public class FlowstratesLegend extends Legend {
         }
 
         @Override
-        public SeqStat getMinMax() {
+        public SeqStat getValueStat() {
           return flowstratesView.getValueStat();
         }
 

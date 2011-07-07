@@ -202,7 +202,7 @@ public class ControlPanel {
           "fillx,insets 20", "[][grow][]"));
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
-      int selIndex = attrs.indexOf(jFlowMap.getSelectedFlowWeightAttr());
+      int selIndex = attrs.indexOf(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
       final JLabel selAttrLabel = new JLabel(attrs.get(selIndex));
       selAttrLabel.setFont(new Font("Arial", Font.BOLD, 42));
 
@@ -256,9 +256,9 @@ public class ControlPanel {
           if (playStopBut.getText().equals("Play")) {
             attrSlider.setEnabled(false);
             playStopBut.setText("Stop");
-            jFlowMap.getVisualFlowMap().startFlowWeightAttrsAnimation(runWhenFinished);
+            jFlowMap.getVisualFlowMap().startValueAnimation(runWhenFinished);
           } else {
-            jFlowMap.getVisualFlowMap().stopFlowWeightAttrsAnimation();
+            jFlowMap.getVisualFlowMap().stopValueAnimation();
             runWhenFinished.run();
           }
         }
@@ -447,7 +447,7 @@ public class ControlPanel {
     }
 
     public void setData(VisualFlowMapModel data) {
-        datasetCombo.setSelectedItem(jFlowMap.getSelectedFlowWeightAttr());
+        datasetCombo.setSelectedItem(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
 
         autoAdjustColorScaleCheckBox.setSelected(data.getAutoAdjustColorScale());
         useLogWidthScaleCheckbox.setSelected(data.getUseLogWidthScale());

@@ -39,9 +39,10 @@ public class VisualEdgeStrokeFactory {
       // Besides, the edge of a NaN value shouldn't be visible anyway.
       return new PFixedWidthStroke(0);
     }
-    float width = (float)(1 + normalizedValue * visualFlowMap.getModel().getMaxEdgeWidth());
+
+    // For a negative value the width is the same as for its absolute value.
+    float width = (float)(1 + Math.abs(normalizedValue) * visualFlowMap.getModel().getMaxEdgeWidth());
     return new PFixedWidthStroke(width);
-//    return new BasicStroke(width);
   }
 
 }

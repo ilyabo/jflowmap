@@ -902,7 +902,7 @@ public class FlowstratesView extends AbstractCanvasView {
     }
     double val = wstats.normalizer().normalizeLogAroundZero(value, true);
               // wstats.normalizeAroundZero(
-    if (wstats.getMin() < 0  &&  wstats.getMax() > 0) {
+    if (wstats.isDiverging()) {
       if (val < -1.0 || val > 1.0) {
         return Color.green;  // out of color scale
       }

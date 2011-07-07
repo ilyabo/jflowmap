@@ -181,7 +181,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       pp.setStrokePaint(Color.gray);
       camera.addChild(pp);
 
-      caption = new PText(visualFlowMap.getFlowWeightAttr());
+      caption = new PText(visualFlowMap.getValueAttr());
       caption.setFont(CAPTION_FONT);
       caption.setTextPaint(Color.white);
       caption.setTransparency(0.3f);

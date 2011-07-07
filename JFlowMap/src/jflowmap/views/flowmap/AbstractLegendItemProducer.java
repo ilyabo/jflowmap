@@ -29,7 +29,7 @@ public abstract class AbstractLegendItemProducer implements ItemProducer {
   public Iterable<PNode> createItems() {
     List<PNode> items = Lists.newArrayList();
 
-    SeqStat stats = getMinMax();
+    SeqStat stats = getValueStat();
     List<Double> values = LegendValuesGenerator.generate(
         stats.getMin(), stats.getMax(), numLegendValues);
     for (Double value : values) {
@@ -41,6 +41,6 @@ public abstract class AbstractLegendItemProducer implements ItemProducer {
 
   public abstract PNode createItem(double value);
 
-  public abstract SeqStat getMinMax();
+  public abstract SeqStat getValueStat();
 
 }

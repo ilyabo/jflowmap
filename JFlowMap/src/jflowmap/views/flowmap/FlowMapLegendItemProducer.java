@@ -36,8 +36,8 @@ public class FlowMapLegendItemProducer extends AbstractLegendItemProducer {
   }
 
   @Override
-  public SeqStat getMinMax() {
-    return visualFlowMap.getStats().getEdgeWeightStats();
+  public SeqStat getValueStat() {
+    return visualFlowMap.getValueStat();
   }
 
   @Override
@@ -47,7 +47,7 @@ public class FlowMapLegendItemProducer extends AbstractLegendItemProducer {
     VisualFlowMapModel fmm = visualFlowMap.getModel();
 
     Stroke stroke = visualFlowMap.getVisualEdgeStrokeFactory().createStroke(
-        fmm.normalizeEdgeWeightForWidthScale(value));
+        fmm.normalizeForWidthScale(value));
 
     double sw = getStrokeWidth(stroke);
     double yp = y + sw/2;
@@ -58,7 +58,7 @@ public class FlowMapLegendItemProducer extends AbstractLegendItemProducer {
         if (rv) {
           VisualFlowMapModel fmm = visualFlowMap.getModel();
           setStrokePaint(visualFlowMap.getVisualEdgePaintFactory().createPaint(
-              fmm.normalizeEdgeWeightForColorScale(value), x, y, x + width, y));
+              fmm.normalizeForColorScale(value), x, y, x + width, y));
         }
         return rv;
       }

@@ -40,6 +40,7 @@ import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
 import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
+import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjection;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
@@ -174,7 +175,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
           updateNodePositions();
-          System.out.println(view.getVisualCanvas().getVisibleBounds());
         }
       }
     });
@@ -209,13 +209,26 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
+  /**
+   * This method returns the selected attr without taking <code>valueType</code>
+   * into account. Use {@link #getFlowWeightAttr()} if you need the attribute of
+   * the selected valueType.
+   */
   public String getFlowWeightAttr() {
-    return getFlowWeightAttrFor(flowWeightAttr);
+    return flowWeightAttr;
   }
 
-  public String getFlowWeightAttrFor(String attr) {
+  public String getValueAttr() {
+    return getValueAttrFor(flowWeightAttr);
+  }
+
+  private String getValueAttrFor(String attr) {
     return model.getValueType().getColumnValueAttr(
         model.getFlowMapGraph().getAttrSpec(), attr);
+  }
+
+  private double getValueOf(VisualEdge ve, String attr) {
+    return ve.getEdge().getDouble(getValueAttrFor(attr));
   }
 
   public PGeoMap getAreaMap() {
@@ -373,7 +386,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getFlowWeightAttr())) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getValueAttr())) {
 
       if (!hasCoordinates(edge)) {
         // TODO: create rectangles for flowmap nodes with missing coords
@@ -398,7 +411,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdges() {
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getFlowWeightAttr())) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getValueAttr())) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.update();
@@ -408,7 +421,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdgeOrdering() {
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getFlowWeightAttr())) {
+    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getValueAttr())) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.moveToFront();  // order by attr value
@@ -453,6 +466,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   public FlowMapStats getStats() {
     return getFlowMapGraph().getStats();
+  }
+
+  public SeqStat getValueStat() {
+    return model.getValueStat();
   }
 
   public VisualFlowMapModel getModel() {
@@ -506,7 +523,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       VisualEdge edge = (VisualEdge) component;
       tooltipBox.setText(
           wordWrapLabel(edge.getLabel(), maxLabelWidth),
-          getFlowWeightAttr() + ": ", Double.toString(edge.getEdgeWeight())
+          getValueAttr() + ": ", Double.toString(edge.getEdgeWeight())
           );
     } else {
       return;
@@ -1032,7 +1049,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private VisualFlowMap flowMapBeforeJoining = null;
-  private PInterpolatingActivity flowWeightAnimation;
+  private PInterpolatingActivity valueAnimation;
 
   public void setOriginalVisualFlowMap(VisualFlowMap originalVisualFlowMap) {
     this.flowMapBeforeJoining = originalVisualFlowMap;
@@ -1045,7 +1062,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           getFlowMapGraph().getAttrSpec(), visualNodeClusters);
       VisualFlowMap clusteredFlowMap = fmview.createVisualFlowMap(
           new VisualFlowMapModel(fmg, model.getViewConfig()), mapProjection,
-          getFlowWeightAttr(), getColorScheme());
+          getValueAttr(), getColorScheme());
       if (areaMap != null) {
         clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
       }
@@ -1096,8 +1113,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return null;
   }
 
-  public void startFlowWeightAttrsAnimation(final Runnable runWhenFinished) {
-    if (flowWeightAnimation != null   &&   flowWeightAnimation.isStepping()) {
+  public void startValueAnimation(final Runnable runWhenFinished) {
+    if (valueAnimation != null   &&   valueAnimation.isStepping()) {
       return;
     }
 
@@ -1108,7 +1125,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    flowWeightAnimation = new PInterpolatingActivity(20000) {
+    valueAnimation = new PInterpolatingActivity(20000) {
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
         for (VisualEdge ve : edgesToVisuals.values()) {
@@ -1120,10 +1137,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
           int highi = (int)Math.ceil(alpha);
 
           if (lowi == highi) {
-            value = ve.getEdge().getDouble(attrs.get(lowi));
+            value = getValueOf(ve, attrs.get(lowi));
           } else {
-            double low = ve.getEdge().getDouble(attrs.get(lowi));
-            double high = ve.getEdge().getDouble(attrs.get(highi));
+            double low = getValueOf(ve, attrs.get(lowi));
+            double high = getValueOf(ve, attrs.get(highi));
             if (Double.isNaN(low)) low = 0;
             if (Double.isNaN(high)) high = 0;
             value = low + (high - low) * (alpha - lowi);
@@ -1141,24 +1158,24 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         super.activityFinished();
         if (runWhenFinished != null) {
           runWhenFinished.run();
-          flowWeightAnimation = null;
+          valueAnimation = null;
         }
       }
     };
-    flowWeightAnimation.setSlowInSlowOut(false);
-    addActivity(flowWeightAnimation);
+    valueAnimation.setSlowInSlowOut(false);
+    addActivity(valueAnimation);
   }
 
 
-  public void stopFlowWeightAttrsAnimation() {
-    if (flowWeightAnimation != null  &&  flowWeightAnimation.isStepping()) {
-      flowWeightAnimation.getActivityScheduler().removeActivity(flowWeightAnimation);
-      flowWeightAnimation = null;
+  public void stopValueAnimation() {
+    if (valueAnimation != null  &&  valueAnimation.isStepping()) {
+      valueAnimation.getActivityScheduler().removeActivity(valueAnimation);
+      valueAnimation = null;
     }
   }
 
   public ForceDirectedBundlerParameters createForceDirectedBundlerParameters() {
-    return model.createForceDirectedBundlerParameters(getFlowWeightAttr());
+    return model.createForceDirectedBundlerParameters(getValueAttr());
   }
 
 

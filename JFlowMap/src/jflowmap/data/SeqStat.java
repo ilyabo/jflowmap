@@ -116,6 +116,10 @@ public class SeqStat {
     }
   }
 
+  public boolean isDiverging() {
+    return (min < 0  &&  max > 0);
+  }
+
   public double getMax() {
     return max;
   }
