@@ -8,7 +8,7 @@ var init = function(views) {
  };
  var writeViewLinks = function(view) {
   var i, view, viewconf;
-  document.write('<h3 class="view">'+view.name+' view</h3>');
+  document.write('<h3 class="view">'+view.name+'</h3>');
   if (view.hasOwnProperty('desc')) {
     document.write('<p class="viewdesc">'+view.desc+'</p>');
   }

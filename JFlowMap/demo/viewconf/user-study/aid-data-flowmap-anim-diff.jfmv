@@ -1,12 +1,12 @@
 view=flowmap
 view.flowmap.colorScheme=Dark
-view.flowmap.weightFilterMin=10
+view.flowmap.weightFilterMin=1000
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
 view.flowmap.edgeWidth=15
 view.flowmap.edgeOpacity=150
-view.flowmap.showSelfLoops=true
+view.flowmap.showSelfLoops=false
 view.flowmap.valueType=DIFF
 
 window.size=1024x768
@@ -14,20 +14,20 @@ window.settings.show=true
 window.settings.activeTab=Animation
 
 data=graphml
-data.graphml.src=data/commuters-si.xml.gz
+data.graphml.src=data/aid-data.xml.gz
 
 data.attrs.node.label=name
 data.attrs.node.lat=lat
 data.attrs.node.lon=lon
-data.attrs.flow.weight.csvList=2000,2001,2002,2003,2004,2005,2006,2007,2008
+data.attrs.flow.weight.re=19[789][0-9]|[2][0-9]{3}
 
-
-map.projection=Mercator
+map.projection=WinkelTripel
 
 #map=shapefile
-#map.shapefile.src=data/maps/slo/SVN_adm2.shp.gz
+#map.shapefile.src=data/maps/countries/countries.shp.gz
+#map.shapefile.dbfAreaIdField=ISO_A3
 
-map.background.src=data/maps/slo/slo-map.png
-map.background.boundingBox=7.303700109638609,-29.761913892631096,2.12921263064913,1.5416999478281372
+map.background.src=data/maps/countries/countries.png
+map.background.boundingBox=-2.722533516968113,-1.8260025298264655,5.601597416002858,3.4280609186475823
 map.background.transparency=0.5
 

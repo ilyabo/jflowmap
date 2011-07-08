@@ -1,6 +1,8 @@
 view=flowmapSmallMultiple
+view.flowMapSmallMultiple.numberOfColumns=3
+
 view.flowmap.colorScheme=Dark
-view.flowmap.weightFilterMin=50
+view.flowmap.weightFilterMin=10
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
@@ -8,8 +10,6 @@ view.flowmap.edgeWidth=15
 view.flowmap.edgeOpacity=150
 view.flowmap.showSelfLoops=true
 view.flowmap.valueType=VALUE
-
-
 
 data=graphml
 data.graphml.src=data/commuters-si.xml.gz
@@ -19,7 +19,13 @@ data.attrs.node.lat=lat
 data.attrs.node.lon=lon
 data.attrs.flow.weight.csvList=2000,2001,2002,2003,2004,2005,2006,2007,2008
 
-map=shapefile
-map.shapefile.src=data/maps/slo/SVN_adm2.shp.gz
+
 map.projection=Mercator
+
+#map=shapefile
+#map.shapefile.src=data/maps/slo/SVN_adm2.shp.gz
+
+map.background.src=data/maps/slo/slo-map.png
+map.background.boundingBox=7.303700109638609,-29.761913892631096,2.12921263064913,1.5416999478281372
+map.background.transparency=0.5
 
