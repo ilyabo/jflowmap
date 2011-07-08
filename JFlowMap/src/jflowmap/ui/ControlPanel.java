@@ -199,7 +199,7 @@ public class ControlPanel {
 
     private JPanel createAnimationTab() {
       JPanel panel = new JPanel(new MigLayout(
-          "fillx,insets 20", "[][grow][]"));
+          "fillx,insets 20", "[][][grow][]", ""));
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
       int selIndex = attrs.indexOf(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
@@ -230,11 +230,22 @@ public class ControlPanel {
             }
           });
 
+      final JSlider speedSlider = new JSlider(1, 10, 5);
+      Hashtable<Integer, JComponent> speedLabels = new Hashtable<Integer, JComponent>();
+      speedLabels.put(9, createTinyLabel("Fast"));
+      speedLabels.put(2, createTinyLabel("Slow"));
+      speedSlider.setLabelTable(speedLabels);
+      speedSlider.setOrientation(JSlider.VERTICAL);
+      speedSlider.setPaintTicks(true);
+      speedSlider.setPaintLabels(true);
+
+
       final JButton playStopBut = new JButton("Play");
       final Runnable runWhenFinished = new Runnable() {
         @Override
         public void run() {
           attrSlider.setEnabled(true);
+          speedSlider.setEnabled(true);
           playStopBut.setText("Play");
           updateFlowsTable();
         }
@@ -245,8 +256,9 @@ public class ControlPanel {
           VisualFlowMap vfm = jFlowMap.getVisualFlowMap();
           if (playStopBut.getText().equals("Play")) {
             attrSlider.setEnabled(false);
+            speedSlider.setEnabled(false);
             playStopBut.setText("Stop");
-            vfm.startValueAnimation(runWhenFinished);
+            vfm.startValueAnimation(runWhenFinished, speedSlider.getValue());
           } else {
             vfm.stopValueAnimation();
             runWhenFinished.run();
@@ -274,11 +286,19 @@ public class ControlPanel {
       });
 
 //      panel.add(new JButton("|<<"), "aligny top");
-      panel.add(playStopBut, "aligny top");
+      panel.add(playStopBut, "aligny center");
 //      panel.add(new JButton(">>|"), "aligny top");
+      panel.add(speedSlider, "hmax 60");
       panel.add(attrSlider, "gapx 20, growx");
       panel.add(selAttrLabel, "gap 20, aligny top");
       return panel;
+    }
+
+    private JLabel createTinyLabel(String text) {
+      JLabel label = new JLabel(text);
+      label.setFont(new Font(label.getFont().getFamily(), Font.PLAIN, (int) (label.getFont().getSize()*.75)));
+      label.setHorizontalTextPosition(JLabel.LEFT);
+      return label;
     }
 
     public void loadVisualFlowMap(VisualFlowMap newVisualFlowMap) {

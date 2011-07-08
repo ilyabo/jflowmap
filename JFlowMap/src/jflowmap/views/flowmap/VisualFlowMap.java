@@ -1118,7 +1118,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return null;
   }
 
-  public void startValueAnimation(final Runnable runWhenFinished) {
+  /**
+   * @param speed Animation will take (25/<code>speed</code>) seconds
+   */
+  public void startValueAnimation(final Runnable runWhenFinished, int speed) {
     if (valueAnimation != null   &&   valueAnimation.isStepping()) {
       return;
     }
@@ -1130,7 +1133,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    valueAnimation = new PInterpolatingActivity(20000, 1) {
+    valueAnimation = new PInterpolatingActivity(25000 / speed, 1) {
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
         double alpha = (numAttrs - 1) * zeroToOne;
