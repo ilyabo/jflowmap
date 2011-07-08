@@ -175,6 +175,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
           updateNodePositions();
+//          System.out.println(getCamera().getViewBounds());
         }
       }
     });
@@ -196,9 +197,9 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void setFlowWeightAttr(String attr, boolean doUpdate) {
-    String oldValue = this.flowWeightAttr;
+    String oldValue = flowWeightAttr;
     if (!oldValue.equals(attr)) {
-      this.flowWeightAttr = attr;
+      flowWeightAttr = attr;
       resetClusters();
       resetBundling();
       if (doUpdate) {
@@ -379,6 +380,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
+  public Iterable<Edge> getEdgesSortedByValue() {
+    return getFlowMapGraph().getEdgesSortedBy(getValueAttr(), true);
+  }
+
   private void createEdgeVisuals() {
     edgeLayer.removeAllChildren();
     clearAggregatedEdgesLayer();
@@ -386,7 +391,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getValueAttr())) {
+    for (Edge edge : getEdgesSortedByValue()) {
 
       if (!hasCoordinates(edge)) {
         // TODO: create rectangles for flowmap nodes with missing coords
@@ -411,7 +416,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdges() {
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getValueAttr())) {
+    for (Edge edge : getEdgesSortedByValue()) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.update();
@@ -421,7 +426,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdgeOrdering() {
-    for (Edge edge : getFlowMapGraph().getEdgesSortedBy(getValueAttr())) {
+    for (Edge edge : getEdgesSortedByValue()) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.moveToFront();  // order by attr value
@@ -1125,16 +1130,17 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    valueAnimation = new PInterpolatingActivity(20000) {
+    valueAnimation = new PInterpolatingActivity(20000, 1) {
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
+        double alpha = (numAttrs - 1) * zeroToOne;
+        int lowi = (int)Math.floor(alpha);
+        int highi = (int)Math.ceil(alpha);
+
+        setFlowWeightAttr(attrs.get(lowi), false);
+
         for (VisualEdge ve : edgesToVisuals.values()) {
-
           double value;
-
-          double alpha = (numAttrs - 1) * zeroToOne;
-          int lowi = (int)Math.floor(alpha);
-          int highi = (int)Math.ceil(alpha);
 
           if (lowi == highi) {
             value = getValueOf(ve, attrs.get(lowi));
@@ -1145,9 +1151,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
             if (Double.isNaN(high)) high = 0;
             value = low + (high - low) * (alpha - lowi);
           }
-
-          setFlowWeightAttr(attrs.get(lowi), false);
-
           ve.updateEdgeWidthTo(value);
           ve.updateEdgeColorsTo(value);
         }
@@ -1166,6 +1169,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     addActivity(valueAnimation);
   }
 
+
+  public boolean isValueAnimationRunning() {
+    return (valueAnimation != null  &&   valueAnimation.isStepping());
+  }
 
   public void stopValueAnimation() {
     if (valueAnimation != null  &&  valueAnimation.isStepping()) {

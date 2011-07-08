@@ -100,13 +100,13 @@ public class VisualEdgePaintFactory {
   }
 
   private Paint createSelfLoopPaint(double normalizedValue, int alpha, boolean diverging) {
-    if (diverging) {
-      return createSimpleDivergingPaint(normalizedValue, alpha);
-    } else {
+    if (visualFlowMap.getModel().getFillEdgesWithGradient()) {
       return ColorUtils.colorBetween(
           visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT),
           visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT),
           normalizedValue, alpha);
+    } else {
+      return createSimplePaint(normalizedValue, alpha, diverging);
     }
   }
 

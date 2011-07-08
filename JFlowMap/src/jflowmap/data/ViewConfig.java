@@ -323,7 +323,9 @@ public class ViewConfig {
       public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
         return new FlowMapSmallMultipleView(
             VisualFlowMapModel.createFor((FlowMapGraph)data, config),
-            areaMap, mapProjection(config), colorSchemeFor(config));
+            areaMap, mapProjection(config), colorSchemeFor(config),
+            config.getIntOrElse(FlowMapSmallMultipleView.VIEWCONF_NUM_OF_COLUMNS, 7)
+        );
       }
     }
     ;

@@ -62,11 +62,7 @@ public abstract class VisualEdge extends PNode {
     if (isSelfLoop) {
       this.edgeLength = 0;
     } else {
-      final double x1 = sourceNode.getValueX();
-      final double y1 = sourceNode.getValueY();
-      final double x2 = targetNode.getValueX();
-      final double y2 = targetNode.getValueY();
-      this.edgeLength = GeomUtils.distance(x1, y1, x2, y2);
+      this.edgeLength = getDistance(sourceNode, targetNode);
     }
   }
 
@@ -286,11 +282,11 @@ public abstract class VisualEdge extends PNode {
   }
 
   private double normalizeForWidthScale(double value) {
-    return visualFlowMap.getModel().normalizeForWidthScale(value, false);
+    return visualFlowMap.getModel().normalizeForWidthScale(value);
   }
 
   private double normalizeForColorScale(double value) {
-    return visualFlowMap.getModel().normalizeForColorScale(value, false);
+    return visualFlowMap.getModel().normalizeForColorScale(value);
   }
 
   private Paint createPaintFor(double normValue) {
@@ -356,5 +352,14 @@ public abstract class VisualEdge extends PNode {
       }
     }
   };
+
+  private double getDistance(VisualNode n1, VisualNode n2) {
+    final double x1 = n1.getValueX();
+    final double y1 = n1.getValueY();
+    final double x2 = n2.getValueX();
+    final double y2 = n2.getValueY();
+    double length = GeomUtils.distance(x1, y1, x2, y2);
+    return length;
+  }
 
 }

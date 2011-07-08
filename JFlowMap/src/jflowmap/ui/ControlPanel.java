@@ -218,6 +218,7 @@ public class ControlPanel {
       attrSlider.setMajorTickSpacing(attrs.size() < 50  ?  1  : (int)Math.ceil(attrs.size() / 50));
       attrSlider.setPaintTicks(true);
       attrSlider.setPaintLabels(true);
+      attrSlider.setSnapToTicks(true);
       jFlowMap.getVisualFlowMap().addPropertyChangeListener(
           VisualFlowMap.PROPERTY_FLOW_WEIGHT_ATTR,
           new PropertyChangeListener() {
@@ -228,18 +229,6 @@ public class ControlPanel {
               datasetCombo.setSelectedItem(sel);
             }
           });
-      attrSlider.addChangeListener(new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-          final JSlider slider = (JSlider)e.getSource();
-          final String attr = attrs.get(slider.getValue());
-          selAttrLabel.setText(attr);
-          if (!slider.getValueIsAdjusting()) {
-            jFlowMap.setSelectedFlowWeightAttr(attr);
-            // setSelectedFlowWeightAttr(attr);
-          }
-        }
-      });
 
       final JButton playStopBut = new JButton("Play");
       final Runnable runWhenFinished = new Runnable() {
@@ -253,14 +242,34 @@ public class ControlPanel {
       playStopBut.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+          VisualFlowMap vfm = jFlowMap.getVisualFlowMap();
           if (playStopBut.getText().equals("Play")) {
             attrSlider.setEnabled(false);
             playStopBut.setText("Stop");
-            jFlowMap.getVisualFlowMap().startValueAnimation(runWhenFinished);
+            vfm.startValueAnimation(runWhenFinished);
           } else {
-            jFlowMap.getVisualFlowMap().stopValueAnimation();
+            vfm.stopValueAnimation();
             runWhenFinished.run();
           }
+        }
+      });
+
+      attrSlider.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+//          VisualFlowMap vfm = jFlowMap.getVisualFlowMap();
+//          if (vfm.isValueAnimationRunning()) {
+//            vfm.stopValueAnimation();
+//            runWhenFinished.run();
+//          }
+
+          final JSlider slider = (JSlider)e.getSource();
+          final String attr = attrs.get(slider.getValue());
+          selAttrLabel.setText(attr);
+//          if (!slider.getValueIsAdjusting()) {
+            jFlowMap.setSelectedFlowWeightAttr(attr);
+            // setSelectedFlowWeightAttr(attr);
+//          }
         }
       });
 
@@ -1009,13 +1018,13 @@ public class ControlPanel {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
-        panel1 = createAnimationTab();
+        panel1 = new JPanel();
         panel1.setLayout(new BorderLayout(0, 0));
         tabbedPane1 = new JTabbedPane();
         panel1.add(tabbedPane1, BorderLayout.CENTER);
-        final JPanel panel2 = createAnimationTab();
+        final JPanel panel2 = new JPanel();
         panel2.setLayout(new FormLayout("fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:187px:noGrow,left:4dlu:noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:119px:noGrow,left:20dlu:noGrow,fill:max(d;4px):grow", "center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:min(p;200px):grow"));
-        tabbedPane1.addTab("Dataset", panel2);
+        tabbedPane1.addTab("Data", panel2);
         panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
         datasetCombo = new JComboBox();
         CellConstraints cc = new CellConstraints();
@@ -1065,7 +1074,7 @@ public class ControlPanel {
         comboBox3 = new JComboBox();
         comboBox3.setEnabled(false);
         panel2.add(comboBox3, cc.xy(9, 7));
-        final JPanel panel3 = createAnimationTab();
+        final JPanel panel3 = new JPanel();
         panel3.setLayout(new FormLayout("right:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow(2.0),left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:20px:noGrow,left:4dlu:noGrow,right:max(d;4px):noGrow,left:4dlu:noGrow,fill:d:grow,left:4dlu:noGrow,fill:p:noGrow", "center:26px:noGrow,top:4dlu:noGrow,center:24px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:5dlu:noGrow,center:d:noGrow"));
         tabbedPane1.addTab("Filter", panel3);
         panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -1099,7 +1108,7 @@ public class ControlPanel {
         panel3.add(maxLengthFilterSlider, cc.xy(11, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
         maxLengthFilterSpinner = new JSpinner();
         panel3.add(maxLengthFilterSpinner, cc.xy(13, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
-        final JPanel panel4 = createAnimationTab();
+        final JPanel panel4 = new JPanel();
         panel4.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
         panel3.add(panel4, cc.xy(5, 7));
         final JLabel label9 = new JLabel();
@@ -1107,7 +1116,7 @@ public class ControlPanel {
         panel3.add(label9, cc.xy(1, 1));
         minWeightFilterSlider = new JSlider();
         panel3.add(minWeightFilterSlider, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-        final JPanel panel5 = createAnimationTab();
+        final JPanel panel5 = new JPanel();
         panel5.setLayout(new FormLayout("fill:d:noGrow,left:p:noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:20dlu:noGrow,fill:max(d;4px):grow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:24px:noGrow,top:6dlu:noGrow,top:4dlu:noGrow"));
         tabbedPane1.addTab("Scales", panel5);
         panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -1133,7 +1142,7 @@ public class ControlPanel {
         final JSeparator separator5 = new JSeparator();
         separator5.setOrientation(1);
         panel5.add(separator5, cc.xywh(6, 1, 1, 5, CellConstraints.CENTER, CellConstraints.FILL));
-        final JPanel panel6 = createAnimationTab();
+        final JPanel panel6 = new JPanel();
         panel6.setLayout(new FormLayout("fill:d:noGrow,left:4dlu:noGrow,fill:110px:noGrow,left:4dlu:noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,fill:20px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:max(d;4px):grow,left:4dlu:noGrow,fill:max(m;50px):noGrow", "center:d:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         tabbedPane1.addTab("Aesthetics", panel6);
         panel6.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));
@@ -1193,7 +1202,7 @@ public class ControlPanel {
         edgeMarkerOpacityLabel = new JLabel();
         edgeMarkerOpacityLabel.setText("Direction marker opacity:");
         panel6.add(edgeMarkerOpacityLabel, cc.xy(10, 7, CellConstraints.RIGHT, CellConstraints.DEFAULT));
-        final JPanel panel7 = createAnimationTab();
+        final JPanel panel7 = new JPanel();
         panel7.setLayout(new FormLayout("fill:d:noGrow,left:6dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:p:noGrow,left:4dlu:noGrow,fill:12px:noGrow,left:4dlu:noGrow,fill:max(d;4px):noGrow,left:4dlu:noGrow,fill:p:noGrow,left:12dlu:noGrow,fill:p:noGrow,fill:d:noGrow,left:d:noGrow", "center:max(d;4px):noGrow,top:4dlu:noGrow,center:25px:noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:d:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow"));
         tabbedPane1.addTab("Edge bundling", panel7);
         panel7.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10), null));

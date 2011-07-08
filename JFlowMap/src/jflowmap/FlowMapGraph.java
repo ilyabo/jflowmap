@@ -949,24 +949,47 @@ public class FlowMapGraph {
     return !((Double.isNaN(lon) || lon == 0) && (Double.isNaN(lat) || lat == 0));
   }
 
+  /**
+   * @param useAbsValues Edges with negative values, but high absolute values
+   *                     should be above others.
+   */
   @SuppressWarnings("unchecked")
-  public Iterable<Edge> getEdgesSortedBy(final String flowWeightAttr) {
+  public Iterable<Edge> getEdgesSortedBy(final String flowWeightAttr, final boolean useAbsValues) {
     if (!getGraph().getEdgeTable().canGetDouble(flowWeightAttr)) {
       throw new IllegalArgumentException("Now attribute '" + flowWeightAttr + "' in edge table");
     }
-    return new Iterable<Edge>() {
-      @Override
-      public Iterator<Edge> iterator() {
-        return Iterators.transform(
-            getGraph().getEdgeTable().rowsSortedBy(flowWeightAttr, true),
-            new Function<Integer, Edge>() {
-              @Override
-              public Edge apply(Integer index) {
-                return getGraph().getEdge(index);
-              }
-            });
-      }
-    };
+    if (useAbsValues) {
+      List<Edge> edges = Lists.newArrayList(edges());
+      Collections.sort(edges, new Comparator<Edge>() {
+        @Override
+        public int compare(Edge e1, Edge e2) {
+          double v1 = e1.getDouble(flowWeightAttr);
+          double v2 = e2.getDouble(flowWeightAttr);
+          if (useAbsValues) {
+            v1 = Math.abs(v1);
+            v2 = Math.abs(v2);
+          }
+          return Double.compare(v1, v2);
+        }
+      });
+
+      return edges;
+
+    } else {
+      return new Iterable<Edge>() {
+        @Override
+        public Iterator<Edge> iterator() {
+          return Iterators.transform(
+              getGraph().getEdgeTable().rowsSortedBy(flowWeightAttr, true),
+              new Function<Integer, Edge>() {
+                @Override
+                public Edge apply(Integer index) {
+                  return getGraph().getEdge(index);
+                }
+              });
+        }
+      };
+    }
   }
 
 }
