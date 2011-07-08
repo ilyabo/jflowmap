@@ -434,21 +434,21 @@ public class VisualFlowMapModel {
   }
 
 
-  public double normalize(double value, boolean useLogValue, boolean omitIntervalCheck) {
+  public double normalize(double value, boolean useLogValue) {
     SeqStat ws = getValueStat();
     if (useLogValue) {
-      return ws.normalizer().normalizeLogAroundZero(value, omitIntervalCheck);
+      return ws.normalizer().normalizeLogAroundZero(value);
     } else {
-      return ws.normalizer().normalizeAroundZero(value, omitIntervalCheck);
+      return ws.normalizer().normalizeAroundZero(value);
     }
   }
 
-  public double normalizeForColorScale(double value, boolean omitIntervalCheck) {
-    return normalize(value, useLogColorScale, omitIntervalCheck);
+  public double normalizeForColorScale(double value) {
+    return normalize(value, useLogColorScale);
   }
 
-  public double normalizeForWidthScale(double value, boolean omitIntervalCheck) {
-    return normalize(value, useLogWidthScale, omitIntervalCheck);
+  public double normalizeForWidthScale(double value) {
+    return normalize(value, useLogWidthScale);
   }
 
   public ForceDirectedBundlerParameters createForceDirectedBundlerParameters(String weightAttr) {

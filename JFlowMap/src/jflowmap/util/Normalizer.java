@@ -62,7 +62,7 @@ public class Normalizer {
     }
     if (max == min)
       return min;
-  
+
     double rv = min + (normalized * (max - min));
     // checkInterval(rv);
     return rv;
@@ -80,7 +80,7 @@ public class Normalizer {
       return Double.NaN;
     }
     if (!omitIntervalCheck) {
-      checkInterval(value, min, max);
+      checkIntervalAroundZero(value, min, max);
     }
     if (max == min)
       return 0.0;
@@ -106,6 +106,14 @@ public class Normalizer {
   private void checkInterval(double value, double min, double max) {
     if (value < min || value > max) {
       throw new IllegalArgumentException("Value must be between " + min + " and " + max + ". Actual value = "
+          + value);
+    }
+  }
+
+  private void checkIntervalAroundZero(double value, double min, double max) {
+    double maxAbs = Math.max(Math.abs(min), Math.abs(max));
+    if (Math.abs(value) > maxAbs) {
+      throw new IllegalArgumentException("Value must be between " + (-maxAbs) + " and " + maxAbs + ". Actual value = "
           + value);
     }
   }
@@ -146,14 +154,14 @@ public class Normalizer {
       return Double.NaN;
     }
     if (!omitIntervalCheck) {
-      checkInterval(value, min, max);
+      checkIntervalAroundZero(value, min, max);
     }
     if (max == min)
       return Math.signum(max);
     double radius = Math.max(Math.abs(max), Math.abs(min));
     double logOfRadius = Math.log10(1.0 + radius);
     double rv = Math.signum(value) * Math.log10(1.0 + Math.abs(value)) / logOfRadius;
-  
+
     if (!omitIntervalCheck) { // TODO: remove this
       checkNormalized(value, rv, -1.0, 1.0);
     }

@@ -27,7 +27,6 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
@@ -58,15 +57,17 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class FlowMapSmallMultipleView extends AbstractCanvasView {
 
+  public static final String VIEWCONF_NUM_OF_COLUMNS = "view.flowMapSmallMultiple.numberOfColumns";
+
   private final List<VisualFlowMapLayer> layers;
   private final VisualFlowMapModel model;
-  private final int numberOfColumns = 7;
-
+  private final int numberOfColumns;
 
   public FlowMapSmallMultipleView(VisualFlowMapModel model, GeoMap areaMap, MapProjections proj,
-      IFlowMapColorScheme cs) {
+      IFlowMapColorScheme cs, int numberOfColumns) {
 
     this.model = model;
+    this.numberOfColumns = numberOfColumns;
 
     FlowMapGraph fmg = model.getFlowMapGraph();
     VisualCanvas canvas = getVisualCanvas();
@@ -92,6 +93,11 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       canvas.getLayer().addChild(layer.getCamera());
     }
 
+    if (layers.size() > 0) {
+      VisualFlowMapLayer firstLayer = layers.get(0);
+      firstLayer.getCamera().addChild(firstLayer.getVisualFlowMap().getVisualLegend());
+    }
+
     canvas.setBackground(cs.get(ColorCodes.BACKGROUND));
     canvas.setAutoFitOnBoundsChange(false);
     canvas.setPanEventHandler(createPanHandler());
@@ -112,7 +118,8 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
 
   @Override
   public JComponent getControls() {
-    return new JPanel();
+//    return new JPanel();
+    return null;
   }
 
   private ZoomHandler createZoomHandler() {
@@ -209,7 +216,6 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     }
   }
 
-
   @Override
   public void fitInView() {
     for (VisualFlowMapLayer layer : layers) {
@@ -222,13 +228,12 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     return model.getFlowMapGraph().getId();
   }
 
-
   private void layoutChildren() {
     Rectangle2D vbounds = getCamera().getViewBounds();
 
     int size = layers.size();
     int numColumns = Math.min(numberOfColumns, size);
-    int numRows = (int) Math.ceil(((double)size) / numColumns);
+    int numRows = (int) Math.ceil(((double) size) / numColumns);
 
     double w = vbounds.getWidth() / numColumns;
     double h = vbounds.getHeight() / numRows;
@@ -246,6 +251,5 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       }
     }
   }
-
 
 }
