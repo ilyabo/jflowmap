@@ -286,11 +286,11 @@ public abstract class VisualEdge extends PNode {
   }
 
   private double normalizeForWidthScale(double value) {
-    return visualFlowMap.getModel().normalizeForWidthScale(value);
+    return visualFlowMap.getModel().normalizeForWidthScale(value, false);
   }
 
   private double normalizeForColorScale(double value) {
-    return visualFlowMap.getModel().normalizeForColorScale(value);
+    return visualFlowMap.getModel().normalizeForColorScale(value, false);
   }
 
   private Paint createPaintFor(double normValue) {
