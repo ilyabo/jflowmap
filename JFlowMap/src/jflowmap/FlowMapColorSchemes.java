@@ -62,9 +62,10 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
 
-    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
-    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
-    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(239, 138, 98))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(5, 113, 176))
+//    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(0, 0, 0))
+    .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MAX, new Color(202, 0, 32))
 
 
     .build()),
