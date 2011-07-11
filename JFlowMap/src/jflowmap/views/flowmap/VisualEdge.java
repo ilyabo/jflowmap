@@ -136,7 +136,8 @@ public abstract class VisualEdge extends PNode {
     PPath ppath = getEdgePPath();
     if (ppath != null) {
       if (isSelfLoop) {
-        ppath.setBounds(getSelfLoopBoundsFor(value));
+//        ppath.setBounds(getSelfLoopBoundsFor(value));
+        ppath.setPathTo(createSelfLoopShape());
         ppath.setStroke(null);
       } else {
         ppath.setStroke(createStrokeFor(normalizeForWidthScale(value)));
@@ -172,12 +173,12 @@ public abstract class VisualEdge extends PNode {
 
   private double getSelfLoopSizeFor(double value) {
     double linewidth = Math.max(1, visualFlowMap.getModel().getMaxEdgeWidth());
-    double normValue = normalizeForWidthScale(value);
-    if (Double.isNaN(normValue)) {
+    double normAbsValue = Math.abs(normalizeForWidthScale(value));
+    if (Double.isNaN(normAbsValue)) {
       return 0;
     }
     double avgLen = visualFlowMap.getStats().getEdgeLengthStats().getAvg();
-    return avgLen / MAX_EDGE_WIDTH * linewidth * normValue;
+    return avgLen / MAX_EDGE_WIDTH * linewidth * normAbsValue;
   }
 
   public void updateVisibility() {
