@@ -199,7 +199,7 @@ public class ControlPanel {
 
     private JPanel createAnimationTab() {
       JPanel panel = new JPanel(new MigLayout(
-          "fillx,insets 20", "[][][grow][]", ""));
+          "fillx,insets 20", "[70,right][][grow][]", ""));
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
       int selIndex = attrs.indexOf(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
@@ -255,10 +255,15 @@ public class ControlPanel {
         public void actionPerformed(ActionEvent e) {
           VisualFlowMap vfm = jFlowMap.getVisualFlowMap();
           if (playStopBut.getText().equals("Play")) {
+            if (attrSlider.getValue() == attrSlider.getMaximum()) {
+              attrSlider.setValue(attrSlider.getMinimum());
+            }
             attrSlider.setEnabled(false);
             speedSlider.setEnabled(false);
             playStopBut.setText("Stop");
-            vfm.startValueAnimation(runWhenFinished, speedSlider.getValue());
+            vfm.startValueAnimation(runWhenFinished,
+                attrSlider.getValue(),
+                speedSlider.getValue());
           } else {
             vfm.stopValueAnimation();
             runWhenFinished.run();

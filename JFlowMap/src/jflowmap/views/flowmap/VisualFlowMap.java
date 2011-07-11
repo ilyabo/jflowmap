@@ -1119,26 +1119,31 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   /**
-   * @param speed Animation will take (25/<code>speed</code>) seconds
+   * @param speed Animation will take (25/<code>speed</code>) seconds for animating
+   *              all attributes.
+   * @param i
    */
-  public void startValueAnimation(final Runnable runWhenFinished, int speed) {
+  public void startValueAnimation(final Runnable runWhenFinished, final int startAttrIndex, int speed) {
     if (valueAnimation != null   &&   valueAnimation.isStepping()) {
       return;
     }
 
     final List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
 
-    final int numAttrs = attrs.size();
-    if (numAttrs == 0) {
+    final int numAttrs = (attrs.size() - startAttrIndex);
+    if (numAttrs <= 1) {
+      if (runWhenFinished != null) {
+        runWhenFinished.run();
+      }
       return;
     }
 
-    valueAnimation = new PInterpolatingActivity(25000 / speed, 1) {
+    valueAnimation = new PInterpolatingActivity(25000 * numAttrs / attrs.size() / speed, 1) {
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
         double alpha = (numAttrs - 1) * zeroToOne;
-        int lowi = (int)Math.floor(alpha);
-        int highi = (int)Math.ceil(alpha);
+        int lowi = startAttrIndex + (int)Math.floor(alpha);
+        int highi = startAttrIndex + (int)Math.ceil(alpha);
 
         setFlowWeightAttr(attrs.get(lowi), false);
 
@@ -1152,7 +1157,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
             double high = getValueOf(ve, attrs.get(highi));
             if (Double.isNaN(low)) low = 0;
             if (Double.isNaN(high)) high = 0;
-            value = low + (high - low) * (alpha - lowi);
+            value = low + (high - low) * (alpha - (lowi - startAttrIndex));
           }
           ve.updateEdgeWidthTo(value);
           ve.updateEdgeColorsTo(value);

@@ -136,7 +136,7 @@ public abstract class VisualEdge extends PNode {
     PPath ppath = getEdgePPath();
     if (ppath != null) {
       if (isSelfLoop) {
-        ppath.setBounds(getSelfLoopBounds());
+        ppath.setBounds(getSelfLoopBoundsFor(value));
         ppath.setStroke(null);
       } else {
         ppath.setStroke(createStrokeFor(normalizeForWidthScale(value)));
@@ -162,19 +162,22 @@ public abstract class VisualEdge extends PNode {
   }
 
   private Rectangle2D.Double getSelfLoopBounds() {
-    double size = getSelfLoopSize(Math.max(1, visualFlowMap.getModel().getMaxEdgeWidth()));
+    return getSelfLoopBoundsFor(getEdgeWeight());
+  }
+
+  private Rectangle2D.Double getSelfLoopBoundsFor(double value) {
+    double size = getSelfLoopSizeFor(value);
     return new Rectangle2D.Double(getSourceX() - size/2, getSourceY() - size/2, size, size);
   }
 
-  private double getSelfLoopSize(double edgeWidth) {
-    double value = normalizeForWidthScale(getEdgeWeight());
-    if (Double.isNaN(value)) {
+  private double getSelfLoopSizeFor(double value) {
+    double linewidth = Math.max(1, visualFlowMap.getModel().getMaxEdgeWidth());
+    double normValue = normalizeForWidthScale(value);
+    if (Double.isNaN(normValue)) {
       return 0;
     }
     double avgLen = visualFlowMap.getStats().getEdgeLengthStats().getAvg();
-    return
-      avgLen / MAX_EDGE_WIDTH *
-      edgeWidth * value;
+    return avgLen / MAX_EDGE_WIDTH * linewidth * normValue;
   }
 
   public void updateVisibility() {
