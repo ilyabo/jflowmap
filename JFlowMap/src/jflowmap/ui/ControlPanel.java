@@ -239,7 +239,6 @@ public class ControlPanel {
       speedSlider.setPaintTicks(true);
       speedSlider.setPaintLabels(true);
 
-
       final JButton playStopBut = new JButton("Play");
       final Runnable runWhenFinished = new Runnable() {
         @Override

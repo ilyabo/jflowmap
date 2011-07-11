@@ -31,6 +31,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +53,9 @@ import org.apache.log4j.Logger;
 
 import at.fhj.utils.misc.FileUtils;
 import at.fhj.utils.swing.JMsgPane;
+
+import com.google.common.collect.ImmutableList;
+
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
@@ -131,7 +135,7 @@ public class ViewLoader {
 
               final JComponent controls = view.getControls();
               if (controls != null) {
-                createControls(parent, canvas, controls, config);
+                initControls(parent, canvas, controls, config);
               }
 
             }
@@ -157,7 +161,7 @@ public class ViewLoader {
     worker.execute();
   }
 
-  private static void createControls(final Container parent, VisualCanvas canvas,
+  private static void initControls(final Container parent, VisualCanvas canvas,
       final JComponent controls, ViewConfig config) {
 
 
@@ -195,9 +199,15 @@ public class ViewLoader {
         (int)Math.min(b.getMaxY(), screen.getHeight() - dialog.getHeight()));
     dialog.setResizable(false);
 
+    String visibleTabs = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_SHOW_TABS);
+    if (visibleTabs != null) {
+      setControlTabsVisibility(dialog.getContentPane(), visibleTabs.split(","));
+    }
+
+
     String activeTab = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_ACTIVE_TAB);
     if (activeTab != null) {
-      setActiveTab(dialog.getContentPane(), activeTab);
+      setActiveControlTab(dialog.getContentPane(), activeTab);
     }
 
     boolean visible = config.getBoolOrElse(ViewConfig.PROP_WINDOW_SETTINGS_SHOW, false);
@@ -241,13 +251,37 @@ public class ViewLoader {
     return win;
   }
 
-  private static void setActiveTab(Container contentPane, String activeTab) {
+  private static JTabbedPane getTabbedPane(Container contentPane) {
+    JTabbedPane tp = null;
     for (Component c : contentPane.getComponents()) {
       if (c instanceof JTabbedPane) {
-        JTabbedPane tp = (JTabbedPane)c;
-        int index = tp.indexOfTab(activeTab);
-        if (index >= 0) {
-          tp.setSelectedIndex(index);
+        tp = (JTabbedPane)c;
+        break;
+      }
+    }
+    return tp;
+  }
+
+  private static void setActiveControlTab(Container contentPane, String activeTab) {
+    JTabbedPane tp = getTabbedPane(contentPane);
+    if (tp != null) {
+      int index = tp.indexOfTab(activeTab);
+      if (index >= 0) {
+        tp.setSelectedIndex(index);
+      }
+    }
+  }
+
+  private static void setControlTabsVisibility(Container contentPane, String[] visibleTabs) {
+    List<String> tabList = ImmutableList.copyOf(visibleTabs);
+    JTabbedPane tp = getTabbedPane(contentPane);
+    if (tp != null) {
+      for (int i = tp.getTabCount() - 1; i >= 0; i--) {
+        String title = tp.getTitleAt(i);
+        boolean visible = tabList.contains(title);
+        if (!visible) {
+          tp.removeTabAt(i);
+          tp.getComponentAt(i).setVisible(false);
         }
       }
     }

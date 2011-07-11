@@ -63,6 +63,7 @@ public class ViewConfig {
   public static final String PROP_WINDOW_SETTINGS = PROP_WINDOW + ".settings";
   public static final String PROP_WINDOW_SETTINGS_SHOW = PROP_WINDOW_SETTINGS + ".show";
   public static final String PROP_WINDOW_SETTINGS_ACTIVE_TAB = PROP_WINDOW_SETTINGS + ".activeTab";
+  public static final String PROP_WINDOW_SETTINGS_SHOW_TABS = PROP_WINDOW_SETTINGS + ".showTabs";
 
   public static final String PROP_DATA = "data";
 
