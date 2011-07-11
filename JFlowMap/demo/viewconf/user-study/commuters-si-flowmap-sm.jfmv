@@ -8,11 +8,14 @@ view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
 view.flowmap.edgeWidth=15
 view.flowmap.edgeOpacity=150
-view.flowmap.showSelfLoops=true
+view.flowmap.showSelfLoops=false
 view.flowmap.valueType=VALUE
 
 data=graphml
 data.graphml.src=data/commuters-si.xml.gz
+
+data.select.edges=
+data.select.nodes=
 
 data.attrs.node.label=name
 data.attrs.node.lat=lat

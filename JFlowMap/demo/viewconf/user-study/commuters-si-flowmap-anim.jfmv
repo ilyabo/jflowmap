@@ -6,7 +6,7 @@ view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
 view.flowmap.edgeWidth=15
 view.flowmap.edgeOpacity=150
-view.flowmap.showSelfLoops=true
+view.flowmap.showSelfLoops=false
 view.flowmap.valueType=VALUE
 
 window.size=1024x768

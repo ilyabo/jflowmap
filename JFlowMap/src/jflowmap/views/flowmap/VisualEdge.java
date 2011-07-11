@@ -186,6 +186,14 @@ public abstract class VisualEdge extends PNode {
   }
 
   public void updateVisibilityFor(double value) {
+    boolean visible = getVisibilityFor(value);
+
+    setVisible(visible);
+    setPickable(visible);
+    setChildrenPickable(visible);
+  }
+
+  public boolean getVisibilityFor(double value) {
     final VisualFlowMapModel model = visualFlowMap.getModel();
     double weightFilterMin = model.getEdgeWeightFilterMin();
     double weightFilterMax = model.getEdgeWeightFilterMax();
@@ -199,18 +207,16 @@ public abstract class VisualEdge extends PNode {
     boolean visible =
         !Double.isNaN(value)  &&
         value != 0.0  &&
+//        model.getEdgeFilter().accepts(this)
         weightFilterMin <= absValue && absValue <= weightFilterMax  &&
-        edgeLengthFilterMin <= length && length <= edgeLengthFilterMax &&
+//        edgeLengthFilterMin <= length && length <= edgeLengthFilterMax &&
         (!isSelfLoop()  ||  visualFlowMap.getModel().getShowSelfLoops())
     ;
 
     if (visible) {
       visible = areNodeClustersVisibile();
     }
-
-    setVisible(visible);
-    setPickable(visible);
-    setChildrenPickable(visible);
+    return visible;
   }
 
   private boolean areNodeClustersVisibile() {

@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import prefuse.data.Graph;
 import au.com.bytecode.opencsv.CSVParser;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -66,6 +67,10 @@ public class ViewConfig {
   public static final String PROP_WINDOW_SETTINGS_SHOW_TABS = PROP_WINDOW_SETTINGS + ".showTabs";
 
   public static final String PROP_DATA = "data";
+
+  public static final String PROP_DATA_SELECT = PROP_DATA + ".select";
+  public static final String PROP_DATA_SELECT_NODES = PROP_DATA_SELECT + ".nodes";
+  public static final String PROP_DATA_SELECT_EDGES = PROP_DATA_SELECT + ".edges";
 
   public static final String PROP_DATA_CSV = PROP_DATA + ".csv";
   public static final String PROP_DATA_CSV_SEPARATOR = PROP_DATA_CSV + ".separator";
@@ -224,7 +229,8 @@ public class ViewConfig {
       public Object load(final ViewConfig config) throws IOException {
         final char csvSeparator = config.getStringOrElse(PROP_DATA_CSV_SEPARATOR, ",").charAt(0);
         final String csvCharset = config.getStringOrElse(PROP_DATA_CSV_CHARSET, "utf-8");
-        return CsvFlowMapGraphReader.readFlowMapGraph(
+
+        FlowMapGraphBuilder builder = CsvFlowMapGraphReader.readFlowMapGraph(
             config.require(PROP_DATA_CSV_NODES_SRC),
             config.require(PROP_DATA_CSV_FLOWS_SRC),
             createFlowMapAttrSpec(
@@ -239,12 +245,27 @@ public class ViewConfig {
                 }
             ),
             csvSeparator, csvCharset);
+
+        String nodeFilter = config.getString(PROP_DATA_SELECT_NODES);
+        String edgeFilter = config.getString(PROP_DATA_SELECT_EDGES);
+
+        if (!Strings.isNullOrEmpty(nodeFilter)) {
+          builder.withNodeFilter(nodeFilter);
+        }
+        if (!Strings.isNullOrEmpty(edgeFilter)) {
+          builder.withEdgeFilter(edgeFilter);
+        }
+
+        return builder.build();
       }
     },
     GRAPHML {
       @Override
       public Object load(ViewConfig config) throws IOException {
         final Graph graph = StaxGraphMLReader.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
+
+        FlowMapGraphBuilder.filterNodes(graph, config.getString(PROP_DATA_SELECT_NODES));
+        FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_EDGES));
 
         return new FlowMapGraph(graph,
             createFlowMapAttrSpec(

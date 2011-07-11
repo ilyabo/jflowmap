@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import jflowmap.FlowMapAttrSpec;
-import jflowmap.FlowMapGraph;
 import jflowmap.util.IOUtils;
 
 import org.apache.log4j.Logger;
@@ -79,13 +78,12 @@ public class CsvFlowMapGraphReader {
     return list;
   }
 
-  public static FlowMapGraph readFlowMapGraph(String nodesLocation, String flowsLocation,
+  public static FlowMapGraphBuilder readFlowMapGraph(String nodesLocation, String flowsLocation,
       FlowMapAttrSpec attrSpec, char separator, String charset) throws IOException {
     return new CsvFlowMapGraphReader(attrSpec, separator, charset).read(nodesLocation, flowsLocation);
   }
 
-  private FlowMapGraph read(String nodesLocation, String flowsLocation) throws IOException {
-
+  private FlowMapGraphBuilder read(String nodesLocation, String flowsLocation) throws IOException {
     builder = new FlowMapGraphBuilder(FileUtils.getFilenameOnly(flowsLocation), attrSpec);
 
     parseCsv(nodesLocation, new LineParser() {
@@ -96,7 +94,7 @@ public class CsvFlowMapGraphReader {
       public void apply(Map<String, String> attrs) { builder.addEdge(attrs); }
     });
 
-    return builder.build();
+    return builder;
   }
 
   private void parseCsv(String csvLocation, LineParser lp) throws IOException {

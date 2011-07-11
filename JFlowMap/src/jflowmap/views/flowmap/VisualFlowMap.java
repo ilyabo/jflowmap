@@ -55,7 +55,6 @@ import jflowmap.views.map.PGeoMap;
 import org.apache.log4j.Logger;
 
 import prefuse.data.Edge;
-import prefuse.data.Graph;
 import prefuse.data.Node;
 import at.fhj.utils.misc.ProgressTracker;
 import at.fhj.utils.misc.TaskCompletionListener;
@@ -308,15 +307,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     FlowMapGraph fmg = getFlowMapGraph();
 
-    Graph graph = fmg.getGraph();
-
-    final int numNodes = graph.getNodeCount();
     visualNodes = new ArrayList<VisualNode>();
     nodesToVisuals = new LinkedHashMap<Node, VisualNode>();
 
-    for (int i = 0; i < numNodes; i++) {
-      Node node = graph.getNode(i);
-
+    for (Node node : fmg.nodes()) {
       if (!fmg.hasCoords(node)) {
         // TODO: create rectangles for flowmap nodes with missing coords
         //       See FlowMapGraph.haveCoordsPredicate() and
@@ -1138,9 +1132,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    valueAnimation = new PInterpolatingActivity(25000 * numAttrs / attrs.size() / speed, 1) {
+    valueAnimation = new PInterpolatingActivity(25000 * numAttrs / attrs.size() / speed, 20) {
+      int count = 0;
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
+        count++;
+        System.out.println(count + "\t" + zeroToOne);
         double alpha = (numAttrs - 1) * zeroToOne;
         int lowi = startAttrIndex + (int)Math.floor(alpha);
         int highi = startAttrIndex + (int)Math.ceil(alpha);

@@ -32,8 +32,12 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
+import prefuse.data.expression.NotPredicate;
+import prefuse.data.expression.parser.ExpressionParser;
+import prefuse.util.collections.IntIterator;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -47,10 +51,19 @@ public class FlowMapGraphBuilder {
   private final FlowMapAttrSpec attrSpec;
   private HashMap<EdgeKey, Edge> cumulatedEdges;
   private final Map<String, Node> nodesById = Maps.newHashMap();
+  private prefuse.data.expression.Predicate nodePredicate;
+  private prefuse.data.expression.Predicate edgePredicate;
 
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
+
     graph = new Graph();
+//  XTable nodeTable = new XTable();
+//  XTable edgeTable = new XTable();
+//  graph = new Graph(edgeTable, edgeTable, true);
+//  edgeTable.addColumn(Graph.DEFAULT_SOURCE_KEY, int.class, -1);
+//  edgeTable.addColumn(Graph.DEFAULT_TARGET_KEY, int.class, -1);
+
     FlowMapGraph.setGraphId(graph, graphId);
     graph.addColumn(graphNodeIdAttr, String.class);
     Table nodeTable = graph.getNodeTable();
@@ -77,6 +90,16 @@ public class FlowMapGraphBuilder {
 
   public FlowMapGraphBuilder withCumulatedEdges() {
     this.cumulatedEdges = new HashMap<EdgeKey, Edge>();
+    return this;
+  }
+
+  public FlowMapGraphBuilder withEdgeFilter(String expr) {
+    edgePredicate = filterPredicate(expr);
+    return this;
+  }
+
+  public FlowMapGraphBuilder withNodeFilter(String expr) {
+    nodePredicate = filterPredicate(expr);
     return this;
   }
 
@@ -245,7 +268,39 @@ public class FlowMapGraphBuilder {
 
   private Graph buildGraph() {
     cumulatedEdges = null;
+    filterNodes(graph, edgePredicate);
+    filterEdges(graph, nodePredicate);
     return graph;
+  }
+
+  public static NotPredicate filterPredicate(String expr) {
+    return new NotPredicate((prefuse.data.expression.Predicate) ExpressionParser.parse(expr));
+  }
+
+  public static void filterNodes(Graph graph, String expr) {
+    if (!Strings.isNullOrEmpty(expr)) {
+      filterNodes(graph, filterPredicate(expr));
+    }
+  }
+
+  public static void filterEdges(Graph graph, String expr) {
+    if (!Strings.isNullOrEmpty(expr)) {
+      filterEdges(graph, filterPredicate(expr));
+    }
+  }
+
+  private static void filterNodes(Graph g, prefuse.data.expression.Predicate p) {
+    if (p != null) {
+      IntIterator it = g.getNodeTable().rows(p);
+      while (it.hasNext()) { g.removeNode(it.nextInt()); }
+    }
+  }
+
+  private static void filterEdges(Graph g, prefuse.data.expression.Predicate p) {
+    if (p != null) {
+      IntIterator it = g.getEdgeTable().rows(p);
+      while (it.hasNext()) { g.removeEdge(it.nextInt()); }
+    }
   }
 
   public FlowMapGraph build() {
