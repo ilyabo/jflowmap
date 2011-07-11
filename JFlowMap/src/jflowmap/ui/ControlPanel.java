@@ -230,9 +230,9 @@ public class ControlPanel {
             }
           });
 
-      final JSlider speedSlider = new JSlider(1, 10, 5);
+      final JSlider speedSlider = new JSlider(1, 9, 5);
       Hashtable<Integer, JComponent> speedLabels = new Hashtable<Integer, JComponent>();
-      speedLabels.put(9, createTinyLabel("Fast"));
+      speedLabels.put(8, createTinyLabel("Fast"));
       speedLabels.put(2, createTinyLabel("Slow"));
       speedSlider.setLabelTable(speedLabels);
       speedSlider.setOrientation(JSlider.VERTICAL);
