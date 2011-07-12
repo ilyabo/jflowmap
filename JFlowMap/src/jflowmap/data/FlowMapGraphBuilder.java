@@ -46,13 +46,14 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapGraphBuilder {
 
+  private static final String ALL_WEIGHT_ATTRS_PLACEHOLDER = "#value#";
   private static final String graphNodeIdAttr = FlowMapGraph.GRAPH_NODE_ID_COLUMN;
   private final Graph graph;
   private final FlowMapAttrSpec attrSpec;
   private HashMap<EdgeKey, Edge> cumulatedEdges;
   private final Map<String, Node> nodesById = Maps.newHashMap();
-  private prefuse.data.expression.Predicate nodePredicate;
-  private prefuse.data.expression.Predicate edgePredicate;
+  private String nodePredicate;
+  private String edgePredicate;
 
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
@@ -94,12 +95,12 @@ public class FlowMapGraphBuilder {
   }
 
   public FlowMapGraphBuilder withEdgeFilter(String expr) {
-    edgePredicate = filterPredicate(expr);
+    edgePredicate = expr;
     return this;
   }
 
   public FlowMapGraphBuilder withNodeFilter(String expr) {
-    nodePredicate = filterPredicate(expr);
+    nodePredicate = expr;
     return this;
   }
 
@@ -269,7 +270,7 @@ public class FlowMapGraphBuilder {
   private Graph buildGraph() {
     cumulatedEdges = null;
     filterNodes(graph, edgePredicate);
-    filterEdges(graph, nodePredicate);
+    filterEdges(graph, nodePredicate, attrSpec.getFlowWeightAttrs());
     return graph;
   }
 
@@ -283,9 +284,15 @@ public class FlowMapGraphBuilder {
     }
   }
 
-  public static void filterEdges(Graph graph, String expr) {
+  public static void filterEdges(Graph graph, String expr, Iterable<String> weightAttrs) {
     if (!Strings.isNullOrEmpty(expr)) {
-      filterEdges(graph, filterPredicate(expr));
+      if (expr.indexOf(ALL_WEIGHT_ATTRS_PLACEHOLDER) > 0) {
+        for (String attr : weightAttrs) {
+          filterEdges(graph, filterPredicate(expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr)));
+        }
+      } else {
+        filterEdges(graph, filterPredicate(expr));
+      }
     }
   }
 

@@ -264,15 +264,17 @@ public class ViewConfig {
       public Object load(ViewConfig config) throws IOException {
         final Graph graph = StaxGraphMLReader.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
 
+        final Iterable<String> attrs = FlowMapGraph.listFlowAttrs(graph);
+
         FlowMapGraphBuilder.filterNodes(graph, config.getString(PROP_DATA_SELECT_NODES));
-        FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_EDGES));
+        FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_EDGES), attrs);
 
         return new FlowMapGraph(graph,
             createFlowMapAttrSpec(
                 config, false,
                 new LazyGet<Iterable<String>>() {
                     @Override
-                    public Iterable<String> get() { return FlowMapGraph.listFlowAttrs(graph); }
+                    public Iterable<String> get() { return attrs; }
                 }));
       }
     };
