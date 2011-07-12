@@ -70,7 +70,7 @@ public class ViewConfig {
 
   public static final String PROP_DATA_SELECT = PROP_DATA + ".select";
   public static final String PROP_DATA_SELECT_NODES = PROP_DATA_SELECT + ".nodes";
-  public static final String PROP_DATA_SELECT_EDGES = PROP_DATA_SELECT + ".edges";
+  public static final String PROP_DATA_SELECT_EDGES = PROP_DATA_SELECT + ".flows";
 
   public static final String PROP_DATA_CSV = PROP_DATA + ".csv";
   public static final String PROP_DATA_CSV_SEPARATOR = PROP_DATA_CSV + ".separator";
