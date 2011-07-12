@@ -103,7 +103,8 @@ public class ViewConfig {
   public static final String PROP_MAP_XML_SRC = PROP_MAP_XML + ".src";
   public static final String PROP_MAP_SHAPEFILE = PROP_MAP + ".shapefile";
   public static final String PROP_MAP_SHAPEFILE_SRC = PROP_MAP_SHAPEFILE + ".src";
-  public static final String PROP_MAP_SHAPEFILE_DBFAREAIDFIELD = PROP_MAP_SHAPEFILE + ".dbfAreaIdField";
+  public static final String PROP_MAP_SHAPEFILE_DBF_AREAIDFIELD_ = PROP_MAP_SHAPEFILE + ".dbfAreaIdField";
+  public static final String PROP_MAP_SHAPEFILE_DBF_AREAIDFIELD = PROP_MAP_SHAPEFILE + ".dbf.areaIdField";
 
   public static final String PROP_MAP_BACKGROUND = PROP_MAP + ".background";
   public static final String PROP_MAP_BACKGROUND_SRC = PROP_MAP_BACKGROUND + ".src";
@@ -386,7 +387,8 @@ public class ViewConfig {
       public GeoMap load(ViewConfig config) throws IOException {
         return GeoMap.asAreaMap(ShapefileReader.loadShapefile(
             config.require(PROP_MAP_SHAPEFILE_SRC),
-            config.getString(PROP_MAP_SHAPEFILE_DBFAREAIDFIELD)));
+            config.getStringOrElse(PROP_MAP_SHAPEFILE_DBF_AREAIDFIELD,
+                config.getString(PROP_MAP_SHAPEFILE_DBF_AREAIDFIELD_))));
       }
     }
     ;
