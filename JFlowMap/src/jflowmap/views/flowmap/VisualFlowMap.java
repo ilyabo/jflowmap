@@ -1134,12 +1134,15 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     long duration = Math.round(numAttrs * 1000 / attrsPerSecond);
 
+
     valueAnimation = new PInterpolatingActivity(duration, 20) {
-//      int count = 0;
+      {
+        for (VisualEdge ve : edgesToVisuals.values()) {
+          setAbsVal(ve, ve.getEdgeWeight());
+        }
+      }
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
-//        count++;
-//        System.out.println(count + "\t" + zeroToOne);
         double alpha = (numAttrs - 1) * zeroToOne;
         int lowi = startAttrIndex + (int)Math.floor(alpha);
         int highi = startAttrIndex + (int)Math.ceil(alpha);
@@ -1158,9 +1161,49 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
             if (Double.isNaN(high)) high = 0;
             value = low + (high - low) * (alpha - (lowi - startAttrIndex));
           }
+
+          orderByValue(ve, value);
+          setAbsVal(ve, value);
+
           ve.updateEdgeWidthTo(value);
           ve.updateEdgeColorsTo(value);
         }
+      }
+
+      public void orderByValue(VisualEdge ve, double value) {
+        double absValue = Math.abs(value);
+        int numChildren = edgeLayer.getChildrenCount();
+        int index = edgeLayer.indexOfChild(ve);
+
+        while (index > 0   &&   absValue < getVal(index)) index--;
+        while (index < numChildren - 1   &&   absValue > getVal(index)) index++;
+
+        int change = edgeLayer.indexOfChild(ve) - index;
+        if (change != 0) {
+          VisualEdge nve = getVe(index);
+          double nv = getVal(nve);
+          if (nv > absValue) {
+            ve.moveInBackOf(nve);
+          } else {
+            ve.moveInFrontOf(nve);
+          }
+        }
+      }
+
+      public void setAbsVal(VisualEdge ve, double value) {
+        ve.addAttribute(VisualEdge.ATTR_ANIMATION_ABS_EDGE_WEIGHT, Math.abs(value));
+      }
+
+      public double getVal(int i) {
+        return getVal(getVe(i));
+      }
+
+      public VisualEdge getVe(int i) {
+        return (VisualEdge)edgeLayer.getChild(i);
+      }
+
+      public double getVal(VisualEdge ve) {
+        return (Double) ve.getAttribute(VisualEdge.ATTR_ANIMATION_ABS_EDGE_WEIGHT);
       }
 
       @Override

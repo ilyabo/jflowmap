@@ -333,7 +333,7 @@ public class FlowMapGraphBuilder {
 
   private static void filterNodes(Graph g, prefuse.data.expression.Predicate p) {
     if (p != null) {
-      p = new NotPredicate(p); // remove rows which do not satisfy predicate
+      p = new NotPredicate(p); // remove rows which do NOT satisfy the original predicate
       IntIterator it = g.getNodeTable().rows(p);
       int cnt = 0;
       int numNodes = g.getNodeCount();

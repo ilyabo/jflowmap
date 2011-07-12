@@ -40,6 +40,7 @@ import edu.umd.cs.piccolo.nodes.PPath;
  */
 public abstract class VisualEdge extends PNode {
 
+  protected static final Object ATTR_ANIMATION_ABS_EDGE_WEIGHT = "animAbsWeight";
   private static final int MAX_EDGE_WIDTH = 100;
   private static final long serialVersionUID = 1L;
 
