@@ -48,7 +48,7 @@ public class FlowMapGraphBuilder {
 
   private static final String ALL_WEIGHT_ATTRS_PLACEHOLDER = "#value#";
   private static final String graphNodeIdAttr = FlowMapGraph.GRAPH_NODE_ID_COLUMN;
-  private final Graph graph;
+  private final Graph2 graph;
   private final FlowMapAttrSpec attrSpec;
   private HashMap<EdgeKey, Edge> cumulatedEdges;
   private final Map<String, Node> nodesById = Maps.newHashMap();
@@ -58,12 +58,7 @@ public class FlowMapGraphBuilder {
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
 
-    graph = new Graph();
-//  XTable nodeTable = new XTable();
-//  XTable edgeTable = new XTable();
-//  graph = new Graph(edgeTable, edgeTable, true);
-//  edgeTable.addColumn(Graph.DEFAULT_SOURCE_KEY, int.class, -1);
-//  edgeTable.addColumn(Graph.DEFAULT_TARGET_KEY, int.class, -1);
+    graph = Graph2.create();
 
     FlowMapGraph.setGraphId(graph, graphId);
     graph.addColumn(graphNodeIdAttr, String.class);
@@ -269,8 +264,8 @@ public class FlowMapGraphBuilder {
 
   private Graph buildGraph() {
     cumulatedEdges = null;
-    filterNodes(graph, edgePredicate);
-    filterEdges(graph, nodePredicate, attrSpec.getFlowWeightAttrs());
+    filterNodes(graph, nodePredicate);
+    filterEdges(graph, edgePredicate, attrSpec.getFlowWeightAttrs());
     return graph;
   }
 

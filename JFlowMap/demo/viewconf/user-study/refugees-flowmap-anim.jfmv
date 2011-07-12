@@ -1,6 +1,6 @@
 view=flowmap
 view.flowmap.colorScheme=Dark
-view.flowmap.weightFilterMin=1000
+#view.flowmap.weightFilterMin=1000
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
@@ -19,6 +19,7 @@ data.csv.charset=utf-8
 data.csv.nodes.src=data/refugee-nodes.csv.gz
 data.csv.flows.src=data/refugee-flows.csv.gz
 
+data.select.flows=(source != target) AND ([#value#] > 100)
 
 
 data.attrs.node.id=Code
@@ -37,7 +38,7 @@ map.projection=WinkelTripel
 
 #map=shapefile
 #map.shapefile.src=data/maps/countries/countries.shp.gz
-#map.shapefile.dbfAreaIdField=ISO_A3
+#map.shapefile.dbf.areaIdField=ISO_A3
 
 map.background.src=data/maps/countries/countries.png
 map.background.boundingBox=-2.722533516968113,-1.8260025298264655,5.601597416002858,3.4280609186475823

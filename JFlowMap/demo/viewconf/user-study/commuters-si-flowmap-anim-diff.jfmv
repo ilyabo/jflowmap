@@ -17,7 +17,7 @@ window.settings.showTabs=Animation
 data=graphml
 data.graphml.src=data/commuters-si.xml.gz
 
-# remove self-loops
+# remove self-loops and filter by flow value
 data.select.flows= (source != target) AND ([#value#] > 15)
 data.select.nodes=
 

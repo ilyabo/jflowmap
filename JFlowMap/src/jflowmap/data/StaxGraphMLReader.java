@@ -258,9 +258,9 @@ public class StaxGraphMLReader {
   }
 
   private void initSchemas() {
-    nodeSchema = new Schema();
+    nodeSchema = new Graph2.Schema2();
     nodeSchema.addColumn(FlowMapGraph.GRAPH_NODE_ID_COLUMN, String.class);
-    edgeSchema = new Schema();
+    edgeSchema = new Graph2.Schema2();
     edgeSchema.addColumn(FlowMapGraph.SRC, int.class);
     edgeSchema.addColumn(FlowMapGraph.TRG, int.class);
     edgeSchema.addColumn(FlowMapGraph.SRC_TEMP_ID, String.class);
