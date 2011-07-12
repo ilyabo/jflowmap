@@ -335,9 +335,13 @@ public class FlowMapGraphBuilder {
     if (p != null) {
       p = new NotPredicate(p); // remove rows which do not satisfy predicate
       IntIterator it = g.getNodeTable().rows(p);
+      int cnt = 0;
+      int numNodes = g.getNodeCount();
       while (it.hasNext()) {
         g.removeNode(it.nextInt());
+        cnt++;
       }
+      logger.info("Nodes removed by filter query: " + cnt + " of " + numNodes + ", left: " + g.getNodeCount());
     }
   }
 
