@@ -20,9 +20,6 @@ data.csv.nodes.src=data/refugee-nodes.csv.gz
 data.csv.flows.src=data/refugee-flows.csv.gz
 
 
-data.select.edges=
-data.select.nodes=
-
 
 data.attrs.node.id=Code
 data.attrs.node.label=Name
