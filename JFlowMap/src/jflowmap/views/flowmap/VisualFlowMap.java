@@ -1113,11 +1113,11 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   /**
-   * @param speed Animation will take (25/<code>speed</code>) seconds for animating
-   *              all attributes.
+   * @param attrsPerSecond Animation speed
    * @param i
    */
-  public void startValueAnimation(final Runnable runWhenFinished, final int startAttrIndex, int speed) {
+  public void startValueAnimation(final Runnable runWhenFinished, final int startAttrIndex,
+      double attrsPerSecond) {
     if (valueAnimation != null   &&   valueAnimation.isStepping()) {
       return;
     }
@@ -1132,12 +1132,14 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
-    valueAnimation = new PInterpolatingActivity(25000 * numAttrs / attrs.size() / speed, 20) {
-      int count = 0;
+    long duration = Math.round(numAttrs * 1000 / attrsPerSecond);
+
+    valueAnimation = new PInterpolatingActivity(duration, 20) {
+//      int count = 0;
       @Override
       public void setRelativeTargetValue(float zeroToOne) {
-        count++;
-        System.out.println(count + "\t" + zeroToOne);
+//        count++;
+//        System.out.println(count + "\t" + zeroToOne);
         double alpha = (numAttrs - 1) * zeroToOne;
         int lowi = startAttrIndex + (int)Math.floor(alpha);
         int highi = startAttrIndex + (int)Math.ceil(alpha);

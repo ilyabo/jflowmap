@@ -230,10 +230,10 @@ public class ControlPanel {
             }
           });
 
-      final JSlider speedSlider = new JSlider(1, 9, 5);
+      final JSlider speedSlider = new JSlider(0, 10, 5);
       Hashtable<Integer, JComponent> speedLabels = new Hashtable<Integer, JComponent>();
-      speedLabels.put(8, createTinyLabel("Fast"));
-      speedLabels.put(2, createTinyLabel("Slow"));
+      speedLabels.put(speedSlider.getMaximum(), createTinyLabel("Fast"));
+      speedLabels.put(speedSlider.getMinimum(), createTinyLabel("Slow"));
       speedSlider.setLabelTable(speedLabels);
       speedSlider.setOrientation(JSlider.VERTICAL);
       speedSlider.setPaintTicks(true);
@@ -262,7 +262,7 @@ public class ControlPanel {
             playStopBut.setText("Stop");
             vfm.startValueAnimation(runWhenFinished,
                 attrSlider.getValue(),
-                speedSlider.getValue());
+                0.2 + speedSlider.getValue() / 4.0);
           } else {
             vfm.stopValueAnimation();
             runWhenFinished.run();
