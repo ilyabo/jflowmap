@@ -26,9 +26,9 @@ import prefuse.data.expression.Predicate;
 /**
  * @author Ilya Boyandin
  */
-public class IsNullFunction extends FunctionExpression implements Predicate {
+public class IsNaNFunction extends FunctionExpression implements Predicate {
 
-  public IsNullFunction() {
+  public IsNaNFunction() {
     super(1);
   }
 
@@ -43,7 +43,7 @@ public class IsNullFunction extends FunctionExpression implements Predicate {
 
   @Override
   public String getName() {
-    return "ISNULL";
+    return "ISNAN";
   }
 
   @Override

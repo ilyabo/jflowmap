@@ -19,7 +19,9 @@ data.graphml.src=data/commuters-si.xml.gz
 
 # remove self-loops
 data.select.flows.where=(source != target)  
-data.select.flows.where.exists=([#weightAttr#] > 5000)
+# NOT ISNAN is necessary, because Double.compareTo treats NaNs greater than everything else
+data.select.flows.where.exists=((NOT ISNAN([#weightAttr#])) AND ([#weightAttr#] > 100))
+
 
 data.attrs.node.label=name
 data.attrs.node.lat=lat

@@ -27,6 +27,9 @@ import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapGraph;
 import jflowmap.geom.Point;
 import jflowmap.util.ArrayUtils;
+
+import org.apache.log4j.Logger;
+
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -50,6 +53,8 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapGraphBuilder {
 
+  private static Logger logger = Logger.getLogger(FlowMapGraphBuilder.class);
+
   private static final String ALL_WEIGHT_ATTRS_PLACEHOLDER = "#weightAttr#";
   private static final String graphNodeIdAttr = FlowMapGraph.GRAPH_NODE_ID_COLUMN;
   private final Graph2 graph;
@@ -62,7 +67,7 @@ public class FlowMapGraphBuilder {
   private String edgeWeightAttrForAllFilterExpr;
 
   static {
-    FunctionTable.addFunction("ISNULL", IsNullFunction.class);
+    FunctionTable.addFunction("ISNAN", IsNaNFunction.class);
   }
 
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
@@ -293,50 +298,60 @@ public class FlowMapGraphBuilder {
   }
 
   public static void filterEdgesWithWeightAttrForAll(Graph g, String expr, Iterable<String> weightAttrs) {
-    filterEdgesWithWeightAttr(g, expr, weightAttrs, new OrPredicate());  // !(a and b) = !a or !b
+    filterEdgesWithWeightAttr(g, expr, weightAttrs, new AndPredicate());
   }
 
   public static void filterEdgesWithWeightAttrExists(Graph g, String expr, Iterable<String> weightAttrs) {
-    filterEdgesWithWeightAttr(g, expr, weightAttrs, new AndPredicate());
+    filterEdgesWithWeightAttr(g, expr, weightAttrs, new OrPredicate());
   }
 
   private static void filterEdgesWithWeightAttr(Graph g, String expr, Iterable<String> weightAttrs,
       CompositePredicate cp) {
     if (!Strings.isNullOrEmpty(expr)) {
       for (String attr : weightAttrs) {
-        cp.add(filterNotPredicate(expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr)));
+        cp.add(filterPredicate(expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr)));
       }
       filterEdges(g, cp);
     }
   }
 
-  public static NotPredicate filterNotPredicate(String expr) {
-    return new NotPredicate((prefuse.data.expression.Predicate) ExpressionParser.parse(expr, true));
+  public static prefuse.data.expression.Predicate filterPredicate(String expr) {
+    return (prefuse.data.expression.Predicate) ExpressionParser.parse(expr, true);
   }
 
   public static void filterNodes(Graph graph, String expr) {
     if (!Strings.isNullOrEmpty(expr)) {
-      filterNodes(graph, filterNotPredicate(expr));
+      filterNodes(graph, filterPredicate(expr));
     }
   }
 
   public static void filterEdges(Graph graph, String expr) {
     if (!Strings.isNullOrEmpty(expr)) {
-      filterEdges(graph, filterNotPredicate(expr));
+      filterEdges(graph, filterPredicate(expr));
     }
   }
 
   private static void filterNodes(Graph g, prefuse.data.expression.Predicate p) {
     if (p != null) {
+      p = new NotPredicate(p); // remove rows which do not satisfy predicate
       IntIterator it = g.getNodeTable().rows(p);
-      while (it.hasNext()) { g.removeNode(it.nextInt()); }
+      while (it.hasNext()) {
+        g.removeNode(it.nextInt());
+      }
     }
   }
 
   private static void filterEdges(Graph g, prefuse.data.expression.Predicate p) {
     if (p != null) {
+      p = new NotPredicate(p);
+      int numEdges = g.getEdgeCount();
       IntIterator it = g.getEdgeTable().rows(p);
-      while (it.hasNext()) { g.removeEdge(it.nextInt()); }
+      int cnt = 0;
+      while (it.hasNext()) {
+        g.removeEdge(it.nextInt());
+        cnt++;
+      }
+      logger.info("Edges removed by filter query: " + cnt + " of " + numEdges + ", left: " + g.getEdgeCount());
     }
   }
 
