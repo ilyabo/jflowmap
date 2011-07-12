@@ -32,7 +32,11 @@ import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
+import prefuse.data.expression.AndPredicate;
+import prefuse.data.expression.CompositePredicate;
+import prefuse.data.expression.FunctionTable;
 import prefuse.data.expression.NotPredicate;
+import prefuse.data.expression.OrPredicate;
 import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.util.collections.IntIterator;
 
@@ -46,14 +50,20 @@ import com.google.common.collect.Maps;
  */
 public class FlowMapGraphBuilder {
 
-  private static final String ALL_WEIGHT_ATTRS_PLACEHOLDER = "#value#";
+  private static final String ALL_WEIGHT_ATTRS_PLACEHOLDER = "#weightAttr#";
   private static final String graphNodeIdAttr = FlowMapGraph.GRAPH_NODE_ID_COLUMN;
   private final Graph2 graph;
   private final FlowMapAttrSpec attrSpec;
   private HashMap<EdgeKey, Edge> cumulatedEdges;
   private final Map<String, Node> nodesById = Maps.newHashMap();
-  private String nodePredicate;
-  private String edgePredicate;
+  private String nodeFilterExpr;
+  private String edgeFilterExpr;
+  private String edgeWeightAttrExistsFilterExpr;
+  private String edgeWeightAttrForAllFilterExpr;
+
+  static {
+    FunctionTable.addFunction("ISNULL", IsNullFunction.class);
+  }
 
   public FlowMapGraphBuilder(String graphId, FlowMapAttrSpec attrSpec) {
     this.attrSpec = attrSpec;
@@ -90,12 +100,22 @@ public class FlowMapGraphBuilder {
   }
 
   public FlowMapGraphBuilder withEdgeFilter(String expr) {
-    edgePredicate = expr;
+    edgeFilterExpr = expr;
     return this;
   }
 
   public FlowMapGraphBuilder withNodeFilter(String expr) {
-    nodePredicate = expr;
+    nodeFilterExpr = expr;
+    return this;
+  }
+
+  public FlowMapGraphBuilder withEdgeWeightAttrExistsFilter(String expr) {
+    edgeWeightAttrExistsFilterExpr = expr;
+    return this;
+  }
+
+  public FlowMapGraphBuilder withEdgeWeightAttrForAllFilter(String expr) {
+    edgeWeightAttrForAllFilterExpr = expr;
     return this;
   }
 
@@ -264,30 +284,45 @@ public class FlowMapGraphBuilder {
 
   private Graph buildGraph() {
     cumulatedEdges = null;
-    filterNodes(graph, nodePredicate);
-    filterEdges(graph, edgePredicate, attrSpec.getFlowWeightAttrs());
+    filterNodes(graph, nodeFilterExpr);
+    filterEdges(graph, edgeFilterExpr);
+    List<String> attrs = attrSpec.getFlowWeightAttrs();
+    filterEdgesWithWeightAttrForAll(graph, edgeWeightAttrForAllFilterExpr, attrs);
+    filterEdgesWithWeightAttrExists(graph, edgeWeightAttrExistsFilterExpr, attrs);
     return graph;
   }
 
-  public static NotPredicate filterPredicate(String expr) {
-    return new NotPredicate((prefuse.data.expression.Predicate) ExpressionParser.parse(expr));
+  public static void filterEdgesWithWeightAttrForAll(Graph g, String expr, Iterable<String> weightAttrs) {
+    filterEdgesWithWeightAttr(g, expr, weightAttrs, new OrPredicate());  // !(a and b) = !a or !b
+  }
+
+  public static void filterEdgesWithWeightAttrExists(Graph g, String expr, Iterable<String> weightAttrs) {
+    filterEdgesWithWeightAttr(g, expr, weightAttrs, new AndPredicate());
+  }
+
+  private static void filterEdgesWithWeightAttr(Graph g, String expr, Iterable<String> weightAttrs,
+      CompositePredicate cp) {
+    if (!Strings.isNullOrEmpty(expr)) {
+      for (String attr : weightAttrs) {
+        cp.add(filterNotPredicate(expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr)));
+      }
+      filterEdges(g, cp);
+    }
+  }
+
+  public static NotPredicate filterNotPredicate(String expr) {
+    return new NotPredicate((prefuse.data.expression.Predicate) ExpressionParser.parse(expr, true));
   }
 
   public static void filterNodes(Graph graph, String expr) {
     if (!Strings.isNullOrEmpty(expr)) {
-      filterNodes(graph, filterPredicate(expr));
+      filterNodes(graph, filterNotPredicate(expr));
     }
   }
 
-  public static void filterEdges(Graph graph, String expr, Iterable<String> weightAttrs) {
+  public static void filterEdges(Graph graph, String expr) {
     if (!Strings.isNullOrEmpty(expr)) {
-      if (expr.indexOf(ALL_WEIGHT_ATTRS_PLACEHOLDER) > 0) {
-        for (String attr : weightAttrs) {
-          filterEdges(graph, filterPredicate(expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr)));
-        }
-      } else {
-        filterEdges(graph, filterPredicate(expr));
-      }
+      filterEdges(graph, filterNotPredicate(expr));
     }
   }
 

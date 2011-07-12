@@ -1,6 +1,6 @@
 view=flowmap
 view.flowmap.colorScheme=Dark
-#view.flowmap.weightFilterMin=10
+#view.flowmap.weightFilterMin=50
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
@@ -17,10 +17,9 @@ window.settings.showTabs=Animation
 data=graphml
 data.graphml.src=data/commuters-si.xml.gz
 
-# remove self-loops and filter by flow value
-data.select.flows= (source != target) AND ([#value#] > 15)
-data.select.nodes=
-
+# remove self-loops
+data.select.flows.where=(source != target)  
+data.select.flows.where.exists=([#weightAttr#] > 5000)
 
 data.attrs.node.label=name
 data.attrs.node.lat=lat

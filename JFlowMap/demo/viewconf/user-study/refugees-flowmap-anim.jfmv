@@ -19,7 +19,9 @@ data.csv.charset=utf-8
 data.csv.nodes.src=data/refugee-nodes.csv.gz
 data.csv.flows.src=data/refugee-flows.csv.gz
 
-data.select.flows=(source != target) AND ([#value#] > 100)
+data.select.flows.where=(source != target)
+data.select.flows.where.forAll=
+data.select.flows.where.exists=NOT(ISNULL([#weightAttr#])) AND [#weightAttr#] > 100
 
 
 data.attrs.node.id=Code

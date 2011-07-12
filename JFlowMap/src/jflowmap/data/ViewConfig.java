@@ -69,8 +69,10 @@ public class ViewConfig {
   public static final String PROP_DATA = "data";
 
   public static final String PROP_DATA_SELECT = PROP_DATA + ".select";
-  public static final String PROP_DATA_SELECT_NODES = PROP_DATA_SELECT + ".nodes";
-  public static final String PROP_DATA_SELECT_EDGES = PROP_DATA_SELECT + ".flows";
+  public static final String PROP_DATA_SELECT_NODES = PROP_DATA_SELECT + ".nodes.where";
+  public static final String PROP_DATA_SELECT_FLOWS = PROP_DATA_SELECT + ".flows.where";
+  public static final String PROP_DATA_SELECT_FLOWS_FORALL = PROP_DATA_SELECT_FLOWS + ".forAll";
+  public static final String PROP_DATA_SELECT_FLOWS_EXISTS = PROP_DATA_SELECT_FLOWS + ".exists";
 
   public static final String PROP_DATA_CSV = PROP_DATA + ".csv";
   public static final String PROP_DATA_CSV_SEPARATOR = PROP_DATA_CSV + ".separator";
@@ -248,13 +250,21 @@ public class ViewConfig {
             csvSeparator, csvCharset);
 
         String nodeFilter = config.getString(PROP_DATA_SELECT_NODES);
-        String edgeFilter = config.getString(PROP_DATA_SELECT_EDGES);
+        String edgeFilter = config.getString(PROP_DATA_SELECT_FLOWS);
+        String edgeFilterExists = config.getString(PROP_DATA_SELECT_FLOWS_EXISTS);
+        String edgeFilterForAll = config.getString(PROP_DATA_SELECT_FLOWS_FORALL);
 
         if (!Strings.isNullOrEmpty(nodeFilter)) {
           builder.withNodeFilter(nodeFilter);
         }
         if (!Strings.isNullOrEmpty(edgeFilter)) {
           builder.withEdgeFilter(edgeFilter);
+        }
+        if (!Strings.isNullOrEmpty(edgeFilterExists)) {
+          builder.withEdgeWeightAttrExistsFilter(edgeFilterExists);
+        }
+        if (!Strings.isNullOrEmpty(edgeFilterForAll)) {
+          builder.withEdgeWeightAttrForAllFilter(edgeFilterForAll);
         }
 
         return builder.build();
@@ -265,18 +275,22 @@ public class ViewConfig {
       public Object load(ViewConfig config) throws IOException {
         final Graph graph = StaxGraphMLReader.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
 
-        final Iterable<String> attrs = FlowMapGraph.listFlowAttrs(graph);
+        LazyGet<Iterable<String>> getFlowAttrs = new LazyGet<Iterable<String>>() {
+          @Override
+          public Iterable<String> get() { return FlowMapGraph.listFlowAttrs(graph); }
+        };
+
+        Iterable<String> attrs = weightAttrs(config, getFlowAttrs);
 
         FlowMapGraphBuilder.filterNodes(graph, config.getString(PROP_DATA_SELECT_NODES));
-        FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_EDGES), attrs);
+        FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_FLOWS));
+        FlowMapGraphBuilder.filterEdgesWithWeightAttrForAll(
+            graph, config.getString(PROP_DATA_SELECT_FLOWS_FORALL), attrs);
+        FlowMapGraphBuilder.filterEdgesWithWeightAttrExists(
+            graph, config.getString(PROP_DATA_SELECT_FLOWS_EXISTS), attrs);
 
-        return new FlowMapGraph(graph,
-            createFlowMapAttrSpec(
-                config, false,
-                new LazyGet<Iterable<String>>() {
-                    @Override
-                    public Iterable<String> get() { return attrs; }
-                }));
+
+        return new FlowMapGraph(graph, createFlowMapAttrSpec(config, false, getFlowAttrs));
       }
     };
 
