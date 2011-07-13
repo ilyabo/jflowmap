@@ -9,9 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -23,7 +23,8 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import jflowmap.data.StaxGraphMLReader;
-import jflowmap.ui.actions.OpenFileAction;
+import jflowmap.ui.actions.OpenViewConfigAction;
+import jflowmap.util.SwingUtils;
 
 import org.apache.log4j.Logger;
 
@@ -31,12 +32,14 @@ import prefuse.data.Graph;
 import at.fhj.utils.swing.InternalFrameUtils;
 import at.fhj.utils.swing.JMemoryIndicator;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author Ilya Boyandin
  */
 public class JFlowMapMainFrame extends JFrame {
 
-  public static final String APP_NAME = "FlowMapView";
+  public static final String APP_NAME = "JFlowMap";
 //  private static final String PREFERENCES_FILE_NAME = ".preferences";
 
   private static Logger logger = Logger.getLogger(JFlowMapMainFrame.class);
@@ -46,13 +49,10 @@ public class JFlowMapMainFrame extends JFrame {
   private final JDesktopPane desktopPane;
 //  private String appStartDir;
 
-  private OpenFileAction openInFlowmapAction;
-  private JComponent activeView;
+  private OpenViewConfigAction openViewConfigAction;
+  private IView activeView;
   private AbstractAction tileViewsAction;
-
-  private OpenFileAction openAsTimelineAction;
-
-  private OpenFileAction openInFlowstratesAction;
+  private final List<IView> openViews = Lists.newArrayList();
 
 
   public JFlowMapMainFrame() {
@@ -74,18 +74,17 @@ public class JFlowMapMainFrame extends JFrame {
     mi.startUpdater();
 
     setExtendedState(MAXIMIZED_BOTH);
+
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+    setSize(new Dimension((int)(screen.width * .8), (int)(screen.height * .8)));
     setMinimumSize(new Dimension(800, 600));
-//    setPreferredSize(new Dimension(800, 600));
 //    pack();
 
 //    setAppStartDir(System.getProperty("user.dir"));
 //    loadPreferences();
 
-    final Dimension size = getSize();
-    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    final int locX = (screen.width - size.width) / 2;
-    final int locY = (screen.height - size.height) / 2;
-    setLocation(locX, locY);
+    SwingUtils.centerOnScreen(this);
 
 
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -119,10 +118,16 @@ public class JFlowMapMainFrame extends JFrame {
 //    });
   }
 
+  public void centerOnScreen(JFrame frame) {
+    final Dimension size = frame.getSize();
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    final int locX = (screen.width - size.width) / 2;
+    final int locY = (screen.height - size.height) / 2;
+    frame.setLocation(locX, locY);
+  }
+
   private void initActions() {
-    openInFlowmapAction = new OpenFileAction(this, OpenFileAction.As.FLOWMAP);
-    openInFlowstratesAction = new OpenFileAction(this, OpenFileAction.As.FLOWSTRATES);
-//    openAsTimelineAction = new OpenFileAction(this, OpenFileAction.As.TIMELINE);
+    openViewConfigAction = new OpenViewConfigAction(this);
     tileViewsAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
@@ -176,47 +181,8 @@ public class JFlowMapMainFrame extends JFrame {
     return graphs;
   }
 
-  private JInternalFrame showView(final JComponent view) {
-    JInternalFrame iframe = new JInternalFrame(view.getName(), true, true, true, true);
-    iframe.setContentPane(view);
-    view.setPreferredSize(new Dimension(800, 600));
-    final int offset = desktopPane.getAllFrames().length * 16;
-    iframe.setLocation(offset, offset);
-    iframe.pack();
-    iframe.setVisible(true);
-    desktopPane.add(iframe);
 
-    iframe.addInternalFrameListener(new InternalFrameAdapter() {
-      @Override
-      public void internalFrameActivated(InternalFrameEvent e) {
-        setActiveView(view);
-//        updateActions();
-      }
-
-      @Override
-      public void internalFrameDeactivated(InternalFrameEvent e) {
-        setActiveView(null);
-//        updateActions();
-      }
-
-      @Override
-      public void internalFrameOpened(InternalFrameEvent e) {
-//        openViews.add(view);
-//        updateActions();
-      }
-
-      @Override
-      public void internalFrameClosed(InternalFrameEvent e) {
-//        openViews.remove(view);
-//        view.setFrame(null);
-//        updateActions();
-      }
-    });
-
-    return iframe;
-  }
-
-  private void setActiveView(JComponent view) {
+  private void setActiveView(IView view) {
 //    if (view != null) {
 //      setViewOptionsDialogContent(view.getOptionsComponent());
 //
@@ -246,9 +212,7 @@ public class JFlowMapMainFrame extends JFrame {
     menu = new JMenu("File");
     mb.add(menu);
 
-    menu.add(openInFlowmapAction);
-//    menu.add(openAsTimelineAction);
-    menu.add(openInFlowstratesAction);
+    menu.add(openViewConfigAction);
 
     // TODO: recent files
     menu.addSeparator();
@@ -266,6 +230,41 @@ public class JFlowMapMainFrame extends JFrame {
     menu = new JMenu("Window");
     mb.add(menu);
 
+//    menu.addSeparator();
+
+//    subMenu = new JMenu("Arrange");
+//    menu.add(subMenu);
+//
+//    item = new JMenuItem("Cascade");
+//    item.setEnabled(false);
+//    subMenu.add(item);
+//    item = new JMenuItem("Tile");
+//    item.addActionListener(tileViewsAction);
+//    subMenu.add(item);
+//
+//    item = new JMenuItem("Tile horizontally");
+//    item.setEnabled(false);
+//    subMenu.add(item);
+//    item = new JMenuItem("Tile vertically");
+//    item.setEnabled(false);
+//    subMenu.add(item);
+//    item = new JMenuItem("Maximize all");
+//    item.setEnabled(false);
+//    subMenu.add(item);
+//    item = new JMenuItem("Minimize all");
+//    item.setEnabled(false);
+//    subMenu.add(item);
+
+    item = new JMenuItem("Tile");
+    item.addActionListener(tileViewsAction);
+    menu.add(item);
+
+//    menu.addSeparator();
+//
+//    item = new JMenuItem("Preferences...");
+//    item.setEnabled(false);
+//    menu.add(item);
+
     item = new JMenuItem("Fit in view");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -274,44 +273,13 @@ public class JFlowMapMainFrame extends JFrame {
     });
     menu.add(item);
 
-    item = new JMenuItem("Fit all in views");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        fitAllInViews();
-      }
-    });
-    menu.add(item);
-
-    menu.addSeparator();
-
-    subMenu = new JMenu("Arrange");
-    menu.add(subMenu);
-
-    item = new JMenuItem("Cascade");
-    item.setEnabled(false);
-    subMenu.add(item);
-    item = new JMenuItem("Tile");
-    item.addActionListener(tileViewsAction);
-    subMenu.add(item);
-
-    item = new JMenuItem("Tile horizontally");
-    item.setEnabled(false);
-    subMenu.add(item);
-    item = new JMenuItem("Tile vertically");
-    item.setEnabled(false);
-    subMenu.add(item);
-    item = new JMenuItem("Maximize all");
-    item.setEnabled(false);
-    subMenu.add(item);
-    item = new JMenuItem("Minimize all");
-    item.setEnabled(false);
-    subMenu.add(item);
-
-    menu.addSeparator();
-
-    item = new JMenuItem("Preferences...");
-    item.setEnabled(false);
-    menu.add(item);
+//    item = new JMenuItem("Fit all in views");
+//    item.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        fitAllInViews();
+//      }
+//    });
+//    menu.add(item);
 
     menu = new JMenu("Help");
     mb.add(menu);
@@ -396,8 +364,73 @@ public class JFlowMapMainFrame extends JFrame {
     if (activeView != null) {
 //      if (activeView instanceof FlowMapView)
 //        ((FlowMapView)activeView).fitInView();
+      activeView.fitInView();
     }
   }
 
+  public JDesktopPane getDesktopPane() {
+      return desktopPane;
+  }
+
+
+  public void loadView(String configLocation) {
+    final JInternalFrame frame = new JInternalFrame("", true, true, true, true);
+
+    try {
+      ViewLoader.loadView(configLocation, frame.getContentPane());
+    } catch (Exception ex) {
+      logger.error(ex);
+    }
+
+
+    final JDesktopPane desktopPane = getDesktopPane();
+    desktopPane.add(frame);
+
+//    frame.setContentPane(view.getVisualCanvas());
+//    view.setFrame(frame);
+
+    frame.setPreferredSize(new Dimension(800, 600));
+    frame.pack();
+
+    final int offset = openViews.size() * 16;
+    frame.setLocation(offset, offset);
+
+    frame.addInternalFrameListener(new InternalFrameAdapter() {
+
+
+      @Override
+      public void internalFrameActivated(InternalFrameEvent e) {
+        setActiveView(getInternalFrameView(e));
+//        updateActions();
+      }
+
+      @Override
+      public void internalFrameDeactivated(InternalFrameEvent e) {
+        setActiveView(null);
+//        updateActions();
+      }
+
+      @Override
+      public void internalFrameOpened(InternalFrameEvent e) {
+        openViews.add(getInternalFrameView(e));
+//        updateActions();
+      }
+
+      @Override
+      public void internalFrameClosed(InternalFrameEvent e) {
+        openViews.remove(getInternalFrameView(e));
+//        view.setFrame(null);
+//        updateActions();
+      }
+    });
+
+//    view.initInFrame();
+
+    frame.setVisible(true);
+  }
+
+  public IView getInternalFrameView(InternalFrameEvent e) {
+    return (IView)e.getInternalFrame().getClientProperty(ViewLoader.CLIENT_PROPERTY_CONTAINER_IVIEW);
+  }
 
 }

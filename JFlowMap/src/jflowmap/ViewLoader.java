@@ -19,6 +19,7 @@
 package jflowmap;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -66,6 +67,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class ViewLoader {
 
+  public static final String CLIENT_PROPERTY_CONTAINER_IVIEW = "_iview";
+
   private static Logger logger = Logger.getLogger(ViewLoader.class);
 
   public static final ImageIcon LOADING_ICON = JFlowMapMain.createImageIcon("resources/loading.gif");
@@ -79,6 +82,7 @@ public class ViewLoader {
         FileUtils.getFilename(viewConfigLocation) + "'...", LOADING_ICON, JLabel.CENTER);
     loadingLabel.setFont(LOADING_TEXT_FONT);
     parent.add(loadingLabel);
+    parent.setBackground(Color.white);
 
 //    view = (IView) Worker.post(new Task() {
 //      @Override
@@ -131,6 +135,9 @@ public class ViewLoader {
             VisualCanvas canvas = view.getVisualCanvas();
             if (canvas != null) {
               parent.add(canvas, BorderLayout.CENTER);
+              if (parent instanceof JComponent) {
+                ((JComponent)parent).putClientProperty(CLIENT_PROPERTY_CONTAINER_IVIEW, view);
+              }
               isViewEmpty = false;
 
               final JComponent controls = view.getControls();

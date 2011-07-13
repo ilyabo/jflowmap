@@ -57,23 +57,28 @@ public class JFlowMapMain {
 
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
-      System.out.println("Usage: java -jar jflowmap.jar [-fullscreen] <view-config.jfmv>");
-      System.exit(0);
-    }
-
-//    enableDebugging();
-
-
-    final String configLocation;
-    final boolean fullscreenMode;
-    if (args[0].equals("-fullscreen")) {
-      fullscreenMode = true;
-      configLocation = args[1];
+//      System.out.println("Usage: java -jar jflowmap.jar [-fullscreen] <view-config.jfmv>");
+//      System.exit(0);
+      showMainFrame();
     } else {
-      fullscreenMode = false;
-      configLocation = args[0];
+      final String configLocation;
+      final boolean fullscreenMode;
+      if (args[0].equals("-fullscreen")) {
+        fullscreenMode = true;
+        configLocation = args[1];
+      } else {
+        fullscreenMode = false;
+        configLocation = args[0];
+      }
+
+      loadView(configLocation, fullscreenMode);
     }
 
+  }
+
+
+  private static void loadView(final String configLocation, final boolean fullscreenMode) {
+//  enableDebugging();
 
     logger.info(">>> Starting JFlowMap");
 
@@ -125,9 +130,6 @@ public class JFlowMapMain {
         return frame;
       }
     });
-
-
-//    showMainFrame();
   }
 
   /*

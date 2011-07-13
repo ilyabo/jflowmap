@@ -7,6 +7,7 @@ import java.util.Map;
 
 import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapGraph;
+import jflowmap.data.Graph2.Table2;
 
 import org.apache.log4j.Logger;
 
@@ -132,10 +133,9 @@ public class FlowMapGraphEdgeAggregator {
 
     nodesByIds = Maps.newHashMap();
     Graph graph = flowMapGraph.getGraph();
-    aggGraph = new Graph(
-        graph.getNodeTable().getSchema().instantiate(),
-        graph.getEdgeTable().getSchema().instantiate(),
-        graph.isDirected());
+    aggGraph = Graph2.create(
+        (Table2)graph.getNodeTable().getSchema().instantiate(),
+        (Table2)graph.getEdgeTable().getSchema().instantiate());
 
     addAggListColumn(aggGraph.getNodeTable());
     addAggListColumn(aggGraph.getEdgeTable());

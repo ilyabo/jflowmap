@@ -56,17 +56,17 @@ import com.google.common.collect.Iterables;
 /**
  * @author Ilya Boyandin
  */
-public class OpenFileAction extends AbstractAction {
+public class OpenFlowMapGraphAction extends AbstractAction {
 
-  private static final Logger logger = Logger.getLogger(OpenFileAction.class);
+  private static final Logger logger = Logger.getLogger(OpenFlowMapGraphAction.class);
 
   private static final ImageIcon ICON = new ImageIcon(
-      OpenFileAction.class.getResource("images/Open16-2.gif"));
+      OpenFlowMapGraphAction.class.getResource("images/Open16-2.gif"));
 
   private final JFlowMapMainFrame app;
   private final As target;
 
-  public OpenFileAction(JFlowMapMainFrame app, As target) {
+  public OpenFlowMapGraphAction(JFlowMapMainFrame app, As target) {
     this.app = app;
     this.target = target;
 

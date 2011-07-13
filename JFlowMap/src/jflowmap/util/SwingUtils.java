@@ -49,7 +49,7 @@ public class SwingUtils {
     frame.setExtendedState(Frame.MAXIMIZED_BOTH);
   }
 
-  public static void center(Window window) {
+  public static void centerOnScreen(Window window) {
     final Dimension size = window.getSize();
     final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     final int locX = (screen.width - size.width) / 2;
