@@ -1,26 +1,38 @@
 
-Thanks for your interest in JFlowMap! 
+ Thanks for your interest in JFlowMap! 
 
-There are two ways to run the app: 
+
+ JFlowMap requires Java 1.6+ to be installed on your computer. Preferably, 
+ Sun JRE which you can download from here: http://www.java.com/ 
+
+
+ There are several ways to run the app: 
   
-  1) Simply open demo-applets.html in a browser (requires Java browser plugin);
+  
+  1) Find jflowmap.jar in Explorer/Finder/Nautilus and double click on it.
 
-  2) Run the tool from the command line.  
+     Then, open from the menu one of the view configuration files (.jfmv) 
+     which you can find in the 'viewconf' subfolder of this distribution. 
+  
+  
+  2) Run the desktop version from the terminal:
+        
+        java -jar jflowmap.jar
+         
+     To open a specific view type, e.g.:
+       
+        java -jar jflowmap.jar viewconf/refugees-flowstrates.jfmv 
 
-To run the tool from the command line you need to choose or create a view
-configuration file. There are quite a few of them in the 'viewconf' folder
-of this distribution. 
+     or to run in the fullscreen mode:
+      
+        java -jar jflowmap.jar -fullscreen viewconf/refugees-flowstrates.jfmv
+        
 
-For example, to open the refugee dataset in the Flowstrates view type the
-following in a UNIX terminal or in the Command Prompt in Windows:
+  3) Open demo-applets.html in a browser
+  
+  
 
-  java -jar jflowmap.jar viewconf/refugees-flowstrates.jfmv  
-
-
-To open it in the fullscreen mode type:
-
-  java -jar jflowmap.jar -fullscreen viewconf/refugees-flowstrates.jfmv  
+ Enjoy!
 
 
-
-Ilya Boyandin <ilya.boyandin@unifr.ch>
+ Ilya Boyandin <ilya.boyandin@unifr.ch>
