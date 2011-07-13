@@ -31,16 +31,26 @@ import prefuse.data.tuple.TableTuple;
  */
 public class Graph2 extends Graph {
 
+  public static final String GRAPH_NODE_KEY_COLUMN = "_node_key";
+
   private Graph2(Table2 nodes, Table2 edges) {
     super(nodes, edges, true);
   }
 
   public static Graph2 create() {
-    Table2 nodes = new Table2();
-    Table2 edges = new Table2();
-    nodes.addColumn(Graph.DEFAULT_NODE_KEY, int.class, -1);
-    edges.addColumn(Graph.DEFAULT_SOURCE_KEY, int.class, -1);
-    edges.addColumn(Graph.DEFAULT_TARGET_KEY, int.class, -1);
+    return create(new Table2(), new Table2());
+  }
+
+  public static Graph2 create(Table2 nodes, Table2 edges) {
+//    if (!nodes.canGetInt(GRAPH_NODE_KEY_COLUMN)) {
+//      nodes.addColumn(GRAPH_NODE_KEY_COLUMN, int.class, -1);
+//    }
+    if (!edges.canGetInt(DEFAULT_SOURCE_KEY)) {
+      edges.addColumn(Graph.DEFAULT_SOURCE_KEY, int.class, -1);
+    }
+    if (!edges.canGetInt(DEFAULT_TARGET_KEY)) {
+      edges.addColumn(Graph.DEFAULT_TARGET_KEY, int.class, -1);
+    }
     return new Graph2(nodes, edges);
   }
 
@@ -62,7 +72,21 @@ public class Graph2 extends Graph {
       row = getColumnRow(row, col);
       return getColumn(col).get(row);
     }
+
+    @Override
+    public Schema getSchema() {
+      if (m_schema == null) {
+        Schema s = new Schema2();
+        for (int i = 0; i < getColumnCount(); ++i) {
+          s.addColumn(getColumnName(i), getColumnType(i), getColumn(i).getDefaultValue());
+        }
+        s.lockSchema();
+        m_schema = s;
+      }
+      return m_schema;
   }
+  }
+
 
 
   public static class Schema2 extends Schema {
@@ -71,6 +95,9 @@ public class Graph2 extends Graph {
       int size = getColumnCount();
       Table2 t = new Table2(nrows, size);
       for (int i=0; i < size; i++) {
+        if (getColumnName(i) == null) {
+          System.out.println("hi");
+        }
         t.addColumn(getColumnName(i), getColumnType(i), getDefault(i));
       }
       return t;
