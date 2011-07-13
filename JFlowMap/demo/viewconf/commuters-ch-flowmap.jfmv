@@ -2,7 +2,7 @@ view=flowmap
 view.flowmap.colorScheme=Dark
 
 data=graphml
-data.graphml.src=data/commuters-ch.xml.gz
+data.graphml.src=../data/commuters-ch.xml.gz
 
 data.attrs.node.label=tooltip
 data.attrs.node.lat=y

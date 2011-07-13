@@ -42,7 +42,6 @@ import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import jflowmap.data.ViewConfig;
@@ -151,7 +150,7 @@ public class ViewLoader {
                 iframe.setTitle(view.getName());
                 iframe.putClientProperty(CLIENT_PROPERTY_CONTAINER_IVIEW, view);
               } else {
-                Window w = SwingUtilities.getWindowAncestor(parent);
+                Window w = SwingUtils.getWindowFor(parent);
                 w.setName(view.getName());
               }
 
@@ -293,7 +292,7 @@ public class ViewLoader {
         boolean visible = tabList.contains(title);
         if (!visible) {
           tp.removeTabAt(i);
-          tp.getComponentAt(i).setVisible(false);
+//          tp.getComponentAt(i).setVisible(false);
         }
       }
     }

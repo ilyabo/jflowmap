@@ -1,23 +1,24 @@
-view=flowmapSmallMultiple
 view.flowmap.colorScheme=Dark
-view.flowmap.weightFilterMin=1000
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
 view.flowmap.edgeWidth=7
 view.flowmap.edgeOpacity=200
 view.flowmap.showSelfLoops=false
-view.flowmap.valueType=VALUE
 
-#window.size=1024x768
-#window.settings.show=true
-#window.settings.activeTab=Animation
+
+#view.flowmap.weightFilterMin=1000
+
 
 data=csv
 data.csv.separator=,
 data.csv.charset=utf-8
-data.csv.nodes.src=data/refugee-nodes.csv.gz
-data.csv.flows.src=data/refugee-flows.csv.gz
+data.csv.nodes.src=../../../data/refugee-nodes.csv.gz
+data.csv.flows.src=../../../data/refugee-flows.csv.gz
+
+
+data.select.flows.where.exists=((NOT ISNAN([#weightAttr#])) AND ([#weightAttr#] > 600))
+
 
 data.attrs.node.id=Code
 data.attrs.node.label=Name
@@ -34,6 +35,6 @@ data.attrs.flow.weight.csvList=1975,1976,1977,1978,1979,\
 
 map.projection=WinkelTripel
 
-map.background.src=data/maps/countries/countries.png
+map.background.src=../../../data/maps/countries/countries.png
 map.background.boundingBox=-2.722533516968113,-1.8260025298264655,5.601597416002858,3.4280609186475823
 map.background.transparency=0.5

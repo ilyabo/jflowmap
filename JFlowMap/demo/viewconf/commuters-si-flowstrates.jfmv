@@ -2,7 +2,7 @@ view=flowstrates
 view.flowstrates.maxVisibleTuples=200
 
 data=graphml
-data.graphml.src=data/commuters-si.xml.gz
+data.graphml.src=../data/commuters-si.xml.gz
 
 data.attrs.node.label=name
 data.attrs.node.lat=lat
@@ -10,6 +10,6 @@ data.attrs.node.lon=lon
 data.attrs.flow.weight.re=[0-9]{4}
 
 map=shapefile
-map.shapefile.src=data/maps/slo/SVN_adm2.shp.gz
+map.shapefile.src=../data/maps/slo/SVN_adm2.shp.gz
 map.projection=Mercator
 

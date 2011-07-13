@@ -16,6 +16,7 @@ var init = function(views) {
   for (i=0;i<view.viewconfs.length;i++) {    
     viewconf = view.viewconfs[i];
     document.write('<li><a href="?'+viewconf.jfmv+'">'+viewconf.name+'</a>');
+    document.title = viewconf.name;
     if (viewconf.hasOwnProperty('desc')) {
       document.write('<p class="jfvmdesc">&ndash; '+viewconf.desc+'</p>');
     }

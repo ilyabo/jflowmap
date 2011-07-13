@@ -3,8 +3,8 @@ view=flowstrates
 
 data=csv
 data.csv.separator=,
-data.csv.nodes.src=data/refugee-nodes.csv.gz
-data.csv.flows.src=data/refugee-flows.csv.gz
+data.csv.nodes.src=../data/refugee-nodes.csv.gz
+data.csv.flows.src=../data/refugee-flows.csv.gz
 
 data.attrs.node.id=Code
 data.attrs.node.label=Name
@@ -21,6 +21,6 @@ data.attrs.flow.weight.csvList= 1975,1976,1977,1978,1979,\
 data.aggregator=jflowmap.views.flowstrates.RefugeeAggLayersBuilder
 
 map=shapefile
-map.shapefile.src=data/maps/countries/countries.shp.gz
+map.shapefile.src=../data/maps/countries/countries.shp.gz
 map.shapefile.dbfAreaIdField=ISO_A3
 map.projection=WinkelTripel

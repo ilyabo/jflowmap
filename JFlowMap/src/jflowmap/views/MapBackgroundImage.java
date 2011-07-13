@@ -66,6 +66,7 @@ public class MapBackgroundImage {
     if (src == null) {
       return null;
     }
+    src = config.relativeFileLocation(src);
 
     return new MapBackgroundImage(src,
         getBoundingBox(config),

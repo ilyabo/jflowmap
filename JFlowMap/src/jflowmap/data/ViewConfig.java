@@ -18,9 +18,12 @@
 
 package jflowmap.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 
 import jflowmap.FlowMapAttrSpec;
@@ -45,6 +48,7 @@ import jflowmap.views.flowstrates.FlowstratesView;
 import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
+import prefuse.util.io.IOLib;
 import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.common.base.Strings;
@@ -56,6 +60,8 @@ import com.google.common.collect.Lists;
 public class ViewConfig {
 
   private static Logger logger = Logger.getLogger(ViewConfig.class);
+
+  public static final String PROP_INCLUDES = "includes";
 
   public static final String PROP_VIEW = "view";
 
@@ -177,6 +183,19 @@ public class ViewConfig {
     Properties props = new Properties();
     props.load(is);
 
+    // process includes
+    if (props.containsKey(PROP_INCLUDES)) {
+      for (String loc : props.getProperty(PROP_INCLUDES).split(",")) {
+        Properties pps = loadProps(relativeFileLocation(loc, location));
+        for (Map.Entry<Object, Object> e : pps.entrySet()) {
+          if (!props.containsKey(e.getKey())) {  // properties set in the file which includes
+                                                 // others have priority
+            props.put(e.getKey(), e.getValue());
+          }
+        }
+      }
+    }
+
     return props;
   }
 
@@ -226,6 +245,31 @@ public class ViewConfig {
     return PropUtils.getBoolOrElse(props, propName, defaultValue);
   }
 
+  /**
+   * @param loc Location relative to the current directory
+   * @retun Location relative to this viewconf
+   */
+  public String relativeFileLocation(String loc) {
+    return relativeFileLocation(loc, location);
+  }
+
+  public static String relativeFileLocation(String loc, String configLocation) {
+    if (IOLib.isUrlString(loc)) {
+      return loc;
+    }
+
+    URL configUrl = IOLib.urlFromString(configLocation, null, true);
+
+    // get path only
+    String path = configUrl.getPath();
+    int sep = Math.max(path.lastIndexOf(File.separator), path.lastIndexOf("/"));
+    if (sep >= 0) {
+      path = path.substring(0, sep + 1);
+    }
+
+    return path + loc;
+  }
+
   enum DataLoaders {
     CSV {
       @Override
@@ -233,16 +277,19 @@ public class ViewConfig {
         final char csvSeparator = config.getStringOrElse(PROP_DATA_CSV_SEPARATOR, ",").charAt(0);
         final String csvCharset = config.getStringOrElse(PROP_DATA_CSV_CHARSET, "utf-8");
 
+        final String nodesSrc = config.relativeFileLocation(config.require(PROP_DATA_CSV_NODES_SRC));
+        final String flowsSrc = config.relativeFileLocation(config.require(PROP_DATA_CSV_FLOWS_SRC));
+
         FlowMapGraphBuilder builder = CsvFlowMapGraphReader.readFlowMapGraph(
-            config.require(PROP_DATA_CSV_NODES_SRC),
-            config.require(PROP_DATA_CSV_FLOWS_SRC),
+            nodesSrc,
+            flowsSrc,
             createFlowMapAttrSpec(
                 config, true,
                 new LazyGet<Iterable<String>>() {
                   @Override
                   public Iterable<String> get() throws IOException {
                     return CsvFlowMapGraphReader.readAttrNames(
-                        config.require(PROP_DATA_CSV_FLOWS_SRC),
+                        flowsSrc,
                         csvSeparator, csvCharset);
                   }
                 }
@@ -273,7 +320,8 @@ public class ViewConfig {
     GRAPHML {
       @Override
       public Object load(ViewConfig config) throws IOException {
-        final Graph graph = StaxGraphMLReader.readFirstGraph(config.require(PROP_DATA_GRAPHML_SRC));
+        final Graph graph = StaxGraphMLReader.readFirstGraph(
+            config.relativeFileLocation(config.require(PROP_DATA_GRAPHML_SRC)));
 
         LazyGet<Iterable<String>> getFlowAttrs = new LazyGet<Iterable<String>>() {
           @Override
@@ -393,14 +441,14 @@ public class ViewConfig {
     XML {
       @Override
       public GeoMap load(ViewConfig config) throws IOException {
-        return GeoMap.load(config.require(PROP_MAP_XML_SRC));
+        return GeoMap.load(config.relativeFileLocation(config.require(PROP_MAP_XML_SRC)));
       }
     },
     SHAPEFILE {
       @Override
       public GeoMap load(ViewConfig config) throws IOException {
         return GeoMap.asAreaMap(ShapefileReader.loadShapefile(
-            config.require(PROP_MAP_SHAPEFILE_SRC),
+            config.relativeFileLocation(config.require(PROP_MAP_SHAPEFILE_SRC)),
             config.getStringOrElse(PROP_MAP_SHAPEFILE_DBF_AREAIDFIELD,
                 config.getString(PROP_MAP_SHAPEFILE_DBF_AREAIDFIELD_))));
       }
