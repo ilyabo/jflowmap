@@ -1,11 +1,15 @@
 package jflowmap.util;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.Window;
+
+import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
 
 /**
  * @author Ilya Boyandin
@@ -55,6 +59,26 @@ public class SwingUtils {
     final int locX = (screen.width - size.width) / 2;
     final int locY = (screen.height - size.height) / 2;
     window.setLocation(locX, locY);
+  }
+
+  public static JInternalFrame getInternalFrameFor(Component c) {
+    JInternalFrame iframe;
+    if (c instanceof JInternalFrame) {
+      iframe = (JInternalFrame)c;
+    } else {
+      iframe = (JInternalFrame) SwingUtilities.getAncestorOfClass(JInternalFrame.class, c);
+    }
+    return iframe;
+  }
+
+  public static Window getWindowFor(Component c) {
+    Window win;
+    if (c instanceof Window) {
+      win = (Window)c;
+    } else {
+      win = SwingUtilities.windowForComponent(c);
+    }
+    return win;
   }
 
 }

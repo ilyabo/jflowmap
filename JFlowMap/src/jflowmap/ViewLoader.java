@@ -39,12 +39,14 @@ import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import jflowmap.data.ViewConfig;
+import jflowmap.util.SwingUtils;
 import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
 import jflowmap.util.piccolo.PNodes;
@@ -111,9 +113,16 @@ public class ViewLoader {
         if (size != null) {
           Matcher m = Pattern.compile("(\\d+)x(\\d+)").matcher(size);
           if (m.matches()) {
-            Window win = getWindowFor(parent);
-            if (win != null) {
-              win.setSize(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+            Dimension dim = new Dimension(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+
+            JInternalFrame iframe = SwingUtils.getInternalFrameFor(parent);
+            if (iframe != null) {
+              iframe.setSize(dim);
+            } else {
+              Window win = SwingUtils.getWindowFor(parent);
+              if (win != null) {
+                win.setSize(dim);
+              }
             }
           }
         }
@@ -139,6 +148,14 @@ public class ViewLoader {
                 ((JComponent)parent).putClientProperty(CLIENT_PROPERTY_CONTAINER_IVIEW, view);
               }
               isViewEmpty = false;
+
+              JInternalFrame iframe = SwingUtils.getInternalFrameFor(parent);
+              if (iframe != null) {
+                iframe.setTitle(view.getName());
+              } else {
+                Window w = SwingUtilities.getWindowAncestor(parent);
+                w.setName(view.getName());
+              }
 
               final JComponent controls = view.getControls();
               if (controls != null) {
@@ -195,7 +212,7 @@ public class ViewLoader {
       ViewConfig config) {
     final PButton settingsBut = new PButton("Settings", true);
 
-    Window win = getWindowFor(parent);
+    Window win = SwingUtils.getWindowFor(parent);
     final JDialog dialog = new JDialog(win, "Settings");
     dialog.setContentPane(controls);
     dialog.pack();
@@ -246,16 +263,6 @@ public class ViewLoader {
      });
 
     return settingsBut;
-  }
-
-  private static Window getWindowFor(final Container parent) {
-    Window win;
-    if (parent instanceof Window) {
-      win = (Window)parent;
-    } else {
-      win = SwingUtilities.windowForComponent(parent);
-    }
-    return win;
   }
 
   private static JTabbedPane getTabbedPane(Container contentPane) {
