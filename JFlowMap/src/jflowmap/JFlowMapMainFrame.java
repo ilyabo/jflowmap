@@ -9,7 +9,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDesktopPane;
@@ -32,8 +31,6 @@ import prefuse.data.Graph;
 import at.fhj.utils.swing.InternalFrameUtils;
 import at.fhj.utils.swing.JMemoryIndicator;
 
-import com.google.common.collect.Lists;
-
 /**
  * @author Ilya Boyandin
  */
@@ -50,9 +47,9 @@ public class JFlowMapMainFrame extends JFrame {
 //  private String appStartDir;
 
   private OpenViewConfigAction openViewConfigAction;
-  private IView activeView;
+  private JInternalFrame activeFrame;
   private AbstractAction tileViewsAction;
-  private final List<IView> openViews = Lists.newArrayList();
+//  private final List<IView> openViews = Lists.newArrayList();
 
 
   public JFlowMapMainFrame() {
@@ -182,7 +179,7 @@ public class JFlowMapMainFrame extends JFrame {
   }
 
 
-  private void setActiveView(IView view) {
+  private void setActiveFrame(JInternalFrame view) {
 //    if (view != null) {
 //      setViewOptionsDialogContent(view.getOptionsComponent());
 //
@@ -201,7 +198,7 @@ public class JFlowMapMainFrame extends JFrame {
 //        actionsToolBar.repaint();
 //      }
 //    }
-    this.activeView = view;
+    this.activeFrame = view;
   }
 
   private JMenuBar buildMenuBar() {
@@ -361,10 +358,10 @@ public class JFlowMapMainFrame extends JFrame {
   }
 
   private void fitActiveInView() {
-    if (activeView != null) {
+    if (activeFrame != null) {
 //      if (activeView instanceof FlowMapView)
 //        ((FlowMapView)activeView).fitInView();
-      activeView.fitInView();
+      getViewOf(activeFrame).fitInView();
     }
   }
 
@@ -372,6 +369,10 @@ public class JFlowMapMainFrame extends JFrame {
       return desktopPane;
   }
 
+
+  public IView getViewOf(JInternalFrame iframe) {
+    return (IView)iframe.getClientProperty(ViewLoader.CLIENT_PROPERTY_CONTAINER_IVIEW);
+  }
 
   public void loadView(String configLocation) {
     final JInternalFrame frame = new JInternalFrame("", true, true, true, true);
@@ -392,7 +393,7 @@ public class JFlowMapMainFrame extends JFrame {
     frame.setPreferredSize(new Dimension(800, 600));
     frame.pack();
 
-    final int offset = openViews.size() * 16;
+    final int offset = desktopPane.getAllFrames().length * 16;
     frame.setLocation(offset, offset);
 
     frame.addInternalFrameListener(new InternalFrameAdapter() {
@@ -400,25 +401,25 @@ public class JFlowMapMainFrame extends JFrame {
 
       @Override
       public void internalFrameActivated(InternalFrameEvent e) {
-        setActiveView(getInternalFrameView(e));
+        setActiveFrame(e.getInternalFrame());
 //        updateActions();
       }
 
       @Override
       public void internalFrameDeactivated(InternalFrameEvent e) {
-        setActiveView(null);
+        setActiveFrame(null);
 //        updateActions();
       }
 
       @Override
       public void internalFrameOpened(InternalFrameEvent e) {
-        openViews.add(getInternalFrameView(e));
+//        openViews.add(e.getInternalFrame());
 //        updateActions();
       }
 
       @Override
       public void internalFrameClosed(InternalFrameEvent e) {
-        openViews.remove(getInternalFrameView(e));
+//        openViews.remove(e.getInternalFrame());
 //        view.setFrame(null);
 //        updateActions();
       }
@@ -427,10 +428,6 @@ public class JFlowMapMainFrame extends JFrame {
 //    view.initInFrame();
 
     frame.setVisible(true);
-  }
-
-  public IView getInternalFrameView(InternalFrameEvent e) {
-    return (IView)e.getInternalFrame().getClientProperty(ViewLoader.CLIENT_PROPERTY_CONTAINER_IVIEW);
   }
 
 }

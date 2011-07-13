@@ -144,14 +144,12 @@ public class ViewLoader {
             VisualCanvas canvas = view.getVisualCanvas();
             if (canvas != null) {
               parent.add(canvas, BorderLayout.CENTER);
-              if (parent instanceof JComponent) {
-                ((JComponent)parent).putClientProperty(CLIENT_PROPERTY_CONTAINER_IVIEW, view);
-              }
               isViewEmpty = false;
 
               JInternalFrame iframe = SwingUtils.getInternalFrameFor(parent);
               if (iframe != null) {
                 iframe.setTitle(view.getName());
+                iframe.putClientProperty(CLIENT_PROPERTY_CONTAINER_IVIEW, view);
               } else {
                 Window w = SwingUtilities.getWindowAncestor(parent);
                 w.setName(view.getName());
