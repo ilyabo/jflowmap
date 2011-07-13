@@ -77,6 +77,8 @@ public class PTooltip extends PPath {
       setStrokePaint(DEFAULT_STROKE_PAINT);
 //    }
     setTextPaint(DEFAULT_TEXT_PAINT);
+
+    setPickable(false);
   }
 
   public PTooltip() {

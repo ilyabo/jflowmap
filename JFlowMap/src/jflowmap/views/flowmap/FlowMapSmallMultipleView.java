@@ -35,6 +35,7 @@ import jflowmap.models.map.GeoMap;
 import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
+import jflowmap.views.PTooltip;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.map.PGeoMap;
 
@@ -42,6 +43,7 @@ import com.google.common.collect.Lists;
 
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
@@ -75,6 +77,8 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
+    final PTooltip tooltip = new PTooltip();
+
     layers = Lists.newArrayList();
     for (String attr : fmg.getEdgeWeightAttrs()) {
       final PCamera camera = new PCamera();
@@ -83,7 +87,20 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
         public PCamera getCamera() {
           return camera;
         }
+        @Override
+        protected PTooltip createTooltip() {
+          return tooltip;
+        }
+        @Override
+        public void showTooltip(PNode component, Point2D pos) {
+          Point2D p = new Point2D.Double(pos.getX(), pos.getY());
+          getCamera().viewToLocal(p);
+          super.showTooltip(component, p);
+        }
       };
+
+      canvas.getCamera().addChild(tooltip);
+
       if (areaMap != null) {
         vfm.setAreaMap(new PGeoMap(vfm, areaMap, proj));
       }
@@ -180,7 +197,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       this.visualFlowMap = visualFlowMap;
       this.camera = camera;
       this.camera.addLayer(this);
-      this.camera.addChild(visualFlowMap.getTooltipBox());
+//      this.camera.addChild(visualFlowMap.getTooltipBox());
 
       // border
       pp = new PPath(new PBounds(0, 0, 1, 1));

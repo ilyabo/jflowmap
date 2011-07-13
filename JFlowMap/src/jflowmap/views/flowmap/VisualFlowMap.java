@@ -155,9 +155,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
 //    addChild(nodeLayer);
 
-    tooltipBox = new PTooltip();
+    tooltipBox = createTooltip();
     tooltipBox.setVisible(false);
-    tooltipBox.setPickable(false);
 
     visualLegend = new Legend(
         getColor(ColorCodes.LEDGEND_BOX_PAINT),
@@ -178,6 +177,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         }
       }
     });
+  }
+
+  protected PTooltip createTooltip() {
+    return new PTooltip();
   }
 
   private void createVisuals() {
