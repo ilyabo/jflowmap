@@ -21,7 +21,6 @@ package jflowmap.data;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -258,10 +257,10 @@ public class ViewConfig {
       return loc;
     }
 
-    URL configUrl = IOLib.urlFromString(configLocation, null, true);
+//    URL configUrl = IOLib.urlFromString(configLocation, null, true);
 
     // get path only
-    String path = configUrl.getPath();
+    String path = configLocation;
     int sep = Math.max(path.lastIndexOf(File.separator), path.lastIndexOf("/"));
     if (sep >= 0) {
       path = path.substring(0, sep + 1);
