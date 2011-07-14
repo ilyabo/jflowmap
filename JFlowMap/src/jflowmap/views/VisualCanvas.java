@@ -96,13 +96,15 @@ public class VisualCanvas extends PCanvas {
   @Override
   public void setBounds(int x, int y, int w, int h) {
     if (autoFitOnBoundsChange) {
-      Rectangle2D oldVisibleBounds =  getVisibleBounds();
-      Rectangle2D oldContentBounds = getViewContentBounds();
+      if (x != getX()  ||  y != getY()  ||  w != getWidth()  ||  h != getHeight()) {
+        Rectangle2D oldVisibleBounds =  getVisibleBounds();
+        Rectangle2D oldContentBounds = getViewContentBounds();
 
-      super.setBounds(x, y, w, h);
+        super.setBounds(x, y, w, h);
 
-      if (oldVisibleBounds != null) {
-        fitVisibleInCameraView(oldVisibleBounds, oldContentBounds);
+        if (oldVisibleBounds != null) {
+          fitVisibleInCameraView(oldVisibleBounds, oldContentBounds);
+        }
       }
     } else {
       super.setBounds(x, y, w, h);
