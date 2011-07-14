@@ -211,6 +211,11 @@ public class ViewLoader {
 
     Window win = SwingUtils.getWindowFor(parent);
     final JDialog dialog = new JDialog(win, "Settings");
+//    try {
+//      dialog.setAlwaysOnTop(true);
+//    } catch (SecurityException se) {
+//      // ignore
+//    }
     dialog.setContentPane(controls);
     dialog.pack();
     Rectangle b = win.getBounds();

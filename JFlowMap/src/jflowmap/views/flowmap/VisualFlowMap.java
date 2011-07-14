@@ -206,8 +206,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       resetBundling();
       if (doUpdate) {
         updateVisualEdges();
+        updateVisualEdgeOrdering();
       }
-      updateVisualEdgeOrdering();
       firePropertyChange(PROPERTY_CODE_FLOW_WEIGHT_ATTR, PROPERTY_FLOW_WEIGHT_ATTR, oldValue, attr);
     }
   }
@@ -377,8 +377,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     }
   }
 
-  public Iterable<Edge> getEdgesSortedByValue() {
-    return getFlowMapGraph().getEdgesSortedBy(getValueAttr(), true);
+  public Iterable<Edge> getEdgesSortedByValue(boolean ascending) {
+    return getFlowMapGraph().getEdgesSortedBy(getValueAttr(), true, ascending);
   }
 
   private void createEdgeVisuals() {
@@ -388,7 +388,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
 
-    for (Edge edge : getEdgesSortedByValue()) {
+    for (Edge edge : getEdgesSortedByValue(true)) {
 
       if (!hasCoordinates(edge)) {
         // TODO: create rectangles for flowmap nodes with missing coords
@@ -413,7 +413,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdges() {
-    for (Edge edge : getEdgesSortedByValue()) {
+    for (Edge edge : getEdgesSortedByValue(false)) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
         ve.update();
@@ -423,10 +423,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   private void updateVisualEdgeOrdering() {
-    for (Edge edge : getEdgesSortedByValue()) {
+    for (Edge edge : getEdgesSortedByValue(false)) {
       VisualEdge ve = edgesToVisuals.get(edge);
       if (hasCoordinates(edge)) {
-        ve.moveToFront();  // order by attr value
+        ve.moveToBack();  // order by attr value
       }
     }
   }
@@ -1174,12 +1174,15 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
 
       public void orderByValue(VisualEdge ve, double value) {
+        if (Double.isNaN(value)) {
+          return;
+        }
         double absValue = Math.abs(value);
         int numChildren = edgeLayer.getChildrenCount();
         int index = edgeLayer.indexOfChild(ve);
 
-        while (index > 0   &&   absValue < getVal(index)) index--;
-        while (index < numChildren - 1   &&   absValue > getVal(index)) index++;
+        while (index > 0   &&   absValue < getVal(index - 1)) index--;
+        while (index < numChildren - 1   &&   absValue > getVal(index + 1)) index++;
 
         int change = edgeLayer.indexOfChild(ve) - index;
         if (change != 0) {

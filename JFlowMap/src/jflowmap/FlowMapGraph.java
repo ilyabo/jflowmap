@@ -37,6 +37,7 @@ import jflowmap.data.SeqStat;
 import jflowmap.data.StaxGraphMLReader;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
+import jflowmap.util.CollectionUtils;
 import jflowmap.util.MathUtils;
 import jflowmap.util.Tables;
 
@@ -954,7 +955,8 @@ public class FlowMapGraph {
    *                     should be above others.
    */
   @SuppressWarnings("unchecked")
-  public Iterable<Edge> getEdgesSortedBy(final String flowWeightAttr, final boolean useAbsValues) {
+  public Iterable<Edge> getEdgesSortedBy(final String flowWeightAttr, final boolean useAbsValues,
+      final boolean ascending) {
     if (!getGraph().getEdgeTable().canGetDouble(flowWeightAttr)) {
       throw new IllegalArgumentException("Now attribute '" + flowWeightAttr + "' in edge table");
     }
@@ -969,14 +971,14 @@ public class FlowMapGraph {
             v1 = Math.abs(v1);
             v2 = Math.abs(v2);
           }
-          return Double.compare(v1, v2);
+          return ascending ? Double.compare(v1, v2) : Double.compare(v2, v1);
         }
       });
 
       return edges;
 
     } else {
-      return new Iterable<Edge>() {
+      Iterable<Edge> it = new Iterable<Edge>() {
         @Override
         public Iterator<Edge> iterator() {
           return Iterators.transform(
@@ -989,6 +991,11 @@ public class FlowMapGraph {
               });
         }
       };
+      if (ascending)
+        return it;
+      else
+        return CollectionUtils.reverse(it);
+
     }
   }
 
