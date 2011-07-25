@@ -111,7 +111,8 @@ public class CsvFlowMapGraphReader {
           colsByName = createColsByNameMap(csvLine);
         } else {
           // parse the rest of the lines
-          lp.apply(asAttrValuesMap(csvLine, colsByName));
+          Map<String, String> attrs = asAttrValuesMap(csvLine, colsByName);
+          lp.apply(attrs);
         }
         lineNum++;
       }
@@ -136,7 +137,9 @@ public class CsvFlowMapGraphReader {
   private Map<String, String> asAttrValuesMap(final String[] csvLine,
       Map<String, Integer> colsByName) {
     return Maps.transformValues(colsByName, new Function<Integer, String>() {
-      public String apply(Integer col) { return csvLine[col]; }
+      public String apply(Integer col) {
+        return csvLine[col].trim();
+      }
     });
   }
 
@@ -147,7 +150,7 @@ public class CsvFlowMapGraphReader {
   private Map<String, Integer> createColsByNameMap(String[] line) {
     Map<String, Integer> map = Maps.newHashMap();
     for (int i = 0; i < line.length; i++) {
-      map.put(line[i], i);
+      map.put(line[i].trim(), i);
     }
     return map;
   }
