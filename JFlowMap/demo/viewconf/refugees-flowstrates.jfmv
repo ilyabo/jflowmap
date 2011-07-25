@@ -1,5 +1,4 @@
 view=flowstrates
-view.flowstrates.maxVisibleTuples=200
 
 data=csv
 data.csv.separator=,
@@ -20,6 +19,7 @@ data.attrs.flow.weight.csvList= 1975,1976,1977,1978,1979,\
 
 data.aggregator=jflowmap.views.flowstrates.RefugeeAggLayersBuilder
 
-map=xml
-map.xml.src=../data/maps/countries-areas-ll.xml.gz
+map=shapefile
+map.shapefile.src=../data/maps/countries/countries.shp.gz
+map.shapefile.dbf.areaIdField=ISO_A3
 map.projection=WinkelTripel
