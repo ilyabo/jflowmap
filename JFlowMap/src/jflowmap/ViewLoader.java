@@ -59,6 +59,7 @@ import at.fhj.utils.swing.JMsgPane;
 import com.google.common.collect.ImmutableList;
 
 import edu.umd.cs.piccolo.PCamera;
+import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -198,6 +199,7 @@ public class ViewLoader {
     } else {
       final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
       buttonPanel.addChild(createSettingsButton(parent, controls, config));
+      buttonPanel.addChild(createPaintToSvgButton(parent, canvas));
 
   //    final PButton helpBut = new PButton(" ? ", true);
   //    buttonPanel.addChild(helpBut);
@@ -213,6 +215,22 @@ public class ViewLoader {
       });
       ccam.addChild(buttonPanel);
     }
+  }
+
+  private static PNode createPaintToSvgButton(final Container parent, final VisualCanvas canvas) {
+    PButton but = new PButton("SVG");
+    but.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        try {
+          canvas.paintToSvg();
+        } catch (Exception ex) {
+          logger.error("Cannot export SVG", ex);
+          JMsgPane.showProblemDialog(parent, ex);
+        }
+      }
+    });
+    return but;
   }
 
   private static PButton createSettingsButton(final Container parent, final JComponent controls,

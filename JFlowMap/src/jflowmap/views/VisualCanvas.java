@@ -22,10 +22,22 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.PiccoloUtils;
 import jflowmap.util.piccolo.ZoomHandler;
+
+import org.apache.batik.ext.awt.image.codec.imageio.ImageIOPNGImageWriter;
+import org.apache.batik.ext.awt.image.spi.ImageWriterRegistry;
+import org.apache.batik.svggen.SVGGraphics2D;
+
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -170,4 +182,33 @@ public class VisualCanvas extends PCanvas {
     getCamera().localToView(cb);
     return cb;
   }
+
+  public void paintToSvg() throws Exception {
+    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    DocumentBuilder builder = factory.newDocumentBuilder();
+    SVGGraphics2D svgGen = new SVGGraphics2D(builder.newDocument());
+
+    ImageWriterRegistry.getInstance().register(new ImageIOPNGImageWriter());
+    paintComponent(svgGen);
+
+    Writer out = null;
+    try {
+      out = new OutputStreamWriter(new FileOutputStream(getSvgOutputFilename()), "UTF-8");
+      svgGen.stream(out, false);
+    } finally {
+      if (out != null) out.close();
+    }
+
+  }
+
+  public String getSvgOutputFilename() {
+    String fname = "output.svg";
+    int i = 0;
+    while (new File(fname).exists()) {
+      i++;
+      fname = "output-" + i + ".svg";
+    }
+    return fname;
+  }
 }
+
