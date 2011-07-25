@@ -28,7 +28,6 @@ import java.util.Properties;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.IView;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
@@ -41,7 +40,6 @@ import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.flowmap.FlowMapSmallMultipleView;
 import jflowmap.views.flowmap.FlowMapView;
 import jflowmap.views.flowmap.VisualFlowMapModel;
-import jflowmap.views.flowstrates.AggLayersBuilder;
 import jflowmap.views.flowstrates.FlowstratesView;
 
 import org.apache.log4j.Logger;
@@ -382,17 +380,7 @@ public class ViewConfig {
     FLOWSTRATES {
       @Override
       public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
-        String aggName = config.getString(PROP_DATA_AGGREGATOR);
-        AggLayersBuilder aggregator;
-        if (aggName != null) {
-          aggregator = FlowMapGraphAggLayers.createBuilder(aggName);
-        } else {
-          aggregator = null;
-        }
-
-        return new FlowstratesView((FlowMapGraph)data, areaMap, aggregator,
-            config.getIntOrElse(FlowstratesView.VIEW_CONFIG_PROP_MAX_VISIBLE_TUPLES, -1),
-            mapProjection(config));
+        return new FlowstratesView((FlowMapGraph)data, areaMap, mapProjection(config), config);
       }
 
     },

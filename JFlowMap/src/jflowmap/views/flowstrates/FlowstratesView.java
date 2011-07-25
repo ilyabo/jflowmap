@@ -46,6 +46,7 @@ import jflowmap.data.EdgeListFlowMapStats;
 import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
+import jflowmap.data.ViewConfig;
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.GeoMap;
 import jflowmap.util.ColorUtils;
@@ -91,6 +92,8 @@ public class FlowstratesView extends AbstractCanvasView {
   public static Logger logger = Logger.getLogger(FlowstratesView.class);
 
   public static final String VIEW_CONFIG_PROP_MAX_VISIBLE_TUPLES = "view.flowstrates.maxVisibleTuples";
+  public static final String VIEW_CONFIG_PROP_MSG_ORIGINS_CAPTION = "view.flowstrates.messages.originsMapCaption";
+  public static final String VIEW_CONFIG_PROP_MSG_DESTS_CAPTION = "view.flowstrates.messages.destsMapCaption";
 
   private static final int LEGEND_MARGIN_BOTTOM = 10;
   private static final String CAPTION_NODE_ATTR = "captionNode";
@@ -156,31 +159,39 @@ public class FlowstratesView extends AbstractCanvasView {
 
   protected ViewLayer mouseOverLayer;
   protected List<ViewLayer> viewLayers;
+  private final ViewConfig viewConfig;
 
 
 
-  public FlowstratesView(FlowMapGraph flowMapGraph, final GeoMap areaMap, AggLayersBuilder aggregator,
-      int maxVisibleTuples, MapProjection proj) {
+  public FlowstratesView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj, ViewConfig config) {
+    String aggName = config.getString(ViewConfig.PROP_DATA_AGGREGATOR);
+    AggLayersBuilder aggregator;
+    if (aggName != null) {
+      aggregator = FlowMapGraphAggLayers.createBuilder(aggName);
+    } else {
+      aggregator = null;
+    }
 
     logger.info("Opening flowstrates view");
 
-    this.flowMapGraph = flowMapGraph;
-    this.maxVisibleTuples = maxVisibleTuples;
+    this.flowMapGraph = fmg;
+    this.maxVisibleTuples = config.getIntOrElse(FlowstratesView.VIEW_CONFIG_PROP_MAX_VISIBLE_TUPLES, -1);
     this.mapProjection = proj;
     this.areaMap = areaMap;
+    this.viewConfig = config;
 
     if (aggregator == null) {
       aggregator = new DefaultAggLayersBuilder();
     }
-    this.layers = aggregator.build(flowMapGraph);
+    this.layers = aggregator.build(fmg);
 
-    for (FlowMapGraph fmg : layers.getFlowMapGraphs()) {
-      fmg.addEdgeWeightDifferenceColumns();
-      fmg.addEdgeWeightRelativeDifferenceColumns();
+    for (FlowMapGraph g : layers.getFlowMapGraphs()) {
+      g.addEdgeWeightDifferenceColumns();
+      g.addEdgeWeightRelativeDifferenceColumns();
 
-      FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg);
-      FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightDiffAttr());
-      FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
+      FlowMapNodeTotals.supplyNodesWithWeightTotals(g);
+      FlowMapNodeTotals.supplyNodesWithWeightTotals(g, g.getEdgeWeightDiffAttr());
+      FlowMapNodeTotals.supplyNodesWithWeightTotals(g, g.getEdgeWeightRelativeDiffAttrNames());
     }
 
 
@@ -230,12 +241,16 @@ public class FlowstratesView extends AbstractCanvasView {
     viewLayers = ImmutableList.<ViewLayer>of(originMapLayer, temporalLayer, destMapLayer);
 
 
-    addCaption(originMapLayer.getCamera(), "Origins");
+    addCaption(originMapLayer.getCamera(),
+        viewConfig.getStringOrElse(VIEW_CONFIG_PROP_MSG_ORIGINS_CAPTION, "Origins"));
+
 //    if (SHOW_TIME_CAPTION) {
 //      addCaption(temporalLayer.getCamera(), "Time");
 //    }
     addCaption(temporalLayer.getCamera(), " ");
-    addCaption(destMapLayer.getCamera(), "Destinations");
+
+    addCaption(destMapLayer.getCamera(),
+        viewConfig.getStringOrElse(VIEW_CONFIG_PROP_MSG_DESTS_CAPTION, "Destinations"));
 
     PLayer canvasLayer = canvas.getLayer();
     canvasLayer.addChild(temporalLayer.getCamera()); // should come first so that lasso shows above it
