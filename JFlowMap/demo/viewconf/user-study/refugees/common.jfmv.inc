@@ -2,7 +2,7 @@ view.flowmap.colorScheme=Dark
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false
 view.flowmap.showNodes=false
-view.flowmap.edgeWidth=7
+view.flowmap.edgeWidth=10
 view.flowmap.edgeOpacity=200
 view.flowmap.showSelfLoops=false
 
@@ -38,3 +38,5 @@ map.projection=WinkelTripel
 map.background.src=../../../data/maps/countries/countries.png
 map.background.boundingBox=-2.722533516968113,-1.8260025298264655,5.601597416002858,3.4280609186475823
 map.background.transparency=0.5
+
+window.settings.embed=true

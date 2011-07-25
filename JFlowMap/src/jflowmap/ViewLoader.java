@@ -159,6 +159,7 @@ public class ViewLoader {
                 initControls(parent, canvas, controls, config);
               }
 
+
             }
           }
         } catch (Exception ex) {
@@ -186,23 +187,32 @@ public class ViewLoader {
       final JComponent controls, ViewConfig config) {
 
 
-    final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
-    buttonPanel.addChild(createSettingsButton(parent, controls, config));
+    String visibleTabs = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_SHOW_TABS);
+    if (visibleTabs != null) {
+      setVisibileSettingsTabs(controls, visibleTabs.split(","));
+    }
 
-//    final PButton helpBut = new PButton(" ? ", true);
-//    buttonPanel.addChild(helpBut);
+    boolean embedSettings = config.getBoolOrElse(ViewConfig.PROP_WINDOW_SETTINGS_EMBED, false);
+    if (embedSettings) {
+      parent.add(controls, BorderLayout.SOUTH);
+    } else {
+      final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+      buttonPanel.addChild(createSettingsButton(parent, controls, config));
+
+  //    final PButton helpBut = new PButton(" ? ", true);
+  //    buttonPanel.addChild(helpBut);
 
 
-    final PCamera ccam = canvas.getCamera();
-    ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        PBounds b = ccam.getBoundsReference();
-        PNodes.setPosition(buttonPanel, b.getMaxX() - buttonPanel.getFullBoundsReference().width - 4, 4);
-      }
-    });
-    ccam.addChild(buttonPanel);
-
+      final PCamera ccam = canvas.getCamera();
+      ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+          PBounds b = ccam.getBoundsReference();
+          PNodes.setPosition(buttonPanel, b.getMaxX() - buttonPanel.getFullBoundsReference().width - 4, 4);
+        }
+      });
+      ccam.addChild(buttonPanel);
+    }
   }
 
   private static PButton createSettingsButton(final Container parent, final JComponent controls,
@@ -224,11 +234,6 @@ public class ViewLoader {
         (int)b.getMaxX() - dialog.getWidth(),
         (int)Math.min(b.getMaxY(), screen.getHeight() - dialog.getHeight()));
     dialog.setResizable(false);
-
-    String visibleTabs = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_SHOW_TABS);
-    if (visibleTabs != null) {
-      setControlTabsVisibility(dialog.getContentPane(), visibleTabs.split(","));
-    }
 
 
     String activeTab = config.getString(ViewConfig.PROP_WINDOW_SETTINGS_ACTIVE_TAB);
@@ -288,7 +293,8 @@ public class ViewLoader {
     }
   }
 
-  private static void setControlTabsVisibility(Container contentPane, String[] visibleTabs) {
+  private static int setVisibileSettingsTabs(Container contentPane, String[] visibleTabs) {
+    int numVisible = 0;
     List<String> tabList = ImmutableList.copyOf(visibleTabs);
     JTabbedPane tp = getTabbedPane(contentPane);
     if (tp != null) {
@@ -298,8 +304,11 @@ public class ViewLoader {
         if (!visible) {
           tp.removeTabAt(i);
 //          tp.getComponentAt(i).setVisible(false);
+        } else {
+          numVisible++;
         }
       }
     }
+    return numVisible;
   }
 }
