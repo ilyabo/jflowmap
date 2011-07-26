@@ -20,6 +20,7 @@ package jflowmap.views;
 
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -27,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -37,7 +40,9 @@ import jflowmap.util.piccolo.ZoomHandler;
 import org.apache.batik.ext.awt.image.codec.imageio.ImageIOPNGImageWriter;
 import org.apache.batik.ext.awt.image.spi.ImageWriterRegistry;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.log4j.Logger;
 
+import at.fhj.utils.swing.JMsgPane;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PCanvas;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -47,6 +52,10 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class VisualCanvas extends PCanvas {
 
+  private static final String ACTION_SVG_EXPORT = "svg-export";
+
+  private static Logger logger = Logger.getLogger(VisualCanvas.class);
+
   private static final Dimension MIN_SIZE = new Dimension(150, 100);
   private ZoomHandler zoomHandler;
   private boolean autoFitOnBoundsChange = true;
@@ -55,6 +64,13 @@ public class VisualCanvas extends PCanvas {
     setZoomEventHandler(null);
     setZoomHandler(createZoomHandler());
     setPanEventHandler(new PanHandler());
+    getInputMap().put(KeyStroke.getKeyStroke("alt S"), ACTION_SVG_EXPORT);
+    getActionMap().put(ACTION_SVG_EXPORT, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        tryToPaintToSvg();
+      }
+    });
   }
 
   public ZoomHandler getZoomHandler() {
@@ -183,6 +199,15 @@ public class VisualCanvas extends PCanvas {
     return cb;
   }
 
+  public void tryToPaintToSvg() {
+    try {
+      paintToSvg();
+    } catch (Exception ex) {
+      logger.error("Cannot export SVG", ex);
+      JMsgPane.showProblemDialog(this, ex);
+    }
+  }
+
   public void paintToSvg() throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
@@ -193,22 +218,25 @@ public class VisualCanvas extends PCanvas {
 
     Writer out = null;
     try {
-      out = new OutputStreamWriter(new FileOutputStream(getSvgOutputFilename()), "UTF-8");
+      File f = getSvgOutputFilename();
+      out = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
       svgGen.stream(out, false);
+
+      JMsgPane.showInfoDialog(this, "View exported to '" + f.getAbsolutePath() + "'");
+
     } finally {
       if (out != null) out.close();
     }
-
   }
 
-  public String getSvgOutputFilename() {
-    String fname = "output.svg";
+  public File getSvgOutputFilename() {
+    File file = new File("output.svg");
     int i = 0;
-    while (new File(fname).exists()) {
+    while (file.exists()) {
       i++;
-      fname = "output-" + i + ".svg";
+      file = new File("output-" + i + ".svg");
     }
-    return fname;
+    return file;
   }
 }
 

@@ -69,9 +69,9 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 public class ViewLoader {
 
-  public static final String CLIENT_PROPERTY_CONTAINER_IVIEW = "_iview";
-
   private static Logger logger = Logger.getLogger(ViewLoader.class);
+
+  public static final String CLIENT_PROPERTY_CONTAINER_IVIEW = "_iview";
 
   public static final ImageIcon LOADING_ICON = JFlowMapMain.createImageIcon("resources/loading.gif");
 
@@ -222,12 +222,7 @@ public class ViewLoader {
     but.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        try {
-          canvas.paintToSvg();
-        } catch (Exception ex) {
-          logger.error("Cannot export SVG", ex);
-          JMsgPane.showProblemDialog(parent, ex);
-        }
+        canvas.tryToPaintToSvg();
       }
     });
     return but;
