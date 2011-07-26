@@ -46,6 +46,7 @@ import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
 import prefuse.util.io.IOLib;
+import at.fhj.utils.misc.FileUtils;
 import au.com.bytecode.opencsv.CSVParser;
 
 import com.google.common.base.Strings;
@@ -141,6 +142,10 @@ public class ViewConfig {
 
   public String getLocation() {
     return location;
+  }
+
+  public String getName() {
+    return FileUtils.getFilename(location);
   }
 
   public IView createView() throws IOException {
@@ -390,7 +395,7 @@ public class ViewConfig {
       public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
         return new FlowMapView(
             VisualFlowMapModel.createFor((FlowMapGraph)data, config),
-            areaMap, mapProjection(config), colorSchemeFor(config));
+            areaMap, mapProjection(config), colorSchemeFor(config), config);
       }
     },
     FLOWMAPSMALLMULTIPLE {

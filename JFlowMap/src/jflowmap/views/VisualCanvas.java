@@ -37,8 +37,9 @@ import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.PiccoloUtils;
 import jflowmap.util.piccolo.ZoomHandler;
 
-import org.apache.batik.ext.awt.image.codec.imageio.ImageIOPNGImageWriter;
+import org.apache.batik.ext.awt.image.codec.png.PNGImageWriter;
 import org.apache.batik.ext.awt.image.spi.ImageWriterRegistry;
+import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.log4j.Logger;
 
@@ -211,9 +212,13 @@ public class VisualCanvas extends PCanvas {
   public void paintToSvg() throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
-    SVGGraphics2D svgGen = new SVGGraphics2D(builder.newDocument());
 
-    ImageWriterRegistry.getInstance().register(new ImageIOPNGImageWriter());
+    SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(builder.newDocument());
+    ctx.setExtensionHandler(new SvgGenExtensionHandler());
+
+    SVGGraphics2D svgGen = new SVGGraphics2D(ctx, false);
+
+    ImageWriterRegistry.getInstance().register(new PNGImageWriter());
     paintComponent(svgGen);
 
     Writer out = null;
@@ -239,4 +244,5 @@ public class VisualCanvas extends PCanvas {
     return file;
   }
 }
+
 

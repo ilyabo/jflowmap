@@ -114,4 +114,11 @@ public class ColorUtils {
   public static Color setAlpha(Color color, int alpha) {
     return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
   }
+
+  public static String toHexString(Color color) {
+    String str = Integer.toHexString(color.getRGB()  &  0x00ffffff);
+    while (str.length() < 6) { str = "0" + str; }
+    return str;
+  }
+
 }

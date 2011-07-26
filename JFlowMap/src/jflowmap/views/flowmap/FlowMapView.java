@@ -28,6 +28,7 @@ import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.GraphMLDatasetSpec;
+import jflowmap.data.ViewConfig;
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.GeoMap;
 import jflowmap.ui.ControlPanel;
@@ -51,9 +52,13 @@ public class FlowMapView extends AbstractCanvasView {
   private final ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
 
+  private ViewConfig viewConfig;
+
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.#####");
 
-  public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme cs) {
+  public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme cs, ViewConfig config) {
+    this.viewConfig = config;
+
     FlowMapGraph fmg = model.getFlowMapGraph();
 
     setVisualFlowMap(createVisualFlowMap(model, proj, Iterables.getLast(fmg.getEdgeWeightAttrs()), cs));
@@ -123,7 +128,10 @@ public class FlowMapView extends AbstractCanvasView {
 
   @Override
   public String getName() {
-    return visualFlowMap.getName();
+    if (viewConfig == null) {
+      return "";
+    }
+    return viewConfig.getName();
   }
 
   public void setColorScheme(IFlowMapColorScheme cs) {
