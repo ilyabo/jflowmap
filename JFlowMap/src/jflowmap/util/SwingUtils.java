@@ -1,5 +1,6 @@
 package jflowmap.util;
 
+import java.applet.Applet;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -79,6 +80,16 @@ public class SwingUtils {
       win = SwingUtilities.windowForComponent(c);
     }
     return win;
+  }
+
+  public static Applet getAppletFor(Component c) {
+    Applet iframe;
+    if (c instanceof Applet) {
+      iframe = (Applet)c;
+    } else {
+      iframe = (Applet) SwingUtilities.getAncestorOfClass(Applet.class, c);
+    }
+    return iframe;
   }
 
 }

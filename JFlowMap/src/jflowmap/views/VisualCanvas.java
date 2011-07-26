@@ -18,6 +18,7 @@
 
 package jflowmap.views;
 
+import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -26,6 +27,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.swing.AbstractAction;
@@ -33,6 +35,7 @@ import javax.swing.KeyStroke;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import jflowmap.util.SwingUtils;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.PiccoloUtils;
 import jflowmap.util.piccolo.ZoomHandler;
@@ -202,14 +205,40 @@ public class VisualCanvas extends PCanvas {
 
   public void tryToPaintToSvg() {
     try {
-      paintToSvg();
+      try {
+        File f = getSvgOutputFilename();
+        paintToSvg(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
+        JMsgPane.showInfoDialog(VisualCanvas.this, "View exported to '" + f.getAbsolutePath() + "'");
+      } catch (SecurityException se) {
+        // try again, but show the output in window
+        StringWriter sw = new StringWriter();
+        paintToSvg(sw);
+
+        showSvgInApplet(sw.getBuffer().toString());
+
+      }
     } catch (Exception ex) {
       logger.error("Cannot export SVG", ex);
-      JMsgPane.showProblemDialog(this, ex);
+      JMsgPane.showProblemDialog(this, ex.getClass().getSimpleName() + " " + ex.getMessage() + " " + ex.getCause().getMessage());
     }
   }
 
-  public void paintToSvg() throws Exception {
+  public void showSvgInApplet(String svgCode) throws Exception {
+    // ShowSourceDialog dialog = new ShowSourceDialog(
+    // SwingUtils.getWindowFor(this), "SVG export", svgCode, false);
+    // dialog.setVisible(true);
+
+    Applet applet = SwingUtils.getAppletFor(this);
+    if (applet != null) {
+      Class<?> klass = Class.forName("netscape.javascript.JSObject");
+      Object window = klass.getMethod("getWindow", Applet.class).invoke(null, applet); // the method
+                                                                                       // is static
+      klass.getMethod("call", String.class, Object[].class).invoke(window, "showCode",
+          new Object[] { svgCode });
+    }
+  }
+
+  public void paintToSvg(Writer out) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -221,14 +250,8 @@ public class VisualCanvas extends PCanvas {
     ImageWriterRegistry.getInstance().register(new PNGImageWriter());
     paintComponent(svgGen);
 
-    Writer out = null;
     try {
-      File f = getSvgOutputFilename();
-      out = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
       svgGen.stream(out, false);
-
-      JMsgPane.showInfoDialog(this, "View exported to '" + f.getAbsolutePath() + "'");
-
     } finally {
       if (out != null) out.close();
     }
