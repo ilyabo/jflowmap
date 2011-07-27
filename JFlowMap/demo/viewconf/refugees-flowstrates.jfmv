@@ -23,3 +23,4 @@ map=shapefile
 map.shapefile.src=../data/maps/countries/countries.shp.gz
 map.shapefile.dbf.areaIdField=ISO_A3
 map.projection=WinkelTripel
+

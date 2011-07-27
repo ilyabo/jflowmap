@@ -31,7 +31,6 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 
 
 /**
@@ -63,8 +62,9 @@ public class GeoMap {
     if (dataset.getAreaMapFilename() != null) {
       areaMap = load(dataset.getAreaMapFilename());
     } else if (dataset.getShapefileName() != null) {
-      areaMap = asAreaMap(ShapefileReader.loadShapefile(
-          dataset.getShapefileName(), dataset.getDbfAreaIdField()));
+      Iterable<Geometry> geoms = ShapefileReader.loadShapefile(
+          dataset.getShapefileName(), dataset.getDbfAreaIdField(), null);
+      areaMap = asAreaMap(geoms);
     }
     return areaMap;
   }
@@ -74,10 +74,9 @@ public class GeoMap {
     return XmlAreaMapModelReader2.readMap(filename);
   }
 
-  public static GeoMap asAreaMap(GeometryCollection geoms) {
+  public static GeoMap asAreaMap(Iterable<Geometry> geoms) {
     List<MapArea> list = Lists.newArrayList();
-    for (int i = 0; i < geoms.getNumGeometries(); i++) {
-      Geometry g = geoms.getGeometryN(i);
+    for (Geometry g : geoms) {
       String name = (g.getUserData() != null ? g.getUserData().toString() : null);
       list.add(MapArea.fromGeometry(name, name, g));
     }
