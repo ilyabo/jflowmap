@@ -19,7 +19,6 @@
 package jflowmap.views.flowmap;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -48,7 +47,6 @@ import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
 import edu.umd.cs.piccolo.nodes.PPath;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PDimension;
 import edu.umd.cs.piccolo.util.PPaintContext;
@@ -187,11 +185,9 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
   }
 
   static class VisualFlowMapLayer extends PLayer {
-    private final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 20);
     private final VisualFlowMap visualFlowMap;
     private final PCamera camera;
     private final PPath pp;
-    private final PText caption;
 
     public VisualFlowMapLayer(VisualFlowMap visualFlowMap, PCamera camera) {
       this.visualFlowMap = visualFlowMap;
@@ -205,11 +201,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       pp.setStrokePaint(Color.gray);
       camera.addChild(pp);
 
-      caption = new PText(visualFlowMap.getValueAttr());
-      caption.setFont(CAPTION_FONT);
-      caption.setTextPaint(Color.white);
-      caption.setTransparency(0.3f);
-      camera.addChild(caption);
+      visualFlowMap.setFlowWeightAttrLabelVisibile(true);
 
       addChild(visualFlowMap);
     }
@@ -223,10 +215,10 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     }
 
     public void adjustBounds(double x, double y, double w, double h) {
-      PBounds viewBounds = camera.getViewBounds();
+      PBounds viewBounds = getCamera().getViewBounds();
       getCamera().setBounds(x, y, w, h);
       pp.setBounds(x, y, w, h);
-      caption.setBounds(x + 3, y + (h - caption.getHeight() - 2), caption.getWidth(), caption.getHeight());
+      visualFlowMap.updateFlowWeightAttrLabel();
       if (!viewBounds.isEmpty()) {
         camera.setViewBounds(viewBounds);
       }

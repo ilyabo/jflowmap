@@ -19,6 +19,7 @@
 package jflowmap.views.flowmap;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Window;
 import java.awt.geom.Point2D;
@@ -73,6 +74,7 @@ import com.google.common.collect.Maps;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
+import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -82,6 +84,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(VisualFlowMap.class);
+  private final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 20);
 
   private static final boolean SHOW_SPLINE_POINTS = false;
 
@@ -127,6 +130,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final MapProjection mapProjection;
   private IFlowMapColorScheme colorScheme;
   private PNode mapBackgroundImage;
+  private final PText flowWeightAttrLabel;
 
 
   public VisualFlowMap(final IView view, VisualFlowMapModel model, boolean showLegend,
@@ -169,14 +173,20 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
           fitInCameraView();
+          updateFlowWeightAttrLabel();
         } else
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
           updateNodePositions();
-//          System.out.println(getCamera().getViewBounds());
         }
       }
     });
+
+    flowWeightAttrLabel = new PText(getValueAttr());
+    flowWeightAttrLabel.setFont(CAPTION_FONT);
+    flowWeightAttrLabel.setTransparency(0.3f);
+    getCamera().addChild(flowWeightAttrLabel);
+    flowWeightAttrLabel.setVisible(false);
   }
 
   protected PTooltip createTooltip() {
@@ -204,11 +214,33 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       flowWeightAttr = attr;
       resetClusters();
       resetBundling();
+      updateFlowWeightAttrLabel();
       if (doUpdate) {
         updateVisualEdges();
         updateVisualEdgeOrdering();
       }
       firePropertyChange(PROPERTY_CODE_FLOW_WEIGHT_ATTR, PROPERTY_FLOW_WEIGHT_ATTR, oldValue, attr);
+    }
+  }
+
+  public void setFlowWeightAttrLabelVisibile(boolean visible) {
+    flowWeightAttrLabel.setVisible(visible);
+  }
+
+  public void updateFlowWeightAttrLabel() {
+    PText label = flowWeightAttrLabel;
+    if (label.getVisible()) {
+      PBounds cb = getCamera().getBoundsReference();
+      label.setText(flowWeightAttr);
+
+      float height = (float)(cb.height * 0.25);
+      float fontSize = label.getFont().getSize2D();
+      if (fontSize != height) {
+        label.setFont(label.getFont().deriveFont(height));
+      }
+
+      flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));
+      label.setBounds(cb.x + 3, cb.y + (cb.height - height - 2), label.getWidth(), height);
     }
   }
 
@@ -1124,6 +1156,8 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     if (valueAnimation != null   &&   valueAnimation.isStepping()) {
       return;
     }
+
+    setFlowWeightAttrLabelVisibile(true);
 
     final List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
 

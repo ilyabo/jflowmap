@@ -141,7 +141,8 @@ public abstract class VisualEdge extends PNode {
         ppath.setPathTo(createSelfLoopShape());
         ppath.setStroke(null);
       } else {
-        ppath.setStroke(createStrokeFor(normalizeForWidthScale(value)));
+        double strokeWidth = normalizeForWidthScale(value);
+        ppath.setStroke(createStrokeFor(strokeWidth));
       }
     }
     updateVisibilityFor(value);

@@ -283,7 +283,8 @@ public class ControlPanel {
           final String attr = attrs.get(slider.getValue());
           selAttrLabel.setText(attr);
 //          if (!slider.getValueIsAdjusting()) {
-            jFlowMap.setSelectedFlowWeightAttr(attr);
+          jFlowMap.setSelectedFlowWeightAttr(attr);
+          jFlowMap.getVisualFlowMap().setFlowWeightAttrLabelVisibile(true);
             // setSelectedFlowWeightAttr(attr);
 //          }
         }
