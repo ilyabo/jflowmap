@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import jflowmap.data.DatasetSpec;
-import jflowmap.data.ShapefileReader;
 import jflowmap.data.XmlAreaMapModelReader2;
 
 import org.apache.log4j.Logger;
@@ -55,18 +53,6 @@ public class GeoMap {
 
   public Collection<MapArea> getAreas() {
     return areas;
-  }
-
-  public static GeoMap loadFor(DatasetSpec dataset) throws IOException {
-    GeoMap areaMap = null;
-    if (dataset.getAreaMapFilename() != null) {
-      areaMap = load(dataset.getAreaMapFilename());
-    } else if (dataset.getShapefileName() != null) {
-      Iterable<Geometry> geoms = ShapefileReader.loadShapefile(
-          dataset.getShapefileName(), dataset.getDbfAreaIdField(), null);
-      areaMap = asAreaMap(geoms);
-    }
-    return areaMap;
   }
 
   public static final GeoMap load(String filename) throws IOException {

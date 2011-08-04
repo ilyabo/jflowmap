@@ -31,10 +31,8 @@ import jflowmap.data.AttrDataTypes;
 import jflowmap.data.FlowMapGraphBuilder;
 import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.FlowMapStats;
-import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.MultiFlowMapStats;
 import jflowmap.data.SeqStat;
-import jflowmap.data.StaxGraphMLReader;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
 import jflowmap.util.CollectionUtils;
@@ -585,19 +583,6 @@ public class FlowMapGraph {
     throws IOException
   {
     return loadGraphML(filename, attrSpec, null);
-  }
-
-  public static FlowMapGraph loadGraphML(GraphMLDatasetSpec dataset) throws IOException {
-    return loadGraphML(dataset, null);
-  }
-
-  public static FlowMapGraph loadGraphML(GraphMLDatasetSpec dataset, FlowMapStats stats) throws IOException {
-    Iterator<Graph> it = StaxGraphMLReader.readGraphs(dataset.getFilename()).iterator();
-    if (!it.hasNext()) {
-      throw new IOException("No graphs found in '" + dataset.getFilename() + "'");
-    }
-    Graph graph = it.next();
-    return new FlowMapGraph(graph, dataset.createFlowMapAttrsSpecFor(graph), stats);
   }
 
   /**

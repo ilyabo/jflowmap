@@ -19,15 +19,11 @@
 package jflowmap.views.flowmap;
 
 import java.text.DecimalFormat;
-import java.util.List;
 
 import javax.swing.JComponent;
 
 import jflowmap.AbstractCanvasView;
-import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
-import jflowmap.data.FlowMapStats;
-import jflowmap.data.GraphMLDatasetSpec;
 import jflowmap.data.ViewConfig;
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.GeoMap;
@@ -52,7 +48,7 @@ public class FlowMapView extends AbstractCanvasView {
   private final ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
 
-  private ViewConfig viewConfig;
+  private final ViewConfig viewConfig;
 
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.#####");
 
@@ -71,54 +67,12 @@ public class FlowMapView extends AbstractCanvasView {
     controlPanel = new ControlPanel(this, fmg.getAttrSpec());
   }
 
-  public FlowMapView(List<GraphMLDatasetSpec> datasets, boolean showControlPanel) {
-    if (datasets != null) {
-      load(datasets.get(0), getVisualFlowMap().getFlowMapGraph().getStats());
-      getVisualCanvas().getLayer().addChild(visualFlowMap);
-    }
-
-    if (showControlPanel) {
-      controlPanel = new ControlPanel(this, getVisualFlowMap().getFlowMapGraph().getAttrSpec());
-    } else {
-      controlPanel = null;
-    }
-  }
-
   @Override
   public JComponent getControls() {
     if (controlPanel != null) {
       return controlPanel.getPanel();
     } else {
       return null;
-    }
-  }
-
-  /**
-   * Use when the stats have to be induced and not calculated (e.g. when a global mapping over
-   * a number of flow maps for small multiples must be used).
-   * Otherwise, use {@link #load(GraphMLDatasetSpec)}.
-   */
-  public void load(GraphMLDatasetSpec dataset, FlowMapStats stats) {
-    logger.info("> Loading flow map '" + dataset + "'");
-    try {
-      FlowMapGraph fmg = FlowMapGraph.loadGraphML(dataset, stats);
-
-      VisualFlowMap visualFlowMap = createVisualFlowMap(
-          new VisualFlowMapModel(fmg, null),
-          dataset.getMapProjection(), fmg.getEdgeWeightAttrs().get(0),
-          FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.getScheme()
-      );
-
-      GeoMap areaMap = GeoMap.loadFor(dataset);
-
-      if (areaMap != null) {
-        visualFlowMap.setAreaMap(new PGeoMap(visualFlowMap, areaMap, dataset.getMapProjection()));
-      }
-      setVisualFlowMap(visualFlowMap);
-
-    } catch (Exception ex) {
-      logger.error("Couldn't load flow map " + dataset.getFilename(), ex);
-      throw new RuntimeException("Couldn't load flow map '" + dataset.getFilename() + "':\n" + ex.getMessage());
     }
   }
 
