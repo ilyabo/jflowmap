@@ -40,7 +40,7 @@ public class BagOfWordsFilterTest {
         "test unit is not love song"));
     assertTrue(BagOfWordsFilter.ALL.apply("+7-(812)-212-85-06", "7 812 212 85 06"));
     assertTrue(!BagOfWordsFilter.ALL.apply("3.3", "33"));
-    assertTrue(BagOfWordsFilter.ALL.apply("Mühe", "MÜHE"));
+    assertTrue(BagOfWordsFilter.ALL.apply("MÃ¼he", "MÃœHE"));
     assertTrue(BagOfWordsFilter.ALL.apply("EMPTY QUERY", ""));
     assertTrue(!BagOfWordsFilter.ALL.apply("", "EMPTY STRING"));
     assertTrue(BagOfWordsFilter.ALL.apply("", ""));
@@ -55,7 +55,7 @@ public class BagOfWordsFilterTest {
         "test unit is not love song"));
     assertTrue(BagOfWordsFilter.ANY.apply("+7-(812)-212-85-06", "7 812 212 85 06"));
     assertTrue(!BagOfWordsFilter.ANY.apply("3.3", "33"));
-    assertTrue(BagOfWordsFilter.ANY.apply("Mühe", "MÜHE"));
+    assertTrue(BagOfWordsFilter.ANY.apply("MÃ¼he", "MÃœHE"));
     assertTrue(BagOfWordsFilter.ANY.apply("EMPTY QUERY", ""));
     assertTrue(!BagOfWordsFilter.ANY.apply("", "EMPTY STRING"));
     assertTrue(BagOfWordsFilter.ANY.apply("", ""));

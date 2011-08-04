@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views;
+package jflowmap.tests_manual;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -27,6 +27,7 @@ import java.io.IOException;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
+import jflowmap.views.ColorCodes;
 import jflowmap.views.flowmap.ColorSchemeAware;
 import jflowmap.views.map.PGeoMap;
 import edu.umd.cs.piccolo.PCamera;

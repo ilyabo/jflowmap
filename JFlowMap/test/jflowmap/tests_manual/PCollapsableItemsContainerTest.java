@@ -1,8 +1,10 @@
-package jflowmap.util.piccolo;
+package jflowmap.tests_manual;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Random;
+
+import jflowmap.util.piccolo.PCollapsableItemsContainer;
 
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.nodes.PPath;

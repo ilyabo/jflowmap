@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package jflowmap.views;
+package jflowmap.tests_manual;
 
 import java.util.List;
 

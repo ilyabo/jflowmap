@@ -8,14 +8,13 @@
       <param name="ConversionPattern" value="%-5p %c{1} - %m%n"/> 
     </layout> 
   </appender> 
+<!--
   <root> 
     <priority value="info" /> 
     <appender-ref ref="console" /> 
   </root>
-<!--
+-->
   <root> 
     <priority value="off" /> 
   </root>
--->
-  
 </log4j:configuration>
