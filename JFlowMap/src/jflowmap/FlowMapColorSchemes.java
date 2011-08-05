@@ -37,9 +37,6 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
     .put(ColorCodes.NODE_STROKE_PAINT, new Color(255, 255, 255, 200))
     .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(100, 100, 100, 100))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
@@ -81,10 +78,6 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
       .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
       .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
-
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(180, 180, 180, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
 
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
@@ -131,10 +124,6 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
     .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
 
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(180, 180, 180, 150))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
-
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
@@ -175,10 +164,6 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.NODE_SELECTED_PAINT, new Color(200, 200, 0, 200))
       .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
       .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
-
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(180, 180, 180, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
 
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
@@ -224,10 +209,6 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
       .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
 
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(180, 180, 180, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-      .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
-
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(0, 0, 255, 200))
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
       .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
@@ -266,9 +247,6 @@ public enum FlowMapColorSchemes {
   .put(ColorCodes.NODE_SELECTED_PAINT, new Color(55, 55, 255, 200))
   .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
   .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(0, 0, 255, 255))
-  .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(155, 155, 155, 100))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
   .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(255, 255, 0, 200))
   .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(0, 255, 255, 200))
   .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(255, 0, 255, 200))
@@ -310,9 +288,6 @@ GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
   .put(ColorCodes.NODE_SELECTED_PAINT, new Color(55, 55, 255, 200))
   .put(ColorCodes.NODE_STROKE_PAINT, new Color(0, 0, 0, 200))
   .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(0, 0, 255, 255))
-  .put(ColorCodes.NODE_CLUSTER_ORIG_NODE, new Color(155, 155, 155, 100))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE, new Color(240, 240, 240, 150))
-    .put(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE, new Color(180, 180, 180, 150))
   .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(255, 255, 0, 200))
   .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(0, 255, 255, 200))
   .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(255, 0, 255, 200))

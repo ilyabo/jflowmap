@@ -39,7 +39,6 @@ import jflowmap.FlowMapGraph;
 import jflowmap.IView;
 import jflowmap.bundling.ForceDirectedBundlerParameters;
 import jflowmap.bundling.ForceDirectedEdgeBundler;
-import jflowmap.clustering.NodeDistanceMeasure;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
 import jflowmap.geo.MapProjection;
@@ -61,16 +60,6 @@ import at.fhj.utils.misc.ProgressTracker;
 import at.fhj.utils.misc.TaskCompletionListener;
 import at.fhj.utils.swing.ProgressDialog;
 import at.fhj.utils.swing.ProgressWorker;
-import ch.unifr.dmlib.cluster.ClusterNode;
-import ch.unifr.dmlib.cluster.ClusterSetBuilder;
-import ch.unifr.dmlib.cluster.ClusterVisitor;
-import ch.unifr.dmlib.cluster.DistanceMatrix;
-import ch.unifr.dmlib.cluster.HierarchicalClusterer;
-import ch.unifr.dmlib.cluster.Linkage;
-import ch.unifr.dmlib.cluster.Linkages;
-
-import com.google.common.collect.Maps;
-
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
@@ -94,7 +83,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   public enum Attributes {
     NODE_SELECTION
   }
-//  private static final Color SINGLE_ELEMENT_CLUSTER_COLOR = new Color(100, 100, 100, 150);
   private final PTooltip tooltipBox;
   private PBounds nodeBounds;
 
@@ -108,18 +96,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private Map<Edge, VisualEdge> edgesToVisuals;
   private final IView view;
 
-  // clustering fields
-  private ClusterNode<VisualNode> rootCluster = null;
-  private ClusterNode<VisualNode> euclideanRootCluster = null;
-  private List<VisualNodeDistance> nodeDistanceList;
-  private double maxNodeDistance;
-  private double clusterDistanceThreshold;
-  private double euclideanClusterDistanceThreshold;
-  private List<VisualNodeCluster> visualNodeClusters;
-  private Map<VisualNode, VisualNodeCluster> nodesToClusters;
   private PGeoMap areaMap;
-  private double euclideanMaxNodeDistance;
-  // endOf clustering fields
   private boolean bundled;
 
   private final VisualEdgePaintFactory visualEdgePaintFactory;
@@ -212,7 +189,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     String oldValue = flowWeightAttr;
     if (!oldValue.equals(attr)) {
       flowWeightAttr = attr;
-      resetClusters();
       resetBundling();
       updateFlowWeightAttrLabel();
       if (doUpdate) {
@@ -415,7 +391,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   private void createEdgeVisuals() {
     edgeLayer.removeAllChildren();
-    clearAggregatedEdgesLayer();
 
     visualEdges = new ArrayList<VisualEdge>();
     edgesToVisuals = new LinkedHashMap<Edge, VisualEdge>();
@@ -547,7 +522,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     if (component instanceof VisualNode) {
       VisualNode vnode = (VisualNode) component;
       tooltipBox.setText(
-          wordWrapLabel(vnode.getFullLabel(), maxLabelWidth),
+          wordWrapLabel(vnode.getLabel(), maxLabelWidth),
           ""
 //			    "Outgoing " + selectedFlowAttrName + ": " + graph.getOutgoingTotal(fnode.getId(), selectedFlowAttrName) + "\n" +
 //			    "Incoming " + selectedFlowAttrName + ": " + graph.getIncomingTotal(fnode.getId(), selectedFlowAttrName)
@@ -762,381 +737,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
 
-  private PNode aggregatedEdgesLayer;
-
-  private PNode getAggregatedEdgesLayer() {
-    if (aggregatedEdgesLayer == null) {
-      aggregatedEdgesLayer = new PNode();
-      addChild(aggregatedEdgesLayer);
-    }
-    return aggregatedEdgesLayer;
-  }
-
-  private void clearAggregatedEdgesLayer() {
-    if (aggregatedEdgesLayer != null) {
-      aggregatedEdgesLayer.removeAllChildren();
-    }
-  }
-
-  /*
-  public void aggregateBundledEdges() {
-    if (!isBundled()) {
-      return;
-    }
-    final EdgeSegmentAggregator aggregator = new EdgeSegmentAggregator(getFlowMapGraph());
-    final ProgressTracker pt = new ProgressTracker();
-    ProgressWorker worker = new ProgressWorker(pt) {
-      @Override
-      public Object construct() {
-        try {
-          aggregator.aggregate(pt);
-          if (pt.isCancelled()) {
-            return null;
-          }
-
-          final List<EdgeSegment> segments = aggregator.getAggregatedSegments();
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              createAggregatedSegmentsVisuals(segments);
-              // remove edges
-            }
-          });
-          repaint();
-        } catch (Exception ex) {
-          logger.error("Aggregation error", ex);
-          JOptionPane.showMessageDialog(view.getVisualCanvas(),
-              "Aggregation error: [" + ex.getClass().getSimpleName()+ "] " + ex.getMessage()
-          );
-        } catch (Error err) {
-          logger.error(err);
-          System.exit(1);
-        }
-        return null;
-      }
-    };
-    ProgressDialog dialog = new ProgressDialog(
-        SwingUtilities.getWindowAncestor(view.getVisualCanvas()), "Edge Segment Aggregation", worker, true);
-    pt.addProgressListener(dialog);
-    worker.start();
-    dialog.setVisible(true);
-  }
-  */
-
-  /*
-  private void createAggregatedSegmentsVisuals(
-      final List<EdgeSegment> segments) {
-//    edgeLayer.removeAllChildren();
-    clearAggregatedEdgesLayer();
-
-    // create aggregated edge weight stats to normalize on them
-    SeqStat stats = SeqStat.createFor(Iterators.transform(segments.iterator(), EdgeSegment.TRANSFORM_TO_WEIGHT));
-
-    PNode parentNode = getAggregatedEdgesLayer();
-
-    for (EdgeSegment seg : segments) {
-//      if (seg.length() == 0) {
-//        logger.warn("Zero-length segment: " + seg);
-//      }
-
-      double nv = stats.normalizer().normalizeLog(seg.getWeight());
-//      double nv = stats.normalize(seg.getWeight());
-//      double nv = seg.getWeight();
-      double width = 1 + nv * getModel().getMaxEdgeWidth();
-
-      parentNode.addChild(new PSegment(seg, width));
-    }
-  }
-
-  private static class PSegment extends PNode {
-    private static final long serialVersionUID = 1L;
-//    private static final Color JOINT_PT_COLOR = new Color(0, 0, 255, 150);
-//    private static final Color SEGMENT_COLOR = new Color(255, 255, 255, 200);
-    private static final float[] GRADIENT_FRACTIONS = new float[] { 0.0f, 1.0f };
-//    private static final Color[] GRADIENT_COLORS = new Color[] { new Color(100, 100, 200, 200), new Color(200, 200, 100, 200) };
-    private static final Color[] GRADIENT_COLORS = new Color[] { new Color(255, 0, 0, 150), new Color(0, 255, 0, 150) };
-    private final EdgeSegment segment;
-
-    public PSegment(EdgeSegment seg, double width) {
-      this.segment = seg;
-
-      FPoint src = seg.getA();
-      FPoint dest = seg.getB();
-      if (src.getPoint().equals(dest.getPoint())) {
-        throw new IllegalStateException();
-      }
-      PPath linep = new PPath(new Line2D.Double(src.asPoint2D(), dest.asPoint2D()), new PFixedWidthStroke((float)width));
-//      linep.setPaint(SEGMENT_COLOR);
-//      linep.setStrokePaint(SEGMENT_COLOR);
-      linep.setStrokePaint( new LinearGradientPaint(
-          (float)src.x(), (float)src.y(), (float)dest.x(), (float)dest.y(),
-          GRADIENT_FRACTIONS,
-          GRADIENT_COLORS
-      ));
-      addChild(linep);
-
-//      PSegmentPoint srcp = new PSegmentPoint(src);
-//      PSegmentPoint dstp = new PSegmentPoint(dest);
-//      srcp.setPaint(JOINT_PT_COLOR);
-//      dstp.setPaint(JOINT_PT_COLOR);
-//      srcp.setStroke(null);
-//      dstp.setStroke(null);
-//      addChild(srcp);
-//      addChild(dstp);
-
-//      setPickable(true);
-      addInputEventListener(MOUSE_HANDLER);
-      setPickable(false);
-    }
-
-    private static class PSegmentPoint extends PPath {
-      private static final long serialVersionUID = 1L;
-      private static final double DIAMETER = .5;
-      private final FPoint point;
-
-      public PSegmentPoint(FPoint p) {
-        super(new Ellipse2D.Double(p.x() - DIAMETER/2, p.y() - DIAMETER/2, DIAMETER, DIAMETER));
-        this.point = p;
-      }
-
-      public FPoint getPoint() {
-        return point;
-      }
-    }
-
-    public EdgeSegment getSegment() {
-      return segment;
-    }
-
-    private static final PInputEventListener MOUSE_HANDLER = new PBasicInputEventHandler() {
-      @Override
-      public void mouseClicked(PInputEvent event) {
-      }
-
-      @Override
-      public void mouseEntered(PInputEvent event) {
-        if (logger.isDebugEnabled()) {
-          PNode picked = event.getPickedNode();
-          if (picked instanceof PSegmentPoint) {
-            PSegmentPoint psp = (PSegmentPoint)picked;
-            logger.debug("Segment point: " + psp.getPoint());
-          }
-
-//          PSegment pseg = PiccoloUtils.getParentNodeOfType(picked, PSegment.class);
-//          if (pseg != null) {
-//            logger.debug("MouseEntered: " + pseg.getSegment());
-//          }
-        }
-      }
-
-      @Override
-      public void mouseExited(PInputEvent event) {
-      }
-    };
-  }
-  */
-
-
-  public ClusterNode<VisualNode> getRootCluster() {
-    return rootCluster;
-  }
-
-  public List<VisualNodeDistance> getNodeDistanceList() {
-    return nodeDistanceList;
-  }
-
-  public double getMaxNodeDistance() {
-//    if (Double.isNaN(maxNodeDistance)) {
-//      maxNodeDistance = VisualNodeDistance.findMaxDistance(nodeDistanceList);
-//    }
-    return maxNodeDistance;
-  }
-
-  public double getEuclideanMaxNodeDistance() {
-    return euclideanMaxNodeDistance;
-  }
-
-  public double getClusterDistanceThreshold() {
-    return clusterDistanceThreshold;
-  }
-
-  public void setClusterDistanceThreshold(double value) {
-    this.clusterDistanceThreshold = value;
-    updateClusters();
-  }
-
-  public double getEuclideanClusterDistanceThreshold() {
-    return euclideanClusterDistanceThreshold;
-  }
-
-  public void setEuclideanClusterDistanceThreshold(double value) {
-    this.euclideanClusterDistanceThreshold = value;
-    updateClusters();
-  }
-
-  public boolean hasClusters() {
-    return rootCluster != null;
-  }
-
-  public boolean hasEuclideanClusters() {
-    return euclideanRootCluster != null;
-  }
-
-  public boolean hasJoinedEdges() {
-    return flowMapBeforeJoining != null;
-  }
-
-  public VisualNodeCluster getNodeCluster(VisualNode node) {
-    return nodesToClusters.get(node);
-  }
-
-  public void updateClusters() {
-    removeClusterTags();  // to remove cluster tags for those nodes which were excluded from clustering
-
-    List<VisualNodeCluster> clusters;
-    if (rootCluster == null) {
-      clusters = Collections.emptyList();
-    } else {
-      List<List<VisualNode>> nodeClusterLists =
-        ClusterSetBuilder.getClusters(rootCluster, clusterDistanceThreshold);
-      if (euclideanRootCluster != null) {
-        nodeClusterLists = VisualNodeCluster.combineClusters(
-            nodeClusterLists,
-            ClusterSetBuilder.getClusters(euclideanRootCluster, euclideanClusterDistanceThreshold)
-        );
-      }
-      clusters = VisualNodeCluster.createClusters(nodeClusterLists, clusterDistanceThreshold);
-    }
-    this.visualNodeClusters = clusters;
-
-    this.nodesToClusters = Maps.newHashMap();
-    for (VisualNodeCluster cluster : clusters) {
-      for (VisualNode node : cluster) {
-        nodesToClusters.put(node, cluster);
-      }
-    }
-  }
-
-  public List<VisualNodeCluster> getVisualNodeClusters() {
-    if (!hasClusters()) {
-      throw new IllegalStateException("The flow map is not clustered");
-    }
-    return Collections.unmodifiableList(visualNodeClusters);
-  }
-
-  public int getNumberOfClusters() {
-    if (visualNodeClusters == null) {
-      return 0;
-    }
-    return visualNodeClusters.size();
-  }
-
-  private void removeClusterTags() {
-    for (VisualNode node : visualNodes) {
-      node.setClusterTag(null);
-    }
-  }
-
-  public void clusterNodes(NodeDistanceMeasure distanceMeasure, Linkage<VisualNode> linkage,
-      boolean combineWithEuclideanClusters) {
-    logger.info("Clustering nodes");
-    HierarchicalClusterer<VisualNode> clusterer =
-      HierarchicalClusterer.createWith(distanceMeasure, linkage).build();
-
-    List<VisualNode> items = distanceMeasure.filterNodes(visualNodes);
-
-    ProgressTracker tracker = new ProgressTracker();
-    DistanceMatrix<VisualNode> distances = clusterer.makeDistanceMatrix(items, tracker);
-    nodeDistanceList = VisualNodeDistance.makeDistanceList(items, distances);
-    rootCluster = clusterer.clusterToRoot(items, distances, tracker);
-    maxNodeDistance = findMaxClusterDist(rootCluster);
-    clusterDistanceThreshold = maxNodeDistance / 2;
-    if (combineWithEuclideanClusters) {
-      euclideanRootCluster = HierarchicalClusterer
-        .createWith(NodeDistanceMeasure.EUCLIDEAN, Linkages.<VisualNode>complete())
-        .build()
-        .clusterToRoot(items, new ProgressTracker());
-
-      euclideanMaxNodeDistance = findMaxClusterDist(euclideanRootCluster);
-      euclideanClusterDistanceThreshold = euclideanMaxNodeDistance / 2;
-    } else {
-      euclideanRootCluster = null;
-      euclideanMaxNodeDistance = Double.NaN;
-      euclideanClusterDistanceThreshold = 0;
-    }
-    updateClusters();
-  }
-
-  private static <T> double findMaxClusterDist(ClusterNode<T> root) {
-    class Finder extends ClusterVisitor.Adapter<T> {
-      double maxDist = Double.NaN;
-      @Override
-      public void betweenChildren(ClusterNode<T> cn) {
-        if (Double.isNaN(maxDist)  || cn.getDistance() > maxDist) {
-          maxDist = cn.getDistance();
-        }
-      }
-    }
-    Finder finder = new Finder();
-    ClusterNode.traverseClusters(root, finder);
-    return finder.maxDist;
-  }
-
-  private VisualFlowMap flowMapBeforeJoining = null;
   private PInterpolatingActivity valueAnimation;
-
-  public void setOriginalVisualFlowMap(VisualFlowMap originalVisualFlowMap) {
-    this.flowMapBeforeJoining = originalVisualFlowMap;
-  }
-
-  public void joinClusterEdges() {
-    if (view instanceof FlowMapView) {
-      FlowMapView fmview = (FlowMapView)view;
-      FlowMapGraph fmg = VisualNodeCluster.createClusteredFlowMap(
-          getFlowMapGraph().getAttrSpec(), visualNodeClusters);
-      VisualFlowMap clusteredFlowMap = fmview.createVisualFlowMap(
-          new VisualFlowMapModel(fmg, model.getViewConfig()), mapProjection,
-          getValueAttr(), getColorScheme());
-      if (areaMap != null) {
-        clusteredFlowMap.setAreaMap(new PGeoMap(areaMap));
-      }
-      clusteredFlowMap.setOriginalVisualFlowMap(this);
-      fmview.setVisualFlowMap(clusteredFlowMap);
-    }
-  }
-
-  public void resetClusters() {
-    if (rootCluster != null) {
-      removeClusterTags();
-      rootCluster = null;
-      euclideanRootCluster = null;
-      visualNodeClusters = null;
-    }
-  }
-
-  public void resetJoinedNodes() {
-    if (view instanceof FlowMapView) {
-      if (flowMapBeforeJoining != null) {
-        ((FlowMapView)view).setVisualFlowMap(flowMapBeforeJoining);
-      }
-    }
-  }
-
-  public void setNodeClustersToShow(List<VisualNodeCluster> nodeClustersToShow) {
-    if (visualNodeClusters == null) {
-      return;
-    }
-    for (VisualNodeCluster cluster : visualNodeClusters) {
-      final boolean visible;
-      if (nodeClustersToShow.isEmpty()) {
-        visible = true;
-      } else {
-        visible = nodeClustersToShow.contains(cluster);
-      }
-      cluster.setVisible(visible);
-    }
-    updateEdgeVisibility();
-  }
 
   public VisualNode getVisualNodeByLabel(String label) {
     for (VisualNode node : visualNodes) {

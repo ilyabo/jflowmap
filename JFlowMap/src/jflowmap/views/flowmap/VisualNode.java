@@ -18,11 +18,9 @@
 
 package jflowmap.views.flowmap;
 
-import java.awt.Color;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +54,7 @@ public class VisualNode extends PNode {
   private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(VisualNode.class);
   public enum Attributes {
-    SELECTED, HIGHLIGHTED, CLUSTER_TAG
+    SELECTED, HIGHLIGHTED
   }
 
   private static final Stroke STROKE = null;
@@ -73,10 +71,8 @@ public class VisualNode extends PNode {
   private final double origX;
   private final double origY;
 
-  private PPath clusterMarker;
 
   private PPath marker;
-  private PNode clusterMembers;
 
 //  private static final Font LABEL_FONT = new Font("Dialog", Font.BOLD, 5);
 
@@ -90,27 +86,6 @@ public class VisualNode extends PNode {
     this.node = node;
     this.visualFlowMap = visualFlowMap;
     addInputEventListener(INPUT_EVENT_HANDLER);
-
-    VisualNodeCluster cluster = VisualNodeCluster.getJoinedFlowMapNodeCluster(node);
-    if (cluster != null) {
-      clusterMembers = new PNode();
-      Color origNodePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE);
-      Color origNodeStrokePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE_STROKE);
-      Color origNodeLinePaint = visualFlowMap.getColor(ColorCodes.NODE_CLUSTER_ORIG_NODE_LINE);
-      for (VisualNode origNode : cluster) {
-        PPath pnode = new PPath(createNodeShape(origNode.getValueX(), origNode.getValueY()));
-        pnode.setPaint(origNodePaint);
-        pnode.setStrokePaint(origNodeStrokePaint);
-        clusterMembers.addChild(pnode);
-
-
-        PPath pline = new PPath(new Line2D.Double(origNode.getPoint(), this.getPoint()));
-        pline.setStrokePaint(origNodeLinePaint);
-        clusterMembers.addChild(pline);
-      }
-      visualFlowMap.addChild(clusterMembers);
-      clusterMembers.moveToBack();
-    }
 
 //    PText label = new PText(visualFlowMap.getLabel(node));
 //    label.setFont(LABEL_FONT);
@@ -140,9 +115,6 @@ public class VisualNode extends PNode {
   protected void updateVisibility() {
     boolean visibility = (visualFlowMap.getModel().getShowNodes()  ||  isHighlighted()  ||  isSelected());
     marker.setVisible(visibility);
-    if (clusterMembers != null) {
-      clusterMembers.setVisible(visibility);
-    }
   }
 
   protected void updatePositionInCamera(PCamera cam) {
@@ -210,28 +182,6 @@ public class VisualNode extends PNode {
       sb.append("(").append(getValueX()).append(",").append(getValueY()).append(")");
     }
     return sb.toString();
-  }
-
-  public void setClusterTag(ClusterTag tag) {
-    addAttribute(Attributes.CLUSTER_TAG, tag);
-    updateClusterMarker();
-  }
-
-  public ClusterTag getClusterTag() {
-    return (ClusterTag)getAttribute(Attributes.CLUSTER_TAG, null);
-  }
-
-  public String getFullLabel() {
-    String fullLabel;
-    ClusterTag clusterTag = getClusterTag();
-    if (clusterTag != null) {
-      StringBuilder sb = new StringBuilder(getLabel());
-      sb.append(" [Cluster ").append(clusterTag.getClusterId()).append("]");
-      fullLabel = sb.toString();
-    } else {
-      fullLabel = getLabel();
-    }
-    return fullLabel;
   }
 
   private static final PInputEventListener INPUT_EVENT_HANDLER = new PBasicInputEventHandler() {
@@ -401,25 +351,6 @@ public class VisualNode extends PNode {
 //    setChildrenPickable(pickable);
   }
 
-
-  protected void updateClusterMarker() {
-    ClusterTag clusterTag = getClusterTag();
-    if (clusterTag == null  ||  !clusterTag.isVisible()) {
-      if (clusterMarker != null) {  // hide marker
-        removeChild(clusterMarker);
-        clusterMarker = null;
-      }
-    } else {
-      if (clusterMarker == null) {  // show marker
-        double size = visualFlowMap.getModel().getNodeSize() * 2;
-        clusterMarker = new PPath(new Ellipse2D.Double(getValueX() - size/2, getValueY() - size/2, size, size));
-        clusterMarker.setStroke(new PFixedWidthStroke(1));
-        addChild(clusterMarker);
-        clusterMarker.moveToBack();
-      }
-      clusterMarker.setPaint(clusterTag.getClusterPaint());
-    }
-  }
 
   /**
    * Returns a list of the opposite nodes of the node's incoming/outgoing edges.

@@ -200,9 +200,9 @@ public abstract class VisualEdge extends PNode {
     double weightFilterMin = model.getEdgeWeightFilterMin();
     double weightFilterMax = model.getEdgeWeightFilterMax();
 
-    double edgeLengthFilterMin = model.getEdgeLengthFilterMin();
-    double edgeLengthFilterMax = model.getEdgeLengthFilterMax();
-    double length = getEdgeLength();
+//    double edgeLengthFilterMin = model.getEdgeLengthFilterMin();
+//    double edgeLengthFilterMax = model.getEdgeLengthFilterMax();
+//    double length = getEdgeLength();
 
     double absValue = Math.abs(value);
 
@@ -215,24 +215,9 @@ public abstract class VisualEdge extends PNode {
         (!isSelfLoop()  ||  visualFlowMap.getModel().getShowSelfLoops())
     ;
 
-    if (visible) {
-      visible = areNodeClustersVisibile();
-    }
     return visible;
   }
 
-  private boolean areNodeClustersVisibile() {
-    boolean visible = true;
-    if (visualFlowMap.hasClusters()) {
-      VisualNodeCluster srcCluster = visualFlowMap.getNodeCluster(getSourceNode());
-      VisualNodeCluster targetCluster = visualFlowMap.getNodeCluster(getTargetNode());
-
-      // TODO: why do we need these null checks here? i.e. why some countries don't have a cluster
-      visible = (srcCluster != null  &&  srcCluster.getTag().isVisible())  ||
-            (targetCluster != null  &&  targetCluster.getTag().isVisible());
-    }
-    return visible;
-  }
 
   public Edge getEdge() {
     return edge;
