@@ -79,13 +79,13 @@ public class ControlPanel {
     private JSlider maxEdgeWidthSlider;
     private JSpinner maxEdgeWidthSpinner;
     private JSpinner minWeightFilterSpinner;
-    private JSlider minLengthFilterSlider;
-    private JSpinner minLengthFilterSpinner;
+//    private JSlider minLengthFilterSlider;
+//    private JSpinner minLengthFilterSpinner;
     private JSlider maxWeightFilterSlider;
     private JSpinner maxWeightFilterSpinner;
     private JCheckBox autoAdjustColorScaleCheckBox;
-    private JSlider maxLengthFilterSlider;
-    private JSpinner maxLengthFilterSpinner;
+//    private JSlider maxLengthFilterSlider;
+//    private JSpinner maxLengthFilterSpinner;
     private JSlider minWeightFilterSlider;
     private JCheckBox useLogWidthScaleCheckbox;
     private JComboBox datasetCombo;
@@ -431,21 +431,21 @@ public class ControlPanel {
 
         SeqStat lengthStats = stats.getEdgeLengthStats();
 
-        Pair<SpinnerModel, BoundedRangeModel> minLengthFilterModels =
-                new BoundSpinnerSliderModels<Double>(
-                        lengthStats.getMin(), lengthStats.getMin(), lengthStats.getMax(), 1.0,
-                        BoundSpinnerSliderModels.MAP_ID_DOUBLE
-                ).build();
-        minLengthFilterSpinner.setModel(minLengthFilterModels.first());
-        minLengthFilterSlider.setModel(minLengthFilterModels.second());
-
-        Pair<SpinnerModel, BoundedRangeModel> maxLengthFilterModels =
-                new BoundSpinnerSliderModels<Double>(
-                        lengthStats.getMax(), lengthStats.getMin(), lengthStats.getMax(), 1.0,
-                        BoundSpinnerSliderModels.MAP_ID_DOUBLE
-                ).build();
-        maxLengthFilterSpinner.setModel(maxLengthFilterModels.first());
-        maxLengthFilterSlider.setModel(maxLengthFilterModels.second());
+//        Pair<SpinnerModel, BoundedRangeModel> minLengthFilterModels =
+//                new BoundSpinnerSliderModels<Double>(
+//                        lengthStats.getMin(), lengthStats.getMin(), lengthStats.getMax(), 1.0,
+//                        BoundSpinnerSliderModels.MAP_ID_DOUBLE
+//                ).build();
+//        minLengthFilterSpinner.setModel(minLengthFilterModels.first());
+//        minLengthFilterSlider.setModel(minLengthFilterModels.second());
+//
+//        Pair<SpinnerModel, BoundedRangeModel> maxLengthFilterModels =
+//                new BoundSpinnerSliderModels<Double>(
+//                        lengthStats.getMax(), lengthStats.getMin(), lengthStats.getMax(), 1.0,
+//                        BoundSpinnerSliderModels.MAP_ID_DOUBLE
+//                ).build();
+//        maxLengthFilterSpinner.setModel(maxLengthFilterModels.first());
+//        maxLengthFilterSlider.setModel(maxLengthFilterModels.second());
     }
 
     public void setData(VisualFlowMapModel data) {
@@ -455,8 +455,8 @@ public class ControlPanel {
         useLogWidthScaleCheckbox.setSelected(data.getUseLogWidthScale());
         useLogColorScaleCheckbox.setSelected(data.getUseLogColorScale());
 
-        minLengthFilterSpinner.setValue(data.getEdgeLengthFilterMin());
-        maxLengthFilterSpinner.setValue(data.getEdgeLengthFilterMax());
+//        minLengthFilterSpinner.setValue(data.getEdgeLengthFilterMin());
+//        maxLengthFilterSpinner.setValue(data.getEdgeLengthFilterMax());
 
         minWeightFilterSpinner.setValue(data.getEdgeWeightFilterMin());
         maxWeightFilterSpinner.setValue(data.getEdgeWeightFilterMax());
@@ -534,19 +534,19 @@ public class ControlPanel {
 //    });
 
 
-        // Edge length filter
-        minLengthFilterSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (initializing) return;
-                getFlowMapModel().setEdgeLengthFilterMin((Double) minLengthFilterSpinner.getValue());
-            }
-        });
-        maxLengthFilterSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (initializing) return;
-                getFlowMapModel().setEdgeLengthFilterMax((Double) maxLengthFilterSpinner.getValue());
-            }
-        });
+//        // Edge length filter
+//        minLengthFilterSpinner.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent e) {
+//                if (initializing) return;
+//                getFlowMapModel().setEdgeLengthFilterMin((Double) minLengthFilterSpinner.getValue());
+//            }
+//        });
+//        maxLengthFilterSpinner.addChangeListener(new ChangeListener() {
+//            public void stateChanged(ChangeEvent e) {
+//                if (initializing) return;
+//                getFlowMapModel().setEdgeLengthFilterMax((Double) maxLengthFilterSpinner.getValue());
+//            }
+//        });
     }
 
     private void initScalesListeners() {
@@ -836,10 +836,10 @@ public class ControlPanel {
         final JLabel label6 = new JLabel();
         label6.setText("Min length:");
         panel3.add(label6, cc.xy(9, 1));
-        minLengthFilterSlider = new JSlider();
-        panel3.add(minLengthFilterSlider, cc.xy(11, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
-        minLengthFilterSpinner = new JSpinner();
-        panel3.add(minLengthFilterSpinner, cc.xy(13, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+//        minLengthFilterSlider = new JSlider();
+//        panel3.add(minLengthFilterSlider, cc.xy(11, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
+//        minLengthFilterSpinner = new JSpinner();
+//        panel3.add(minLengthFilterSpinner, cc.xy(13, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
         final JLabel label7 = new JLabel();
         label7.setText("Max edge weight:");
         panel3.add(label7, cc.xy(1, 3));
@@ -854,10 +854,10 @@ public class ControlPanel {
         final JLabel label8 = new JLabel();
         label8.setText("Max length:");
         panel3.add(label8, cc.xy(9, 3));
-        maxLengthFilterSlider = new JSlider();
-        panel3.add(maxLengthFilterSlider, cc.xy(11, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
-        maxLengthFilterSpinner = new JSpinner();
-        panel3.add(maxLengthFilterSpinner, cc.xy(13, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+//        maxLengthFilterSlider = new JSlider();
+//        panel3.add(maxLengthFilterSlider, cc.xy(11, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+//        maxLengthFilterSpinner = new JSpinner();
+//        panel3.add(maxLengthFilterSpinner, cc.xy(13, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new FormLayout("fill:d:grow", "center:d:grow"));
         panel3.add(panel4, cc.xy(5, 7));
