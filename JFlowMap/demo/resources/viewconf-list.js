@@ -1,7 +1,8 @@
 var init = function(views) {
  var deployApp = function(viewconf) {
    deployJava.runApplet(
-    {code:'jflowmap.JFlowMapApplet', width:'100%', height:'100%', archive:'jflowmap.jar'},
+    {id:'jflowmapApplet', code:'jflowmap.JFlowMapApplet', width:'100%', height:'100%', 
+     archive:'jflowmap.jar'},
     {viewConfig:'viewconf/'+viewconf+'.jfmv', codebase_lookup:'.',
      image:'resources/loading.gif', boxbgcolor:'white', boxborder:'false', centerimage:'true'},
     '1.6');
