@@ -18,12 +18,12 @@
 
 package jflowmap;
 
-import java.awt.Container;
 import java.io.StringWriter;
 
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 
+import jflowmap.util.SwingUtils;
 import jflowmap.views.VisualCanvas;
 
 import org.apache.log4j.Logger;
@@ -58,15 +58,19 @@ public class JFlowMapApplet extends JApplet {
   }
 
   public String exportToSvg() {
-    Container cp = getContentPane();
-    if (cp instanceof VisualCanvas) {
-      VisualCanvas canvas = (VisualCanvas)cp;
+    VisualCanvas canvas = SwingUtils.getChildOfType(getContentPane(), VisualCanvas.class);
+    if (canvas != null) {
       try {
         StringWriter sw = new StringWriter();
         canvas.paintToSvg(sw);
-        return sw.getBuffer().toString();
+
+        String svg = sw.getBuffer().toString();
+        JMsgPane.showInfoDialog(this, svg);
+        return svg;
       } catch (Exception e) {
         logger.error("SVG export failed", e);
+        JMsgPane.showErrorDialog(this,
+            "SVG export failed: " + e.getClass().getSimpleName() + ": " + e.getMessage());
       }
     }
     return "";

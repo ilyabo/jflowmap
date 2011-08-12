@@ -2,6 +2,7 @@ package jflowmap.util;
 
 import java.applet.Applet;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -90,6 +91,17 @@ public class SwingUtils {
       iframe = (Applet) SwingUtilities.getAncestorOfClass(Applet.class, c);
     }
     return iframe;
+  }
+
+  @SuppressWarnings("unchecked")
+  public static <T extends Component> T getChildOfType(Container c, Class<T> klass) {
+    for (int i = 0, size = c.getComponentCount(); i < size; i++) {
+      Component comp = c.getComponent(i);
+      if (comp.getClass().isAssignableFrom(klass)) {
+        return (T) comp;
+      }
+    }
+    return null;
   }
 
 }

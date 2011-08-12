@@ -252,6 +252,7 @@ public class VisualCanvas extends PCanvas {
 
     try {
       svgGen.stream(out, false);
+      out.flush();
     } finally {
       if (out != null) out.close();
     }
