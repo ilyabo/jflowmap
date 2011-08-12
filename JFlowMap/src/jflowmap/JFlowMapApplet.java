@@ -65,7 +65,6 @@ public class JFlowMapApplet extends JApplet {
         canvas.paintToSvg(sw);
 
         String svg = sw.getBuffer().toString();
-        JMsgPane.showInfoDialog(this, svg);
         return svg;
       } catch (Exception e) {
         logger.error("SVG export failed", e);
