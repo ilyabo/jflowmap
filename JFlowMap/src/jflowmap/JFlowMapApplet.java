@@ -18,14 +18,18 @@
 
 package jflowmap;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
 
+import jflowmap.ui.BlockingGlassPane;
 import jflowmap.util.SwingUtils;
 import jflowmap.views.VisualCanvas;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import at.fhj.utils.swing.JMsgPane;
@@ -38,8 +42,12 @@ import com.google.common.base.Strings;
 public class JFlowMapApplet extends JApplet {
 
   private static Logger logger = Logger.getLogger(JFlowMapApplet.class);
+  private final BlockingGlassPane blockingGlassPane;
 
   public JFlowMapApplet() {
+    blockingGlassPane = new BlockingGlassPane();
+    setGlassPane(blockingGlassPane);
+    blockingGlassPane.setVisible(false);
   }
 
 
@@ -57,22 +65,48 @@ public class JFlowMapApplet extends JApplet {
     }
   }
 
+  public String exportToPng() {
+    String bytes = null;
+    VisualCanvas canvas = getCanvas();
+    if (canvas != null) {
+      try {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        canvas.paintToPng(out);
+        bytes = new String(Base64.encodeBase64(out.toByteArray()));
+
+      } catch (IOException e) {
+        logger.error("PNG export failed", e);
+        JMsgPane.showErrorDialog(this,
+            "SVG export failed: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+      }
+    }
+    return bytes;
+  }
+
   public String exportToSvg() {
-    VisualCanvas canvas = SwingUtils.getChildOfType(getContentPane(), VisualCanvas.class);
+    blockingGlassPane.setVisible(true);
+    String svg = null;
+    VisualCanvas canvas = getCanvas();
     if (canvas != null) {
       try {
         StringWriter sw = new StringWriter();
         canvas.paintToSvg(sw);
 
-        String svg = sw.getBuffer().toString();
-        return svg;
+        svg = sw.getBuffer().toString();
       } catch (Exception e) {
         logger.error("SVG export failed", e);
         JMsgPane.showErrorDialog(this,
             "SVG export failed: " + e.getClass().getSimpleName() + ": " + e.getMessage());
       }
     }
-    return "";
+    blockingGlassPane.setVisible(false);
+    return svg;
+  }
+
+
+  public VisualCanvas getCanvas() {
+    return SwingUtils.getChildOfType(getContentPane(), VisualCanvas.class);
   }
 
   private void createUI() {

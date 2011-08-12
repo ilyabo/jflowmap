@@ -20,16 +20,21 @@ package jflowmap.views;
 
 import java.applet.Applet;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import javax.xml.parsers.DocumentBuilder;
@@ -63,6 +68,7 @@ public class VisualCanvas extends PCanvas {
   private static final Dimension MIN_SIZE = new Dimension(150, 100);
   private ZoomHandler zoomHandler;
   private boolean autoFitOnBoundsChange = true;
+//  private BlockingGlassPane blockingGlassPane;
 
   public VisualCanvas() {
     setZoomEventHandler(null);
@@ -206,21 +212,36 @@ public class VisualCanvas extends PCanvas {
   public void tryToPaintToSvg() {
     try {
       try {
-        File f = getSvgOutputFilename();
+        File f = getOutputFilename(".svg");
         paintToSvg(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
         JMsgPane.showInfoDialog(VisualCanvas.this, "View exported to '" + f.getAbsolutePath() + "'");
       } catch (SecurityException se) {
         // try again, but show the output in window
         StringWriter sw = new StringWriter();
         paintToSvg(sw);
-
         showSvgInApplet(sw.getBuffer().toString());
-
       }
     } catch (Exception ex) {
       logger.error("Cannot export SVG", ex);
-      JMsgPane.showProblemDialog(this, ex.getClass().getSimpleName() + " " + ex.getMessage() + " " + ex.getCause().getMessage());
+      showProblemDialog(ex);
     }
+  }
+
+  public void tryToPaintToPng() {
+    try {
+      File f = getOutputFilename(".png");
+      paintToPng(new FileOutputStream(f));
+      JMsgPane.showInfoDialog(VisualCanvas.this, "View exported to '" + f.getAbsolutePath() + "'");
+    } catch (Exception ex) {
+      logger.error("Cannot export PNG", ex);
+      showProblemDialog(ex);
+    }
+  }
+
+  public void showProblemDialog(Exception ex) {
+    JMsgPane.showProblemDialog(this,
+        ex.getClass().getSimpleName() + " " + ex.getMessage() + " " +
+        (ex.getCause() != null ? ex.getCause().getMessage() : ""));
   }
 
   public void showSvgInApplet(String svgCode) throws Exception {
@@ -238,7 +259,7 @@ public class VisualCanvas extends PCanvas {
     }
   }
 
-  public void paintToSvg(Writer out) throws Exception {
+  public void paintToSvg(final Writer out) throws Exception {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -258,12 +279,51 @@ public class VisualCanvas extends PCanvas {
     }
   }
 
-  public File getSvgOutputFilename() {
-    File file = new File("output.svg");
+  public void paintToPng(OutputStream out) throws IOException {
+    BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+
+    Graphics2D g = (Graphics2D)image.getGraphics();
+    paintComponent(g);
+
+    try {
+      ImageIO.write(image, "PNG", out);
+    } finally {
+      if (out != null) out.close();
+    }
+  }
+
+
+//  public void setBlockInput(boolean block) {
+//    if (blockingGlassPane == null) {
+//      initGlassPane();
+//    }
+//    blockingGlassPane.setVisible(block);
+//  }
+//
+//  private void initGlassPane() {
+//    blockingGlassPane = new BlockingGlassPane();
+//    blockingGlassPane.setVisible(false);
+//
+//    JInternalFrame iframe = SwingUtils.getInternalFrameFor(this);
+//    if (iframe != null) {
+//      iframe.setGlassPane(blockingGlassPane);
+//    } else {
+//      Window w = SwingUtils.getWindowFor(this);
+//      if (w != null  &&  (w instanceof JFrame)) {
+//        ((JFrame)w).setGlassPane(blockingGlassPane);
+//      } else {
+//        JApplet applet = SwingUtils.getAppletFor(this);
+//        applet.setGlassPane(blockingGlassPane);
+//      }
+//    }
+//  }
+
+  public File getOutputFilename(String ext) {
+    File file = new File("output" + ext);
     int i = 0;
     while (file.exists()) {
       i++;
-      file = new File("output-" + i + ".svg");
+      file = new File("output-" + i + ext);
     }
     return file;
   }
