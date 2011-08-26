@@ -50,7 +50,8 @@ public class FlowMapView extends AbstractCanvasView {
 
   private final ViewConfig viewConfig;
 
-  public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.#####");
+//  public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.#####");
+  public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.#####");
 
   public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme cs, ViewConfig config) {
     this.viewConfig = config;
