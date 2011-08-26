@@ -17,7 +17,6 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
@@ -29,7 +28,6 @@ import org.apache.log4j.Logger;
 
 import prefuse.data.Graph;
 import at.fhj.utils.swing.InternalFrameUtils;
-import at.fhj.utils.swing.JMemoryIndicator;
 
 /**
  * @author Ilya Boyandin
@@ -63,12 +61,12 @@ public class JFlowMapMainFrame extends JFrame {
     desktopPane.setBackground(Color.gray);
     add(desktopPane, BorderLayout.CENTER);
 
-    JPanel statusPanel = new JPanel(new BorderLayout());
-    add(statusPanel, BorderLayout.SOUTH);
+//    JPanel statusPanel = new JPanel(new BorderLayout());
+//    add(statusPanel, BorderLayout.SOUTH);
 
-    JMemoryIndicator mi = new JMemoryIndicator(3000);
-    statusPanel.add(mi, BorderLayout.EAST);
-    mi.startUpdater();
+//    JMemoryIndicator mi = new JMemoryIndicator(3000);
+//    statusPanel.add(mi, BorderLayout.EAST);
+//    mi.startUpdater();
 
     setExtendedState(MAXIMIZED_BOTH);
 
