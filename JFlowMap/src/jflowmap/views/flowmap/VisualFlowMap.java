@@ -18,6 +18,7 @@
 
 package jflowmap.views.flowmap;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -45,6 +46,7 @@ import jflowmap.geo.MapProjection;
 import jflowmap.geo.MapProjections;
 import jflowmap.geom.GeomUtils;
 import jflowmap.geom.Point;
+import jflowmap.util.piccolo.POutlinedText;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.Legend;
@@ -63,7 +65,6 @@ import at.fhj.utils.swing.ProgressWorker;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.activities.PInterpolatingActivity;
-import edu.umd.cs.piccolo.nodes.PText;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
@@ -107,7 +108,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private final MapProjection mapProjection;
   private IFlowMapColorScheme colorScheme;
   private PNode mapBackgroundImage;
-  private final PText flowWeightAttrLabel;
+  private final POutlinedText flowWeightAttrLabel;
 
 
   public VisualFlowMap(final IView view, VisualFlowMapModel model, boolean showLegend,
@@ -159,9 +160,12 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
     });
 
-    flowWeightAttrLabel = new PText(getValueAttr());
+    flowWeightAttrLabel = new POutlinedText(getValueAttr());
+//    flowWeightAttrLabel.setTextPaint(new Color(220, 220, 220));
+    flowWeightAttrLabel.setTextPaint(null);
+    flowWeightAttrLabel.setOutlinePaint(new Color(85, 85, 85));
     flowWeightAttrLabel.setFont(CAPTION_FONT);
-    flowWeightAttrLabel.setTransparency(0.3f);
+    flowWeightAttrLabel.setTransparency(0.9f);
     getCamera().addChild(flowWeightAttrLabel);
     flowWeightAttrLabel.setVisible(false);
   }
@@ -204,15 +208,16 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
   public void updateFlowWeightAttrLabel() {
-    PText label = flowWeightAttrLabel;
+    POutlinedText label = flowWeightAttrLabel;
     if (label.getVisible()) {
       PBounds cb = getCamera().getBoundsReference();
       label.setText(flowWeightAttr);
 
-      float height = (float)(cb.height * 0.25);
+      float height = (float)(cb.height * 0.17);
       float fontSize = label.getFont().getSize2D();
       if (fontSize != height) {
         label.setFont(label.getFont().deriveFont(height));
+        flowWeightAttrLabel.setOutlineStroke(new BasicStroke(height * 0.04f));
       }
 
       flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));

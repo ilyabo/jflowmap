@@ -21,6 +21,7 @@ package jflowmap.views.flowmap;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
@@ -45,7 +46,7 @@ public class FlowMapView extends AbstractCanvasView {
 
   public static Logger logger = Logger.getLogger(FlowMapView.class);
 
-  private final ControlPanel controlPanel;
+  private ControlPanel controlPanel;
   private VisualFlowMap visualFlowMap;
 
   private final ViewConfig viewConfig;
@@ -53,9 +54,20 @@ public class FlowMapView extends AbstractCanvasView {
 //  public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0.#####");
   public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("#,##0.#####");
 
-  public FlowMapView(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj, IFlowMapColorScheme cs, ViewConfig config) {
+  public FlowMapView(final VisualFlowMapModel model, final GeoMap areaMap, final MapProjection proj,
+      final IFlowMapColorScheme cs, ViewConfig config) {
     this.viewConfig = config;
 
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initialize(model, areaMap, proj, cs);
+      }
+    });
+  }
+
+  public void initialize(VisualFlowMapModel model, GeoMap areaMap, MapProjection proj,
+      IFlowMapColorScheme cs) {
     FlowMapGraph fmg = model.getFlowMapGraph();
 
     setVisualFlowMap(createVisualFlowMap(model, proj, Iterables.getLast(fmg.getEdgeWeightAttrs()), cs));
@@ -66,6 +78,8 @@ public class FlowMapView extends AbstractCanvasView {
       setColorScheme(cs);
     }
     controlPanel = new ControlPanel(this, fmg.getAttrSpec());
+    
+    fitInView();
   }
 
   @Override

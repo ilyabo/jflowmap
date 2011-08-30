@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.swing.SwingUtilities;
+
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
@@ -154,7 +156,29 @@ public class ViewConfig {
     		" using " + dataLoader + " data loader" +
     	        " and " + (mapLoader != null ? mapLoader : "no") + " map loader");
     try {
-      return viewType.createView(this, dataLoader.load(this), createMap());
+      final Object data = dataLoader.load(this);
+      final GeoMap mapModel = createMap();
+      class ViewRef {
+        IView view;
+        IOException ex;
+      }
+      final ViewRef viewRef = new ViewRef();
+
+      SwingUtilities.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            viewRef.view = viewType.createView(ViewConfig.this, data, mapModel);
+          } catch (IOException e) {
+            viewRef.ex = e;
+          }
+        }
+      });
+
+      if (viewRef.ex != null) {
+        throw viewRef.ex;
+      }
+      return viewRef.view;
     } catch (Exception e) {
       error(e, location);  // will throw an IOException
       return null;

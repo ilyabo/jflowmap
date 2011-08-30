@@ -26,6 +26,7 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
@@ -59,16 +60,25 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
 
   public static final String VIEWCONF_NUM_OF_COLUMNS = "view.flowMapSmallMultiple.numberOfColumns";
 
-  private final List<VisualFlowMapLayer> layers;
+  private List<VisualFlowMapLayer> layers;
   private final VisualFlowMapModel model;
   private final int numberOfColumns;
 
-  public FlowMapSmallMultipleView(VisualFlowMapModel model, GeoMap areaMap, MapProjections proj,
-      IFlowMapColorScheme cs, int numberOfColumns) {
+  public FlowMapSmallMultipleView(VisualFlowMapModel model, final GeoMap areaMap, final MapProjections proj,
+      final IFlowMapColorScheme cs, int numberOfColumns) {
 
     this.model = model;
     this.numberOfColumns = numberOfColumns;
 
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        initialize(areaMap, proj, cs);
+      }
+    });
+  }
+
+  public void initialize(GeoMap areaMap, MapProjections proj, IFlowMapColorScheme cs) {
     FlowMapGraph fmg = model.getFlowMapGraph();
     VisualCanvas canvas = getVisualCanvas();
 
