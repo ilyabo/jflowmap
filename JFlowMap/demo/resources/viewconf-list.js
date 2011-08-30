@@ -35,23 +35,28 @@ var init = function(views) {
  }
 };
 
-
-var showCode = function(code) {
- var width = 800,height = 600;
- var left = parseInt((screen.availWidth/2) - (width/2));
- var top = parseInt((screen.availHeight/2) - (height/2));
- var w = window.open('','svgexport',
-  'width='+width+',height='+height+',left='+left+',top='+top
-   +',menubar=0'
-   +',toolbar=0'
-   +',status=0'
-   +',scrollbars=1'
-   +',resizable=1');
- w.document.writeln(
-  '<html><head><title>Console</title></head>'
-   +'<body bgcolor="white" onLoad="self.focus()"><pre>'
-   + code.replace(/</g,"&lt;").replace(/>/g,"&gt;")
-   +'</pre></body></html>'
- );
- w.document.close();
-}; 
+var jsFlowMap = {
+  // These functions are invoked by the applet		
+  showSVGCode: function(code) {
+     var width = 800,height = 600;
+     var left = parseInt((screen.availWidth/2) - (width/2));
+	 var top = parseInt((screen.availHeight/2) - (height/2));
+	 var w = window.open('','svgexport',
+	  'width='+width+',height='+height+',left='+left+',top='+top
+	   +',menubar=0'
+	   +',toolbar=0'
+	   +',status=0'
+	   +',scrollbars=1'
+	   +',resizable=1');
+	 w.document.writeln(
+	  '<html><head><title>Console</title></head>'
+	   +'<body bgcolor="white" onLoad="self.focus()"><pre>'
+	   + code.replace(/</g,"&lt;").replace(/>/g,"&gt;")
+	   +'</pre></body></html>'
+	 );
+	 w.document.close();
+  },
+  viewLoaded: function() {
+    // This function is invoked by the applet when the view is loaded
+  }
+};

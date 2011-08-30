@@ -18,6 +18,7 @@
 
 package jflowmap;
 
+import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -163,6 +164,12 @@ public class ViewLoader {
 
             }
           }
+
+          Applet applet = SwingUtils.getAppletFor(view.getVisualCanvas());
+          if (applet != null   &&   applet instanceof JFlowMapApplet) {
+            ((JFlowMapApplet)applet).jsFlowMapViewLoaded();
+          }
+
         } catch (Exception ex) {
           logger.error("Cannot open view", ex);
           JMsgPane.showProblemDialog(parent, ex);

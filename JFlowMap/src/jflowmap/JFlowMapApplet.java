@@ -18,9 +18,11 @@
 
 package jflowmap;
 
+import java.applet.Applet;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
@@ -102,6 +104,31 @@ public class JFlowMapApplet extends JApplet {
     }
     blockingGlassPane.setVisible(false);
     return svg;
+  }
+
+  /**
+   * Notify the web page in which the applet is running that the view loaded.
+   */
+  public void jsFlowMapViewLoaded() {
+    jsFlowMapFunctionCall("viewLoaded");
+  }
+
+  public Object jsFlowMapFunctionCall(String memberFunction, Object ... args) {
+    Class<?> klass;
+    try {
+      klass = Class.forName("netscape.javascript.JSObject");
+      Object window = klass.getMethod("getWindow", Applet.class).invoke(null, this); // static
+      Method call = klass.getMethod("call", String.class, Object[].class);
+      Method getMember = klass.getMethod("getMember", String.class);
+      Object jFlowMap = getMember.invoke(window, "jsFlowMap");
+      if (jFlowMap != null) {
+        return call.invoke(jFlowMap, memberFunction, args != null ? args : new Object[] { });
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      logger.error(e);
+    }
+    return null;
   }
 
 

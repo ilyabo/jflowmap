@@ -40,6 +40,7 @@ import javax.swing.KeyStroke;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import jflowmap.JFlowMapApplet;
 import jflowmap.util.SwingUtils;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.PiccoloUtils;
@@ -250,12 +251,8 @@ public class VisualCanvas extends PCanvas {
     // dialog.setVisible(true);
 
     Applet applet = SwingUtils.getAppletFor(this);
-    if (applet != null) {
-      Class<?> klass = Class.forName("netscape.javascript.JSObject");
-      Object window = klass.getMethod("getWindow", Applet.class).invoke(null, applet); // the method
-                                                                                       // is static
-      klass.getMethod("call", String.class, Object[].class).invoke(window, "showCode",
-          new Object[] { svgCode });
+    if (applet != null  &&  applet instanceof JFlowMapApplet) {
+      ((JFlowMapApplet)applet).jsFlowMapFunctionCall("showSVGCode",  new Object[] { svgCode });
     }
   }
 
