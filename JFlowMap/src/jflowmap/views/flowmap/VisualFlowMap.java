@@ -161,11 +161,11 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     });
 
     flowWeightAttrLabel = new POutlinedText(getValueAttr());
-//    flowWeightAttrLabel.setTextPaint(new Color(220, 220, 220));
-    flowWeightAttrLabel.setTextPaint(null);
-    flowWeightAttrLabel.setOutlinePaint(new Color(85, 85, 85));
+//    flowWeightAttrLabel.setTextPaint(new Color(150, 150, 150));
+    flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));
+    flowWeightAttrLabel.setOutlinePaint(new Color(80, 80, 80));
     flowWeightAttrLabel.setFont(CAPTION_FONT);
-    flowWeightAttrLabel.setTransparency(0.9f);
+//    flowWeightAttrLabel.setTransparency(0.9f);
     getCamera().addChild(flowWeightAttrLabel);
     flowWeightAttrLabel.setVisible(false);
   }
@@ -220,7 +220,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         flowWeightAttrLabel.setOutlineStroke(new BasicStroke(height * 0.04f));
       }
 
-      flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));
+//      flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));
       label.setBounds(cb.x + 3, cb.y + (cb.height - height - 2), label.getWidth(), height);
     }
   }

@@ -57,7 +57,7 @@ public enum FlowMapColorSchemes {
 
     .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(140, 140, 140, 200))
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
-    .put(ColorCodes.FLOW_ATTR_LABEL, new Color(255, 255, 255))
+    .put(ColorCodes.FLOW_ATTR_LABEL, new Color(200, 200, 200, 200))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
 
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(5, 113, 176))
@@ -103,7 +103,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
       .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
-      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(0, 0, 0))
+      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(200, 200, 200, 200))
 
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
@@ -188,7 +188,7 @@ public enum FlowMapColorSchemes {
 
       .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
       .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
-      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(0, 0, 0))
+      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(200, 200, 200, 200))
       .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
 
       .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
@@ -270,7 +270,7 @@ public enum FlowMapColorSchemes {
    .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
-      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(0, 0, 0))
+      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(200, 200, 200, 200))
 
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
@@ -311,7 +311,7 @@ GRAY_RED_GREEN(new EnumColorScheme.Builder("Gray red-green")
     .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(240, 240, 240, 200))
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
     .put(ColorCodes.LEDGEND_ARROW, new Color(0, 0, 0, 120))
-      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(0, 0, 0))
+      .put(ColorCodes.FLOW_ATTR_LABEL, new Color(200, 200, 200, 200))
 
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_MIN, new Color(103, 169, 207))
     .put(ColorCodes.EDGE_NO_GRADIENT_DIVERGING_ZERO, new Color(247, 247, 247))
