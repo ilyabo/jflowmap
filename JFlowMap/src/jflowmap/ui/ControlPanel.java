@@ -172,8 +172,8 @@ public class ControlPanel {
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
       int selIndex = attrs.indexOf(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
-      final JLabel selAttrLabel = new JLabel(attrs.get(selIndex));
-      selAttrLabel.setFont(new Font("Arial", Font.BOLD, 42));
+//      final JLabel selAttrLabel = new JLabel(attrs.get(selIndex));
+//      selAttrLabel.setFont(new Font("Arial", Font.BOLD, 42));
 
       final JSlider attrSlider = new JSlider(0, attrs.size() - 1, selIndex);
 //      attrSlider.getModel().set
@@ -250,7 +250,7 @@ public class ControlPanel {
 
           final JSlider slider = (JSlider)e.getSource();
           final String attr = attrs.get(slider.getValue());
-          selAttrLabel.setText(attr);
+//          selAttrLabel.setText(attr);
 //          if (!slider.getValueIsAdjusting()) {
           jFlowMap.setSelectedFlowWeightAttr(attr);
           jFlowMap.getVisualFlowMap().setFlowWeightAttrLabelVisibile(true);
@@ -264,7 +264,7 @@ public class ControlPanel {
 //      panel.add(new JButton(">>|"), "aligny top");
       panel.add(speedSlider, "hmax 60");
       panel.add(attrSlider, "gapx 20, growx");
-      panel.add(selAttrLabel, "gap 20, aligny top");
+//      panel.add(selAttrLabel, "gap 20, aligny top");
       return panel;
     }
 
