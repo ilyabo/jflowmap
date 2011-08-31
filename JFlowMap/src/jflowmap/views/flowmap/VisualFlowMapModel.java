@@ -73,6 +73,7 @@ public class VisualFlowMapModel {
   public static final String VIEWCONF_EDGE_OPACITY = "view.flowmap.edgeOpacity";
   public static final String VIEWCONF_SHOW_SELF_LOOPS = "view.flowmap.showSelfLoops";
   public static final String VIEWCONF_VALUE_TYPE = "view.flowmap.valueType";
+  public static final String VIEWCONF_SHOW_FLOW_WEIGHT_ATTR_LABEL = "view.flowmap.showFlowWeightAttrLabel";
 
   public static final String VIEWCONF_BUNDLING_UPDATE_VIEW_AFTER_EACH_STEP =
     "view.flowmap.edgeBundling.updateViewAfterEachStep";

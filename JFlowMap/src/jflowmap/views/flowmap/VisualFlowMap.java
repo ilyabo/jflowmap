@@ -221,7 +221,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       }
 
 //      flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));
-      label.setBounds(cb.x + 3, cb.y + (cb.height - height - 2), label.getWidth(), height);
+      label.setBounds(cb.getMaxX() - label.getWidth() - 3, cb.y + (cb.height - height - 2), label.getWidth(), height);
     }
   }
 

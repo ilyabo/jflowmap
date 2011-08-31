@@ -6,6 +6,7 @@ view.flowmap.showNodes=false
 view.flowmap.edgeWidth=15
 view.flowmap.edgeOpacity=150
 view.flowmap.showSelfLoops=true
+view.flowmap.showFlowWeightAttrLabel=true
 
 #view.flowmap.weightFilterMin=50
 
