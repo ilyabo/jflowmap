@@ -12,11 +12,17 @@ import java.awt.Window;
 import javax.swing.JApplet;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Ilya Boyandin
  */
 public class SwingUtils {
+
+  private static Logger logger = Logger.getLogger(SwingUtils.class);
 
   private SwingUtils() {
   }
@@ -103,5 +109,18 @@ public class SwingUtils {
     }
     return null;
   }
+
+  public static void initNimbusLF() {
+      for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+        if ("Nimbus".equals(info.getName())) {
+          try {
+            UIManager.setLookAndFeel(info.getClassName());
+          } catch (Exception e) {
+            logger.error("Cannot init Nimbus L&F");
+          }
+          break;
+        }
+      }
+    }
 
 }

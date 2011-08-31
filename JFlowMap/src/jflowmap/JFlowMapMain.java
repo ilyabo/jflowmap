@@ -26,7 +26,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 import jflowmap.util.SwingUtils;
 
@@ -155,7 +154,7 @@ public class JFlowMapMain {
 
   private static void showMainFrame() {
     if (!IS_OS_MAC) {
-      initNimbusLF();
+      SwingUtils.initNimbusLF();
     }
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -169,19 +168,6 @@ public class JFlowMapMain {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     } catch (Exception e) {
       logger.error("Cannot init systemL&F");
-    }
-  }
-
-  private static void initNimbusLF() {
-    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-      if ("Nimbus".equals(info.getName())) {
-        try {
-          UIManager.setLookAndFeel(info.getClassName());
-        } catch (Exception e) {
-          logger.error("Cannot init Nimbus L&F");
-        }
-        break;
-      }
     }
   }
 

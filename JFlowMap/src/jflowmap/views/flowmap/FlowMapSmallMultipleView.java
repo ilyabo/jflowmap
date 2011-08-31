@@ -32,11 +32,13 @@ import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
+import jflowmap.util.piccolo.PButton;
 import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.PTooltip;
 import jflowmap.views.VisualCanvas;
+import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
 import com.google.common.collect.Lists;
@@ -44,6 +46,7 @@ import com.google.common.collect.Lists;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventFilter;
 import edu.umd.cs.piccolo.event.PPanEventHandler;
@@ -119,9 +122,39 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     }
 
     if (layers.size() > 0) {
-      VisualFlowMapLayer firstLayer = layers.get(0);
-      firstLayer.getCamera().addChild(firstLayer.getVisualFlowMap().getVisualLegend());
+      VisualFlowMapLayer layer1 = layers.get(0);
+      final VisualFlowMap visualFlowMap = layer1.getVisualFlowMap();
+      PCamera cam = layer1.getCamera();
+      cam.addChild(visualFlowMap.getVisualLegend());
     }
+
+    final PButton diffButton = new PButton("DIFF", true);
+    getCamera().addChild(diffButton);
+    diffButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        for (int i = 0; i < layers.size(); i++) {
+          VisualFlowMap vfm = layers.get(i).getVisualFlowMap();
+          VisualFlowMapModel m = vfm.getModel();
+          m.setValueType(diffButton.isPressed() ? ValueType.DIFF : ValueType.VALUE);
+          vfm.updateColors();
+          vfm.updateEdgeWidths();
+          vfm.getVisualLegend().update();
+        }
+      }
+    });
+
+    getCamera().addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
+          PBounds cb = getCamera().getBounds();
+          PBounds b = diffButton.getBounds();
+          diffButton.setPosition(cb.getMaxX() - b.width -3, 3);
+        }
+      }
+    });
+
+
 
     canvas.setBackground(cs.get(ColorCodes.BACKGROUND));
     canvas.setAutoFitOnBoundsChange(false);

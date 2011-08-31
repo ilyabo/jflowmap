@@ -47,6 +47,7 @@ public class JFlowMapApplet extends JApplet {
   private final BlockingGlassPane blockingGlassPane;
 
   public JFlowMapApplet() {
+    SwingUtils.initNimbusLF();
     blockingGlassPane = new BlockingGlassPane();
     setGlassPane(blockingGlassPane);
     blockingGlassPane.setVisible(false);
