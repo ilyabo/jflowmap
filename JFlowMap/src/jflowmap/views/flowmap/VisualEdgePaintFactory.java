@@ -65,28 +65,27 @@ public class VisualEdgePaintFactory {
 
     boolean diverging = visualFlowMap.getValueStat().isDiverging();
 
-    if (isSelfLoop) {
-      return createSelfLoopPaint(normalizedValue, alpha, diverging);
-    } else {
-      if (!model.getShowDirectionMarkers()  &&  !model.getFillEdgesWithGradient()) {
-        return createSimplePaint(normalizedValue, alpha, diverging);
-      } else {
-        return createCompositePaint(
-            normalizedValue, srcX, srcY, targetX, targetY, edgeLength, model, alpha, diverging);
-      }
+    if (diverging) {
+      return createSimpleDivergingPaint(normalizedValue, alpha);
+    }
 
+    if (isSelfLoop) {
+      return createSelfLoopPaint(normalizedValue, alpha);
+    }
+
+    if (model.getShowDirectionMarkers()  ||  model.getFillEdgesWithGradient()) {
+      return createCompositePaint(
+          normalizedValue, srcX, srcY, targetX, targetY, edgeLength, model, alpha);
+    } else {
+      return createSimplePaint(normalizedValue, alpha);
     }
   }
 
-  private Paint createSimplePaint(double normalizedValue, int alpha, boolean diverging) {
-    if (diverging) {
-      return createSimpleDivergingPaint(normalizedValue, alpha);
-    } else {
-      return ColorUtils.colorBetween(
-          visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
-          visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT),
-          normalizedValue, alpha);
-    }
+  private Paint createSimplePaint(double normalizedValue, int alpha) {
+    return ColorUtils.colorBetween(
+        visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT),
+        visualFlowMap.getColor(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT),
+        normalizedValue, alpha);
   }
 
   private Paint createSimpleDivergingPaint(double normalizedValue, int alpha) {
@@ -99,20 +98,19 @@ public class VisualEdgePaintFactory {
         normalizedValue, -1.0, 1.0, alpha, true));
   }
 
-  private Paint createSelfLoopPaint(double normalizedValue, int alpha, boolean diverging) {
+  private Paint createSelfLoopPaint(double normalizedValue, int alpha) {
     if (visualFlowMap.getModel().getFillEdgesWithGradient()) {
       return ColorUtils.colorBetween(
           visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT),
           visualFlowMap.getColor(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT),
           normalizedValue, alpha);
     } else {
-      return createSimplePaint(normalizedValue, alpha, diverging);
+      return createSimplePaint(normalizedValue, alpha);
     }
   }
 
   private Paint createCompositePaint(double normalizedValue, double srcX, double srcY,
-      double targetX, double targetY, double edgeLength, VisualFlowMapModel model, int alpha,
-      boolean diverging) {
+      double targetX, double targetY, double edgeLength, VisualFlowMapModel model, int alpha) {
 
     // TODO: support for diverging color scheme
     Color startEdgeColor, endEdgeColor;

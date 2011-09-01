@@ -26,7 +26,6 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
@@ -73,15 +72,6 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     this.model = model;
     this.numberOfColumns = numberOfColumns;
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        initialize(areaMap, proj, cs);
-      }
-    });
-  }
-
-  public void initialize(GeoMap areaMap, MapProjections proj, IFlowMapColorScheme cs) {
     FlowMapGraph fmg = model.getFlowMapGraph();
     VisualCanvas canvas = getVisualCanvas();
 
@@ -135,25 +125,15 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       public void mouseClicked(PInputEvent event) {
         for (int i = 0; i < layers.size(); i++) {
           VisualFlowMap vfm = layers.get(i).getVisualFlowMap();
-          VisualFlowMapModel m = vfm.getModel();
-          m.setValueType(diffButton.isPressed() ? ValueType.DIFF : ValueType.VALUE);
-          vfm.updateColors();
-          vfm.updateEdgeWidths();
-          vfm.getVisualLegend().update();
+          if (diffButton.isPressed()) {
+            vfm.setValueType(ValueType.DIFF);
+          } else {
+            vfm.setValueType(ValueType.VALUE);
+          }
         }
       }
     });
-
-    getCamera().addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
-          PBounds cb = getCamera().getBounds();
-          PBounds b = diffButton.getBounds();
-          diffButton.setPosition(cb.getMaxX() - b.width -3, 3);
-        }
-      }
-    });
-
+    getVisualCanvas().getSettingButtonsPanel().addChild(diffButton);
 
 
     canvas.setBackground(cs.get(ColorCodes.BACKGROUND));

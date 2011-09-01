@@ -956,7 +956,11 @@ public class FlowMapGraph {
             v1 = Math.abs(v1);
             v2 = Math.abs(v2);
           }
-          return ascending ? Double.compare(v1, v2) : Double.compare(v2, v1);
+          if (ascending) {
+            return MathUtils.compareDoubles_smallestIsNaN(v1, v2);
+          } else {
+            return MathUtils.compareDoubles_smallestIsNaN(v2, v1);
+          }
         }
       });
 

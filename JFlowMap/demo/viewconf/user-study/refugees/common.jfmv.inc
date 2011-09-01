@@ -17,7 +17,7 @@ data.csv.charset=utf-8
 data.csv.nodes.src=../../../data/refugee-nodes.csv.gz
 data.csv.flows.src=../../../data/refugee-flows.csv.gz
 
-
+data.select.flows.where=([source]!=[target])
 data.select.flows.where.exists=((NOT ISNAN([#weightAttr#])) AND ([#weightAttr#] > 600))
 
 

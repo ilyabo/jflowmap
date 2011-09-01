@@ -30,8 +30,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -49,7 +47,6 @@ import jflowmap.data.ViewConfig;
 import jflowmap.util.SwingUtils;
 import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
-import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.VisualCanvas;
 
 import org.apache.log4j.Logger;
@@ -59,11 +56,9 @@ import at.fhj.utils.swing.JMsgPane;
 
 import com.google.common.collect.ImmutableList;
 
-import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
-import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -204,23 +199,12 @@ public class ViewLoader {
     if (embedSettings) {
       parent.add(controls, BorderLayout.SOUTH);
     } else {
-      final PBoxLayoutNode buttonPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+      PBoxLayoutNode buttonPanel = canvas.getSettingButtonsPanel();
       buttonPanel.addChild(createSettingsButton(parent, controls, config));
       buttonPanel.addChild(createPaintToSvgButton(parent, canvas));
 
   //    final PButton helpBut = new PButton(" ? ", true);
   //    buttonPanel.addChild(helpBut);
-
-
-      final PCamera ccam = canvas.getCamera();
-      ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-          PBounds b = ccam.getBoundsReference();
-          PNodes.setPosition(buttonPanel, b.getMaxX() - buttonPanel.getFullBoundsReference().width - 4, 4);
-        }
-      });
-      ccam.addChild(buttonPanel);
     }
   }
 

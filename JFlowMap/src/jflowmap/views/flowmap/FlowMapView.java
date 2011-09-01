@@ -28,13 +28,18 @@ import jflowmap.data.ViewConfig;
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.GeoMap;
 import jflowmap.ui.ControlPanel;
+import jflowmap.util.piccolo.PButton;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
+import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.Iterables;
+
+import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
+import edu.umd.cs.piccolo.event.PInputEvent;
 
 /**
  * @author Ilya Boyandin
@@ -70,6 +75,20 @@ public class FlowMapView extends AbstractCanvasView {
     visualFlowMap.setFlowWeightAttrLabelVisibile(
       config.getBoolOrElse(VisualFlowMapModel.VIEWCONF_SHOW_FLOW_WEIGHT_ATTR_LABEL, false)
     );
+
+    final PButton diffButton = new PButton("DIFF", true);
+    getCamera().addChild(diffButton);
+    diffButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        if (diffButton.isPressed()) {
+          visualFlowMap.setValueType(ValueType.DIFF);
+        } else {
+          visualFlowMap.setValueType(ValueType.VALUE);
+        }
+      }
+    });
+    getVisualCanvas().getSettingButtonsPanel().addChild(diffButton);
 
     controlPanel = new ControlPanel(this, fmg.getAttrSpec());
 

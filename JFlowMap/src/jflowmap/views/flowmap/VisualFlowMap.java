@@ -52,6 +52,7 @@ import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.Legend;
 import jflowmap.views.MapBackgroundImage;
 import jflowmap.views.PTooltip;
+import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
 import org.apache.log4j.Logger;
@@ -217,7 +218,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       float fontSize = label.getFont().getSize2D();
       if (fontSize != height) {
         label.setFont(label.getFont().deriveFont(height));
-        flowWeightAttrLabel.setOutlineStroke(new BasicStroke(height * 0.04f));
+        flowWeightAttrLabel.setOutlineStroke(new BasicStroke(height * 0.02f));
       }
 
 //      flowWeightAttrLabel.setTextPaint(colorScheme.get(ColorCodes.FLOW_ATTR_LABEL));
@@ -589,6 +590,16 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       visualNode.setSelected(true);
     }
     addAttribute(Attributes.NODE_SELECTION.name(), visualNode);  // will fire a propertyChange event
+  }
+
+  public void setValueType(ValueType valueType) {
+    model.setValueType(valueType);
+    updateColors();
+//    updateEdgeWidths();
+//    updateEdgeVisibility();
+    updateVisualEdges();
+    updateVisualEdgeOrdering();
+    getVisualLegend().update();
   }
 
   private void initModelChangeListeners(VisualFlowMapModel model) {

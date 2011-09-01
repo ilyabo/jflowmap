@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,6 +44,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import jflowmap.JFlowMapApplet;
 import jflowmap.util.SwingUtils;
+import jflowmap.util.piccolo.PBoxLayoutNode;
+import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PanHandler;
 import jflowmap.util.piccolo.PiccoloUtils;
 import jflowmap.util.piccolo.ZoomHandler;
@@ -69,6 +73,7 @@ public class VisualCanvas extends PCanvas {
   private static final Dimension MIN_SIZE = new Dimension(150, 100);
   private ZoomHandler zoomHandler;
   private boolean autoFitOnBoundsChange = true;
+  private final PBoxLayoutNode settingButtonsPanel;
 //  private BlockingGlassPane blockingGlassPane;
 
   public VisualCanvas() {
@@ -82,6 +87,22 @@ public class VisualCanvas extends PCanvas {
         tryToPaintToSvg();
       }
     });
+
+    settingButtonsPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+    final PCamera ccam = getCamera();
+    ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        PBounds b = ccam.getBoundsReference();
+        PNodes.setPosition(settingButtonsPanel, b.getMaxX() - settingButtonsPanel.getFullBoundsReference().width - 4, 4);
+      }
+    });
+    ccam.addChild(settingButtonsPanel);
+
+  }
+
+  public PBoxLayoutNode getSettingButtonsPanel() {
+    return settingButtonsPanel;
   }
 
   public ZoomHandler getZoomHandler() {
