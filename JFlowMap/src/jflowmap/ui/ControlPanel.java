@@ -126,7 +126,7 @@ public class ControlPanel {
     private JLabel edgeMarkerOpacityLabel;
     private JTable flowsTable;
 //    private JButton aggregateEdgesButton;
-    private final FlowMapView jFlowMap;
+    private final FlowMapView flowMapView;
     private boolean initializing;
     private ForceDirectedBundlerParameters fdBundlingParams;
     private boolean modelsInitialized;
@@ -137,7 +137,7 @@ public class ControlPanel {
 
 
     public ControlPanel(FlowMapView flowMap, FlowMapAttrSpec attrSpec) {
-        this.jFlowMap = flowMap;
+        this.flowMapView = flowMap;
         this.attrSpec = attrSpec;
         $$$setupUI$$$();
         setupUI();
@@ -152,13 +152,13 @@ public class ControlPanel {
     }
 
     private void setSelectedFlowWeightAttr(String selAttr) {
-      jFlowMap.setSelectedFlowWeightAttr(selAttr);
+      flowMapView.setSelectedFlowWeightAttr(selAttr);
       updateFlowsTable();
     }
 
     private void updateFlowsTable() {
       List<Directive> sort = flowsTableSorter.getSortingColumns();
-      flowsTableModel.setVisualFlowMap(jFlowMap.getVisualFlowMap());
+      flowsTableModel.setVisualFlowMap(flowMapView.getVisualFlowMap());
       flowsTableSorter.setSortingColumns(sort); // prevent the column sortings being reset
     }
 
@@ -168,10 +168,11 @@ public class ControlPanel {
 
     private JPanel createAnimationTab() {
       JPanel panel = new JPanel(new MigLayout(
-          "fillx,insets 20", "[70,right][][grow][]", ""));
+          "insets 20,align center", "[grow 0,center,70][grow 0][800, grow 0][grow 0,center,70]", ""));
+
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
-      int selIndex = attrs.indexOf(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
+      int selIndex = attrs.indexOf(flowMapView.getVisualFlowMap().getFlowWeightAttr());
 //      final JLabel selAttrLabel = new JLabel(attrs.get(selIndex));
 //      selAttrLabel.setFont(new Font("Arial", Font.BOLD, 42));
 
@@ -188,7 +189,7 @@ public class ControlPanel {
       attrSlider.setPaintTicks(true);
       attrSlider.setPaintLabels(true);
       attrSlider.setSnapToTicks(true);
-      jFlowMap.getVisualFlowMap().addPropertyChangeListener(
+      flowMapView.getVisualFlowMap().addPropertyChangeListener(
           VisualFlowMap.PROPERTY_FLOW_WEIGHT_ATTR,
           new PropertyChangeListener() {
             @Override
@@ -201,8 +202,8 @@ public class ControlPanel {
 
       final JSlider speedSlider = new JSlider(0, 10, 5);
       Hashtable<Integer, JComponent> speedLabels = new Hashtable<Integer, JComponent>();
-      speedLabels.put(speedSlider.getMaximum(), createTinyLabel("Fast"));
-      speedLabels.put(speedSlider.getMinimum(), createTinyLabel("Slow"));
+      speedLabels.put(speedSlider.getMaximum(), createTinyLabel("Fast "));
+      speedLabels.put(speedSlider.getMinimum(), createTinyLabel("Slow "));
       speedSlider.setLabelTable(speedLabels);
       speedSlider.setOrientation(JSlider.VERTICAL);
       speedSlider.setPaintTicks(true);
@@ -221,7 +222,7 @@ public class ControlPanel {
       playStopBut.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          VisualFlowMap vfm = jFlowMap.getVisualFlowMap();
+          VisualFlowMap vfm = flowMapView.getVisualFlowMap();
           if (playStopBut.getText().equals("Play")) {
             if (attrSlider.getValue() == attrSlider.getMaximum()) {
               attrSlider.setValue(attrSlider.getMinimum());
@@ -231,7 +232,7 @@ public class ControlPanel {
             playStopBut.setText("Stop");
             vfm.startValueAnimation(runWhenFinished,
                 attrSlider.getValue(),
-                0.2 + speedSlider.getValue() / 4.0);
+                0.5 + speedSlider.getValue() / 4.0);
           } else {
             vfm.stopValueAnimation();
             runWhenFinished.run();
@@ -252,19 +253,27 @@ public class ControlPanel {
           final String attr = attrs.get(slider.getValue());
 //          selAttrLabel.setText(attr);
 //          if (!slider.getValueIsAdjusting()) {
-          jFlowMap.setSelectedFlowWeightAttr(attr);
-          jFlowMap.getVisualFlowMap().setFlowWeightAttrLabelVisibile(true);
+          flowMapView.setSelectedFlowWeightAttr(attr);
+          flowMapView.getVisualFlowMap().setFlowWeightAttrLabelVisibile(true);
             // setSelectedFlowWeightAttr(attr);
 //          }
         }
       });
 
-//      panel.add(new JButton("|<<"), "aligny top");
       panel.add(playStopBut, "aligny center");
 //      panel.add(new JButton(">>|"), "aligny top");
-      panel.add(speedSlider, "hmax 60");
-      panel.add(attrSlider, "gapx 20, growx");
+      panel.add(speedSlider, "hmax 60, growx 0");
+      panel.add(attrSlider, "gapx 20, growx 100, wmax 800");
 //      panel.add(selAttrLabel, "gap 20, aligny top");
+      JButton rewindBut = new JButton("|<<");
+      panel.add(rewindBut, "aligny center");
+      rewindBut.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          flowMapView.setSelectedFlowWeightAttr(attrs.get(0));
+        }
+      });
+
       return panel;
     }
 
@@ -401,7 +410,7 @@ public class ControlPanel {
     }
 
     public void updateColorScheme() {
-      colorSchemeCombo.setSelectedItem(FlowMapColorSchemes.findByScheme(jFlowMap.getColorScheme()));
+      colorSchemeCombo.setSelectedItem(FlowMapColorSchemes.findByScheme(flowMapView.getColorScheme()));
     }
 
     private void initFilterModels() {
@@ -449,7 +458,7 @@ public class ControlPanel {
     }
 
     public void setData(VisualFlowMapModel data) {
-        datasetCombo.setSelectedItem(jFlowMap.getVisualFlowMap().getFlowWeightAttr());
+        datasetCombo.setSelectedItem(flowMapView.getVisualFlowMap().getFlowWeightAttr());
 
         autoAdjustColorScaleCheckBox.setSelected(data.getAutoAdjustColorScale());
         useLogWidthScaleCheckbox.setSelected(data.getUseLogWidthScale());
@@ -630,7 +639,7 @@ public class ControlPanel {
         colorSchemeCombo.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                jFlowMap.setColorScheme(((FlowMapColorSchemes) e.getItem()).getScheme());
+                flowMapView.setColorScheme(((FlowMapColorSchemes) e.getItem()).getScheme());
             }
         });
     }
@@ -731,7 +740,7 @@ public class ControlPanel {
     }
 
     private VisualFlowMap getVisualFlowMap() {
-        return jFlowMap.getVisualFlowMap();
+        return flowMapView.getVisualFlowMap();
     }
 
     private FlowMapStats getGraphStats() {

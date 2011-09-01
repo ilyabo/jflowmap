@@ -73,6 +73,11 @@ public class ViewLoader {
 
   private static final Font LOADING_TEXT_FONT = new Font("Sans Serif", Font.PLAIN, 11);
 
+
+  public static boolean isApplet(Component c) {
+    return (SwingUtils.getAppletFor(c) != null);
+  }
+
   public static void loadView(final String viewConfigLocation, final Container parent)
     throws Exception
   {
@@ -311,6 +316,12 @@ public class ViewLoader {
         } else {
           numVisible++;
         }
+      }
+
+      if (tp.getTabCount() == 1) {
+        Component onlyTab = tp.getComponentAt(0);
+        contentPane.remove(tp);
+        contentPane.add(onlyTab);
       }
     }
     return numVisible;

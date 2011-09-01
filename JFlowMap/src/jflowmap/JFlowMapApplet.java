@@ -48,6 +48,11 @@ public class JFlowMapApplet extends JApplet {
 
   public JFlowMapApplet() {
     SwingUtils.initNimbusLF();
+
+//    UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+//    defaults.put("Panel.background", Color.BLACK);
+//    defaults.put("TabbedPane.background", Color.BLACK);
+
     blockingGlassPane = new BlockingGlassPane();
     setGlassPane(blockingGlassPane);
     blockingGlassPane.setVisible(false);
