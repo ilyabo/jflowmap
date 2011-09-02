@@ -111,16 +111,16 @@ public class SwingUtils {
   }
 
   public static void initNimbusLF() {
-      for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-        if ("Nimbus".equals(info.getName())) {
-          try {
-            UIManager.setLookAndFeel(info.getClassName());
-          } catch (Exception e) {
-            logger.error("Cannot init Nimbus L&F");
-          }
-          break;
+    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+      if ("Nimbus".equals(info.getName())) {
+        try {
+          UIManager.setLookAndFeel(info.getClassName());
+        } catch (Exception e) {
+          logger.error("Cannot init Nimbus L&F");
         }
+        break;
       }
     }
+  }
 
 }

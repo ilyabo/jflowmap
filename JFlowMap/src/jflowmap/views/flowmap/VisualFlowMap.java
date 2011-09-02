@@ -753,7 +753,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
 
-  private PInterpolatingActivity valueAnimation;
+  private ValueAnimationActivity valueAnimation;
 
   public VisualNode getVisualNodeByLabel(String label) {
     for (VisualNode node : visualNodes) {
@@ -768,7 +768,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
    * @param attrsPerSecond Animation speed
    * @param i
    */
-  public void startValueAnimation(final Runnable runWhenFinished, final int startAttrIndex,
+  public void startValueAnimation(Runnable runWhenFinished, int startAttrIndex,
       double attrsPerSecond) {
     if (valueAnimation != null   &&   valueAnimation.isStepping()) {
       return;
@@ -776,104 +776,142 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     setFlowWeightAttrLabelVisibile(true);
 
-    final List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
-
-    final int numAttrs = (attrs.size() - startAttrIndex);
-    if (numAttrs <= 1) {
+    valueAnimation = new ValueAnimationActivity(startAttrIndex, runWhenFinished, attrsPerSecond);
+    if (valueAnimation.numAttrs > 1) {
+      valueAnimation.start();
+    } else {
       if (runWhenFinished != null) {
         runWhenFinished.run();
       }
-      return;
+    }
+  }
+
+
+  class ValueAnimationActivity extends PInterpolatingActivity {
+
+    final List<String> attrs = getFlowMapGraph().getEdgeWeightAttrs();
+    private final int startAttrIndex;
+    private final Runnable runWhenFinished;
+    private final int numAttrs;
+    private int lastAttrIndex;
+
+    public ValueAnimationActivity(int startAttrIndex, Runnable runWhenFinished,
+        double attrsPerSecond) {
+      super(0, 20);
+      this.startAttrIndex = startAttrIndex;
+      this.runWhenFinished = runWhenFinished;
+      this.numAttrs = (attrs.size() - startAttrIndex);
+      setSlowInSlowOut(false);
+      setDuration(Math.round(numAttrs * 1000 / attrsPerSecond));
+      for (VisualEdge ve : edgesToVisuals.values()) {
+        setAbsVal(ve, ve.getEdgeWeight());
+      }
     }
 
-    long duration = Math.round(numAttrs * 1000 / attrsPerSecond);
+    public void start() {
+      addActivity(valueAnimation);
+    }
 
+    public void stop() {
+      getActivityScheduler().removeActivity(this);
+      setFlowWeightAttr(attrs.get(lastAttrIndex), true);
+    }
 
-    valueAnimation = new PInterpolatingActivity(duration, 20) {
-      {
-        for (VisualEdge ve : edgesToVisuals.values()) {
-          setAbsVal(ve, ve.getEdgeWeight());
+    @Override
+    public void setRelativeTargetValue(float zeroToOne) {
+      double alpha = alpha(zeroToOne);
+      int lowi = lowi(zeroToOne);
+      int highi = highi(zeroToOne);
+
+      this.lastAttrIndex = closesti(zeroToOne);
+
+      setFlowWeightAttr(attrs.get(lowi), false);
+
+      for (VisualEdge ve : edgesToVisuals.values()) {
+        double value;
+
+        if (lowi == highi) {
+          value = getValueOf(ve, attrs.get(lowi));
+        } else {
+          double low = getValueOf(ve, attrs.get(lowi));
+          double high = getValueOf(ve, attrs.get(highi));
+          if (Double.isNaN(low)) low = 0;
+          if (Double.isNaN(high)) high = 0;
+          value = low + (high - low) * (alpha - (lowi - startAttrIndex));
+        }
+
+        orderByValue(ve, value);
+        setAbsVal(ve, value);
+
+        ve.updateEdgeWidthTo(value);
+        ve.updateEdgeColorsTo(value);
+      }
+    }
+
+    public int highi(float zeroToOne) {
+      return startAttrIndex + (int)Math.ceil(alpha(zeroToOne));
+    }
+
+    public int lowi(float zeroToOne) {
+      return startAttrIndex + (int)Math.floor(alpha(zeroToOne));
+    }
+
+    public int closesti(float zeroToOne) {
+      return startAttrIndex + (int)Math.round(alpha(zeroToOne));
+    }
+
+    public double alpha(float zeroToOne) {
+      return (numAttrs - 1) * zeroToOne;
+    }
+
+    public void orderByValue(VisualEdge ve, double value) {
+      if (Double.isNaN(value)) {
+        return;
+      }
+      double absValue = Math.abs(value);
+      int numChildren = edgeLayer.getChildrenCount();
+      int index = edgeLayer.indexOfChild(ve);
+
+      while (index > 0   &&   absValue < getVal(index - 1)) index--;
+      while (index < numChildren - 1   &&   absValue > getVal(index + 1)) index++;
+
+      int change = edgeLayer.indexOfChild(ve) - index;
+      if (change != 0) {
+        VisualEdge nve = getVE(index);
+        double nv = getVal(nve);
+        if (nv > absValue) {
+          ve.moveInBackOf(nve);
+        } else {
+          ve.moveInFrontOf(nve);
         }
       }
-      @Override
-      public void setRelativeTargetValue(float zeroToOne) {
-        double alpha = (numAttrs - 1) * zeroToOne;
-        int lowi = startAttrIndex + (int)Math.floor(alpha);
-        int highi = startAttrIndex + (int)Math.ceil(alpha);
+    }
 
-        setFlowWeightAttr(attrs.get(lowi), false);
+    public void setAbsVal(VisualEdge ve, double value) {
+      ve.addAttribute(VisualEdge.ATTR_ANIMATION_ABS_EDGE_WEIGHT, Math.abs(value));
+    }
 
-        for (VisualEdge ve : edgesToVisuals.values()) {
-          double value;
+    public double getVal(int i) {
+      return getVal(getVE(i));
+    }
 
-          if (lowi == highi) {
-            value = getValueOf(ve, attrs.get(lowi));
-          } else {
-            double low = getValueOf(ve, attrs.get(lowi));
-            double high = getValueOf(ve, attrs.get(highi));
-            if (Double.isNaN(low)) low = 0;
-            if (Double.isNaN(high)) high = 0;
-            value = low + (high - low) * (alpha - (lowi - startAttrIndex));
-          }
+    public VisualEdge getVE(int i) {
+      return (VisualEdge)edgeLayer.getChild(i);
+    }
 
-          orderByValue(ve, value);
-          setAbsVal(ve, value);
+    public double getVal(VisualEdge ve) {
+      return (Double) ve.getAttribute(VisualEdge.ATTR_ANIMATION_ABS_EDGE_WEIGHT);
+    }
 
-          ve.updateEdgeWidthTo(value);
-          ve.updateEdgeColorsTo(value);
-        }
+    @Override
+    protected void activityFinished() {
+      super.activityFinished();
+      if (runWhenFinished != null) {
+        runWhenFinished.run();
+        valueAnimation = null;
       }
+    }
 
-      public void orderByValue(VisualEdge ve, double value) {
-        if (Double.isNaN(value)) {
-          return;
-        }
-        double absValue = Math.abs(value);
-        int numChildren = edgeLayer.getChildrenCount();
-        int index = edgeLayer.indexOfChild(ve);
-
-        while (index > 0   &&   absValue < getVal(index - 1)) index--;
-        while (index < numChildren - 1   &&   absValue > getVal(index + 1)) index++;
-
-        int change = edgeLayer.indexOfChild(ve) - index;
-        if (change != 0) {
-          VisualEdge nve = getVe(index);
-          double nv = getVal(nve);
-          if (nv > absValue) {
-            ve.moveInBackOf(nve);
-          } else {
-            ve.moveInFrontOf(nve);
-          }
-        }
-      }
-
-      public void setAbsVal(VisualEdge ve, double value) {
-        ve.addAttribute(VisualEdge.ATTR_ANIMATION_ABS_EDGE_WEIGHT, Math.abs(value));
-      }
-
-      public double getVal(int i) {
-        return getVal(getVe(i));
-      }
-
-      public VisualEdge getVe(int i) {
-        return (VisualEdge)edgeLayer.getChild(i);
-      }
-
-      public double getVal(VisualEdge ve) {
-        return (Double) ve.getAttribute(VisualEdge.ATTR_ANIMATION_ABS_EDGE_WEIGHT);
-      }
-
-      @Override
-      protected void activityFinished() {
-        super.activityFinished();
-        if (runWhenFinished != null) {
-          runWhenFinished.run();
-          valueAnimation = null;
-        }
-      }
-    };
-    valueAnimation.setSlowInSlowOut(false);
-    addActivity(valueAnimation);
   }
 
 
@@ -883,7 +921,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   public void stopValueAnimation() {
     if (valueAnimation != null  &&  valueAnimation.isStepping()) {
-      valueAnimation.getActivityScheduler().removeActivity(valueAnimation);
+      valueAnimation.stop();
       valueAnimation = null;
     }
   }

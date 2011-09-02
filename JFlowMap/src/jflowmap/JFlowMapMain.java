@@ -25,7 +25,6 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import jflowmap.util.SwingUtils;
 
@@ -131,44 +130,18 @@ public class JFlowMapMain {
     });
   }
 
-  /*
-  private static void initFonts() {
-    final float scale = .9f;
-    UIDefaults defaults = UIManager.getDefaults();
-    @SuppressWarnings("rawtypes") Enumeration keys = defaults.keys();
-    while(keys.hasMoreElements()) {
-      Object key = keys.nextElement();
-      Object value = defaults.get(key);
-      if(value != null && value instanceof Font) {
-         UIManager.put(key, null);
-         Font font = UIManager.getFont(key);
-         if(font != null) {
-            float size = font.getSize2D();
-            UIManager.put(key, new FontUIResource(
-                font.deriveFont(size * scale)
-//                new Font("Arial", font.isBold() ? Font.BOLD : Font.PLAIN, Math.round(size * scale))
-                ));
-         } } }
-  }
-  */
-
   private static void showMainFrame() {
     if (!IS_OS_MAC) {
       SwingUtils.initNimbusLF();
+//      UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+//      defaults.put("Panel.background", new Color(0xf0, 0xf0, 0xf0));
+//      defaults.put("background", new Color(0xf0, 0xf0, 0xf0));
     }
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         new JFlowMapMainFrame().setVisible(true);
       }
     });
-  }
-
-  private static void initSystemLF() {
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (Exception e) {
-      logger.error("Cannot init systemL&F");
-    }
   }
 
   private static boolean getOSMatches(String osNamePrefix) {

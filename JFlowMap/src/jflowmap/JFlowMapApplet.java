@@ -19,13 +19,16 @@
 package jflowmap;
 
 import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 
 import javax.swing.JApplet;
-import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 
 import jflowmap.ui.BlockingGlassPane;
 import jflowmap.util.SwingUtils;
@@ -47,11 +50,15 @@ public class JFlowMapApplet extends JApplet {
   private final BlockingGlassPane blockingGlassPane;
 
   public JFlowMapApplet() {
-    SwingUtils.initNimbusLF();
+    if (!JFlowMapMain.IS_OS_MAC) {
+      SwingUtils.initNimbusLF();
 
-//    UIDefaults defaults = UIManager.getLookAndFeelDefaults();
-//    defaults.put("Panel.background", Color.BLACK);
-//    defaults.put("TabbedPane.background", Color.BLACK);
+      UIDefaults defaults = UIManager.getLookAndFeelDefaults();
+//      defaults.put("Panel.background", new Color(0xf0, 0xf0, 0xf0));
+//      defaults.put("TabbedPane.background", new Color(0xf0, 0xf0, 0xf0));
+      defaults.put("background", new Color(0xf0, 0xf0, 0xf0));
+      defaults.put("defaultFont", new Font("Arial", Font.PLAIN, 14));
+    }
 
     blockingGlassPane = new BlockingGlassPane();
     setGlassPane(blockingGlassPane);
@@ -62,11 +69,7 @@ public class JFlowMapApplet extends JApplet {
   @Override
   public void init() {
     try {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          createUI();
-        }
-      });
+      createUI();
     } catch (Exception ex) {
       logger.error(ex);
       JMsgPane.showProblemDialog(JFlowMapApplet.this, ex);

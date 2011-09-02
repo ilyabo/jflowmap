@@ -168,7 +168,7 @@ public class ControlPanel {
 
     private JPanel createAnimationTab() {
       JPanel panel = new JPanel(new MigLayout(
-          "insets 20,align center", "[grow 0,center,70][grow 0][800, grow 0][grow 0,center,70]", ""));
+          "insets 20,alignx center", "[grow 0][grow 0,center,65][grow 0][800, grow 0]", ""));
 
 
       final List<String> attrs = attrSpec.getFlowWeightAttrs();
@@ -209,16 +209,28 @@ public class ControlPanel {
       speedSlider.setPaintTicks(true);
       speedSlider.setPaintLabels(true);
 
+      final JButton rewindBut = new JButton("|<<");
+      rewindBut.setFont(rewindBut.getFont().deriveFont(rewindBut.getFont().getSize2D()*0.7f));
+      rewindBut.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          flowMapView.setSelectedFlowWeightAttr(attrs.get(0));
+        }
+      });
+
       final JButton playStopBut = new JButton("Play");
       final Runnable runWhenFinished = new Runnable() {
         @Override
         public void run() {
+          rewindBut.setEnabled(true);
           attrSlider.setEnabled(true);
           speedSlider.setEnabled(true);
           playStopBut.setText("Play");
           updateFlowsTable();
         }
       };
+
+
       playStopBut.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -227,6 +239,7 @@ public class ControlPanel {
             if (attrSlider.getValue() == attrSlider.getMaximum()) {
               attrSlider.setValue(attrSlider.getMinimum());
             }
+            rewindBut.setEnabled(false);
             attrSlider.setEnabled(false);
             speedSlider.setEnabled(false);
             playStopBut.setText("Stop");
@@ -240,39 +253,33 @@ public class ControlPanel {
         }
       });
 
+
+//      JButton fffBut = new JButton(">>|");
+//      fffBut.setFont(fffBut.getFont().deriveFont(fffBut.getFont().getSize2D()*0.7f));
+//      fffBut.addActionListener(new ActionListener() {
+//        @Override
+//        public void actionPerformed(ActionEvent e) {
+//          flowMapView.setSelectedFlowWeightAttr(attrs.get(attrs.size()-1));
+//        }
+//      });
+
       attrSlider.addChangeListener(new ChangeListener() {
         @Override
         public void stateChanged(ChangeEvent e) {
-//          VisualFlowMap vfm = jFlowMap.getVisualFlowMap();
-//          if (vfm.isValueAnimationRunning()) {
-//            vfm.stopValueAnimation();
-//            runWhenFinished.run();
-//          }
-
           final JSlider slider = (JSlider)e.getSource();
           final String attr = attrs.get(slider.getValue());
-//          selAttrLabel.setText(attr);
-//          if (!slider.getValueIsAdjusting()) {
           flowMapView.setSelectedFlowWeightAttr(attr);
           flowMapView.getVisualFlowMap().setFlowWeightAttrLabelVisibile(true);
-            // setSelectedFlowWeightAttr(attr);
-//          }
         }
       });
 
+      panel.add(rewindBut, "aligny center");
       panel.add(playStopBut, "aligny center");
-//      panel.add(new JButton(">>|"), "aligny top");
       panel.add(speedSlider, "hmax 60, growx 0");
+//      panel.add(fffBut, "aligny center");
+
       panel.add(attrSlider, "gapx 20, growx 100, wmax 800");
 //      panel.add(selAttrLabel, "gap 20, aligny top");
-      JButton rewindBut = new JButton("|<<");
-      panel.add(rewindBut, "aligny center");
-      rewindBut.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          flowMapView.setSelectedFlowWeightAttr(attrs.get(0));
-        }
-      });
 
       return panel;
     }
