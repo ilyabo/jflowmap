@@ -117,16 +117,14 @@ public class FlowMapNodeTotals {
 
 
 
-  private static void supplyNodesWithWeightTotals(FlowMapGraph flowMapGraph,
-      String weightAttrName) {
-    Graph g = flowMapGraph.getGraph();
+  private static void supplyNodesWithWeightTotals(FlowMapGraph fmg, String weightAttrName) {
+    Graph g = fmg.getGraph();
     Table nodeTable = g.getNodeTable();
 
     Map<Integer, Double> outsums = Maps.newHashMap();
     Map<Integer, Double> insums = Maps.newHashMap();
 
-    for (int i = 0, numEdges = g.getEdgeCount(); i < numEdges; i++) {
-      Edge e = g.getEdge(i);
+    for (Edge e : fmg.edges()) {
 
       double v = e.getDouble(weightAttrName);
       if (!Double.isNaN(v)) {

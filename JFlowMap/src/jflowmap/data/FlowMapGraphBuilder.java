@@ -352,9 +352,20 @@ public class FlowMapGraphBuilder {
       IntIterator it = g.getEdgeTable().rows(p);
       int cnt = 0;
       while (it.hasNext()) {
-        g.removeEdge(it.nextInt());
-        cnt++;
+        if (g.removeEdge(it.nextInt())) {
+          cnt++;
+        }
       }
+
+//      int cnt = 0;
+//      @SuppressWarnings("unchecked")
+//      List<Integer> toRemove = ImmutableList.copyOf(g.getEdgeTable().rows(p));
+//      for (int i : toRemove) {
+//        if (g.removeEdge(i)) {
+//          cnt++;
+//        }
+//      }
+
       logger.info("Edges removed by filter query: " + cnt + " of " + numEdges + ", left: " + g.getEdgeCount());
     }
   }
