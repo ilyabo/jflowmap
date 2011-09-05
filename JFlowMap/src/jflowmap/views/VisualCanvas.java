@@ -74,6 +74,7 @@ public class VisualCanvas extends PCanvas {
   private ZoomHandler zoomHandler;
   private boolean autoFitOnBoundsChange = true;
   private final PBoxLayoutNode settingButtonsPanel;
+  private final PBoxLayoutNode modeButtonsPanel;
 //  private BlockingGlassPane blockingGlassPane;
 
   public VisualCanvas() {
@@ -89,20 +90,27 @@ public class VisualCanvas extends PCanvas {
     });
 
     settingButtonsPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+    modeButtonsPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
     final PCamera ccam = getCamera();
     ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         PBounds b = ccam.getBoundsReference();
         PNodes.setPosition(settingButtonsPanel, b.getMaxX() - settingButtonsPanel.getFullBoundsReference().width - 4, 4);
+//        PNodes.setPosition(modeButtonsPanel, b.getX() + 4, 4);
       }
     });
+    ccam.addChild(modeButtonsPanel);
     ccam.addChild(settingButtonsPanel);
 
   }
 
   public PBoxLayoutNode getSettingButtonsPanel() {
     return settingButtonsPanel;
+  }
+
+  public PBoxLayoutNode getModeButtonsPanel() {
+    return modeButtonsPanel;
   }
 
   public ZoomHandler getZoomHandler() {

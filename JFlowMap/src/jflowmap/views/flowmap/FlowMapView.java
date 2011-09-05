@@ -18,6 +18,8 @@
 
 package jflowmap.views.flowmap;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
@@ -29,6 +31,7 @@ import jflowmap.geo.MapProjection;
 import jflowmap.models.map.GeoMap;
 import jflowmap.ui.ControlPanel;
 import jflowmap.util.piccolo.PButton;
+import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.flowstrates.ValueType;
@@ -38,8 +41,10 @@ import org.apache.log4j.Logger;
 
 import com.google.common.collect.Iterables;
 
+import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -88,8 +93,16 @@ public class FlowMapView extends AbstractCanvasView {
         }
       }
     });
-    getVisualCanvas().getSettingButtonsPanel().addChild(diffButton);
+    getVisualCanvas().getModeButtonsPanel().addChild(diffButton);
 
+    getCamera().addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        PBounds b = getCamera().getBoundsReference();
+        PBounds lb = visualFlowMap.getVisualLegend().getFullBoundsReference();
+        PNodes.setPosition(getVisualCanvas().getModeButtonsPanel(), b.getX() + 4, lb.getMaxY() + 4);
+      }
+    });
     controlPanel = new ControlPanel(this, fmg.getAttrSpec());
 
     fitInView();

@@ -85,13 +85,16 @@ public class PButton extends PPath {
     this(text, false);
   }
 
-
   public PButton(String text, boolean toggle) {
+    this(text, toggle, FONT);
+  }
+
+  public PButton(String text, boolean toggle, Font font) {
     super(createShape());
     this.isToggleButton = toggle;
 
     textNode = new PText(text.toUpperCase());
-    textNode.setFont(FONT);
+    textNode.setFont(font);
     textNode.setHorizontalAlignment(Component.CENTER_ALIGNMENT);
     addChild(textNode);
 

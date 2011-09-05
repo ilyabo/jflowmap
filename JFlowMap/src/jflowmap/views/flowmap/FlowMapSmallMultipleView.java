@@ -32,9 +32,11 @@ import jflowmap.FlowMapGraph;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
 import jflowmap.util.piccolo.PButton;
+import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.ZoomHandler;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
+import jflowmap.views.Legend;
 import jflowmap.views.PTooltip;
 import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowstrates.ValueType;
@@ -111,11 +113,15 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       canvas.getLayer().addChild(layer.getCamera());
     }
 
+    final Legend legend;
     if (layers.size() > 0) {
       VisualFlowMapLayer layer1 = layers.get(0);
       final VisualFlowMap visualFlowMap = layer1.getVisualFlowMap();
       PCamera cam = layer1.getCamera();
-      cam.addChild(visualFlowMap.getVisualLegend());
+      legend = visualFlowMap.getVisualLegend();
+      cam.addChild(legend);
+    } else {
+      legend = null;
     }
 
     final PButton diffButton = new PButton("DIFF", true);
@@ -133,7 +139,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
         }
       }
     });
-    getVisualCanvas().getSettingButtonsPanel().addChild(diffButton);
+    getVisualCanvas().getModeButtonsPanel().addChild(diffButton);
 
 
     canvas.setBackground(cs.get(ColorCodes.BACKGROUND));
@@ -147,6 +153,12 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
         if (evt.getPropertyName() == PCamera.PROPERTY_BOUNDS) {
           layoutChildren();
 //          fitInView();
+
+          if (legend != null) {
+            PBounds b = getCamera().getBoundsReference();
+            PBounds lb = legend.getFullBoundsReference();
+            PNodes.setPosition(getVisualCanvas().getModeButtonsPanel(), b.getX() + 4, lb.getMaxY() + 4);
+          }
         }
       }
     });

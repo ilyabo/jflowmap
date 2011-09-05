@@ -30,7 +30,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,7 +100,7 @@ public class ViewLoader {
       ViewConfig config;
 
       @Override
-      public IView doInBackground() throws IOException {
+      public IView doInBackground() throws Exception {
         config = ViewConfig.load(viewConfigLocation);
 
         adjustWindowSize(parent);

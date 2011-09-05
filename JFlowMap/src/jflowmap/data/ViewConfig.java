@@ -151,7 +151,7 @@ public class ViewConfig {
     return FileUtils.getFilename(location);
   }
 
-  public IView createView() throws IOException {
+  public IView createView() throws Exception {
     logger.info("Creating " + viewType + " view" +
     		" using " + dataLoader + " data loader" +
     	        " and " + (mapLoader != null ? mapLoader : "no") + " map loader");
@@ -160,7 +160,7 @@ public class ViewConfig {
       final GeoMap mapModel = createMap();
       class ViewRef {
         IView view;
-        IOException ex;
+        Exception ex;
       }
       final ViewRef viewRef = new ViewRef();
 
@@ -169,7 +169,7 @@ public class ViewConfig {
         public void run() {
           try {
             viewRef.view = viewType.createView(ViewConfig.this, data, mapModel);
-          } catch (IOException e) {
+          } catch (Exception e) {
             viewRef.ex = e;
           }
         }
@@ -193,7 +193,7 @@ public class ViewConfig {
     }
   }
 
-  public static ViewConfig load(String location) throws IOException {
+  public static ViewConfig load(String location) throws Exception {
     logger.info("Loading view config '" + location + "'");
     try {
       ViewConfig config = new ViewConfig(loadProps(location), location);
@@ -227,18 +227,19 @@ public class ViewConfig {
     return props;
   }
 
-  private void error(String msg) throws IOException {
+  private void error(String msg) throws Exception {
     error(msg, location, null);
   }
 
-  private static void error(Exception cause, String location) throws IOException {
+  private static void error(Exception cause, String location) throws Exception {
     error(cause.getMessage(), location, cause);
   }
 
-  private static void error(String msg, String location, Exception cause) throws IOException {
+  private static void error(String msg, String location, Exception cause) throws Exception {
     String longMsg = "Error loading view configuration from '" + location + "': " + msg;
-    logger.error(longMsg);
-    throw new IOException(longMsg, cause);
+    logger.error(longMsg, cause);
+//    throw new IOException(longMsg, cause);
+    throw cause;
   }
 
   public String require(String propName) {
@@ -410,14 +411,14 @@ public class ViewConfig {
   enum ViewTypes {
     FLOWSTRATES {
       @Override
-      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
+      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws Exception {
         return new FlowstratesView((FlowMapGraph)data, areaMap, mapProjection(config), config);
       }
 
     },
     FLOWMAP {
       @Override
-      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
+      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws Exception {
         return new FlowMapView(
             VisualFlowMapModel.createFor((FlowMapGraph)data, config),
             areaMap, mapProjection(config), colorSchemeFor(config), config);
@@ -425,7 +426,7 @@ public class ViewConfig {
     },
     FLOWMAPSMALLMULTIPLE {
       @Override
-      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws IOException {
+      public IView createView(ViewConfig config, Object data, GeoMap areaMap) throws Exception {
         return new FlowMapSmallMultipleView(
             VisualFlowMapModel.createFor((FlowMapGraph)data, config),
             areaMap, mapProjection(config), colorSchemeFor(config),
@@ -436,14 +437,14 @@ public class ViewConfig {
     ;
 
     public abstract IView createView(ViewConfig config, Object data, GeoMap areaMap)
-      throws IOException;
+      throws Exception;
 
     private static IFlowMapColorScheme colorSchemeFor(ViewConfig config) {
       return FlowMapColorSchemes.findByName(
           config.getStringOrElse(VisualFlowMapModel.VIEWCONF_COLOR_SCHEME, "Dark"));
     }
 
-    private static MapProjections mapProjection(ViewConfig config) throws IOException {
+    private static MapProjections mapProjection(ViewConfig config) throws Exception {
       String projName = config.getStringOrElse(PROP_MAP_PROJECTION, "None").toUpperCase();
       MapProjections proj = MapProjections.valueOf(
           projName);
