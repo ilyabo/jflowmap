@@ -198,6 +198,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   private void setFlowWeightAttr(String attr, boolean doUpdate) {
     String oldValue = flowWeightAttr;
     if (!oldValue.equals(attr)) {
+      logger.info("Setting flow weight attr to '" + attr + "'");
       flowWeightAttr = attr;
       resetBundling();
       updateFlowWeightAttrLabel();
@@ -337,10 +338,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
     for (Node node : fmg.nodes()) {
       if (!fmg.hasCoords(node)) {
-        // TODO: create rectangles for flowmap nodes with missing coords
+        // TODO: !!! create rectangles for flowmap nodes with missing coords
         //       See FlowMapGraph.haveCoordsPredicate() and
         //           PGeoMap.createAreasForNodesWithoutCoords(nodesWithoutCoords)
-        logger.warn("NaN coordinates passed in for node: " + node);
+//        logger.warn("NaN coordinates passed in for node: " + node);
       } else {
         double lon = node.getDouble(fmg.getNodeLonAttr());
         double lat = node.getDouble(fmg.getNodeLatAttr());
@@ -472,7 +473,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return visualEdge;
   }
 
-  private PBounds getVisualNodesBounds() {
+  PBounds getVisualNodesBounds() {
     if (nodeBounds == null) {
       PBounds b = null;
       for (VisualNode node : visualNodes) {
@@ -598,6 +599,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       visualNode.setSelected(true);
     }
     addAttribute(Attributes.NODE_SELECTION.name(), visualNode);  // will fire a propertyChange event
+  }
+
+  public ValueType getValueType() {
+    return model.getValueType();
   }
 
   public void setValueType(ValueType valueType) {
@@ -782,6 +787,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       return;
     }
 
+    logger.info("Start flow value animation starting from attr " +
+        getFlowMapGraph().getEdgeWeightAttrs().get(startAttrIndex) +
+        " with the speed of " + attrsPerSecond + " attrs per second");
+
     setFlowWeightAttrLabelVisibile(true);
 
     valueAnimation = new ValueAnimationActivity(startAttrIndex, runWhenFinished, attrsPerSecond);
@@ -929,6 +938,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 
   public void stopValueAnimation() {
     if (valueAnimation != null  &&  valueAnimation.isStepping()) {
+      logger.info("Stop flow value animation");
       valueAnimation.stop();
       valueAnimation = null;
     }

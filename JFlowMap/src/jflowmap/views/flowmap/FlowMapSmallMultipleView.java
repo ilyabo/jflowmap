@@ -44,6 +44,8 @@ import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.collect.Lists;
 
 import edu.umd.cs.piccolo.PCamera;
@@ -65,6 +67,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 public class FlowMapSmallMultipleView extends AbstractCanvasView {
 
   public static final String VIEWCONF_NUM_OF_COLUMNS = "view.flowMapSmallMultiple.numberOfColumns";
+  public static Logger logger = Logger.getLogger(FlowMapSmallMultipleView.class);
 
   private List<VisualFlowMapLayer> layers;
   private final VisualFlowMapModel model;
@@ -118,10 +121,23 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     final Legend legend;
     if (layers.size() > 0) {
       VisualFlowMapLayer layer1 = layers.get(0);
-      final VisualFlowMap visualFlowMap = layer1.getVisualFlowMap();
-      PCamera cam = layer1.getCamera();
-      legend = visualFlowMap.getVisualLegend();
+      final VisualFlowMap vfm = layer1.getVisualFlowMap();
+      final PCamera cam = layer1.getCamera();
+      legend = vfm.getVisualLegend();
       cam.addChild(legend);
+      cam.addPropertyChangeListener(new PropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent evt) {
+          if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
+            if (logger.isDebugEnabled()) {
+              PBounds fb = vfm.getVisualNodesBounds();
+              PBounds b = cam.getViewBounds();
+              double areap = (b.width * b.height) / (fb.width * fb.height / 100);
+              logger.debug("View transform to " + b +
+                  " (" + FlowMapView.NUMBER_FORMAT.format(areap) + "% of visible area)");
+            }
+          }
+        }
+      });
     } else {
       legend = null;
     }
@@ -168,6 +184,14 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     });
 
     fitInView();
+  }
+
+  @Override
+  public String getSpec() {
+    return getClass().getSimpleName() + "[" +
+      "name='" + getName() + "', " +
+      "valueType="+ (layers.size() > 0 ? layers.get(0).getVisualFlowMap().getValueType() : "") +
+    "]";
   }
 
   @Override

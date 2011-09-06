@@ -28,6 +28,9 @@ import java.awt.geom.Rectangle2D;
 import jflowmap.geom.GeomUtils;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
+
+import org.apache.log4j.Logger;
+
 import prefuse.data.Edge;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -39,6 +42,8 @@ import edu.umd.cs.piccolo.nodes.PPath;
  * @author Ilya Boyandin
  */
 public abstract class VisualEdge extends PNode {
+
+  private static Logger logger = Logger.getLogger(VisualEdge.class);
 
   protected static final Object ATTR_ANIMATION_ABS_EDGE_WEIGHT = "animAbsWeight";
   private static final int MAX_EDGE_WIDTH = 100;
@@ -301,6 +306,8 @@ public abstract class VisualEdge extends PNode {
     PPath ppath = getEdgePPath();
     if (ppath != null) {
       Paint paint;
+      logger.info((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
+          visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
       if (value) {
         Color color;
         if (showDirection) {

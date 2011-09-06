@@ -35,4 +35,10 @@ public interface IView {
 
   String getName();
 
+  /**
+   * Human readable view configuration specification
+   * (mostly intended for logging).
+   */
+  String getSpec();
+
 }

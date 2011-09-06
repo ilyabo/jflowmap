@@ -308,8 +308,11 @@ public class FlowMapGraphBuilder {
   private static void filterEdgesWithWeightAttr(Graph g, String expr, Iterable<String> weightAttrs,
       CompositePredicate cp) {
     if (!Strings.isNullOrEmpty(expr)) {
+      logger.info("Filter edges with weight attr: " + expr);
       for (String attr : weightAttrs) {
-        cp.add(filterPredicate(expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr)));
+        String p = expr.replaceAll(ALL_WEIGHT_ATTRS_PLACEHOLDER, attr);
+        logger.info("Filter edges: " + p);
+        cp.add(filterPredicate(p));
       }
       filterEdges(g, cp);
     }
@@ -321,12 +324,14 @@ public class FlowMapGraphBuilder {
 
   public static void filterNodes(Graph graph, String expr) {
     if (!Strings.isNullOrEmpty(expr)) {
+      logger.info("Filter nodes: " + expr);
       filterNodes(graph, filterPredicate(expr));
     }
   }
 
   public static void filterEdges(Graph graph, String expr) {
     if (!Strings.isNullOrEmpty(expr)) {
+      logger.info("Filter edges: " + expr);
       filterEdges(graph, filterPredicate(expr));
     }
   }

@@ -31,6 +31,7 @@ import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import jflowmap.ui.BlockingGlassPane;
+import jflowmap.util.Log4ExportAppender;
 import jflowmap.util.SwingUtils;
 import jflowmap.views.VisualCanvas;
 
@@ -48,6 +49,8 @@ public class JFlowMapApplet extends JApplet {
 
   private static Logger logger = Logger.getLogger(JFlowMapApplet.class);
   private final BlockingGlassPane blockingGlassPane;
+
+  private final Log4ExportAppender logExport = Log4ExportAppender.createAndSetup();
 
   public JFlowMapApplet() {
     if (!JFlowMapMain.IS_OS_MAC) {
@@ -74,6 +77,30 @@ public class JFlowMapApplet extends JApplet {
       logger.error(ex);
       JMsgPane.showProblemDialog(JFlowMapApplet.this, ex);
     }
+  }
+
+  public String getViewSpec() {
+    VisualCanvas canvas = SwingUtils.getChildOfType(getContentPane(), VisualCanvas.class);
+    if (canvas != null) {
+      return canvas.getView().getSpec();
+    }
+    return "Could not find VisualCanvas";
+  }
+
+  public String exportLogMessages() {
+    return exportLogMessages(logExport.getMessages());
+  }
+
+  public String exportLogMessagesAfter(long timestamp) {
+    return exportLogMessages(logExport.getMessagesAfter(timestamp));
+  }
+
+  private String exportLogMessages(Iterable<String> messages) {
+    StringBuilder sb = new StringBuilder();
+    for (String msg : messages) {
+      sb.append(msg);
+    }
+    return sb.toString();
   }
 
   public String exportToPng() {

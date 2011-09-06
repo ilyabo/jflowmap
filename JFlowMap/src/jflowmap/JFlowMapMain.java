@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import jflowmap.util.Log4ExportAppender;
 import jflowmap.util.SwingUtils;
 
 import org.apache.log4j.Logger;
@@ -39,6 +40,9 @@ import edu.umd.cs.piccolo.util.PDebug;
 public class JFlowMapMain {
 
   private static Logger logger = Logger.getLogger(JFlowMapMain.class);
+
+  private static final Log4ExportAppender logExport = Log4ExportAppender.createAndSetup();
+
 
   public static boolean IS_OS_MAC = getOSMatches("Mac");
   public static final String OS_NAME = System.getProperty("os.name");

@@ -325,4 +325,5 @@ public class ViewLoader {
     }
     return numVisible;
   }
+
 }

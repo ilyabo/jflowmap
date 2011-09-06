@@ -29,10 +29,14 @@ import jflowmap.data.ViewConfig;
 import jflowmap.views.MapBackgroundImage;
 import jflowmap.views.flowstrates.ValueType;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Ilya Boyandin
  */
 public class VisualFlowMapModel {
+
+  private static Logger logger = Logger.getLogger(VisualFlowMapModel.class);
 
   public static final String DEFAULT_NODE_X_ATTR_NAME = "x";
   public static final String DEFAULT_NODE_Y_ATTR_NAME = "y";
@@ -173,6 +177,7 @@ public class VisualFlowMapModel {
 
   public void setValueType(ValueType valueType) {
     if (this.valueType != valueType) {
+      logger.info("Setting value type to: " + valueType);
       this.valueType = valueType;
       // TODO: update
     }

@@ -613,6 +613,11 @@ public class FlowstratesView extends AbstractCanvasView {
     return viewConfig.getName();
   }
 
+  @Override
+  public String getSpec() {
+    return getName(); // TODO: add more info
+  }
+
   public Iterable<String> getAggLayerNames() {
     return layers.getLayerNames();
   }

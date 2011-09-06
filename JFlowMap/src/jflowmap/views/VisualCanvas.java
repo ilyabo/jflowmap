@@ -42,6 +42,7 @@ import javax.swing.KeyStroke;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import jflowmap.IView;
 import jflowmap.JFlowMapApplet;
 import jflowmap.util.SwingUtils;
 import jflowmap.util.piccolo.PBoxLayoutNode;
@@ -75,9 +76,12 @@ public class VisualCanvas extends PCanvas {
   private boolean autoFitOnBoundsChange = true;
   private final PBoxLayoutNode settingButtonsPanel;
   private final PBoxLayoutNode modeButtonsPanel;
+
+  private final IView view;
 //  private BlockingGlassPane blockingGlassPane;
 
-  public VisualCanvas() {
+  public VisualCanvas(IView view) {
+    this.view = view;
     setZoomEventHandler(null);
     setZoomHandler(createZoomHandler());
     setPanEventHandler(new PanHandler());
@@ -104,6 +108,10 @@ public class VisualCanvas extends PCanvas {
     ccam.addChild(modeButtonsPanel);
     ccam.addChild(settingButtonsPanel);
 
+  }
+
+  public IView getView() {
+    return view;
   }
 
   public PBoxLayoutNode getSettingButtonsPanel() {

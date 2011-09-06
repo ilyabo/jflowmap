@@ -56,7 +56,7 @@ public abstract class AbstractCanvasView implements IView {
   }
 
   protected VisualCanvas createVisualCanvas() {
-    return new VisualCanvas();
+    return new VisualCanvas(this);
   }
 
   @Override

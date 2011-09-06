@@ -93,7 +93,29 @@ public class FlowMapView extends AbstractCanvasView {
 
     controlPanel = new ControlPanel(this, fmg.getAttrSpec());
 
+    getCamera().addPropertyChangeListener(new PropertyChangeListener() {
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
+          if (logger.isDebugEnabled()) {
+            PBounds fb = getVisualFlowMap().getVisualNodesBounds();
+            PBounds b = getCamera().getViewBounds();
+            double areap = (b.width * b.height) / (fb.width * fb.height / 100);
+            logger.debug("View transform to " + b +
+                " (" + FlowMapView.NUMBER_FORMAT.format(areap) + "% of visible area)");
+          }
+        }
+      }
+    });
+
     fitInView();
+  }
+
+  @Override
+  public String getSpec() {
+    return getClass().getSimpleName() + "[" +
+      "name='" + getName() + "', " +
+      "valueType="+visualFlowMap.getValueType() +
+    "]";
   }
 
   public static void addDiffButton(final VisualFlowMap visualFlowMap) {
