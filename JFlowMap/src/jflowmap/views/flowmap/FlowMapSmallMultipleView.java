@@ -32,6 +32,7 @@ import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
+import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
 import jflowmap.util.piccolo.PNodes;
@@ -45,6 +46,8 @@ import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
 import org.apache.log4j.Logger;
+
+import prefuse.data.Edge;
 
 import com.google.common.collect.Lists;
 
@@ -90,7 +93,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     layers = Lists.newArrayList();
     for (String attr : fmg.getEdgeWeightAttrs()) {
       final PCamera camera = new PCamera();
-      VisualFlowMap vfm = new VisualFlowMap(this, model, true, proj, attr, cs) {
+      final VisualFlowMap vfm = new VisualFlowMap(this, model, true, proj, attr, cs) {
         @Override
         public PCamera getCamera() {
           return camera;
@@ -114,6 +117,19 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       }
       VisualFlowMapLayer layer = new VisualFlowMapLayer(vfm, camera);
       layers.add(layer);
+
+      vfm.addPropertyChangeListener(VisualFlowMap.PROPERTY_HIGHLIGHTED, new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+          for (VisualFlowMapLayer layer : layers) {
+            if (layer.getVisualFlowMap() != vfm) {
+              @SuppressWarnings("unchecked")
+              Pair<Edge, Boolean> val = (Pair<Edge, Boolean>) evt.getNewValue();
+              layer.getVisualFlowMap().setEdgeHighlighted(val.first(), val.second());
+            }
+          }
+        }
+      });
 
       canvas.getLayer().addChild(layer.getCamera());
     }

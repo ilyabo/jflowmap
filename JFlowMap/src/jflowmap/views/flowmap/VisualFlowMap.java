@@ -83,6 +83,11 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   public static final int PROPERTY_CODE_FLOW_WEIGHT_ATTR = 1 << 11;
   public static final String PROPERTY_FLOW_WEIGHT_ATTR = "flowWeightAttr";
 
+  public static final int PROPERTY_CODE_HIGHLIGHTED = 1 << 12;
+  public static final String PROPERTY_HIGHLIGHTED = "highlighted";
+
+  private ValueAnimationActivity valueAnimation;
+
   public enum Attributes {
     NODE_SELECTION
   }
@@ -766,8 +771,6 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
   }
 
 
-  private ValueAnimationActivity valueAnimation;
-
   public VisualNode getVisualNodeByLabel(String label) {
     for (VisualNode node : visualNodes) {
       if (node.getLabel().equals(label)) {
@@ -948,5 +951,20 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     return model.createForceDirectedBundlerParameters(getValueAttr());
   }
 
+  /**
+   * Overriden to allow invoking from VisualEdge
+   */
+  @Override
+  protected void firePropertyChange(int propertyCode, String propertyName,
+      Object oldValue, Object newValue) {
+    super.firePropertyChange(propertyCode, propertyName, oldValue, newValue);
+  }
+
+  public void setEdgeHighlighted(Edge edge, boolean value) {
+    VisualEdge ve = edgesToVisuals.get(edge);
+    if (ve != null  &&  ve.getVisible()) {
+      ve.setHighlighted(value, false, false, false);
+    }
+  }
 
 }

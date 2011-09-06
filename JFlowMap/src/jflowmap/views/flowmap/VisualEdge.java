@@ -26,6 +26,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 import jflowmap.geom.GeomUtils;
+import jflowmap.util.Pair;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 
@@ -58,6 +59,8 @@ public abstract class VisualEdge extends PNode {
   private final double edgeLength;
 
   private PPath edgePPath;
+
+  private boolean highlighted;
 
   public VisualEdge(VisualFlowMap visualFlowMap, Edge edge, VisualNode sourceNode, VisualNode targetNode) {
     this.edge = edge;
@@ -303,29 +306,42 @@ public abstract class VisualEdge extends PNode {
   }
 
   public void setHighlighted(boolean value, boolean showDirection, boolean asOutgoing) {
-    PPath ppath = getEdgePPath();
-    if (ppath != null) {
-      Paint paint;
-      logger.info((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
-          visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
-      if (value) {
-        Color color;
-        if (showDirection) {
-          if (asOutgoing) {
-            color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT);
+    setHighlighted(value, showDirection, asOutgoing, true);
+  }
+
+  public void setHighlighted(boolean value, boolean showDirection, boolean asOutgoing,
+      boolean propagateEvent) {
+    if (this.highlighted != value) {
+      this.highlighted = value;
+      PPath ppath = getEdgePPath();
+      if (ppath != null) {
+        Paint paint;
+        logger.info((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
+            visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
+        if (value) {
+          Color color;
+          if (showDirection) {
+            if (asOutgoing) {
+              color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT);
+            } else {
+              color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT);
+            }
           } else {
-            color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT);
+            color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT);
           }
+          paint = color;
         } else {
-          color = visualFlowMap.getColor(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT);
+          paint = createPaintFor(normalizeForColorScale(getEdgeWeight()));
         }
-        paint = color;
-      } else {
-        paint = createPaintFor(normalizeForColorScale(getEdgeWeight()));
+        ppath.setStrokePaint(paint);
       }
-      ppath.setStrokePaint(paint);
+      repaint();
+      if (propagateEvent) {
+        getVisualFlowMap().firePropertyChange(
+            VisualFlowMap.PROPERTY_CODE_HIGHLIGHTED, VisualFlowMap.PROPERTY_HIGHLIGHTED,
+            Pair.of(edge, !value), Pair.of(edge, value));
+      }
     }
-    repaint();
   }
 
   public void update() {
