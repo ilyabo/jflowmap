@@ -18,6 +18,7 @@
 
 package jflowmap.views.flowmap;
 
+import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -30,10 +31,12 @@ import jflowmap.data.ViewConfig;
 import jflowmap.geo.MapProjection;
 import jflowmap.models.map.GeoMap;
 import jflowmap.ui.ControlPanel;
+import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.views.ColorCodes;
 import jflowmap.views.IFlowMapColorScheme;
+import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
@@ -45,6 +48,7 @@ import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.util.PBounds;
+import edu.umd.cs.piccolo.util.PPaintContext;
 
 /**
  * @author Ilya Boyandin
@@ -77,12 +81,28 @@ public class FlowMapView extends AbstractCanvasView {
       setColorScheme(cs);
     }
 
+    VisualCanvas canvas = getVisualCanvas();
+    canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+    canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
+
     visualFlowMap.setFlowWeightAttrLabelVisibile(
       config.getBoolOrElse(VisualFlowMapModel.VIEWCONF_SHOW_FLOW_WEIGHT_ATTR_LABEL, false)
     );
 
-    final PButton diffButton = new PButton("DIFF", true);
-    getCamera().addChild(diffButton);
+    addDiffButton(visualFlowMap);
+
+    controlPanel = new ControlPanel(this, fmg.getAttrSpec());
+
+    fitInView();
+  }
+
+  public static void addDiffButton(final VisualFlowMap visualFlowMap) {
+    final PCamera cam = visualFlowMap.getCamera();
+    final VisualCanvas canvas = visualFlowMap.getVisualCanvas();
+
+    final PButton diffButton = new PButton("DIFF", true, new Font("Dialog", Font.PLAIN, 11));
+    cam.addChild(diffButton);
+
     diffButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
@@ -93,19 +113,17 @@ public class FlowMapView extends AbstractCanvasView {
         }
       }
     });
-    getVisualCanvas().getModeButtonsPanel().addChild(diffButton);
 
-    getCamera().addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
+    canvas.getModeButtonsPanel().addChild(diffButton);
+    cam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
-        PBounds b = getCamera().getBoundsReference();
         PBounds lb = visualFlowMap.getVisualLegend().getFullBoundsReference();
-        PNodes.setPosition(getVisualCanvas().getModeButtonsPanel(), b.getX() + 4, lb.getMaxY() + 4);
+        PBoxLayoutNode mp = canvas.getModeButtonsPanel();
+        PBounds mpb = mp.getFullBoundsReference();
+        PNodes.setPosition(mp, lb.getMaxX() - mpb.width, lb.getMaxY() + 4);
       }
     });
-    controlPanel = new ControlPanel(this, fmg.getAttrSpec());
-
-    fitInView();
   }
 
   @Override

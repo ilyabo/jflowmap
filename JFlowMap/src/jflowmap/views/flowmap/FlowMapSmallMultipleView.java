@@ -19,6 +19,7 @@
 package jflowmap.views.flowmap;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -31,6 +32,7 @@ import jflowmap.AbstractCanvasView;
 import jflowmap.FlowMapGraph;
 import jflowmap.geo.MapProjections;
 import jflowmap.models.map.GeoMap;
+import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PButton;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.ZoomHandler;
@@ -75,8 +77,8 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
     this.numberOfColumns = numberOfColumns;
 
     FlowMapGraph fmg = model.getFlowMapGraph();
-    VisualCanvas canvas = getVisualCanvas();
 
+    VisualCanvas canvas = getVisualCanvas();
     canvas.setInteractingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
     canvas.setAnimatingRenderQuality(PPaintContext.HIGH_QUALITY_RENDERING);
 
@@ -124,7 +126,7 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
       legend = null;
     }
 
-    final PButton diffButton = new PButton("DIFF", true);
+    final PButton diffButton = new PButton("DIFF", true, new Font("Dialog", Font.PLAIN, 11));
     getCamera().addChild(diffButton);
     diffButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
@@ -155,9 +157,11 @@ public class FlowMapSmallMultipleView extends AbstractCanvasView {
 //          fitInView();
 
           if (legend != null) {
-            PBounds b = getCamera().getBoundsReference();
+//            PBounds b = getCamera().getBoundsReference();
             PBounds lb = legend.getFullBoundsReference();
-            PNodes.setPosition(getVisualCanvas().getModeButtonsPanel(), b.getX() + 4, lb.getMaxY() + 4);
+            PBoxLayoutNode mp = getVisualCanvas().getModeButtonsPanel();
+            PBounds mpb = mp.getFullBoundsReference();
+            PNodes.setPosition(mp, lb.getMaxX() - mpb.width, lb.getMaxY() + 4);
           }
         }
       }

@@ -52,6 +52,7 @@ import jflowmap.views.IFlowMapColorScheme;
 import jflowmap.views.Legend;
 import jflowmap.views.MapBackgroundImage;
 import jflowmap.views.PTooltip;
+import jflowmap.views.VisualCanvas;
 import jflowmap.views.flowstrates.ValueType;
 import jflowmap.views.map.PGeoMap;
 
@@ -169,6 +170,10 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
 //    flowWeightAttrLabel.setTransparency(0.9f);
     getCamera().addChild(flowWeightAttrLabel);
     flowWeightAttrLabel.setVisible(false);
+  }
+
+  public VisualCanvas getVisualCanvas() {
+    return view.getVisualCanvas();
   }
 
   protected PTooltip createTooltip() {

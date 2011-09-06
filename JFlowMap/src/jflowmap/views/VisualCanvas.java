@@ -91,6 +91,7 @@ public class VisualCanvas extends PCanvas {
 
     settingButtonsPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
     modeButtonsPanel = new PBoxLayoutNode(PBoxLayoutNode.Axis.X, 5);
+
     final PCamera ccam = getCamera();
     ccam.addPropertyChangeListener(PCamera.PROPERTY_BOUNDS, new PropertyChangeListener() {
       @Override
