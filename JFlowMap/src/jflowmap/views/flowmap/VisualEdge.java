@@ -205,6 +205,14 @@ public abstract class VisualEdge extends PNode {
     setChildrenPickable(visible);
   }
 
+  @Override
+  public void setVisible(boolean visible) {
+    super.setVisible(visible);
+    if (!visible  &&  highlighted) {
+      setHighlighted(false, false, false);
+    }
+  }
+
   public boolean getVisibilityFor(double value) {
     final VisualFlowMapModel model = visualFlowMap.getModel();
     double weightFilterMin = model.getEdgeWeightFilterMin();
@@ -320,10 +328,6 @@ public abstract class VisualEdge extends PNode {
       PPath ppath = getEdgePPath();
       if (ppath != null) {
         Paint paint;
-        if (logger.isDebugEnabled()) {
-          logger.debug((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
-              visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
-        }
         if (value) {
           Color color;
           if (showDirection) {
@@ -343,6 +347,10 @@ public abstract class VisualEdge extends PNode {
       }
       repaint();
       if (propagateEvent) {
+        if (logger.isDebugEnabled()) {
+          logger.debug((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
+              visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
+        }
         getVisualFlowMap().firePropertyChange(
             VisualFlowMap.PROPERTY_CODE_HIGHLIGHTED, VisualFlowMap.PROPERTY_HIGHLIGHTED,
             Pair.of(edge, !value), Pair.of(edge, value));
