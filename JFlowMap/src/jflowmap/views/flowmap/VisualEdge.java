@@ -38,6 +38,7 @@ import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
 import edu.umd.cs.piccolo.event.PInputEvent;
 import edu.umd.cs.piccolo.event.PInputEventListener;
 import edu.umd.cs.piccolo.nodes.PPath;
+import edu.umd.cs.piccolo.util.PBounds;
 
 /**
  * @author Ilya Boyandin
@@ -215,13 +216,16 @@ public abstract class VisualEdge extends PNode {
 
     double absValue = Math.abs(value);
 
+    PBounds vb = getVisualFlowMap().getCamera().getViewBounds();
+
     boolean visible =
         !Double.isNaN(value)  &&
         value != 0.0  &&
 //        model.getEdgeFilter().accepts(this)
         weightFilterMin <= absValue && absValue <= weightFilterMax  &&
 //        edgeLengthFilterMin <= length && length <= edgeLengthFilterMax &&
-        (!isSelfLoop()  ||  visualFlowMap.getModel().getShowSelfLoops())
+        (!isSelfLoop()  ||  visualFlowMap.getModel().getShowSelfLoops())  &&
+        (vb.contains(getSourceNode().getPoint())  ||  vb.contains(getTargetNode().getPoint()))
     ;
 
     return visible;
@@ -316,8 +320,10 @@ public abstract class VisualEdge extends PNode {
       PPath ppath = getEdgePPath();
       if (ppath != null) {
         Paint paint;
-        logger.info((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
-            visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
+        if (logger.isDebugEnabled()) {
+          logger.debug((value ? "H" : "Unh") + "ighlight edge [" + getLabel() + " (" +
+              visualFlowMap.getValueAttr() + " = " + getEdgeWeight() + ")]");
+        }
         if (value) {
           Color color;
           if (showDirection) {
@@ -365,9 +371,9 @@ public abstract class VisualEdge extends PNode {
     public void mouseExited(PInputEvent event) {
       VisualEdge ve = PNodes.getAncestorOfType(event.getPickedNode(), VisualEdge.class);
       if (ve != null) {
-        if (!ve.getVisible()) {
-          return;
-        }
+//        if (!ve.getVisible()) {
+//          return;
+//        }
         ve.setHighlighted(false, false, false);
         ve.getVisualFlowMap().hideTooltip();
       }

@@ -163,6 +163,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
         if (evt.getPropertyName() == PCamera.PROPERTY_VIEW_TRANSFORM) {
           hideTooltip();
           updateNodePositions();
+          updateEdgeVisibility();
         }
       }
     });
