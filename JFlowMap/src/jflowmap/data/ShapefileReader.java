@@ -50,6 +50,10 @@ public class ShapefileReader {
       Table table = asTable(dbf);  // create table which we can query and filter
 
       if (dbfAreaIdField != null) {
+        if (table.getColumn(dbfAreaIdField) == null) {
+          throw new IllegalArgumentException("Cannot read DBF column '" + dbfAreaIdField + "'");
+        }
+
         for (int i = 0; i < geoms.size(); i++) {
           Geometry g = geoms.get(i);
           g.setUserData(table.get(i, dbfAreaIdField));
