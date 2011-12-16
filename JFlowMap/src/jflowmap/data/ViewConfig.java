@@ -66,6 +66,7 @@ public class ViewConfig {
   public static final String PROP_VIEW = "view";
 
   public static final String PROP_WINDOW = "window";
+  public static final String PROP_WINDOW_TITLE = PROP_WINDOW + ".title";
   public static final String PROP_WINDOW_SIZE = PROP_WINDOW + ".size";
   public static final String PROP_WINDOW_SETTINGS = PROP_WINDOW + ".settings";
   public static final String PROP_WINDOW_SETTINGS_SHOW = PROP_WINDOW_SETTINGS + ".show";

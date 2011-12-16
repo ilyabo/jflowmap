@@ -41,3 +41,4 @@ map.background.boundingBox=-2.722533516968113,-1.8260025298264655,5.601597416002
 map.background.transparency=0.5
 
 window.settings.embed=true
+window.title=Refugees

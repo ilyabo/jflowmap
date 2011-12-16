@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -103,25 +104,43 @@ public class ViewLoader {
       public IView doInBackground() throws Exception {
         config = ViewConfig.load(viewConfigLocation);
 
-        adjustWindowSize(parent);
+        adjustWindowSizeAndTitle(parent);
 
         return config.createView();
       }
 
-      private void adjustWindowSize(final Container parent) {
+      private Dimension getConfigWindowSize() {
         String size = config.getString(ViewConfig.PROP_WINDOW_SIZE);
         if (size != null) {
           Matcher m = Pattern.compile("(\\d+)x(\\d+)").matcher(size);
           if (m.matches()) {
-            Dimension dim = new Dimension(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+            return new Dimension(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
+          }
+        }
+        return null;
+      }
 
-            JInternalFrame iframe = SwingUtils.getInternalFrameFor(parent);
-            if (iframe != null) {
-              iframe.setSize(dim);
-            } else {
-              Window win = SwingUtils.getWindowFor(parent);
-              if (win != null) {
-                win.setSize(dim);
+      private void adjustWindowSizeAndTitle(final Container parent) {
+        Dimension size = getConfigWindowSize();
+        String title = config.getString(ViewConfig.PROP_WINDOW_TITLE);
+        if (size != null  ||  title != null) {
+          JInternalFrame iframe = SwingUtils.getInternalFrameFor(parent);
+          if (iframe != null) {
+            if (size != null) {
+              iframe.setSize(size);
+            }
+            if (title != null) {
+              iframe.setTitle(title);
+            }
+          } else {
+            Window win = SwingUtils.getWindowFor(parent);
+            if (size != null) {
+              win.setSize(size);
+              SwingUtils.centerOnScreen(win);
+            }
+            if (title != null) {
+              if (win instanceof Frame) {
+                ((Frame)win).setTitle(title);
               }
             }
           }

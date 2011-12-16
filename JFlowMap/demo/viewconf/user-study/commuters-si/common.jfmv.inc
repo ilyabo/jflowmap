@@ -1,4 +1,4 @@
-view.flowmap.colorScheme=Dark
+view.flowmap.colorScheme=Light Blue
 
 view.flowmap.fillEdgesWithGradient=false
 view.flowmap.showDirectionMarkers=false

@@ -20,13 +20,17 @@ package jflowmap;
 
 import java.applet.Applet;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 
 import javax.swing.JApplet;
+import javax.swing.JFrame;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
@@ -72,7 +76,17 @@ public class JFlowMapApplet extends JApplet {
   @Override
   public void init() {
     try {
-      createUI();
+      Container parent;
+
+      JFrame frame = new JFrame("JFlowMap");
+
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      frame.setSize((int)(screenSize.getWidth() * 0.8), (int)(screenSize.getHeight() * 0.8));
+      SwingUtils.centerOnScreen(frame);
+      parent = frame.getContentPane();
+      createUI(parent);
+      frame.setVisible(true);
+
     } catch (Exception ex) {
       logger.error(ex);
       JMsgPane.showProblemDialog(JFlowMapApplet.this, ex);
@@ -172,7 +186,7 @@ public class JFlowMapApplet extends JApplet {
     return SwingUtils.getChildOfType(getContentPane(), VisualCanvas.class);
   }
 
-  private void createUI() {
+  private void createUI(Container parent) {
     String viewConfig = getParameter("viewConfig");
     if (Strings.isNullOrEmpty(viewConfig)) {
       JMsgPane.showProblemDialog(JFlowMapApplet.this,
@@ -180,7 +194,7 @@ public class JFlowMapApplet extends JApplet {
           "in the 'viewConfig' applet parameter");
     } else {
       try {
-        ViewLoader.loadView(viewConfig, getContentPane());
+        ViewLoader.loadView(viewConfig, parent);
       } catch (Exception ex) {
         logger.error("Cannot open view", ex);
         JMsgPane.showProblemDialog(JFlowMapApplet.this, ex);
