@@ -323,11 +323,18 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
 //      }
 //    }
 
-
+/*
     if (!whole  &&  full.getHeight() > full.getWidth() * 10) {
       toFit = partial;
     } else {
       toFit = full;
+    }
+*/
+
+    if (whole) {
+      toFit = full;
+    } else {
+      toFit = partial;
     }
 
     PiccoloUtils.animateViewToPaddedBounds(camera, toFit, calcFloatingLabelInsets(),

@@ -74,10 +74,22 @@ enum RowOrderings implements RowOrdering {
       return Collections.reverseOrder(fs.getFlowMapGraph().createMaxEdgeWeightDiffComparator());
     }
   },
+  AVG_DIFF_IN_ROW("avg diff") {
+    @Override
+    public Comparator<Edge> getComparator(FlowstratesView fs) {
+      return Collections.reverseOrder(fs.getFlowMapGraph().createAvgEdgeWeightDiffComparator());
+    }
+  },
   MAX_DIFF_REL_IN_ROW("max relative diff") {
     @Override
     public Comparator<Edge> getComparator(FlowstratesView fs) {
       return Collections.reverseOrder(fs.getFlowMapGraph().createMaxEdgeWeightRelativeDiffComparator());
+    }
+  },
+  AVG_DIFF_REL_IN_ROW("avg relative diff") {
+    @Override
+    public Comparator<Edge> getComparator(FlowstratesView fs) {
+      return Collections.reverseOrder(fs.getFlowMapGraph().createAvgEdgeWeightRelativeDiffComparator());
     }
   },
   /*

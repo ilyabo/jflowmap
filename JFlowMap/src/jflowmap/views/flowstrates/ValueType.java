@@ -19,6 +19,16 @@ public enum ValueType {
     public String getColumnValueAttr(FlowMapAttrSpec attrSpec, String attr) {
       return attr;
     }
+
+    @Override
+    public RowOrdering getHeatmapRowByMaxOrdering() {
+      return RowOrderings.MAX_MAGNITUDE_IN_ROW;
+    }
+
+    @Override
+    public RowOrdering getHeatmapRowByAvgOrdering() {
+      return RowOrderings.AVG_MAGNITUDE_IN_ROW;
+    }
   },
 
   DIFF("difference") {
@@ -31,6 +41,16 @@ public enum ValueType {
     public String getColumnValueAttr(FlowMapAttrSpec attrSpec, String columnAttr) {
       return attrSpec.getFlowWeightDiffAttr(columnAttr);
     }
+
+    @Override
+    public RowOrdering getHeatmapRowByMaxOrdering() {
+      return RowOrderings.MAX_DIFF_IN_ROW;
+    }
+
+    @Override
+    public RowOrdering getHeatmapRowByAvgOrdering() {
+      return RowOrderings.AVG_DIFF_IN_ROW;
+    }
   },
 
   DIFF_REL("relative diff") {
@@ -42,6 +62,16 @@ public enum ValueType {
     @Override
     public String getColumnValueAttr(FlowMapAttrSpec attrSpec, String columnAttr) {
       return attrSpec.getFlowWeightRelativeDiffAttr(columnAttr);
+    }
+
+    @Override
+    public RowOrdering getHeatmapRowByMaxOrdering() {
+      return RowOrderings.MAX_DIFF_REL_IN_ROW;
+    }
+
+    @Override
+    public RowOrdering getHeatmapRowByAvgOrdering() {
+      return RowOrderings.AVG_DIFF_REL_IN_ROW;
     }
   };
 
@@ -59,5 +89,9 @@ public enum ValueType {
   public String toString() {
     return name;
   }
+
+  public abstract RowOrdering getHeatmapRowByMaxOrdering();
+
+  public abstract RowOrdering getHeatmapRowByAvgOrdering();
 
 }

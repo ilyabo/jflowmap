@@ -652,6 +652,10 @@ public class FlowMapGraph {
     return createMaxEdgeWeightComparator(getEdgeWeightRelativeDiffAttrNames());
   }
 
+  public Comparator<Edge> createAvgEdgeWeightRelativeDiffComparator() {
+    return createAvgEdgeWeightComparator(getEdgeWeightRelativeDiffAttrNames());
+  }
+
   public Comparator<Edge> createMaxEdgeWeightComparator(final String weightAttr) {
     return new Comparator<Edge>() {
       @Override

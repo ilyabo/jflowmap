@@ -426,8 +426,10 @@ public class FlowstratesView extends AbstractCanvasView {
           groupByDestButton.setPressed(false);
           allToAllButton.setPressed(false);
           setSelectedAggLayer(DefaultAggLayersBuilder.BY_ORIGIN_LAYER);
+          temporalLayer.fitInView(true, true);
         } else {
           setSelectedAggLayer(null);
+          temporalLayer.fitInView(false, false);
         }
       }
     });
@@ -440,8 +442,10 @@ public class FlowstratesView extends AbstractCanvasView {
           groupByOriginButton.setPressed(false);
           allToAllButton.setPressed(false);
           setSelectedAggLayer(DefaultAggLayersBuilder.BY_DEST_LAYER);
+          temporalLayer.fitInView(true, true);
         } else {
           setSelectedAggLayer(null);
+          temporalLayer.fitInView(false, false);
         }
       }
     });
@@ -453,8 +457,10 @@ public class FlowstratesView extends AbstractCanvasView {
           groupByOriginButton.setPressed(false);
           groupByDestButton.setPressed(false);
           setSelectedAggLayer(DefaultAggLayersBuilder.ALL_TO_ALL_LAYER);
+          temporalLayer.fitInView(true, true);
         } else {
           setSelectedAggLayer(null);
+          temporalLayer.fitInView(false, false);
         }
       }
     });
@@ -467,7 +473,7 @@ public class FlowstratesView extends AbstractCanvasView {
     sortByMaxButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        setRowOrdering(RowOrderings.MAX_MAGNITUDE_IN_ROW);
+        setRowOrdering(getValueType().getHeatmapRowByMaxOrdering());
         temporalLayer.repaint();
       }
     });
@@ -478,7 +484,7 @@ public class FlowstratesView extends AbstractCanvasView {
     sortByAvgButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
-        setRowOrdering(RowOrderings.AVG_MAGNITUDE_IN_ROW);
+        setRowOrdering(getValueType().getHeatmapRowByAvgOrdering());
         temporalLayer.repaint();
       }
     });
