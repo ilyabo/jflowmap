@@ -462,17 +462,26 @@ public class FlowstratesView extends AbstractCanvasView {
 
     mainButtonPanel.addChild(new PText("   "));
 
-    final PButton sortByMaxButton = new PButton("SORT", false);
+    final PButton sortByMaxButton = new PButton("SORT BY MAX", false);
     mainButtonPanel.addChild(sortByMaxButton);
     sortByMaxButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
         setRowOrdering(RowOrderings.MAX_MAGNITUDE_IN_ROW);
         temporalLayer.repaint();
-//        controlPanel.set
       }
     });
 
+
+    final PButton sortByAvgButton = new PButton("SORT BY AVG", false);
+    mainButtonPanel.addChild(sortByAvgButton);
+    sortByAvgButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        setRowOrdering(RowOrderings.AVG_MAGNITUDE_IN_ROW);
+        temporalLayer.repaint();
+      }
+    });
 
 
 
@@ -541,7 +550,7 @@ public class FlowstratesView extends AbstractCanvasView {
     });
     temporalViewButtonPanel.addChild(tempFitButton);
 
-    PButton tempFitAllButton = new PButton("ALL");
+    PButton tempFitAllButton = new PButton("SHOW ALL");
     tempFitAllButton.addInputEventListener(new PBasicInputEventHandler() {
       @Override
       public void mouseClicked(PInputEvent event) {
