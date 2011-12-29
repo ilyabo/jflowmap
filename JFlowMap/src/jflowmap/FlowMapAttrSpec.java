@@ -90,6 +90,10 @@ public class FlowMapAttrSpec {
     return requiredFlowAttrs.contains(attrName);
   }
 
+  public boolean isFlowWeightAttr(String attrName) {
+    return flowWeightAttrs.contains(attrName);
+  }
+
   public boolean hasNodePositions() {
     return (nodeLonAttr != null  &&  nodeLatAttr != null);
   }

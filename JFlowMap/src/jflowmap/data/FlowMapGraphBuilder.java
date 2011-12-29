@@ -234,9 +234,11 @@ public class FlowMapGraphBuilder {
       requireValue(attrSpec.getFlowTargetNodeAttr(), attrValues),
       weightAttrValues(attrSpec.getFlowWeightAttrs(), attrValues)
     );
-
     setCustomAttrs(edge, attrValues, new Predicate<String>() {
-      public boolean apply(String attrName) { return !attrSpec.isRequiredFlowAttr(attrName); }
+      public boolean apply(String attrName) {
+       //return !attrSpec.isRequiredFlowAttr(attrName);
+        return !attrSpec.isFlowWeightAttr(attrName);
+      }
     });
   }
 
