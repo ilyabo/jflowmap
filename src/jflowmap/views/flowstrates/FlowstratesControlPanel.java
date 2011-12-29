@@ -40,8 +40,6 @@ import javax.swing.event.DocumentListener;
 import jflowmap.ColorSchemes;
 import net.miginfocom.swing.MigLayout;
 
-import com.google.common.collect.Iterables;
-
 
 /**
  * @author Ilya Boyandin
@@ -125,18 +123,18 @@ public class FlowstratesControlPanel extends JPanel {
     });
 
 
-    panel.add(new JLabel("Group by:"), "al right, gapleft 10");
-    JComboBox groupByCombo = new JComboBox(
-        Iterables.toArray(view.getAggLayerNames(), Object.class));
-    panel.add(groupByCombo, "height min, width min");
-//    groupByCombo.setEnabled(false);
-    groupByCombo.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        view.clearFilters();
-        view.setSelectedAggLayer((String)e.getItem());
-      }
-    });
+//    panel.add(new JLabel("Group by:"), "al right, gapleft 10");
+//    JComboBox groupByCombo = new JComboBox(
+//        Iterables.toArray(view.getAggLayerNames(), Object.class));
+//    panel.add(groupByCombo, "height min, width min");
+////    groupByCombo.setEnabled(false);
+//    groupByCombo.addItemListener(new ItemListener() {
+//      @Override
+//      public void itemStateChanged(ItemEvent e) {
+//        view.clearFilters();
+//        view.setSelectedAggLayer((String)e.getItem());
+//      }
+//    });
 
 
 //    JButton applyButton = new JButton("Apply");

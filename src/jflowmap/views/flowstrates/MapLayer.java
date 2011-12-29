@@ -467,7 +467,7 @@ public class MapLayer extends PLayer implements ViewLayer {
 
     } else {
       double value = flowstratesView.getValue(edge, weightAttr);
-      colorizeMapArea(flowstratesView.getAggLayers().getNodeId(edge, endpoint), value, hover);
+      colorizeMapArea(FlowMapGraph.getIdOfNode(endpoint.nodeOf(edge)), value, hover);
     }
   }
 

@@ -645,7 +645,7 @@ public class FlowMapGraph {
   }
 
   public Comparator<Edge> createMaxEdgeWeightDiffComparator() {
-    return createMaxEdgeWeightComparator(getEdgeWeightDiffAttr());
+    return createMaxEdgeWeightComparator(getEdgeWeightDiffAttrNames());
   }
 
   public Comparator<Edge> createMaxEdgeWeightRelativeDiffComparator() {
@@ -705,7 +705,7 @@ public class FlowMapGraph {
   }
 
   public Comparator<Edge> createAvgEdgeWeightDiffComparator() {
-    return createAvgEdgeWeightComparator(getEdgeWeightDiffAttr());
+    return createAvgEdgeWeightComparator(getEdgeWeightDiffAttrNames());
   }
 
   public Comparator<Edge> createAvgEdgeWeightComparator(final Iterable<String> attrNames) {
@@ -848,7 +848,7 @@ public class FlowMapGraph {
     return list;
   }
 
-  public List<String> getEdgeWeightDiffAttr() {
+  public List<String> getEdgeWeightDiffAttrNames() {
     return getAttrSpec().getFlowWeightDiffAttrs();
   }
 

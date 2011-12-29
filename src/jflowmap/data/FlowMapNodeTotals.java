@@ -63,12 +63,6 @@ public class FlowMapNodeTotals {
     return node.getDouble(attrName);
   }
 
-  public static void supplyNodesWithWeightTotals(FlowMapGraphSet flowMapGraphSet) {
-    for (FlowMapGraph flowMapGraph : flowMapGraphSet.asList()) {
-      supplyNodesWithWeightTotals(flowMapGraph);
-    }
-  }
-
   /**
    * This method adds additional columns to the nodes table providing
    * the nodes with useful stats.

@@ -198,7 +198,7 @@ public class SimpleHeatmapLayer extends AbstractHeatmapLayer {
 
         HeatmapCell cell = new HeatmapCell(
             this, x, y, cellWidth, cellHeight, weightAttr,
-            getFlowstratesView().getAggLayers().getFlowMapGraphOf(edge), edge);
+            getFlowstratesView().getFlowMapGraph(), edge);
 
         cell.addInputEventListener(heatmapCellHoverListener);
         // if (!Double.isNaN(cell.getWeight())) {

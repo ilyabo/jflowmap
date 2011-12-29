@@ -41,8 +41,8 @@ import jflowmap.FlowEndpoint;
 import jflowmap.FlowMapAttrSpec;
 import jflowmap.FlowMapColorSchemes;
 import jflowmap.FlowMapGraph;
-import jflowmap.FlowMapGraphAggLayers;
 import jflowmap.data.EdgeListFlowMapStats;
+import jflowmap.data.FlowMapGraphEdgeAggregator;
 import jflowmap.data.FlowMapNodeTotals;
 import jflowmap.data.FlowMapStats;
 import jflowmap.data.SeqStat;
@@ -62,6 +62,7 @@ import org.apache.log4j.Logger;
 import prefuse.data.Edge;
 import prefuse.util.ColorLib;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -111,7 +112,8 @@ public class FlowstratesView extends AbstractCanvasView {
   private boolean interpolateColors = true;
 
   private final FlowstratesStyle style = new DefaultFlowstratesStyle();
-  private final FlowMapGraph flowMapGraph;
+  private FlowMapGraph flowMapGraph;
+  private FlowMapGraph originalFlowMapGraph;
   // private final PScrollPane scrollPane;
 
   private JPanel controlPanel;
@@ -144,7 +146,7 @@ public class FlowstratesView extends AbstractCanvasView {
       return FlowMapColorSchemes.LIGHT_BLUE__COLOR_BREWER.get(code);
     }
   };
-  private final FlowMapGraphAggLayers layers;
+//  private final FlowMapGraphAggLayers layers;
   private FlowstratesLegend legend;
 
   private final MapProjection mapProjection;
@@ -164,35 +166,15 @@ public class FlowstratesView extends AbstractCanvasView {
 
 
   public FlowstratesView(FlowMapGraph fmg, GeoMap areaMap, MapProjection proj, ViewConfig config) {
-    String aggName = config.getString(ViewConfig.PROP_DATA_AGGREGATOR);
-    AggLayersBuilder aggregator;
-    if (aggName != null) {
-      aggregator = FlowMapGraphAggLayers.createBuilder(aggName);
-    } else {
-      aggregator = null;
-    }
-
     logger.info("Opening flowstrates view");
 
-    this.flowMapGraph = fmg;
+    this.flowMapGraph = this.originalFlowMapGraph = fmg;
     this.maxVisibleTuples = config.getIntOrElse(FlowstratesView.VIEW_CONFIG_PROP_MAX_VISIBLE_TUPLES, -1);
     this.mapProjection = proj;
     this.areaMap = areaMap;
     this.viewConfig = config;
 
-    if (aggregator == null) {
-      aggregator = new DefaultAggLayersBuilder();
-    }
-    this.layers = aggregator.build(fmg);
-
-    for (FlowMapGraph g : layers.getFlowMapGraphs()) {
-      g.addEdgeWeightDifferenceColumns();
-      g.addEdgeWeightRelativeDifferenceColumns();
-
-      FlowMapNodeTotals.supplyNodesWithWeightTotals(g);
-      FlowMapNodeTotals.supplyNodesWithWeightTotals(g, g.getEdgeWeightDiffAttr());
-      FlowMapNodeTotals.supplyNodesWithWeightTotals(g, g.getEdgeWeightRelativeDiffAttrNames());
-    }
+    initColumns(fmg);
 
 
     beforeInitialize();
@@ -202,6 +184,15 @@ public class FlowstratesView extends AbstractCanvasView {
         initialize();
       }
     });
+  }
+
+  private void initColumns(FlowMapGraph fmg) {
+    fmg.addEdgeWeightDifferenceColumns();
+    fmg.addEdgeWeightRelativeDifferenceColumns();
+
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg);
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightDiffAttrNames());
+    FlowMapNodeTotals.supplyNodesWithWeightTotals(fmg, fmg.getEdgeWeightRelativeDiffAttrNames());
   }
 
   private void beforeInitialize() {
@@ -425,7 +416,12 @@ public class FlowstratesView extends AbstractCanvasView {
         if (groupByOriginButton.isPressed()) {
           groupByDestButton.setPressed(false);
           allToAllButton.setPressed(false);
-          setSelectedAggLayer(DefaultAggLayersBuilder.BY_ORIGIN_LAYER);
+          setSelectedAggLayer(new Function<Edge, Object>() {
+            @Override
+            public Object apply(Edge e) {
+              return FlowMapGraph.getIdOfNode(e.getSourceNode());
+            }
+          });
           temporalLayer.fitInView(true, true);
         } else {
           setSelectedAggLayer(null);
@@ -441,7 +437,12 @@ public class FlowstratesView extends AbstractCanvasView {
         if (groupByDestButton.isPressed()) {
           groupByOriginButton.setPressed(false);
           allToAllButton.setPressed(false);
-          setSelectedAggLayer(DefaultAggLayersBuilder.BY_DEST_LAYER);
+          setSelectedAggLayer(new Function<Edge, Object>() {
+            @Override
+            public Object apply(Edge e) {
+              return FlowMapGraph.getIdOfNode(e.getTargetNode());
+            }
+          });
           temporalLayer.fitInView(true, true);
         } else {
           setSelectedAggLayer(null);
@@ -456,7 +457,12 @@ public class FlowstratesView extends AbstractCanvasView {
         if (allToAllButton.isPressed()) {
           groupByOriginButton.setPressed(false);
           groupByDestButton.setPressed(false);
-          setSelectedAggLayer(DefaultAggLayersBuilder.ALL_TO_ALL_LAYER);
+          setSelectedAggLayer(new Function<Edge, Object>() {
+            @Override
+            public Object apply(Edge e) {
+              return Boolean.TRUE;
+            }
+          });
           temporalLayer.fitInView(true, true);
         } else {
           setSelectedAggLayer(null);
@@ -643,15 +649,16 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   public Iterable<String> getAggLayerNames() {
-    return layers.getLayerNames();
+    return Collections.emptyList();   // TODO: getAggLayerNames
   }
 
-  FlowMapGraphAggLayers getAggLayers() {
-    return layers;
-  }
-
-  public void setSelectedAggLayer(String layerName) {
-    layers.setSelectedLayer(layerName);
+  public void setSelectedAggLayer(Function<Edge, Object> groupFunction) {
+    if (groupFunction != null) {
+      flowMapGraph = FlowMapGraphEdgeAggregator.aggregate(originalFlowMapGraph, groupFunction);
+    } else {
+      flowMapGraph = originalFlowMapGraph;
+    }
+//    layers.setSelectedLayer(layerName);
     resetVisibleEdges();
     temporalLayer.fitInView(false, false);
   }
@@ -741,7 +748,9 @@ public class FlowstratesView extends AbstractCanvasView {
   List<Edge> getVisibleEdges() {
     if (visibleEdges == null) {
       List<Edge> edges = Lists.newArrayList(
-          getTopEdges(Iterables.filter(removeEdgesWithOnlyNaNs(layers.getEdges()),
+          getTopEdges(Iterables.filter(removeEdgesWithOnlyNaNs(
+              flowMapGraph.edges()
+          ),
           getEdgePredicate())));
 
       Collections.sort(edges, rowOrdering.getComparator(this));
@@ -915,11 +924,11 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private FlowMapStats getFlowMapStats() {
-    if (focusOnVisibleRows) {
+//    if (focusOnVisibleRows) {
       return getVisibleEdgesStats();
-    } else {
-      return layers.getStats();
-    }
+//    } else {
+//      return layers.getStats();
+//    }
   }
 
   private FlowMapStats getVisibleEdgesStats() {

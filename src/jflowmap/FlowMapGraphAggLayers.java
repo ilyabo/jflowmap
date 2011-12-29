@@ -374,16 +374,16 @@ public class FlowMapGraphAggLayers {
     return null;
   }
 
-  public String getNodeId(Edge edge, FlowEndpoint endpoint) {
-    return getFlowMapGraphOf(edge).getNodeId(endpoint.nodeOf(edge));
+  public static String getNodeId(Edge edge, FlowEndpoint endpoint) {
+    return FlowMapGraph.getIdOfNode(endpoint.nodeOf(edge));
   }
 
-  public String getSourceNodeId(Edge edge) {
-    return getFlowMapGraphOf(edge).getSourceNodeId(edge);
+  public static String getSourceNodeId(Edge edge) {
+    return FlowMapGraph.getIdOfNode(edge.getSourceNode());
   }
 
-  public String getTargetNodeId(Edge edge) {
-    return getFlowMapGraphOf(edge).getTargetNodeId(edge);
+  public static String getTargetNodeId(Edge edge) {
+    return FlowMapGraph.getIdOfNode(edge.getTargetNode());
   }
 
   public double getEdgeWeight(Edge edge, String weightAttr) {
