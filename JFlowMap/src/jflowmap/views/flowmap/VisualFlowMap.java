@@ -553,7 +553,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
       VisualEdge edge = (VisualEdge) component;
       tooltipBox.setText(
           wordWrapLabel(edge.getLabel(), maxLabelWidth),
-          getValueAttr() + ": ", Double.toString(edge.getEdgeWeight())
+          getValueAttr() + ": ", FlowMapView.NUMBER_FORMAT.format(edge.getEdgeWeight())
           );
     } else {
       return;
