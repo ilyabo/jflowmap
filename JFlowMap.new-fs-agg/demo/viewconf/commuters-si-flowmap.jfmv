@@ -1,0 +1,15 @@
+view=flowmap
+view.flowmap.weightFilterMin=100
+
+data=graphml
+data.graphml.src=../data/commuters-si.xml.gz
+
+data.attrs.node.label=name
+data.attrs.node.lat=lat
+data.attrs.node.lon=lon
+data.attrs.flow.weight.csvList=2008,2007,2006,2005,2004,2003,2002,2001,2000
+
+map=shapefile
+map.shapefile.src=../data/maps/slo/SVN_adm2.shp.gz
+map.projection=Mercator
+

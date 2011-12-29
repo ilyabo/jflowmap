@@ -1,0 +1,14 @@
+view=flowstrates
+view.flowstrates.maxVisibleTuples=500
+
+data=graphml
+data.graphml.src=../data/migrations-oecd.xml.gz
+
+data.attrs.node.label=name
+data.attrs.node.lat=lat
+data.attrs.node.lon=lon
+data.attrs.flow.weight.re=B11:TOT:[0-9]{4}
+
+map=xml
+map.xml.src=../data/maps/countries-areas-ll.xml.gz
+map.projection=WinkelTripel

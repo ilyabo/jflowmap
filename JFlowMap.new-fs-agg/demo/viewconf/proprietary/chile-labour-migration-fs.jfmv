@@ -1,0 +1,14 @@
+view=flowstrates
+
+data=graphml
+data.graphml.src=../data-proprietary/chile-labour-migration.xml.gz
+
+data.attrs.node.label=name
+data.attrs.node.lat=lat
+data.attrs.node.lon=lon
+data.attrs.flow.weight.re=.*
+
+map=shapefile
+map.shapefile.src=../data-proprietary/maps/chile/ci.shp.gz
+map.shapefile.dbfAreaIdField=GMI_ADMIN
+map.projection=Mercator

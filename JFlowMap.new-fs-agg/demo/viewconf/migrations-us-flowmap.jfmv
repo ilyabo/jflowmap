@@ -1,0 +1,13 @@
+view=flowmap
+view.flowmap.colorScheme=Dark
+view.flowmap.weightFilterMin=500
+
+data=graphml
+data.graphml.src=../data/migrations-us-500.xml.gz
+
+data.attrs.node.label=tooltip
+data.attrs.node.lat=y
+data.attrs.node.lon=x
+data.attrs.flow.weight.re=value
+
+map.projection=None

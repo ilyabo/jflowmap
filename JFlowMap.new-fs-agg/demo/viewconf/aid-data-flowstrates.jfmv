@@ -1,0 +1,16 @@
+view=flowstrates
+view.flowstrates.maxVisibleTuples=200
+
+data=graphml
+data.graphml.src=../data/aid-data.xml.gz
+
+data.attrs.node.label=name
+data.attrs.node.lat=lat
+data.attrs.node.lon=lon
+data.attrs.flow.weight.re=19[789][0-9]|[2][0-9]{3}
+
+
+map=shapefile
+map.shapefile.src=../data/maps/countries/countries.shp.gz
+map.shapefile.dbfAreaIdField=ISO_A3
+map.projection=WinkelTripel

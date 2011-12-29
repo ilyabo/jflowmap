@@ -1,0 +1,7 @@
+includes=common.jfmv.inc
+
+view=flowmapSmallMultiple
+
+view.flowmap.valueType=VALUE
+
+window.settings.showTabs=-

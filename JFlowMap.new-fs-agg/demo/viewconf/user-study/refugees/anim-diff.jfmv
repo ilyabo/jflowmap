@@ -1,0 +1,9 @@
+includes=common.jfmv.inc
+
+view=flowmap
+view.flowmap.valueType=DIFF
+
+window.size=1024x768
+window.settings.show=true
+window.settings.activeTab=Animation
+window.settings.showTabs=Animation

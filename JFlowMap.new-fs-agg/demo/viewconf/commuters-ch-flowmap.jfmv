@@ -1,0 +1,12 @@
+view=flowmap
+view.flowmap.colorScheme=Dark
+
+data=graphml
+data.graphml.src=../data/commuters-ch.xml.gz
+
+data.attrs.node.label=tooltip
+data.attrs.node.lat=y
+data.attrs.node.lon=x
+data.attrs.flow.weight.re=value
+
+map.projection=None
