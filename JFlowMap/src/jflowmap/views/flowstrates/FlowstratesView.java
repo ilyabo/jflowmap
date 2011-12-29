@@ -468,6 +468,7 @@ public class FlowstratesView extends AbstractCanvasView {
       @Override
       public void mouseClicked(PInputEvent event) {
         setRowOrdering(RowOrderings.MAX_MAGNITUDE_IN_ROW);
+        temporalLayer.repaint();
 //        controlPanel.set
       }
     });
