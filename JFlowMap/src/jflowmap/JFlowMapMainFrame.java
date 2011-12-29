@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -11,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -377,6 +379,30 @@ public class JFlowMapMainFrame extends JFrame {
 
     try {
       ViewLoader.loadView(configLocation, frame.getContentPane());
+      frame.addInternalFrameListener(new InternalFrameAdapter() {
+        @Override
+        public void internalFrameClosed(InternalFrameEvent e) {
+          Window win = getControlsWindow(frame);
+          if (win != null  &&  win.isVisible()) {
+            win.dispose();
+          }
+        }
+        @Override
+        public void internalFrameActivated(InternalFrameEvent e) {
+          Window win = getControlsWindow(frame);
+          if (win != null  &&  win.isVisible()) {
+            win.toFront();
+          }
+        }
+        public Window getControlsWindow(final JInternalFrame frame) {
+          IView view = getViewOf(frame);
+          if (view != null) {
+            JComponent controls = view.getControls();
+            return SwingUtils.getWindowFor(controls);
+          }
+          return null;
+        }
+      });
     } catch (Exception ex) {
       logger.error(ex);
     }
