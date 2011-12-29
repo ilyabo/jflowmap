@@ -398,7 +398,9 @@ public class JFlowMapMainFrame extends JFrame {
           IView view = getViewOf(frame);
           if (view != null) {
             JComponent controls = view.getControls();
-            return SwingUtils.getWindowFor(controls);
+            if (controls != null) {
+              return SwingUtils.getWindowFor(controls);
+            }
           }
           return null;
         }
