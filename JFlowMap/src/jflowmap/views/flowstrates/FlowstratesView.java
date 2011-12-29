@@ -540,6 +540,14 @@ public class FlowstratesView extends AbstractCanvasView {
     });
     temporalViewButtonPanel.addChild(tempFitButton);
 
+    PButton tempFitAllButton = new PButton("ALL");
+    tempFitAllButton.addInputEventListener(new PBasicInputEventHandler() {
+      @Override
+      public void mouseClicked(PInputEvent event) {
+        temporalLayer.fitInView(true, true);
+      }
+    });
+    temporalViewButtonPanel.addChild(tempFitAllButton);
 
 
   }
