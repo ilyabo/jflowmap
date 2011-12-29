@@ -45,12 +45,13 @@ import jflowmap.util.piccolo.PiccoloUtils;
 import prefuse.data.Edge;
 import at.fhjoanneum.cgvis.data.IColorForValue;
 import at.fhjoanneum.cgvis.data.IDataValues;
-import at.fhjoanneum.cgvis.plots.PaintedFloatingLabelsNode;
 import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelIterator;
 import at.fhjoanneum.cgvis.plots.AbstractFloatingLabelsNode.LabelPositioner;
+import at.fhjoanneum.cgvis.plots.PaintedFloatingLabelsNode;
 import at.fhjoanneum.cgvis.plots.mosaic.MosaicPlotNode;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 import edu.umd.cs.piccolo.PCamera;
@@ -69,6 +70,7 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
   private static final Font NODE_LABELS_FONT = new Font("Arial", Font.PLAIN, 9);
   private static final Font ATTR_LABELS_FONT = NODE_LABELS_FONT;
   private static final Color FLOATING_LABELS_BG = new Color(255, 255, 255, 255);
+  private static final int MAX_NODE_LABEL_LENGTH = 30;
   private MosaicPlotNode heatmapNode;
   private final IColorForValue colorForValue;
   private final InteractiveFloatingLabelsNode attrLabelsNode;
@@ -565,7 +567,17 @@ public class FastHeatmapLayer extends AbstractHeatmapLayer {
       public void reset() {
         pos = Double.NaN;
         index = 0;
-        it = getNodeLabels(ep).iterator();
+        it = Iterators.transform(
+            getNodeLabels(ep).iterator(),
+            new Function<String, String>() {
+
+              @Override
+              public String apply(String label) {
+                if (label == null) return null;
+                if (label.length() < MAX_NODE_LABEL_LENGTH) return label;
+                return label.substring(0, MAX_NODE_LABEL_LENGTH-2) + "...";
+              }
+            });
       }
 
     };
