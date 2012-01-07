@@ -43,9 +43,8 @@ public class JFlowMapMain {
 
   private static final Log4ExportAppender logExport = Log4ExportAppender.createAndSetup();
 
-
-  public static boolean IS_OS_MAC = getOSMatches("Mac");
   public static final String OS_NAME = System.getProperty("os.name");
+  public static boolean IS_OS_MAC = getOSMatches("Mac");
 
   private static void enableDebugging() {
     PDebug.debugThreads = true;
