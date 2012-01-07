@@ -350,7 +350,7 @@ public class MapLayer extends PLayer implements ViewLayer {
         if (lasso.isSelecting())
           return;
 
-        if (event.isControlDown())
+        if (Lasso.isControlOrAppleCmdDown(event))
           return;
 
         PGeoMapArea va = node(event);

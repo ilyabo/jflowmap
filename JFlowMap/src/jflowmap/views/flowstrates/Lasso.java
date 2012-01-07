@@ -25,6 +25,7 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
+import jflowmap.JFlowMapMain;
 import jflowmap.views.map.PGeoMap;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.event.PBasicInputEventHandler;
@@ -38,6 +39,7 @@ import edu.umd.cs.piccolox.util.PFixedWidthStroke;
  */
 public class Lasso extends PBasicInputEventHandler {
 
+  private static final int APPLE_CMD_KEY_CODE = 1280;
   private static final Stroke LINE_STROKE = new PFixedWidthStroke(2.0f);
   private static final double MIN_DIST_BETWEEN_SUBSEQUENT_POINTS = .0;  // on screen
 
@@ -70,7 +72,7 @@ public class Lasso extends PBasicInputEventHandler {
   public void mouseReleased(PInputEvent event) {
     if (inTarget(event)) {
       if (isSelecting()  ||
-          (!wasDragged  &&  !event.isControlDown()  &&
+          (!wasDragged  &&  !isControlOrAppleCmdDown(event)  &&
              (event.getPickedNode() instanceof PGeoMap))) {  // to support "clear selection"
         stop(event);
       }
@@ -88,7 +90,7 @@ public class Lasso extends PBasicInputEventHandler {
 //  @Override
   @Override
   public void mouseMoved(PInputEvent event) {
-    if (isSelecting()  &&  !event.isControlDown()  &&  !event.isLeftMouseButton()) {
+    if (isSelecting()  &&  !isControlOrAppleCmdDown(event)  &&  !event.isLeftMouseButton()) {
       stop(event);
     }
   }
@@ -103,7 +105,7 @@ public class Lasso extends PBasicInputEventHandler {
   @Override
   public void mouseDragged(PInputEvent event) {
     if (inTarget(event)) {
-      if (event.isControlDown()) {
+      if (isControlOrAppleCmdDown(event)) {
         Point2D posInCanvas = event.getCanvasPosition();
         int numPoints = line.getPointCount();
         if (numPoints == 0) {
@@ -124,6 +126,12 @@ public class Lasso extends PBasicInputEventHandler {
       }
       wasDragged = true;
     }
+  }
+
+  public static boolean isControlOrAppleCmdDown(PInputEvent event) {
+    return
+        event.isControlDown()  ||
+        (JFlowMapMain.IS_OS_MAC  &&  event.getModifiersEx() == APPLE_CMD_KEY_CODE);
   }
 
   private boolean inTarget(PInputEvent event) {

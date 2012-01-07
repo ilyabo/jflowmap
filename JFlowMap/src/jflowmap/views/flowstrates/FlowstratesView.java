@@ -212,7 +212,7 @@ public class FlowstratesView extends AbstractCanvasView {
     panHandler.setEventFilter(new PInputEventFilter() {
       @Override
       public boolean acceptsEvent(PInputEvent event, int type) {
-        return !event.isControlDown() && // shouldn't pan when using lasso
+        return !Lasso.isControlOrAppleCmdDown(event) && // shouldn't pan when using lasso
             (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
@@ -220,7 +220,7 @@ public class FlowstratesView extends AbstractCanvasView {
     canvas.getZoomHandler().setEventFilter(new PInputEventFilter() {
       @Override
       public boolean acceptsEvent(PInputEvent event, int type) {
-        return !event.isControlDown() && // shouldn't pan when using lasso
+        return !Lasso.isControlOrAppleCmdDown(event) && // shouldn't pan when using lasso
             (event.getCamera() != getVisualCanvas().getCamera());
       }
     });
