@@ -26,6 +26,7 @@ import prefuse.data.Graph;
 import prefuse.data.Table;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -61,6 +62,8 @@ public class FlowMapAttrSpec {
       Iterable<String> flowWeightAttrs,
       String nodeIdAttr, String nodeLabelAttr,
       String nodeLonAttr, String nodeLatAttr) {
+
+    Preconditions.checkNotNull(nodeLabelAttr);
 
     this.nodeIdAttr = (nodeIdAttr != null ? nodeIdAttr : FlowMapGraph.GRAPH_NODE_ID_COLUMN);
     this.nodeLabelAttr = nodeLabelAttr;

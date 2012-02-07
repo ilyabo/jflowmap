@@ -21,6 +21,8 @@ package jflowmap.data;
 import prefuse.data.Graph;
 import prefuse.data.Schema;
 import prefuse.data.Table;
+import prefuse.data.column.Column;
+import prefuse.data.expression.Expression;
 import prefuse.data.tuple.TableTuple;
 
 /**
@@ -71,6 +73,38 @@ public class Graph2 extends Graph {
       }
       row = getColumnRow(row, col);
       return getColumn(col).get(row);
+    }
+
+    @Override
+    public void addColumn(String name, Class type) {
+      if (name==null) {
+        System.out.println("null"); }
+      super.addColumn(name, type);
+    }
+
+    @Override
+    protected void addColumn(String name, Column col) {
+      if (name==null) {
+        System.out.println("null"); }
+      super.addColumn(name, col);
+    }
+    @Override
+    public void addColumn(String name, String expr) {
+      if (name==null) {
+        System.out.println("null"); }
+      super.addColumn(name, expr);
+    }
+    @Override
+    public void addColumn(String name, Class type, Object defaultValue) {
+      if (name==null) {
+        System.out.println("null"); }
+      super.addColumn(name, type, defaultValue);
+    }
+    @Override
+    public void addColumn(String name, Expression expr) {
+      if (name==null) {
+        System.out.println("null"); }
+      super.addColumn(name, expr);
     }
 
     @Override
