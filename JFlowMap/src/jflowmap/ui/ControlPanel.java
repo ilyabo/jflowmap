@@ -849,9 +849,9 @@ public class ControlPanel {
         final JSeparator separator3 = new JSeparator();
         separator3.setOrientation(1);
         panel3.add(separator3, cc.xywh(7, 1, 1, 5, CellConstraints.CENTER, CellConstraints.FILL));
-        final JLabel label6 = new JLabel();
-        label6.setText("Min length:");
-        panel3.add(label6, cc.xy(9, 1));
+//        final JLabel label6 = new JLabel();
+//        label6.setText("Min length:");
+//        panel3.add(label6, cc.xy(9, 1));
 //        minLengthFilterSlider = new JSlider();
 //        panel3.add(minLengthFilterSlider, cc.xy(11, 1, CellConstraints.FILL, CellConstraints.DEFAULT));
 //        minLengthFilterSpinner = new JSpinner();
@@ -867,9 +867,9 @@ public class ControlPanel {
         autoAdjustColorScaleCheckBox.setEnabled(false);
         autoAdjustColorScaleCheckBox.setText("Auto adjust color scale");
         panel3.add(autoAdjustColorScaleCheckBox, cc.xyw(3, 5, 3));
-        final JLabel label8 = new JLabel();
-        label8.setText("Max length:");
-        panel3.add(label8, cc.xy(9, 3));
+//        final JLabel label8 = new JLabel();
+//        label8.setText("Max length:");
+//        panel3.add(label8, cc.xy(9, 3));
 //        maxLengthFilterSlider = new JSlider();
 //        panel3.add(maxLengthFilterSlider, cc.xy(11, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
 //        maxLengthFilterSpinner = new JSpinner();
