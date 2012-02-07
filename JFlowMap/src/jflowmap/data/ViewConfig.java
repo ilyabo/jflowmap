@@ -101,6 +101,7 @@ public class ViewConfig {
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT = PROP_DATA_ATTRS_FLOW + ".weight";
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_RE = PROP_DATA_ATTRS_FLOW_WEIGHT + ".re";
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_LIST = PROP_DATA_ATTRS_FLOW_WEIGHT + ".csvList";
+  public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_LEGEND_CAPTION = PROP_DATA_ATTRS_FLOW_WEIGHT + ".legendCaption";
 
   public static final String PROP_DATA_GRAPHML = PROP_DATA + ".graphml";
   public static final String PROP_DATA_GRAPHML_SRC = PROP_DATA_GRAPHML + ".src";
@@ -383,6 +384,7 @@ public class ViewConfig {
       return new FlowMapAttrSpec(
           config.getString(PROP_DATA_ATTRS_FLOW_ORIGIN, requireNodeIdAttrs),
           config.getString(PROP_DATA_ATTRS_FLOW_DEST, requireNodeIdAttrs),
+          config.getString(PROP_DATA_ATTRS_FLOW_WEIGHT_LEGEND_CAPTION),
           weightAttrs(config, getFlowAttrs),
           config.getString(PROP_DATA_ATTRS_NODE_ID, requireNodeIdAttrs),
           config.require(PROP_DATA_ATTRS_NODE_LABEL),

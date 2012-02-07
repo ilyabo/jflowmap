@@ -35,6 +35,7 @@ public class FlowstratesLegend extends Legend {
 
   public FlowstratesLegend(final FlowstratesView flowstratesView) {
     super(
+      flowstratesView.getFlowMapGraph().getAttrSpec().getLegendCaption(),
       new Color(220, 220, 220, 225),
       new Color(60, 60, 60, 200),
 
@@ -65,7 +66,7 @@ public class FlowstratesLegend extends Legend {
       });
 
     setOffset(5, 12);
-    setScale(1.4);
+    setScale(1.2);
   }
 
 }

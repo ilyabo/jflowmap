@@ -40,6 +40,7 @@ public class FlowMapAttrSpec {
 
   private final String flowSrcNodeAttr;
   private final String flowTargetNodeAttr;
+  private final String legendCaption;
   private final List<String> flowWeightAttrs;
   private final String nodeIdAttr;
   private final String nodeLabelAttr;
@@ -48,14 +49,15 @@ public class FlowMapAttrSpec {
   private final List<String> requiredNodeAttrs;
   private final List<String> requiredFlowAttrs;
 
-  public FlowMapAttrSpec(Iterable<String> flowWeightAttrs,
-      String nodeLabelAttr, String nodeLonAttr, String nodeLatAttr) {
-    this(null, null, flowWeightAttrs, null, nodeLabelAttr, nodeLonAttr, nodeLatAttr);
-  }
+//  public FlowMapAttrSpec(Iterable<String> flowWeightAttrs,
+//      String nodeLabelAttr, String nodeLonAttr, String nodeLatAttr) {
+//    this(null, null, flowWeightAttrs, null, nodeLabelAttr, nodeLonAttr, nodeLatAttr);
+//  }
 
   public FlowMapAttrSpec(
       String flowSrcNodeAttr,
       String flowTargetNodeAttr,
+      String legendCaption,
       Iterable<String> flowWeightAttrs,
       String nodeIdAttr, String nodeLabelAttr,
       String nodeLonAttr, String nodeLatAttr) {
@@ -65,6 +67,7 @@ public class FlowMapAttrSpec {
     this.nodeLonAttr = nodeLonAttr;
     this.nodeLatAttr = nodeLatAttr;
 
+    this.legendCaption = legendCaption;
     this.flowSrcNodeAttr =
       (flowSrcNodeAttr != null ? flowSrcNodeAttr : FlowMapGraph.GRAPH_EDGE_SOURCE_NODE_COLUMN);
     this.flowTargetNodeAttr =
@@ -96,6 +99,10 @@ public class FlowMapAttrSpec {
 
   public boolean hasNodePositions() {
     return (nodeLonAttr != null  &&  nodeLatAttr != null);
+  }
+
+  public String getLegendCaption() {
+    return legendCaption;
   }
 
   public String getNodeIdAttr() {

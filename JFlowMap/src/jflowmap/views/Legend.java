@@ -18,11 +18,13 @@
 
 package jflowmap.views;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.RoundRectangle2D;
 import java.util.List;
 
+import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PNodes;
 
 import com.google.common.collect.Lists;
@@ -41,9 +43,12 @@ public class Legend extends PPath {
   private static final long serialVersionUID = -8907313603307434727L;
 
   static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 12);
+  static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 10);
+  static final Color TITLE_COLOR = new Color(150, 150, 150);
 
   private final double gapBetweenLines = 3, gapBeforeText = 7;
   private final double gapAfterHeader = 5;
+  private final double gapBetweenTitleAndItemHeader = 2;
   private final double paddingX = 6, paddingY = 4;
   private final double startY = 10;
   private final double startX = 10;
@@ -51,9 +56,11 @@ public class Legend extends PPath {
   private final ItemProducer itemsProducer;
 
   private final Paint textPaint;
+  private final String title;
 
-  public Legend(Paint paint, Paint textPaint, ItemProducer itemsProducer) {
+  public Legend(String title, Paint paint, Paint textPaint, ItemProducer itemsProducer) {
     super(new RoundRectangle2D.Double(4, 4, 140, 120, 10, 20));
+    this.title = title;
     this.itemsProducer = itemsProducer;
     this.textPaint = textPaint;
     setPaint(paint);
@@ -69,11 +76,35 @@ public class Legend extends PPath {
     Iterable<PNode> createItems();
   }
 
+  private PText createTitle() {
+    PText text = null;
+    if (title != null) {
+      text = new PText(title);
+      text.setFont(TITLE_FONT);
+      text.setTextPaint(TITLE_COLOR);
+    }
+    return text;
+  }
+
+  private PNode createHeader() {
+    PNode itemsHeader = itemsProducer.createHeader();
+    PText title = createTitle();
+    if (itemsHeader == null) {
+      return title;
+    } else if (title == null) {
+      return itemsHeader;
+    } else {
+      PNode box = new PBoxLayoutNode(PBoxLayoutNode.Axis.Y, gapBetweenTitleAndItemHeader);
+      box.addChild(title);
+      box.addChild(itemsHeader);
+      return box;
+    }
+  }
 
   public void update() {
     removeAllChildren();
 
-    PNode header = itemsProducer.createHeader();
+    PNode header = createHeader();
 
     final double posX = startX + paddingX;
     double posY = startY + paddingY;
@@ -146,7 +177,7 @@ public class Legend extends PPath {
         itemNode.setX(posX + (maxItemWidth - itemNode.getWidth())/2);
       }
     }
-    setWidth(Math.max(headerWidth, rightMost - getY()) + paddingX * 2);
+    setWidth(Math.max(headerWidth, rightMost - getY()) + paddingX * 4);
     setHeight(posY - gapBetweenLines + paddingY * 2);
   }
 

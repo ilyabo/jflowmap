@@ -148,6 +148,7 @@ public class VisualFlowMap extends PNode implements ColorSchemeAware {
     tooltipBox.setVisible(false);
 
     visualLegend = new Legend(
+        model.getFlowMapGraph().getAttrSpec().getLegendCaption(),
         getColor(ColorCodes.LEDGEND_BOX_PAINT),
         getColor(ColorCodes.LEDGEND_TEXT), new FlowMapLegendItemProducer(this, 5));
     setLegendVisible(showLegend);
