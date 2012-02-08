@@ -5,7 +5,7 @@
     <property file="build.properties" />
 
     <property name="app.name" value="jflowmap" />
-    <property name="app.version" value="0.16.2" />
+    <property name="app.version" value="0.16.3" />
     <property name="dist.name" value="jflowmap-${app.version}" />
     <property name="cert.name" value="JFlowMap" />
     <property name="path.src" value="src" />
@@ -63,7 +63,7 @@
     </target>
 
     <target name="compile">
-        <javac destdir="${path.classes}" failonerror="true" debug="true" target="1.6">
+        <javac destdir="${path.classes}" failonerror="true" debug="true" target="1.6" includeantruntime="false">
             <src path="${path.src}" />
             <classpath refid="master-classpath" />
         </javac>
