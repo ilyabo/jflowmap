@@ -87,7 +87,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(200, 156, 0))
 
       .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(255, 255, 255))
-      .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(20, 20, 200))
+      .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
 
       .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(255, 255, 255))
       .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(215, 25, 28))
@@ -217,7 +217,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(200, 156, 0))
 
       .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(255, 255, 255))
-      .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(20, 20, 200))
+      .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
 
       .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(255, 255, 255))
       .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(215, 25, 28))
@@ -261,7 +261,7 @@ public enum FlowMapColorSchemes {
       .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(200, 156, 0))
 
       .put(ColorCodes.EDGE_NO_GRADIENT_MIN_WEIGHT, new Color(255, 255, 255))
-      .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(20, 20, 200))
+      .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(0, 0, 0))
 
       .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(255, 255, 255))
       .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(215, 25, 28))
