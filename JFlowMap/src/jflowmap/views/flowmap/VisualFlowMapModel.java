@@ -75,6 +75,9 @@ public class VisualFlowMapModel {
   public static final String VIEWCONF_SHOW_NODES = "view.flowmap.showNodes";
   public static final String VIEWCONF_EDGE_WIDTH = "view.flowmap.edgeWidth";
   public static final String VIEWCONF_EDGE_OPACITY = "view.flowmap.edgeOpacity";
+  public static final String VIEWCONF_DIRECTION_MARKERS_OPACITY = "view.flowmap.directionMarkersOpacity";
+  public static final String VIEWCONF_DIRECTION_MARKERS_SIZE = "view.flowmap.directionMarkersSize";
+
   public static final String VIEWCONF_SHOW_SELF_LOOPS = "view.flowmap.showSelfLoops";
   public static final String VIEWCONF_VALUE_TYPE = "view.flowmap.valueType";
   public static final String VIEWCONF_SHOW_FLOW_WEIGHT_ATTR_LABEL = "view.flowmap.showFlowWeightAttrLabel";
@@ -144,6 +147,8 @@ public class VisualFlowMapModel {
 
   public static VisualFlowMapModel createFor(FlowMapGraph fmg, ViewConfig config) {
     VisualFlowMapModel model = new VisualFlowMapModel(fmg, config);
+    model.setDirectionMarkerAlpha(config.getIntOrElse(VIEWCONF_DIRECTION_MARKERS_OPACITY, model.getDirectionMarkerAlpha()));
+    model.setDirectionMarkerSize(config.getDoubleOrElse(VIEWCONF_DIRECTION_MARKERS_SIZE, model.getDirectionMarkerSize()));
     model.setEdgeAlpha(config.getIntOrElse(VIEWCONF_EDGE_OPACITY, model.getEdgeAlpha()));
     model.setMaxEdgeWidth(config.getDoubleOrElse(VIEWCONF_EDGE_WIDTH, model.getMaxEdgeWidth()));
 
