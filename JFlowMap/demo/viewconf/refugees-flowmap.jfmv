@@ -1,6 +1,6 @@
 view=flowmap
 view.flowmap.colorScheme=Light Blue
-view.flowmap.weightFilterMin=500
+view.flowmap.weightFilterMin=200
 
 data=csv
 data.csv.separator=,
@@ -25,3 +25,13 @@ data.attrs.flow.weight.csvList= 1975,1976,1977,1978,1979,\
 map=xml
 map.xml.src=../data/maps/countries-areas-ll.xml.gz
 map.projection=WinkelTripel
+
+
+view.flowmap.edgeBundling.updateViewAfterEachStep=false
+view.flowmap.edgeBundling.numberOfCycles=10
+view.flowmap.edgeBundling.edgeStiffness=0.01
+view.flowmap.edgeBundling.compatibilityThreshold=0.8
+view.flowmap.edgeBundling.stepSize=1
+view.flowmap.edgeBundling.stepDampingFactor=0.5
+view.flowmap.edgeBundling.stepsIn1stCycle=50
+view.flowmap.edgeBundling.simpleCompatibilityMeasure=true
