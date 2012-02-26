@@ -29,17 +29,23 @@ import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 
@@ -52,7 +58,6 @@ import jflowmap.views.VisualCanvas;
 import org.apache.log4j.Logger;
 
 import at.fhj.utils.misc.FileUtils;
-import at.fhj.utils.swing.JMsgPane;
 
 import com.google.common.collect.ImmutableList;
 
@@ -78,9 +83,7 @@ public class ViewLoader {
     return (SwingUtils.getAppletFor(c) != null);
   }
 
-  public static void loadView(final String viewConfigLocation, final Container parent)
-    throws Exception
-  {
+  public static void loadView(final String viewConfigLocation, final Container parent) {
     final JLabel loadingLabel = new JLabel(" Opening '" +
         FileUtils.getFilename(viewConfigLocation) + "'...", LOADING_ICON, JLabel.CENTER);
     loadingLabel.setFont(LOADING_TEXT_FONT);
@@ -190,8 +193,14 @@ public class ViewLoader {
 
         } catch (Exception ex) {
           logger.error("Cannot open view", ex);
-          JMsgPane.showProblemDialog(parent, ex);
-          isViewEmpty = true;
+          // JMsgPane.showProblemDialog(parent, ex);
+
+          if (!isApplet(parent)) {
+            parent.removeAll();
+            parent.add(createLoadingErrorPanel(ex));
+          }
+
+          isViewEmpty = false;
         } finally {
           try {
             parent.remove(loadingLabel);
@@ -203,6 +212,28 @@ public class ViewLoader {
             // ignore
           }
         }
+      }
+
+      private JPanel createLoadingErrorPanel(Exception ex) {
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(new JLabel(
+            "<html><h2>View could not be loaded</h2>" +
+            "<p>"+
+             ex.getMessage()+
+             "</p>" +
+             "<br>",
+             JLabel.CENTER), BorderLayout.CENTER);
+        JButton reloadButton = new JButton("Reload");
+        panel.add(reloadButton);
+        reloadButton.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            loadView(viewConfigLocation, parent);
+          }
+        });
+        return panel;
       }
     };
 
