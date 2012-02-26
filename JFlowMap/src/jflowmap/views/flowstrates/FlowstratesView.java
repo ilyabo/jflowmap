@@ -195,10 +195,10 @@ public class FlowstratesView extends AbstractCanvasView {
     }
 
 
-    beforeInitialize();
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
+        beforeInitialize();
         initialize();
       }
     });
