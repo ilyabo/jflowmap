@@ -3,12 +3,15 @@ package jflowmap;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.AbstractAction;
@@ -19,11 +22,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import jflowmap.data.StaxGraphMLReader;
 import jflowmap.ui.actions.OpenViewConfigAction;
+import jflowmap.util.FileDrop;
 import jflowmap.util.SwingUtils;
 
 import org.apache.log4j.Logger;
@@ -59,9 +64,31 @@ public class JFlowMapMainFrame extends JFrame {
 
     setJMenuBar(buildMenuBar());
 
-    desktopPane = new JDesktopPane();
+    desktopPane = new JDesktopPane(){
+      @Override
+      protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        String str = "Drop " + JFlowMapMain.VIEWCONF_EXT + " files here";
+        FontMetrics fm = g.getFontMetrics();
+        int w = SwingUtilities.computeStringWidth(fm, str);
+        Dimension size = getSize();
+        g.drawString(str, (size.width - w)/2, size.height/2 - fm.getFont().getSize());
+      }
+    };
     desktopPane.setBackground(Color.gray);
     add(desktopPane, BorderLayout.CENTER);
+
+
+    new FileDrop(desktopPane, new FileDrop.Listener() {
+      public void filesDropped(File[] files) {
+        for (File file : files) {
+          if (file.getName().endsWith(JFlowMapMain.VIEWCONF_EXT)) {
+            loadView(file.getAbsolutePath());
+          }
+        }
+      }
+    });
 
 //    JPanel statusPanel = new JPanel(new BorderLayout());
 //    add(statusPanel, BorderLayout.SOUTH);

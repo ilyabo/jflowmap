@@ -190,7 +190,7 @@ public class JFlowMapApplet extends JApplet {
     String viewConfig = getParameter("viewConfig");
     if (Strings.isNullOrEmpty(viewConfig)) {
       JMsgPane.showProblemDialog(JFlowMapApplet.this,
-          "Please, specify the location of the .jfmv view configuration " +
+          "Please, specify the location of the "+JFlowMapMain.VIEWCONF_EXT+" view configuration " +
           "in the 'viewConfig' applet parameter");
     } else {
       try {

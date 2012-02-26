@@ -28,6 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import jflowmap.AppPreferences;
+import jflowmap.JFlowMapMain;
 import jflowmap.JFlowMapMainFrame;
 
 import org.apache.log4j.Logger;
@@ -62,13 +63,13 @@ public class OpenViewConfigAction extends AbstractAction {
       if (f.isDirectory()) {
         return true;
       }
-      if (f.getName().toLowerCase().endsWith(".jfmv")) return true;
+      if (f.getName().toLowerCase().endsWith(JFlowMapMain.VIEWCONF_EXT)) return true;
       return false;
     }
 
     @Override
     public String getDescription() {
-      return "JFlowMap view config files (*.jfmv)";
+      return "JFlowMap view config files (*"+JFlowMapMain.VIEWCONF_EXT+")";
     }
   };
 
