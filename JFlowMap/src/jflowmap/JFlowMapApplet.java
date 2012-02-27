@@ -30,7 +30,6 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 
 import javax.swing.JApplet;
-import javax.swing.JFrame;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
@@ -56,7 +55,10 @@ public class JFlowMapApplet extends JApplet {
 
   private final Log4ExportAppender logExport = Log4ExportAppender.createAndSetup();
 
+  private static boolean instantiated = false;
+
   public JFlowMapApplet() {
+    instantiated = true;
     if (!JFlowMapMain.IS_OS_MAC) {
       SwingUtils.initNimbusLF();
 
@@ -72,13 +74,16 @@ public class JFlowMapApplet extends JApplet {
     blockingGlassPane.setVisible(false);
   }
 
+  public static boolean isInstantiated() {
+    return instantiated;
+  }
 
   @Override
   public void init() {
     try {
       Container parent;
 
-      JFrame frame = new JFrame("JFlowMap");
+      JFlowMapAppletFrame frame = new JFlowMapAppletFrame(this);
 
       Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
       frame.setSize((int)(screenSize.getWidth() * 0.8), (int)(screenSize.getHeight() * 0.8));

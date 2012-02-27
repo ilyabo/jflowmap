@@ -18,7 +18,6 @@
 
 package jflowmap.views;
 
-import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -44,7 +43,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import jflowmap.IView;
 import jflowmap.JFlowMapApplet;
-import jflowmap.util.SwingUtils;
+import jflowmap.JFlowMapAppletFrame;
 import jflowmap.util.piccolo.PBoxLayoutNode;
 import jflowmap.util.piccolo.PNodes;
 import jflowmap.util.piccolo.PanHandler;
@@ -288,9 +287,9 @@ public class VisualCanvas extends PCanvas {
     // SwingUtils.getWindowFor(this), "SVG export", svgCode, false);
     // dialog.setVisible(true);
 
-    Applet applet = SwingUtils.getAppletFor(this);
-    if (applet != null  &&  applet instanceof JFlowMapApplet) {
-      ((JFlowMapApplet)applet).jsFlowMapFunctionCall("showSVGCode",  new Object[] { svgCode });
+    JFlowMapApplet applet = JFlowMapAppletFrame.getApplet(this);
+    if (applet != null) {
+      applet.jsFlowMapFunctionCall("showSVGCode",  new Object[] { svgCode });
     }
   }
 

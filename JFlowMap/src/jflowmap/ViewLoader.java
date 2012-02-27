@@ -18,7 +18,6 @@
 
 package jflowmap;
 
-import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -79,8 +78,8 @@ public class ViewLoader {
   private static final Font LOADING_TEXT_FONT = new Font("Sans Serif", Font.PLAIN, 11);
 
 
-  public static boolean isApplet(Component c) {
-    return (SwingUtils.getAppletFor(c) != null);
+  public static boolean isRunningAsApplet() {
+    return JFlowMapApplet.isInstantiated();
   }
 
   public static void loadView(final String viewConfigLocation, final Container parent) {
@@ -186,19 +185,20 @@ public class ViewLoader {
             }
           }
 
-          Applet applet = SwingUtils.getAppletFor(view.getVisualCanvas());
-          if (applet != null   &&   applet instanceof JFlowMapApplet) {
-            ((JFlowMapApplet)applet).jsFlowMapViewLoaded();
+
+          JFlowMapApplet applet = JFlowMapAppletFrame.getApplet(view.getVisualCanvas());
+          if (applet != null) {
+            applet.jsFlowMapViewLoaded();
           }
 
         } catch (Exception ex) {
           logger.error("Cannot open view", ex);
           // JMsgPane.showProblemDialog(parent, ex);
 
-          if (!isApplet(parent)) {
+          //if (!isRunningAsApplet()) {
             parent.removeAll();
             parent.add(createLoadingErrorPanel(ex));
-          }
+          //}
 
           isViewEmpty = false;
         } finally {
@@ -224,7 +224,7 @@ public class ViewLoader {
              ex.getMessage()+
              "</p>" +
              "<br>",
-             JLabel.CENTER), BorderLayout.CENTER);
+             JLabel.LEFT), BorderLayout.CENTER);
         JButton reloadButton = new JButton("Reload");
         panel.add(reloadButton);
         reloadButton.addActionListener(new ActionListener() {

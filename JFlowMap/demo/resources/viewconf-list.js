@@ -31,26 +31,27 @@ var init = function(views) {
  var viewconf = location.search.substr(1);
  if (viewconf) {
   document.write('<table height="100%" width="100%" id="loadingImage"><td align="center" valign="center"><img src="resources/loading.gif"></td></table>');
-  setTimeout(function() {
+  /*setTimeout(function() {
     var loading = document.getElementById('loadingImage');
     if (loading != null) {
       if (loading.style) {
         loading.style.display = "none";
       }
     }
-  }, 3000);
+  }, 3000);*/
   deployApp(viewconf);
  } else {
   document.write('<div style="margin:10px;"><h1>jflowmap demo applets</h1>');
   for (i=0;i<views.length;i++) { writeViewLinks(views[i]); };
   document.write('</div>');
-  document.write('<iframe id="jflowmapIframe" name="jflowmapIframe" src="about:blank" width="1" height="1"></iframe>');
+  document.write('<iframe id="jflowmapIframe" name="jflowmapIframe" src="about:blank" width="100" height="100" style="border-width:0"></iframe>');
  }
 };
 
 var jsFlowMap = {
   // These functions are invoked by the applet		
   showSVGCode: function(code) {
+    /*
      var width = 800,height = 600;
      var left = parseInt((screen.availWidth/2) - (width/2));
 	 var top = parseInt((screen.availHeight/2) - (height/2));
@@ -62,14 +63,27 @@ var jsFlowMap = {
 	   +',scrollbars=1'
 	   +',resizable=1');
 	 w.document.writeln(
-	  '<html><head><title>Console</title></head>'
-	   +'<body bgcolor="white" onLoad="self.focus()"><pre>'
-	   + code.replace(/</g,"&lt;").replace(/>/g,"&gt;")
-	   +'</pre></body></html>'
+	  '<html><head><title>Exported SVG</title></head>'
+	   +'<body bgcolor="white" onLoad="self.focus()">'+
+     '<pre>'+
+	   code.replace(/</g,"&lt;").replace(/>/g,"&gt;")+
+     //code
+	   '</pre>'+
+     '</body></html>'
 	 );
 	 w.document.close();
+   */
+   parent.parent.document.writeln('<pre>'+
+     code.replace(/</g,"&lt;").replace(/>/g,"&gt;")+
+     '</pre>');
   },
   viewLoaded: function() {
     // This function is invoked by the applet when the view is loaded
+    var loading = document.getElementById('loadingImage');
+    if (loading != null) {
+      if (loading.style) {
+        loading.style.display = "none";
+      }
+    }
   }
 };
