@@ -69,7 +69,7 @@ public class JFlowMapMainFrame extends JFrame {
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        String str = "Drop " + JFlowMapMain.VIEWCONF_EXT + " files here";
+        String str = "Drop a " + JFlowMapMain.VIEWCONF_EXT + " file here";
         FontMetrics fm = g.getFontMetrics();
         int w = SwingUtilities.computeStringWidth(fm, str);
         Dimension size = getSize();

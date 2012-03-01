@@ -103,6 +103,8 @@ public class ViewConfig {
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_LIST = PROP_DATA_ATTRS_FLOW_WEIGHT + ".csvList";
   public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_LEGEND_CAPTION = PROP_DATA_ATTRS_FLOW_WEIGHT + ".legendCaption";
 
+  public static final String PROP_DATA_ATTRS_FLOW_WEIGHT_ATTRS_ATTR = PROP_DATA_ATTRS_FLOW_WEIGHT + ".weightAttrsAttr";
+
   public static final String PROP_DATA_GRAPHML = PROP_DATA + ".graphml";
   public static final String PROP_DATA_GRAPHML_SRC = PROP_DATA_GRAPHML + ".src";
 
@@ -302,52 +304,6 @@ public class ViewConfig {
   }
 
   enum DataLoaders {
-    CSV {
-      @Override
-      public Object load(final ViewConfig config) throws IOException {
-        final char csvSeparator = config.getStringOrElse(PROP_DATA_CSV_SEPARATOR, ",").charAt(0);
-        final String csvCharset = config.getStringOrElse(PROP_DATA_CSV_CHARSET, "utf-8");
-
-        final String nodesSrc = config.relativeFileLocation(config.require(PROP_DATA_CSV_NODES_SRC));
-        final String flowsSrc = config.relativeFileLocation(config.require(PROP_DATA_CSV_FLOWS_SRC));
-
-        FlowMapGraphBuilder builder = CsvFlowMapGraphReader.readFlowMapGraph(
-            nodesSrc,
-            flowsSrc,
-            createFlowMapAttrSpec(
-                config, true,
-                new LazyGet<Iterable<String>>() {
-                  @Override
-                  public Iterable<String> get() throws IOException {
-                    return CsvFlowMapGraphReader.readAttrNames(
-                        flowsSrc,
-                        csvSeparator, csvCharset);
-                  }
-                }
-            ),
-            csvSeparator, csvCharset);
-
-        String nodeFilter = config.getString(PROP_DATA_SELECT_NODES);
-        String edgeFilter = config.getString(PROP_DATA_SELECT_FLOWS);
-        String edgeFilterExists = config.getString(PROP_DATA_SELECT_FLOWS_EXISTS);
-        String edgeFilterForAll = config.getString(PROP_DATA_SELECT_FLOWS_FORALL);
-
-        if (!Strings.isNullOrEmpty(nodeFilter)) {
-          builder.withNodeFilter(nodeFilter);
-        }
-        if (!Strings.isNullOrEmpty(edgeFilter)) {
-          builder.withEdgeFilter(edgeFilter);
-        }
-        if (!Strings.isNullOrEmpty(edgeFilterExists)) {
-          builder.withEdgeWeightAttrExistsFilter(edgeFilterExists);
-        }
-        if (!Strings.isNullOrEmpty(edgeFilterForAll)) {
-          builder.withEdgeWeightAttrForAllFilter(edgeFilterForAll);
-        }
-
-        return builder.build();
-      }
-    },
     GRAPHML {
       @Override
       public Object load(ViewConfig config) throws IOException {
@@ -359,7 +315,7 @@ public class ViewConfig {
           public Iterable<String> get() { return FlowMapGraph.listFlowAttrs(graph); }
         };
 
-        Iterable<String> attrs = weightAttrs(config, getFlowAttrs);
+        Iterable<String> attrs = weightAttrs(config, getFlowAttrs, false);
 
         FlowMapGraphBuilder.filterNodes(graph, config.getString(PROP_DATA_SELECT_NODES));
         FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_FLOWS));
@@ -369,9 +325,23 @@ public class ViewConfig {
             graph, config.getString(PROP_DATA_SELECT_FLOWS_EXISTS), attrs);
 
 
-        return new FlowMapGraph(graph, createFlowMapAttrSpec(config, false, getFlowAttrs));
+        return new FlowMapGraph(graph, createFlowMapAttrSpec(config, false, false, getFlowAttrs));
       }
-    };
+    },
+    CSV {
+      @Override
+      public Object load(ViewConfig config) throws IOException {
+        return loadCsv(config, true);
+      }
+
+    },
+    CSVDISAGGREGATED {
+      @Override
+      public Object load(ViewConfig config) throws IOException {
+        return loadCsv(config, false);
+      }
+    }
+    ;
 
     interface LazyGet<T> {
       T get() throws IOException;
@@ -379,34 +349,109 @@ public class ViewConfig {
 
     public abstract Object load(ViewConfig config) throws IOException;
 
+
+    public static Object loadCsv(ViewConfig config, boolean aggregated) throws IOException {
+      final char csvSeparator = config.getStringOrElse(PROP_DATA_CSV_SEPARATOR, ",").charAt(0);
+      final String csvCharset = config.getStringOrElse(PROP_DATA_CSV_CHARSET, "utf-8");
+
+      final String nodesSrc = config.relativeFileLocation(config.require(PROP_DATA_CSV_NODES_SRC));
+      final String flowsSrc = config.relativeFileLocation(config.require(PROP_DATA_CSV_FLOWS_SRC));
+
+      FlowMapGraphBuilder builder;
+
+      if (aggregated) {
+        builder = CsvFlowMapGraphReader.readFlowMapGraph(
+            nodesSrc,
+            flowsSrc,
+            createFlowMapAttrSpec(
+                config, true, aggregated,
+                new LazyGet<Iterable<String>>() {
+                  @Override
+                  public Iterable<String> get() throws IOException {
+                    return CsvFlowMapGraphReader.readAttrNames(
+                        flowsSrc,
+                        csvSeparator, csvCharset);
+                  }
+                }
+            ),
+            csvSeparator, csvCharset);
+      } else {
+
+        final String weightAttrsAttr = config.require(PROP_DATA_ATTRS_FLOW_WEIGHT_ATTRS_ATTR);
+
+        builder = CsvDisaggregatedFlowMapGraphReader.readFlowMapGraph(
+            nodesSrc,
+            flowsSrc,
+            createFlowMapAttrSpec(
+                config, true, aggregated,
+                new LazyGet<Iterable<String>>() {
+                  @Override
+                  public Iterable<String> get() throws IOException {
+                    return CsvDisaggregatedFlowMapGraphReader.readAttrNames(
+                        flowsSrc, weightAttrsAttr,
+                        csvSeparator, csvCharset);
+                  }
+                }
+            ),
+            weightAttrsAttr, csvSeparator, csvCharset);
+      }
+
+      String nodeFilter = config.getString(PROP_DATA_SELECT_NODES);
+      String edgeFilter = config.getString(PROP_DATA_SELECT_FLOWS);
+      String edgeFilterExists = config.getString(PROP_DATA_SELECT_FLOWS_EXISTS);
+      String edgeFilterForAll = config.getString(PROP_DATA_SELECT_FLOWS_FORALL);
+
+      if (!Strings.isNullOrEmpty(nodeFilter)) {
+        builder.withNodeFilter(nodeFilter);
+      }
+      if (!Strings.isNullOrEmpty(edgeFilter)) {
+        builder.withEdgeFilter(edgeFilter);
+      }
+      if (!Strings.isNullOrEmpty(edgeFilterExists)) {
+        builder.withEdgeWeightAttrExistsFilter(edgeFilterExists);
+      }
+      if (!Strings.isNullOrEmpty(edgeFilterForAll)) {
+        builder.withEdgeWeightAttrForAllFilter(edgeFilterForAll);
+      }
+
+      return builder.build();
+    }
+
     private static FlowMapAttrSpec createFlowMapAttrSpec(ViewConfig config,
-        boolean requireNodeIdAttrs, LazyGet<Iterable<String>> getFlowAttrs) throws IOException {
+        boolean requireNodeIdAttrs, boolean aggregated,
+        LazyGet<Iterable<String>> getFlowAttrs) throws IOException {
       return new FlowMapAttrSpec(
           config.getString(PROP_DATA_ATTRS_FLOW_ORIGIN, requireNodeIdAttrs),
           config.getString(PROP_DATA_ATTRS_FLOW_DEST, requireNodeIdAttrs),
           config.getString(PROP_DATA_ATTRS_FLOW_WEIGHT_LEGEND_CAPTION),
-          weightAttrs(config, getFlowAttrs),
+          weightAttrs(config, getFlowAttrs, aggregated),
           config.getString(PROP_DATA_ATTRS_NODE_ID, requireNodeIdAttrs),
           config.require(PROP_DATA_ATTRS_NODE_LABEL),
           config.require(PROP_DATA_ATTRS_NODE_LON),
           config.require(PROP_DATA_ATTRS_NODE_LAT));
     }
 
-    private static Iterable<String> weightAttrs(ViewConfig config, LazyGet<Iterable<String>> getFlowAttrs)
+    private static Iterable<String> weightAttrs(ViewConfig config,
+        LazyGet<Iterable<String>> getFlowAttrs, boolean aggregated)
       throws IOException
     {
-      Pair<String, String> nameVal =
-        config.requireOneOf(PROP_DATA_ATTRS_FLOW_WEIGHT_LIST, PROP_DATA_ATTRS_FLOW_WEIGHT_RE);
+      if (aggregated) {
+        Pair<String, String> nameVal =
+          config.requireOneOf(PROP_DATA_ATTRS_FLOW_WEIGHT_LIST, PROP_DATA_ATTRS_FLOW_WEIGHT_RE);
 
-      String propName = nameVal.first();
-      String propValue = nameVal.second();
+        String propName = nameVal.first();
+        String propValue = nameVal.second();
 
-      if (propName.equals(PROP_DATA_ATTRS_FLOW_WEIGHT_LIST)) {
-        return Lists.<String>newArrayList(new CSVParser().parseLine(propValue));
-      } else if (propName.equals(PROP_DATA_ATTRS_FLOW_WEIGHT_RE)) {
-        return CollectionUtils.filterByPattern(getFlowAttrs.get(), propValue);
+        if (propName.equals(PROP_DATA_ATTRS_FLOW_WEIGHT_LIST)) {
+          return Lists.<String>newArrayList(new CSVParser().parseLine(propValue));
+        } else if (propName.equals(PROP_DATA_ATTRS_FLOW_WEIGHT_RE)) {
+          return CollectionUtils.filterByPattern(getFlowAttrs.get(), propValue);
+        } else {
+          throw new UnsupportedOperationException("Unsupported property " + propName);
+        }
       } else {
-        throw new UnsupportedOperationException("Unsupported property " + propName);
+        config.require(PROP_DATA_ATTRS_FLOW_WEIGHT_ATTRS_ATTR);
+        return getFlowAttrs.get();
       }
     }
   }

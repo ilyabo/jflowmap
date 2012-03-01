@@ -46,14 +46,35 @@ public class CsvFlowMapGraphReader {
   private final char separator;
   private final String charset;
 
-  private FlowMapGraphBuilder builder;
+  private final FlowMapGraphBuilder builder;
 
-  private CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec, char separator, String charset) {
+  private final String nodesLocation;
+  private final String flowsLocation;
+
+  private LineParser flowsLineParser;
+
+  protected CsvFlowMapGraphReader(FlowMapAttrSpec attrSpec,
+      String nodesLocation, String flowsLocation,
+      char separator, String charset) {
     this.attrSpec = attrSpec;
     this.separator = separator;
     this.charset = charset;
+    this.nodesLocation = nodesLocation;
+    this.flowsLocation = flowsLocation;
+    this.builder = new FlowMapGraphBuilder(FileUtils.getFilenameOnly(flowsLocation), attrSpec);
   }
 
+  public FlowMapGraphBuilder getBuilder() {
+    return builder;
+  }
+
+  public FlowMapAttrSpec getAttrSpec() {
+    return attrSpec;
+  }
+
+  public void setFlowsLineParser(LineParser lineParser) {
+    this.flowsLineParser = lineParser;
+  }
   /**
    * Calling this method prior to readGraph() might be useful for
    * initializing FlowMapAttrSpec which can then be passed to readGraph().
@@ -78,21 +99,25 @@ public class CsvFlowMapGraphReader {
     return list;
   }
 
+
   public static FlowMapGraphBuilder readFlowMapGraph(String nodesLocation, String flowsLocation,
       FlowMapAttrSpec attrSpec, char separator, String charset) throws IOException {
-    return new CsvFlowMapGraphReader(attrSpec, separator, charset).read(nodesLocation, flowsLocation);
+    return new CsvFlowMapGraphReader(
+        attrSpec, nodesLocation, flowsLocation, separator, charset).read();
   }
 
-  private FlowMapGraphBuilder read(String nodesLocation, String flowsLocation) throws IOException {
-    builder = new FlowMapGraphBuilder(FileUtils.getFilenameOnly(flowsLocation), attrSpec);
-
+  FlowMapGraphBuilder read() throws IOException {
     parseCsv(nodesLocation, new LineParser() {
       public void apply(Map<String, String> attrs) { builder.addNode(attrs); }
     });
 
-    parseCsv(flowsLocation, new LineParser() {
-      public void apply(Map<String, String> attrs) { builder.addEdge(attrs); }
-    });
+    if (flowsLineParser != null) {
+      parseCsv(flowsLocation, flowsLineParser);
+    } else {
+      parseCsv(flowsLocation, new LineParser() {
+        public void apply(Map<String, String> attrs) { builder.addEdge(attrs); }
+      });
+    }
 
     return builder;
   }
@@ -128,7 +153,7 @@ public class CsvFlowMapGraphReader {
     }
   }
 
-  private static CSVReader createReader(String csvLocation, char separator, String charset)
+  public static CSVReader createReader(String csvLocation, char separator, String charset)
   throws IOException {
     return new CSVReader(new InputStreamReader(
         IOUtils.asInputStream(csvLocation), charset), separator);
@@ -143,7 +168,7 @@ public class CsvFlowMapGraphReader {
     });
   }
 
-  private interface LineParser {
+  interface LineParser {
     void apply(Map<String, String> attrValues) throws IOException;
   }
 
@@ -154,5 +179,4 @@ public class CsvFlowMapGraphReader {
     }
     return map;
   }
-
 }

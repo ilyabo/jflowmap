@@ -66,6 +66,8 @@ public class FlowMapGraphBuilder {
   private String edgeWeightAttrExistsFilterExpr;
   private String edgeWeightAttrForAllFilterExpr;
 
+  private String disaggregatedAttrValuesAttr;
+
   static {
     FunctionTable.addFunction("ISNAN", IsNaNFunction.class);
   }
@@ -102,6 +104,11 @@ public class FlowMapGraphBuilder {
   public FlowMapGraphBuilder withCumulatedEdges() {
     this.cumulatedEdges = new HashMap<EdgeKey, Edge>();
     return this;
+  }
+
+  public FlowMapGraphBuilder withDisaggregatedEdges(String weightAttrsAttr) {
+    this.disaggregatedAttrValuesAttr = weightAttrsAttr;
+    return withCumulatedEdges();
   }
 
   public FlowMapGraphBuilder withEdgeFilter(String expr) {
@@ -203,8 +210,12 @@ public class FlowMapGraphBuilder {
 
   private Iterable<Double> weightAttrValues(List<String> attrs, Map<String, String> attrValues) {
     List<Double> vals = new ArrayList<Double>(attrs.size());
-    for (String attr : attrs) {
-      vals.add(parseDouble(requireValue(attr, attrValues)));
+    if (disaggregatedAttrValuesAttr == null) {
+      for (String attr : attrs) {
+        vals.add(parseDouble(requireValue(attr, attrValues)));
+      }
+    } else {
+      vals.add(parseDouble(requireValue(disaggregatedAttrValuesAttr, attrValues)));
     }
     return vals;
   }
@@ -229,17 +240,38 @@ public class FlowMapGraphBuilder {
   }
 
   public void addEdge(Map<String, String> attrValues) {
-    Edge edge = addEdge(
-      requireValue(attrSpec.getFlowSrcNodeAttr(), attrValues),
-      requireValue(attrSpec.getFlowTargetNodeAttr(), attrValues),
-      weightAttrValues(attrSpec.getFlowWeightAttrs(), attrValues)
-    );
-    setCustomAttrs(edge, attrValues, new Predicate<String>() {
-      public boolean apply(String attrName) {
-       //return !attrSpec.isRequiredFlowAttr(attrName);
-        return !attrSpec.isFlowWeightAttr(attrName);
+
+    Node from = requireNode(requireValue(attrSpec.getFlowSrcNodeAttr(), attrValues));
+    Node to = requireNode(requireValue(attrSpec.getFlowTargetNodeAttr(), attrValues));
+
+    if (disaggregatedAttrValuesAttr == null) {
+
+      Edge edge = addEdge(from, to, weightAttrValues(attrSpec.getFlowWeightAttrs(), attrValues));
+      setCustomAttrs(edge, attrValues, new Predicate<String>() {
+        public boolean apply(String attrName) {
+         //return !attrSpec.isRequiredFlowAttr(attrName);
+          return !attrSpec.isFlowWeightAttr(attrName);
+        }
+      });
+
+    } else {
+
+      EdgeKey key = new EdgeKey(from, to);
+      Edge edge = cumulatedEdges.get(key);
+      String attr = requireValue(disaggregatedAttrValuesAttr, attrValues);
+      int count = 1;
+      if (edge == null) {
+        edge = graph.addEdge(from, to);
+        cumulatedEdges.put(key, edge);
+      } else {
+        if (edge.canGetDouble(attr)) {
+          count = count + (int)Math.round(edge.getDouble(attr));
+        }
       }
-    });
+      edge.setDouble(attr, count);
+
+
+    }
   }
 
   public Edge addEdge(String srcId, String targetId, Iterable<Double> weights) {
@@ -259,13 +291,19 @@ public class FlowMapGraphBuilder {
   }
 
   public Edge addEdge(Node from, Node to, double ... weights) {
+    if (disaggregatedAttrValuesAttr != null) {
+      throw new IllegalStateException(
+          "This method does is not supported in disaggregatedAttrValues mode");
+    }
     List<String> weightAttrs = attrSpec.getFlowWeightAttrs();
+
+    EdgeKey key = new EdgeKey(from, to);
+
     if (weights.length != weightAttrs.size()) {
       throw new IllegalArgumentException(
           "Number of supplied weights doesn't match the number of weight attrs");
     }
 
-    EdgeKey key = new EdgeKey(from, to);
     double[] sumWeights = weights.clone();
     Edge edge;
     if (cumulatedEdges == null) {
@@ -285,6 +323,7 @@ public class FlowMapGraphBuilder {
     for (int i = 0; i < weightAttrs.size(); i++) {
       edge.setDouble(weightAttrs.get(i), sumWeights[i]);
     }
+
 
     return edge;
   }

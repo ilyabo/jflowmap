@@ -72,6 +72,7 @@ public class ViewLoader {
   private static Logger logger = Logger.getLogger(ViewLoader.class);
 
   public static final String CLIENT_PROPERTY_CONTAINER_IVIEW = "_iview";
+  private static final String LOADING_ERROR_PANEL_NAME = "loadingErrorPanel";
 
   public static final ImageIcon LOADING_ICON = JFlowMapMain.createImageIcon("resources/loading.gif");
 
@@ -83,6 +84,13 @@ public class ViewLoader {
   }
 
   public static void loadView(final String viewConfigLocation, final Container parent) {
+    for (Component c : parent.getComponents()) {
+      if (LOADING_ERROR_PANEL_NAME.equals(c.getName())) {
+        parent.remove(c);  // remove the error panel if it's there
+        break;
+      }
+    }
+
     final JLabel loadingLabel = new JLabel(" Opening '" +
         FileUtils.getFilename(viewConfigLocation) + "'...", LOADING_ICON, JLabel.CENTER);
     loadingLabel.setFont(LOADING_TEXT_FONT);
@@ -196,7 +204,6 @@ public class ViewLoader {
           // JMsgPane.showProblemDialog(parent, ex);
 
           //if (!isRunningAsApplet()) {
-            parent.removeAll();
             parent.add(createLoadingErrorPanel(ex));
           //}
 
@@ -216,6 +223,7 @@ public class ViewLoader {
 
       private JPanel createLoadingErrorPanel(Exception ex) {
         JPanel panel = new JPanel();
+        panel.setName(LOADING_ERROR_PANEL_NAME);
         panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(new JLabel(
