@@ -1,0 +1,20 @@
+view=flowmap
+
+data=csv
+data.csv.nodes.src=nodes.csv
+data.csv.flows.src=flows.csv
+
+
+data.attrs.node.id=Code
+data.attrs.node.label=Name
+data.attrs.node.lat=Lat
+data.attrs.node.lon=Lon
+data.attrs.flow.origin=Origin
+data.attrs.flow.dest=Dest
+
+data.attrs.flow.weight.csvList=Refugees in 2009
+
+
+map=shapefile
+map.shapefile.src=countries.shp
+map.projection=Mercator
