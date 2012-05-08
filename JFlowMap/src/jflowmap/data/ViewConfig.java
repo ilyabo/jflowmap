@@ -315,7 +315,7 @@ public class ViewConfig {
           public Iterable<String> get() { return FlowMapGraph.listFlowAttrs(graph); }
         };
 
-        Iterable<String> attrs = weightAttrs(config, getFlowAttrs, false);
+        Iterable<String> attrs = weightAttrs(config, getFlowAttrs, true);
 
         FlowMapGraphBuilder.filterNodes(graph, config.getString(PROP_DATA_SELECT_NODES));
         FlowMapGraphBuilder.filterEdges(graph, config.getString(PROP_DATA_SELECT_FLOWS));
@@ -325,7 +325,7 @@ public class ViewConfig {
             graph, config.getString(PROP_DATA_SELECT_FLOWS_EXISTS), attrs);
 
 
-        return new FlowMapGraph(graph, createFlowMapAttrSpec(config, false, false, getFlowAttrs));
+        return new FlowMapGraph(graph, createFlowMapAttrSpec(config, false, true, getFlowAttrs));
       }
     },
     CSV {
