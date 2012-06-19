@@ -105,6 +105,8 @@ public class FlowstratesView extends AbstractCanvasView {
   }
 
   private static final Font CAPTION_FONT = new Font("Arial", Font.BOLD, 23);
+  private static final int MAX_NODE_LABEL_LENGTH = 30;
+
 
 //  private static final boolean SHOW_TIME_CAPTION = true;
 
@@ -1080,4 +1082,8 @@ public class FlowstratesView extends AbstractCanvasView {
     return flowMapGraph.getEdgeWeightAttrs();
   }
 
+  public static String shortenNodeLabel(String label) {
+    if (label.length() < MAX_NODE_LABEL_LENGTH) return label;
+    return label.substring(0, MAX_NODE_LABEL_LENGTH-2) + "...";
+  }
 }

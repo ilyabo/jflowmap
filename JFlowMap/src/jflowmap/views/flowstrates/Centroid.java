@@ -42,7 +42,7 @@ class Centroid extends PPath {
     this.size = size;
     this.nodeId = nodeId;
 
-    this.labelText = new PText(nodeLabel);
+    this.labelText = new PText(FlowstratesView.shortenNodeLabel(nodeLabel));
     labelText.setFont(LABEL_FONT);
     addChild(labelText);
 
