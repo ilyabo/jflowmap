@@ -29,6 +29,7 @@ import jflowmap.views.IFlowMapColorScheme;
  */
 public enum FlowMapColorSchemes {
   DARK(new EnumColorScheme.Builder("Dark")
+    // using colors from Till Nagel's Sankey Arcs for Origin-Dest
     .put(ColorCodes.BACKGROUND, Color.black/*new Color(0x20, 0x20, 0x20)*/)
     .put(ColorCodes.AREA_PAINT, new Color(45, 45, 45))
     .put(ColorCodes.AREA_STROKE, new Color(55, 55, 55))
@@ -38,8 +39,8 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.NODE_STROKE_PAINT, new Color(255, 255, 255, 200))
     .put(ColorCodes.NODE_SELECTED_STROKE_PAINT, new Color(255, 255, 0, 255))
     .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_PAINT, new Color(255, 150, 0, 200))
-    .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 0, 0, 200))
-    .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 255, 0, 200))
+    .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_INCOMING_PAINT, new Color(255, 182, 80, 200))
+    .put(ColorCodes.EDGE_STROKE_HIGHLIGHTED_OUTGOING_PAINT, new Color(0, 202, 201, 200))
     .put(ColorCodes.EDGE_SELF_LOOP_MIN_WEIGHT, new Color(0, 0, 0))
     .put(ColorCodes.EDGE_SELF_LOOP_MAX_WEIGHT, new Color(255, 255, 0))
 
@@ -47,13 +48,13 @@ public enum FlowMapColorSchemes {
     .put(ColorCodes.EDGE_NO_GRADIENT_MAX_WEIGHT, new Color(255, 255, 255))
 
     .put(ColorCodes.EDGE_GRADIENT_START_MIN_WEIGHT, new Color(0, 0, 0))
-    .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 0, 0))
+    .put(ColorCodes.EDGE_GRADIENT_START_MAX_WEIGHT, new Color(255, 182, 80))
     .put(ColorCodes.EDGE_GRADIENT_END_MIN_WEIGHT, new Color(0, 0, 0))
-    .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 255, 0))
+    .put(ColorCodes.EDGE_GRADIENT_END_MAX_WEIGHT, new Color(0, 202, 201))
     .put(ColorCodes.EDGE_START_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
-    .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 0, 0))
+    .put(ColorCodes.EDGE_START_MARKER_MAX_WEIGHT, new Color(255, 182, 80))
     .put(ColorCodes.EDGE_END_MARKER_MIN_WEIGHT, new Color(0, 0, 0))
-    .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 255, 0))
+    .put(ColorCodes.EDGE_END_MARKER_MAX_WEIGHT, new Color(0, 202, 201))
 
     .put(ColorCodes.LEDGEND_BOX_PAINT, new Color(140, 140, 140, 200))
     .put(ColorCodes.LEDGEND_TEXT, new Color(0, 0, 0, 120))
