@@ -518,26 +518,35 @@ public class MapLayer extends PLayer implements ViewLayer {
       Rectangle2D.Double b = new Rectangle2D.Double();
       boolean first = true;
       for (Centroid c : centroids) {
-        double x = c.getOrigX();
-        double y = c.getOrigY();
+
         if (first) {
-          b.x = x;
-          b.y = y;
+          b.x = c.getOrigX();
+          b.y = c.getOrigY();
           first = false;
         } else {
-          if (x < b.x) {
-            b.x = x;
-          }
-          if (x > b.getMaxX()) {
-            b.width = x - b.x;
-          }
-          if (y < b.y) {
-            b.y = y;
-          }
-          if (y > b.getMaxY()) {
-            b.height = y - b.y;
-          }
+          b.add(c.getPoint());
         }
+
+//        double x = c.getOrigX();
+//        double y = c.getOrigY();
+//        if (first) {
+//          b.x = x;
+//          b.y = y;
+//          first = false;
+//        } else {
+//          if (x < b.x) {
+//            b.x = x;
+//          }
+//          if (x > b.getMaxX()) {
+//            b.width = x - b.x;
+//          }
+//          if (y < b.y) {
+//            b.y = y;
+//          }
+//          if (y > b.getMaxY()) {
+//            b.height = y - b.y;
+//          }
+//        }
       }
       // getVisualAreaMapCamera(s).localToView(b);
       centroidsBounds = b;
@@ -626,7 +635,7 @@ public class MapLayer extends PLayer implements ViewLayer {
       double w = rect.getWidth(), h = rect.getHeight();
 
       // Show more context for smaller areas and less for larger ones
-      final double minGrowth = 1.1;
+      final double minGrowth = 0.5;
       final double maxGrowth = 3.4;
       double alpha = Math.min((fw - Math.min(fw, w * 5)) / fw, (fh - Math.min(fh, h * 5)) / fh);
       double growBy = minGrowth + (maxGrowth - minGrowth) * Math.pow(alpha, 5);
@@ -685,7 +694,9 @@ public class MapLayer extends PLayer implements ViewLayer {
 
   public void fitInView(boolean animate, boolean whole) {
     if (whole  ||  isNodeSelectionEmpty()) {
-      fit(centroidsBounds(), animate);
+      Rectangle2D bounds = centroidsBounds();
+      //GeomUtils.growRectInPlaceByRelativeSize(bounds, .1,,.1,.1);
+      fit(bounds, animate);
     } else {
 
       /*
