@@ -1,7 +1,9 @@
+# Flowstrates
+
 Flowstrates extend the idea of a [flow map](http://en.wikipedia.org/wiki/Flow_map) (which are used for representing entities flowing between geographic locations) to the temporal dimension and allow to analyze the changes of the flow magnitudes over time.
 In Flowstrates the origins and the destinations of the flows are displayed in two separate maps, and the temporal changes of the flow magnitudes are displayed between the two maps in a heatmap in which the columns represent time periods.
 
-<a href='http://jflowmap.googlecode.com/svn/wiki/images/Sudan-to-Europe-stroke.png' title='Flowstrates: Refugees from Sudan in 1975-2009'><img src='http://jflowmap.googlecode.com/svn/wiki/images/flowstrates/Flowstrates3_x120.png' /></a>
+<a href='./images/Sudan-to-Europe-stroke.png' title='Flowstrates: Refugees from Sudan in 1975-2009'><img src='./images/flowstrates/Flowstrates3_x120.png' /></a>
 
 As in most flow maps which focus on representing the flow magnitudes, the exact routes of the flows are not accurately represented in Flowstrates. Instead, the flow lines are rerouted so that
 they connect the flow origins and destinations with the corresponding rows of the heatmap, as if the flows were going
