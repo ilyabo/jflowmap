@@ -1,0 +1,44 @@
+<html>
+
+<head>
+  <style type="text/css">
+  body {font:82% arial,sans-serif;}
+  p.viewdesc {font-size:.9em; color:#333333;  }
+  p.jfvmdesc {font-size:.8em; color:gray; display:inline; margin-left:.4em; }
+  ul.views {margin-top:.5em; margin-bottom:2em; list-style-type:none; padding-left:1em;}
+  ul.views li {margin:.5em 0;}
+  h3.view {margin-bottom:0; }
+  </style>
+  <script type="text/javascript" src="http://www.java.com/js/deployJava.js"></script>
+  <script type="text/javascript" src="resources/viewconf-list.js"></script>
+</head>
+<body style="overflow:hidden; padding:0px 0px;margin:0px 0px">
+<script type="text/javascript">init([
+  {name:'Refugees',
+   viewconfs: [
+    {jfmv:'user-study/refugees/sm', name:'SM'},
+    {jfmv:'user-study/refugees/sm-diff', name:'SM DIFF'},
+    {jfmv:'user-study/refugees/anim', name:'ANIM'},
+    {jfmv:'user-study/refugees/anim-diff', name:'ANIM DIFF'},
+   ]
+  },
+  /*{name:'Aid data',
+	   viewconfs: [
+        {jfmv:'user-study/aid-data-flowmap-sm', name:'Small multiples'},
+	    {jfmv:'user-study/aid-data-flowmap-anim', name:'Animation'},
+	    {jfmv:'user-study/aid-data-flowmap-sm-diff', name:'Small multiples of differences'},
+	    {jfmv:'user-study/aid-data-flowmap-anim-diff', name:'Animation of differences'},
+	   ]
+	  },*/  
+  {name:'Commuters in Slovenia',
+       viewconfs: [
+        {jfmv:'user-study/commuters-si/sm', name:'SM'},
+        {jfmv:'user-study/commuters-si/anim', name:'ANIM'},
+        {jfmv:'user-study/commuters-si/anim-diff', name:'ANIM DIFF'},
+        {jfmv:'user-study/commuters-si/sm-diff', name:'SM DIFF'},
+       ]
+      }  
+ ]);</script>
+</body>
+
+</html>
