@@ -27,6 +27,6 @@ Here is a short video which can give you an impression of how Flowstrates can be
 
 <a href='http://www.youtube.com/watch?feature=player_embedded&v=nij8OUyiaV0' target='_blank'><img src='http://img.youtube.com/vi/nij8OUyiaV0/0.jpg' width='590' height=355 /></a>
 
-Try out a [demo of Flowstrates](http://jflowmap.googlecode.com/svn/trunk/JFlowMap/demo/demo-applets.html?refugees-flowstrates) representing refugee flows between the world's countries.
+<!--Try out a [demo of Flowstrates](http://jflowmap.googlecode.com/svn/trunk/JFlowMap/demo/demo-applets.html?refugees-flowstrates) representing refugee flows between the world's countries.-->
 
-You can also watch [the video of the Flowstrates demo](http://youtu.be/UQPN7o6A3Cg?hd=1)  or read our [paper on Flowstrates](http://diuf.unifr.ch/people/boyandii/papers/flowstrates-eurovis11.pdf) published in Computer Graphics Forum.
+You can watch [the video of the Flowstrates demo](http://youtu.be/UQPN7o6A3Cg?hd=1)  or read our [paper on Flowstrates](https://www.researchgate.net/profile/Denis_Lalanne/publication/261638928_j1467-8659201101946x/links/0a85e534e80dd48469000000.pdf) published in Computer Graphics Forum.
