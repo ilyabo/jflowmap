@@ -1,4 +1,4 @@
-_For a full list of the view config properties refer to [./ViewConfigProperties.md]._
+_For a full list of the view config properties refer to [ViewConfig properties list](./ViewConfigProperties.md)._
 
 
 ## Minimal configuration example ##
@@ -59,7 +59,7 @@ map.projection=Mercator
 If you don't have a shapefile with a suitable map, you can simply omit the properties starting with "map.shapefile".
 
 
-_Here you can find  [all the files for this minimal JFlowMap config example](http://code.google.com/p/jflowmap/source/browse/trunk/JFlowMap/demo/minimal-config-example/) to work._
+_Here you can find  [all the files for this minimal JFlowMap config example](../demo/minimal-config-example/) to work._
 
 
 
