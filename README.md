@@ -1,6 +1,6 @@
 # Flow map visualization tool
 
-This repo was originally published on [Google Code](https://code.google.com/archive/p/jflowmap/). You can download packages with executable binaries [from here](https://code.google.com/archive/p/jflowmap/downloads).
+This repo was originally published on [Google Code](https://code.google.com/archive/p/jflowmap/). You can download a package with executable binaries [from here](https://code.google.com/archive/p/jflowmap/downloads).
 
 **IMPORTANT** This project is not developed further anymore.
 Check out <a href="https://flowmap.blue">this tool for publishing flow maps online</a> or <a href="https://github.com/teralytics/flowmap.gl">this JavaScript library for flow mapping</a>.
