@@ -36,7 +36,7 @@ If you use JFlowMap for a scientific publication, please, reference <a href="htt
 
 ---
 
-JFlowMap is developed by <a href='http://ilya.boyandin.me'>Ilya Boyandin</a> under the supervision of <a href='http://diuf.unifr.ch/people/lalanned/'>Denis Lalanne</a> and <a href='http://enrico.bertini.me'>Enrico Bertini</a>.
+JFlowMap is developed by <a href='http://ilya.boyandin.me'>Ilya Boyandin</a> under the supervision of <a href='http://diuf.unifr.ch/people/lalanned/'>Denis Lalanne</a> and <a href='http://enrico.bertini.io'>Enrico Bertini</a>.
 
 
 
