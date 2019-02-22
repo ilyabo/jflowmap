@@ -25,7 +25,7 @@ The goal of our work is to develop a tool which would help to explore and analyz
 
 
 You can also watch [the video of the Flowstrates demo](http://youtu.be/UQPN7o6A3Cg?hd=1)
- or read our [paper on Flowstrates](https://www.researchgate.net/profile/Denis_Lalanne/publication/261638928_j1467-8659201101946x/links/0a85e534e80dd48469000000.pdf) published in Computer Graphics Forum.
+ or read our [paper on Flowstrates](https://ilya.boyandin.me/p/flowstrates/flowstrates-eurovis11-fin.pdf) published in Computer Graphics Forum.
 
 If you want to visualize your own data in JFlowMap, check [How to prepare data](doc/HowToPrepareData.md).
 
