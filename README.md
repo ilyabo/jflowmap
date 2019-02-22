@@ -2,10 +2,8 @@
 
 This repo was originally published on [Google Code](https://code.google.com/archive/p/jflowmap/). You can download a package with executable binaries [from here](https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/jflowmap/jflowmap-0.16.6.zip).
 
-**IMPORTANT** This project is not developed further anymore.
-
-Check out <a href="https://flowmap.blue">Flowmap.blue</a>, our tool for publishing flow maps online,
-or <a href="https://github.com/teralytics/flowmap.gl">this JavaScript library for flow mapping</a>.
+**IMPORTANT** Check out <a href="https://flowmap.blue">Flowmap.blue</a>, our tool for publishing flow maps online,
+or <a href="https://github.com/teralytics/flowmap.gl">flowmap.gl</a>, our JavaScript library for flow mapping. This project is not developed further anymore.
 
 ---
 
